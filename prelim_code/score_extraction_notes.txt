@@ -1,0 +1,49 @@
+Score extractor function:
+  Get model-implied S and mean parameters from model output.
+    - Problem: Need to say how each parameter impacts
+      the model-implied S.  Also need to get mean parameters.
+  Need to say which parameters you want to test.
+  Function extracts scores for these parameters.
+  
+
+Notes on sem package:
+
+  Line 140 of sem.R contains code that supplies the function to be
+  minimized via nlm (objective.1 for gradient via numeric derivs;
+  objective.2 for analytic gradient).  Need to figure out what each
+  matrix is, then use them to create objective.3 that uses the
+  casewise likelihood function.  Note that C, A, P are sent to sem
+  output.  C is model-implied cov matrix, A is RAM A matrix, P is RAM 
+  P matrix.  Only problem is that the mean parameters are not
+  estimated.  Can we set these equal to observed means?
+
+  Can get info on model parameters and their locations using objects
+  returned with the estimated model (ram,J,A,P)
+
+Notes on lavaan package:
+
+  This apparently supports FIML for missing data.  It also supports
+  multiple groups analysis and has a pre-defined command for
+  measurement invariance.  So this seems better than the sem
+  package.
+
+  Can potentially obtain info about the estimated model via
+  inspect(lavaan.res, "free")  # location of free parameters
+  inspect(lavaan.res, "coef")  # values of free parameters
+  Then just need to know how to get model-implied S and means out.
+
+Notes on OpenMx:
+
+  Could we somehow define a model with one observation and all
+  parameters fixed to their estimates, then use mxEval?  The model
+  gradient is then the scores that we need.  NO.
+  But it returns various RAM matrices with the output, parameter
+  names included.  Can call various parameters via:
+  tmpmat <- mxres$M
+  tmpmat@values[tmpmat@labels=="meanx1"]
+
+  So first extract vector of parameter estimates, then insert these
+  in a function to get numeric derivatives.
+
+
+
