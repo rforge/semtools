@@ -8,17 +8,30 @@ Score extractor function:
 
 Notes on sem package:
 
-  Line 140 of sem.R contains code that supplies the function to be
-  minimized via nlm (objective.1 for gradient via numeric derivs;
-  objective.2 for analytic gradient).  Need to figure out what each
-  matrix is, then use them to create objective.3 that uses the
-  casewise likelihood function.  Note that C, A, P are sent to sem
-  output.  C is model-implied cov matrix, A is RAM A matrix, P is RAM 
-  P matrix.  Only problem is that the mean parameters are not
-  estimated.  Can we set these equal to observed means?
+  Note that C, A, P are sent to sem
+  output.  C is model-implied cov matrix, A is RAM matrix, P is RAM 
+  matrix.  Only problem is that the mean parameters are not
+  estimated.  We might set these to the observed means.  We can
+  also estimate a model with intercepts, but we need to figure out
+  how we can get information about which parameters are intercepts.
 
   Can get info on model parameters and their locations using objects
   returned with the estimated model (ram,J,A,P)
+
+  Model-implied S can be obtained via the following, assuming
+  res contains the estimated model:
+
+  # Covariances between all variables (latent & observed):
+  covmat <- with(res, solve(diag(nrow(A)) - A) %*% P %*% t(solve(diag(nrow(A)) - A)))
+  # Covariances between just observed variables (utilizes
+  # covmat from previous command):
+  covmat <- with(res, J %*% covmat %*% t(J))
+
+  Locations of model parameters:
+  par.posn object lists rows of ram object that have free parameters
+  ram object "heads" column says whether parameter is in A matrix
+  or P matrix (1=A, 2=P).  "to" and "from" columns say specific
+  row/column (respectively) that each parameter goes into.
 
 Notes on lavaan package:
 
