@@ -770,8 +770,9 @@ used to study Type I error rate.
 For each sample size $\times$
 magnitude combination, 500 datasets were generated and tested for
 measurement invariance.  For the 0-standard error condition, we
-generated 5,000 datasets to get a more precise measure of Type I
-error.  In each dataset, half the students were 14--15
+generated 5,000 datasets because Type I
+error is more difficult to estimate precisely.  In each dataset, half the
+students were 14--15 
 years of age and half were 16--17 years of age.  As stated previously,
 group
 designations (below 16.0 years, above 16.0 years) were assumed to be
@@ -784,10 +785,10 @@ For each test statistic, power and Type I error rates for the twelve
 sample size $\times$ magnitude combinations are displayed in
 Table~\ref{tab:sim1}.  The 0-SE column lists Type I error rates; this
 is the situation where the tests reject the hypothesis of measurement
-invariance at $\alpha=.05$ when none exist.  This column generally
+invariance at $\alpha=.05$ when none exist.  This column 
 shows that the Cram\'{e}r-von Mises test has accurate Type I error
-rates at smaller sample sizes, but it becomes slightly conservative at
-$n=500$.  The double-max test, on the other hand, is conservative at
+rates at all sample sizes examined.
+The double-max test, on the other hand, is conservative at
 all sample sizes examined.  Finally, the likelihood ratio test is
 slightly liberal at smaller sample sizes, with Type I error rates of
 .07 and .06 at $n=100$ and $200$, respectively.  Type I error for the
@@ -841,10 +842,10 @@ $n$ & Test Stat & 0 & 1 & 2 & 3 \\\hline
     & DM        & 0.03 & 0.06 & 0.19 & 0.41 \\ 
     & $\chi^2$  & 0.07 & 0.16 & 0.49 & 0.83 \\ \hline
 200 & CvM       & 0.05 & 0.19 & 0.64 & 0.96 \\ 
-    & DM        & 0.04 & 0.12 & 0.44 & 0.88 \\ 
+    & DM        & 0.03 & 0.12 & 0.44 & 0.88 \\ 
     & $\chi^2$  & 0.06 & 0.27 & 0.76 & 0.99 \\ \hline
-500 & CvM       & 0.03 & 0.44 & 0.98 & 1.00 \\ 
-    & DM        & 0.03 & 0.35 & 0.94 & 1.00 \\ 
+500 & CvM       & 0.05 & 0.44 & 0.98 & 1.00 \\ 
+    & DM        & 0.04 & 0.35 & 0.94 & 1.00 \\ 
     & $\chi^2$  & 0.05 & 0.58 & 1.00 & 1.00 \\\thickline
 \end{tabular}
 \end{table*}
