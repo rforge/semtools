@@ -43,9 +43,15 @@ echo $contents; } ?>
 
 <!-- end of project description -->
 
-<p> No content added. </p>
+<p> R files for carrying out the example described in Merkle & Zeileis: </p>
+<ul>
+<li> <a href=data.dat>Data file</a> containing data for the example.</li>
+<li> <a href=def.model.R>Factor analysis file</a> that contains OpenMx specification of the factor analysis model.</li>
+<li> <a href=fa_score_extraction.R>Score extraction file</a> containing code to extract scores and information matrix from the fitted model.</li>
+<li> <a href=script.R>Script file</a> containing code to run the example, using the above files.</li>
+</ul>
 
-<p> The <strong>project summary page</strong> you can find <a href="http://<?php echo $domain; ?>/projects/<?php echo $group_name; ?>/"><strong>here</strong></a>. </p>
+<p> The <strong>project summary page</strong> resides <a href="http://<?php echo $domain; ?>/projects/<?php echo $group_name; ?>/"><strong>here</strong></a>. </p>
 
 </body>
 </html>
