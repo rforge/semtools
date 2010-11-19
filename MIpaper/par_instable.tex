@@ -113,7 +113,7 @@ often proceeds by assuming that $\bm{\theta}_i = \bm{\theta}\
 criterion:
 \begin{equation}
     \label{eq:score}
-  \sum_{i=1}^{n} \psi(\bm{x}_i, \hat{\bm{\theta}})] = 0,    
+  \sum_{i=1}^{n} \psi(\bm{x}_i, \hat{\bm{\theta}}) = 0,    
 \end{equation}
  where $\psi(\bm{x}_i, \bm{\theta})$ 
 is a score function based on the model.  
@@ -565,6 +565,13 @@ tests on specific model parameters.
 %Some of these ideas are illustrated in
 %the example below.
 
+These attributes give the proposed tests important advantages over
+existing tests, as existing measurement invariance methods cannot
+accomplish either of the tasks outlined above.
+In particular, Millsap \citeyear{Mil05} cites
+``locating the invariance violation'' as a major outstanding problem
+in the field.
+
 \begin{figure}
 \caption{Path diagram representing the base factor analysis model used for
   the Example and Simulations.  To induce measurement invariance
@@ -639,24 +646,24 @@ verbal factor loading parameters for student $i$.
 In the results section, we first describe overall results and then 
 describe estimation of $\eta$ and 
 isolation of model parameters violating
-measurement invariance.
+measurement invariance.\footnote{R code for obtaining these results is
+  available at \url{http://semtools.r-forge.r-project.org}.}
 
 \subsubsection{Overall Results}
 Results related to the cumulative score process are displayed in
-Figure~\ref{fig:cusumex}.  In this figure, the processes
-are displayed individually 
-for each factor loading, with student number (ordered by age and
-rescaled to (0,1)) on the x-axis and
-absolute values of the cumulative scores on the y-axis.  The dashed horizontal
+Figure~\ref{fig:cusumex}.  In this figure, each panel represents the
+process for a single factor loading, with student age on the x-axis and
+cumulative scores on the y-axis.  The dashed horizontal
 lines represent the critical value for rejecting $H_0$ at $\alpha=.05$
 based on the double-max statistic; if any of the three processes
 crosses the horizontal line, then we reject $H_0$.  It is seen that
 the processes for both the second and third factor loadings
 ($\lambda_{21}$ and $\lambda_{31}$) cross the dashed line, indeed
-implying rejection of $H_0$.  The maximum across all three processes,
-corresponding to the double-max test statistic, is 1.72.  This maximum
-occurs in the third graph and is represented as a solid circle, 
-achieving a $p$-value of .016.  
+implying rejection of $H_0$.  The absolute maximum across all three processes,
+corresponding to the double-max test statistic, is 1.77.  This
+statistic is obtained from the minimum of the third
+panel (whose absolute value is the maximum), close to an
+age of 16.  It achieves a $p$-value of .012.
 
 
 
@@ -665,9 +672,9 @@ The results of the test imply that the
 verbal scales lack measurement invariance, and the age at which the
 maximum is achieved provides the estimate $\hat{\eta}$.
 The student corresponding to the maximum
-absolute cumulative sum (the solid circle in the third graph) is 15.8
+absolute cumulative sum (the solid circle in the third graph) is 15.7
 years of age, implying one subgroup of 
-students below 15.8 years and one above 15.8 years.  This agrees well
+students below 15.7 years and one above 15.7 years.  This agrees well
 with the true $\eta$ of 16.0 years.
 
 The results of the test also yield information about specific
@@ -693,11 +700,13 @@ $\lambda_{11}$ did not achieve the critical value represents a Type II
 error, which implicitly brings into question the posthoc tests' power.  We
 generally address the issue of power in the simulations below.
 
+% NEED TO MODIFY
 \begin{figure}
 \caption{Cumulative score processes for the verbal factor loadings,
   based on the example involving measurement invariance with respect
-  to student age.  The dashed lines represent critical values for the
-  test of measurement invariance at $\alpha=.05$.}
+  to student age.  Each panel represents the cumulative score process
+  for a single factor loading; the red line represents the critical values for 
+  the absolute maximum at $\alpha=.05$.}
 \label{fig:cusumex}
 \includegraphics[height=5in]{example.pdf}
 \end{figure}
