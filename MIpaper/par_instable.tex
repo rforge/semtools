@@ -29,6 +29,12 @@ with simulations examining the tests' abilities in controlled conditions.}
 \shorttitle{Parameter instability tests}
 \rightheader{Parameter instability tests}
 
+\newcommand{\argmax}{\operatorname{argmax}\displaylimits}
+
+%% for internal use
+\newcommand{\fixme}[1]{\emph{\marginpar{FIXME} (#1)}}
+\newcommand{\readme}[1]{\emph{\marginpar{README} (#1)}}
+
 \begin{document}
 \maketitle
 
@@ -72,96 +78,154 @@ test or scale.
 
 \section{Framework}
 
-The tests proposed here are generally relevant to situations where the
-$p$-dimensional 
-data vector $\bm{x}_i, i=1,\cdots,n$ is specified to arise from a model with
-density $f(\bm{x}_i | \bm{\theta}_i)$ and log-likelihood 
-$\log L(\bm{\theta}_i | \bm{x}_i)$.  
-For the factor-analytic situations
-considered in this paper, the $\bm{x}_i$ consist of individuals' scale
-scores, and 
-$f()$ and $\log L()$ arise from the multivariate normal distribution.
-The density is defined as:
-\begin{equation}
+The methods proposed here are generally relevant to situations where the
+$p$-dimensional random variable $X$ with associated observations $\bm{x}_i, i=1,\cdots,n$
+is specified to arise from a model with density $f(\bm{x}_i; \bm{\theta})$ and
+associated joint log-likelihood
+\begin{equation} \label{eq:loglik}
+  \ell(\bm{\theta}; \bm{x}_1, \dots, \bm{x}_n) ~=~
+    \sum_{i = 1}^n \ell(\bm{\theta}; \bm{x}_i) ~=~
+    \sum_{i = 1}^n  \log f(\bm{x}_i; \bm{\theta}),
+\end{equation}
+where ${\bm \theta}$ is some $k$-dimensional parameter vector that characterizes
+the distribution. 
+The methods are applicable under very general conditions, essentially
+whenever standard assumptions for maximum likelihood inference hold (for more
+details see below). For empirical applications, we employ
+a specific factor analysis model where the data follow a multivariate normal
+distribution:
+\begin{eqnarray}
     \label{eq:mvndensity}
-    f(\bm{x}_i | \theta_i) = \frac{1}{(2\pi)^{p/2} |
-      \bm{\Sigma}(\bm{\theta}_i) |^{1/2}}\exp(-\frac{1}{2}(\bm{x}_i -
-    \bm{\mu}(\bm{\theta}_i))^{\prime} \bm{\Sigma}(\bm{\theta}_i)^{-1} (\bm{x}_i -
-    \bm{\mu}(\bm{\theta}_i)),
-\end{equation}
-where ${\bm{\mu}}({\bm{\theta}}_i)$ is the
-model-implied mean vector, and ${\bm{\Sigma}}({\bm{\theta}}_i)$ is the
-model-implied covariance matrix.
-The casewise log-likelihood is defined as:
-\begin{equation}
+    f(\bm{x}_i; \bm{\theta}) & = & \frac{1}{(2\pi)^{p/2} |
+      \bm{\Sigma}(\bm{\theta}) |^{1/2}} ~ \exp \left\{ -\frac{1}{2}(\bm{x}_i -
+    \bm{\mu}(\bm{\theta}))^{\top} \bm{\Sigma}(\bm{\theta})^{-1} (\bm{x}_i -
+    \bm{\mu}(\bm{\theta}) \right\}, \\
     \label{eq:caselik}
-    \log \text{L}({\bm{x}}_i, {\bm{\theta}}_i) = %\sum_{i=1}^{N} 
-\log \mid 
-\bm{\Sigma}(\bm{\theta}) \mid + %\sum_{i=1}^{N} 
-(\bm{x}_i -
-\bm{\mu}(\bm{\theta}))^{\prime} \bm{\Sigma}(\bm{\theta})^{-1} (\bm{x}_i -
-\bm{\mu}(\bm{\theta})).
-\end{equation}
-This equation is often summed over $n$ observations, and it is also
-often employed for factor analysis and structural
-equation models with missing data (e.g., \citeNP{Wot00}).  We use
-the likelihood here to facilitate the proposed tests.
+    \ell(\bm{\theta}; \bm{x}_i) & = & -\frac{1}{2} \left\{
+      (\bm{x}_i - \bm{\mu}(\bm{\theta}))^{\top} \bm{\Sigma}(\bm{\theta})^{-1} (\bm{x}_i - \bm{\mu}(\bm{\theta}))
+      ~+~ \log | \bm{\Sigma}(\bm{\theta}) | ~+~ p \log(2 \pi) \right\}.
+\end{eqnarray}
+with model-implied mean vector ${\bm{\mu}}({\bm{\theta}})$ and
+covariance matrix ${\bm{\Sigma}}({\bm{\theta}})$. As pointed out above,
+the assumptions for the tests introduced below do not require this specific
+form of the likelihood but it is presented for illustration due to
+its importance in practice.  Many expositions of factor analysis
+utilize the likelihood for the sample covariance matrix, which is
+based on a Wishart distribution when $\bm{x}_i$ are assumed to be
+multivariate normal.
+However, the techniques presented below require the casewise contributions
+to the likelihood; this situation is also generally
+encountered in structural equation models with missing data (e.g.,
+\citeNP{Wot00}).
 
-Within the general framework outlined above, model estimation
-often proceeds by assuming that $\bm{\theta}_i = \bm{\theta}\
-\forall\ i$, then choosing $\hat{\bm{\theta}}$ to satisfy the
-criterion:
-\begin{equation}
-    \label{eq:score}
-  \sum_{i=1}^{n} \psi(\bm{x}_i, \hat{\bm{\theta}}) = 0,    
+Within the general framework outlined above, and under the usual
+regularity conditions, the model parameters $\bm{\theta}$ can
+be estimated by maximum likelihood (ML), i.e.,
+\begin{equation} \label{eq:ml}
+  \hat{\bm{\theta}} ~=~ \argmax_{\bm{\theta}} \ell(\bm{\theta}; x_1, \dots, x_n),
 \end{equation}
- where $\psi(\bm{x}_i, \bm{\theta})$ 
-is a score function based on the model.  
-For example, in factor analysis models estimated via Maximum
-Likelihood, the score function is the first derivative of $\log
-\text{L}(\bm{x}_i, \bm{\theta})$ with respect to $\bm{\theta}$.
-General M-estimation methods may also be handled within this
-framework, though we do not discuss them here.
+or equivalently by solving the first order conditions
+\begin{equation}
+    \label{eq:ml1}
+  \sum_{i=1}^{n} {\bm s}(\hat{\bm{\theta}}; \bm{x}_i) ~=~ 0,    
+\end{equation}
+where 
+\begin{equation}
+  \label{eq:score}
+  {\bm s}({\bm \theta}; x_i) ~=~ \left(
+    \frac{\partial \ell({\bm \theta}; x_i)}{\partial \theta_1},
+    \dots,
+    \frac{\partial \ell({\bm \theta}; x_i)}{\partial \theta_k}
+  \right)^\top,
+\end{equation}
+is the score function of the model, i.e., the partial derivative of the casewise
+likelihood contributions w.r.t.\ the parameters $\bm{\theta}$.
+
+% \fixme{I have deferred individual-specific parameters for ease of exposition.
+% My feeling is that it should be briefly mentioned at the end of this
+% section and then connected with measurement invariance in the next section.}
+
+One central assumption -- sometimes made implicitly -- is that
+the same model parameters $\bm{\theta}$ hold for all individuals $i = 1, \dots, n$.
+If this is not satisfied, the estimates $\hat{\bm{\theta}}$ are typically
+not meaningful and cannot easily be interpreted.
+One potential source of deviation from this assumption is lack of
+measurement invariance, investigated in the following section.
+
+
 
 \section{Tests of Measurement Invariance}
 
-Measurement invariance specifically implies that factor analysis model
-parameters are invariant across individuals.  It can be framed as the
-hypothesis:
+In general terms, a set of scales is defined to be measurement
+invariant with respect to an auxiliary variable $V$ if:
+\begin{equation}
+    \label{eq:midef}
+      f({\bf X} | T, V, \dots) = f({\bf X} | T, \dots),
+\end{equation}
+where ${\bf X}$ is a data matrix, $T$ is the latent
+variable that the scales purport to measure, and $f$ is the model's
+distributional form.  In the parametric framework
+adopted here, this means that the parameter vector ${\bm \theta}$ (or
+some subset of ${\bm \theta}$; see \citeNP{Mer93}) is equal
+across subgroups of individuals and thus does not vary
+with any variable $V$.
+
+To frame this as a formal hypothesis, we assume that -- in principle --
+Model~(\ref{eq:loglik}) holds for all individuals but with a
+potentially individual-specific 
+parameter vector ${\bm \theta}_i$. The null hypothesis of measurement invariance
+is then equivalent to the null hypothesis of parameter constancy
 \begin{equation}
     \label{eq:h0}
-    H_0: {\bm \theta}_i = {\bm \theta}_0,\ i=1,\ldots,n,
+    H_0:~ {\bm \theta}_i = {\bm \theta}_0,\quad (i=1,\ldots,n),
 \end{equation}
-signifying that the parameter vector is the same for all individuals
-$i$.  
-This general hypothesis is very difficult to test because $n$ is large, and
-there are many ways by which the $\bm{\theta}_i$ may stray from one
-another.  To circumvent this problem, researchers often measure
-individuals on an auxiliary variable $V$ and divide them into groups
-based on that variable.  
-Assuming a continuous $V$, we might divide 
-individuals into two groups based on some threshold $\eta$.
-Equation~\eqref{eq:h0} then becomes:
+which should be tested against the alternative that the parameters
+are some nonconstant function ${\bm \theta}(\cdot)$ of the variable $V$ with observations
+$v_1, \dots, v_n$, i.e.,
 \begin{equation}
-    \label{eq:h0.cut}
-    H_0: \bm{\theta}_{V < \eta} = \bm{\theta}_{V > \eta},
+    \label{eq:h1}
+    H_1:~ {\bm \theta}_i = {\bm \theta}(v_i),\quad (i=1,\ldots,n).
 \end{equation}
-where, i.e., $\bm{\theta}_{V < \eta}$ reflects the factor analysis
-parameters for all individuals with $V < \eta$.  
+where the pattern ${\bm \theta}(V)$ of deviation from measurement invariance is
+typically not known (exactly) in practice. If it were (see below for
+some concrete examples), then standard inference methods (such as likelihood
+ratio, Wald, or Lagrange multiplier tests) could be employed. However,
+if the pattern is unknown, it is difficult to develop a single test
+that is well-suited for all conceivable patterns. But it is possible to
+derive a family of tests so that representatives from this family are well-suited
+for a wide range of possible patterns. One pattern of particular interest
+involves $V$ dividing the individuals into two subgroups with different
+parameter vectors
+\begin{equation}
+  \label{eq:h1*}
+  H_1^*:~ {\bm \theta}_i = \left\{ \begin{array}{ll}
+    {\bm \theta}^{(A)} & \mbox{if } v_i \le \nu, \\
+    {\bm \theta}^{(B)} & \mbox{if } v_i >   \nu,
+  \end{array} \right.
+\end{equation}
+where ${\bm \theta}^{(A)} \neq {\bm \theta}^{(B)}$. This could pertain to 
+two different age groups, income groups, genders, etc.
 
-Once we have grouped individuals based on $V$,
-factor-analytic assessments
-of measurement invariance are well developed.
-These assessments are often carried out using nested Multiple Groups
-Models (e.g., \citeNP{Jor71,Bol89}) coupled with Likelihood Ratio tests,
-though 
-Lagrange Multiplier and Wald tests may also be constructed for this
-purpose.    While these three tests
-are asymptotically equivalent \cite{Sat89}, each is detailed
-individually below.
+Note that even when adopting $H_1^*$ as the relevant alternative, the pattern ${\bm \theta}(V)$
+is not completely specified unless the cutpoint $\nu$ is known in
+advance. 
+In this situation, all individuals can be grouped based on
+$V$, and we can apply standard
+theory: nested multiple group
+models (e.g., \citeNP{Jor71,Bol89}) coupled with likelihood ratio (LR)
+tests are most common,
+though Lagrange multiplier (LM) and Wald tests may also be constructed for this
+purpose.\footnote{All three of these approaches are asymptotically
+  equivalent \cite{Sat89}.}  However, if $\nu$ is unknown (as is often
+the case for continuous $V$), then the standard theory does not apply
+and we can instead rely on the tests proposed in this paper.
 
-
-
+In the following section, we describe the standard approaches to
+testing measurement invariance with $\nu$ known.  We then contrast
+these approaches with the tests proposed in this paper.
+We assume throughout that the observations $i = 1, \dots, n$ are
+ordered with respect to the random variable $V$ of interest such that
+$v_1 \le v_2 \le \dots \le v_n$.
 
 % MAY BE USEFUL SOMEWHERE
 % Focusing on the latter point, Millsap's \citeyear{Mil05} review of 
@@ -170,407 +234,354 @@ individually below.
 % resulting from the proposed project directly address this issue,
 % leading to an important advance in measurement invariance research.
 
+\subsection{Likelihood Ratio, Wald, and Lagrange Multiplier Test for Fixed Subgroups}
 
-
-
-\subsection{Likelihood Ratio Test}
-
-Measurement invariance is achieved
-if sets of factor analysis model parameters are equal across
-subgroups of individuals 
-(\citeNP{Mer93}; there are many types of measurement invariance based
-on different sets of model parameters being held constant, but any of these
-can be examined via the proposed tests).  If measurement invariance is
-not achieved, 
-then the parameters assume different values for different
-subgroups.  This leads to statistical tests of measurement
-invariance via the comparison of two models: a restricted model where
-parameters are equal across subgroups, and a ``full'' model
-where parameters are allowed to assume different values for each
-subgroup.  Statistically, this comparison is often 
-accomplished by a likelihood ratio test (also called a
-difference test).  Let the full model parameters be denoted 
-${\bm \theta} = ({\bm \theta}_1^{\prime}\ {\bm
-  \theta}_2^{\prime})^{\prime}$, where we can obtain the restricted model
-by placing a set of equality constraints on ${\bm \theta}_1$ described
-by the vector-valued function ${\bm
-  h}({\bm \theta}_1) = {\bm 0}$.  A $\chi^2$ statistic testing
-measurement invariance may then be calculated via:
-\begin{equation}
-    \label{eq:chisq}
- \chi^2 = -2(n-1)(\log L({\bm X},
-\widehat{{\bm \theta}}_c) - \log L({\bm X},\widehat{{\bm \theta}})),
+To employ the LR test for assessing measurement invariance, the data
+are typically separated into a certain number of given subgroups where
+the parameters are estimated separately (for ease of
+  exposition, we assume no parameters are restricted to be equal
+  across subgroups). Then, the sum of maximized likelihoods 
+from the subgroups are compared with the original maximized full-sample likelihood
+in a $\chi^2$~test. More specifically, for the special case of two subgroups,
+the alternative $H_1^*$ from (\ref{eq:h1*}) with fixed and prespecified $\nu$ is adopted
+and the null hypothesis $H_0$ from (\ref{eq:h0}) reduces to ${\bm \theta}^{(A)} = {\bm \theta}^{(B)}$.
+The parameter estimated $\hat {\bm \theta}^{(A)}$ can then be obtained from the
+observations $i = 1, \dots, m$, say, for which $v_i \le \nu$. Analogously,
+$\hat {\bm \theta}^{(B)}$ is obtained by maximizing the likelihood for the
+observations $i = m + 1, \dots, n$, for which $v_i > \nu$. The LR test statistic
+for the given threshold $\nu$ is then
+\begin{equation} \label{eq:lr}
+  \mathit{LR}(\nu) ~=~ -2 \left[
+         \ell(\hat {\bm \theta}; x_1, \dots, x_n)
+   ~-~ \{\ell(\hat {\bm \theta}^{(A)}; x_1, \dots, x_m)
+    +    \ell(\hat {\bm \theta}^{(B)}; x_{m+1}, \dots, x_n)\}
+    \right],
 \end{equation}
-where ${\bm{X}}$ is an $n \times p$ data matrix, $\widehat{\bm \theta}_c$
-contains Maximum Likelihood parameter estimates satisfying the
-constraints ${\bm h}({\bm \theta}_1) = {\bm 0}$, and $\widehat{\bm
-  \theta}$ contains Maximum Likelihood parameter estimates from the
-full model.  The log-likelihood function in the above equation arises
-from the multivariate normal distribution and is defined as:
-  The test resulting from
-Equation~\eqref{eq:chisq} has 
-degrees of freedom equal to the difference in number of free
-parameters for the two models, and it rejects the hypothesis of measurement
-invariance for large values of $\chi^2$.
+which has an asymptotic $\chi^2$ with degrees of freedom equal to the number
+of parameters in~${\bm \theta}$.
+\readme{You previously modified the above section so that $\theta$
+  consists only of parameters that are ``doubled'' under the
+  alternative.  This appears to not allow for situations where
+  parameters are restricted to be equal across subgroups.  I am ok
+  with this, but most applications of LR tests with these models have
+  some parameters restricted to be equal across subgroups.  So I've
+  added some detail in parentheses at the beginning of the above
+  paragraph.}
 
-While the Likelihood Ratio Test is most popular for testing
-measurement invariance, Lagrange Multiplier tests and Wald tests
-may also be constructed for the same purpose.The Lagrange Multiplier and Wald 
-tests, described below, are also advantageous in that they require
-estimation of only one 
-model (either the full or restricted model), whereas the Likelihood
-Ratio Test requires estimation of both models.
+Analogously to the LR test, the Wald test and LM test (also known as score test)
+can be employed to test the null hypothesis $H_1^*$ for a fixed threshold $\nu$.
+For the Wald test, the idea is to compute the Wald statistic $W(\nu)$ as a quadratic
+form in $\hat {\bm \theta}^{(A)} - \hat {\bm \theta}^{(B)}$, utilizing its estimated
+covariance matrix for standardization. For the LM test, the LM statistic
+$\mathit{LM}(\nu)$ is a quadratic form in ${\bm s}(\hat {\bm \theta}; x_1, \dots, x_m)$
+and ${\bm s}(\hat {\bm \theta}; x_{m+1}, \dots, x_n)$. Thus, the three tests all assess
+differences that should be zero under $H_0$: for the LR test the difference of maximized
+likelihoods; for the Wald test, the difference of parameter estimates; and for the
+LM test, the differences of likelihood scores from zero. In the LR case, the parameters
+have to be estimated both under null hypothesis and alternative while in the Wald case
+only the estimates under the alternative are required and in the LM case only under the
+null hypothesis.
 
-\subsection{Lagrange Multiplier Test}
-The Lagrange Multiplier test (e.g., \citeNP{Sil59,ChouBent90})
-focuses on a restricted model and tests whether the equality
-constraints described by ${\bm h}({\bm \theta}_1) = {\bm 0}$ should be
-freed.
-Estimating the restricted model, we define a vector of Lagrange
-multipliers $\widehat{\bm \kappa}$ that satisfy:
-\begin{equation}
-    \label{eq:lagrange}
-    \frac{\partial \log L}{\partial {\bm \theta}} \bigg |_{\widehat{\theta}_c} +
-    \frac{\partial {\bm h}}{\partial {\bm \theta}}
-    \bigg |_{\widehat{\theta}_c}^{\prime} \widehat{{\bm \kappa}} = {\bm 0}.
-\end{equation}
-The test itself is then based on the asymptotic distribution of 
-$\widehat{{\bm \kappa}}$: if $\widehat{{\bm \kappa}}$ is sufficiently close
-to ${\bm 0}$, then the constraints are deemed to hold in the
-population.  The resulting test statistic, which is a function of
-$\widehat{\bm \kappa}$, follows a $\chi^2$ distribution for large
-samples.
 
-\subsection{Wald Test}
-In contrast to the Lagrange Multiplier test, the
-Wald test (e.g., \citeNP{Wald43})
-focuses on the full model and tests the plausibility of the
-constraints ${\bm h}({\bm \theta}_1) = {\bm 0}$.
-The test is based on the estimates ${\bm h}(\widehat{{\bm \theta}}_1)$
-from the full model; if
-these are sufficiently close to zero, then the constraints are deemed
-to hold in the population.  The resulting test statistic, which is a
-function of ${\bm h}(\widehat{{\bm \theta}}_1)$, is also
-$\chi^2$-distributed in large 
-samples.
-Chou and Bentler \citeyear{ChouBent90} compared the 
-Wald and Lagrange tests with finite sample sizes via
-simulation, and they generally found similar
-performance.  They noted, 
-however, that the Lagrange test has a tendency toward Type I errors in
-some contexts.  They therefore urged caution in the Lagrange test's
-use, as it may lead one to discard more constraints than is necessary,
-leading to overly-complex models.
+\subsection{Extensions for Unknown Subgroups}
 
-\subsection{Extensions to Proposed Tests}
-For continuous $V$, the three tests described above require the
-threshold $\eta$ to be known.
-  This is a
-major limitation in psychometrics, where $\eta$ is often unknown or
-undefined.
+For assessing measurement invariance in psychometric models, the major limitation of
+the three tests is that the potential subgroups have to be known in advance. 
+Even if the variable $V$ w.r.t.\ which the violation of invariance occurs is
+known, the threshold $\nu$ from (\ref{eq:h1*}) is often unknown in practice.
 For example, if $V$ represents yearly income, there are many possible
-values of 
-$\eta$ that could be used to divide individuals into poorer and richer
-groups.  The ultimate $\eta$ that we
+values of $\nu$ that could be used to divide individuals into poorer and richer
+groups.  The ultimate $\nu$ that we
 choose could potentially impact our
 conclusions about whether or not a scale is measurement invariant, 
 in the same way that dichotomization of continuous variables impacts
-general statistical analyses \cite{MacZha02}.
+general psychometric analyses \cite{MacZha02}.
 
-Instead of choosing a specific $\eta$, we may elect to test
-individuals across all possible values of $\eta$.  For example, we
-could conduct a Likelihood Ratio Test for every possible
-dichotomization of $V$, yielding a test statistic for each
-dichotomization.  The distribution of the maximum of these test
-statistics is derived in Andrews \citeyear{And93}, providing a test of
-measurement invariance over all values of $\eta$.  
-This is a special case of the family of tests proposed here.  The
-tests are designed for situations where
-$\eta$ is unknown or where a dichotomization of $V$ is insufficient to
-detect measurement invariance violations, and they can be applied both
-to individual model parameters and sets of model parameters.
+Instead of choosing a specific $\nu$, a natural idea is to compute $\mathit{LR}(\nu)$
+for each possible value in some interval $[\underline{\nu}, \overline{\nu}]$ and
+reject if their maximum
+\begin{equation} \label{eq:maxlr}
+  \max_{\nu \in [\underline{\nu}, \overline{\nu}]} \mathit{LR}(\nu)
+\end{equation}
+becomes large. Note that this corresponds to maximizing the likelihood w.r.t.\
+an additional parameter, namely $\nu$. Hence, the asymptotic distribution of the
+maximum $\mathit{LR}$ statistic is not $\chi^2$ anymore. However, Andrews \citeyear{And93}
+showed that the asymptotic distribution is in fact tractable, but nonstandard.
+Specifically, the asymptotic distribution of the maximum is the maximum of a
+certain tied-down Bessel process whose specifics also depend on the minimal
+and maximal thresholds $\underline{\nu}$ and $\overline{\nu}$, respectively.
+See below for more details.
 
-We now describe some general ideas for capturing measurement
-invariance violations with respect to a continuous auxiliary variable
-$V$.
+Analogously, one can consider $\max W(\nu)$ and
+$\max \mathit{LM}(\nu)$, respectively, which both have the same asymptotic properties
+as $\max \mathit{LR}(\nu)$ and are asymptotically equivalent \cite{And93}.
+From a computational perspective, the latter test is particularly convenient
+because it requires just a single set of estimated parameters $\hat {\bm \theta}$
+which is employed for all thresholds $\nu$ in $[\underline{\nu}, \overline{\nu}]$
+while the other two techniques require reestimation of the subgroup model for each
+$\nu$.
 
+So far, the discussion focused on the alternative $H_1^*$: The maximum LR, Wald, and LM
+tests are designed for a situation where there is a single threshold at which the full
+parameter vector ${\bm \theta}$ changes. While this is plausible and intuitive
+in many applications, it would also be desirable to obtain tests that direct their power
+against other types of alternatives, i.e., against $H_1$ with other patterns ${\bm \theta}(V)$.
+For example, there might be multiple thresholds at which the parameters change or parameters
+fluctuate randomly. Alternatively, only one (or just a few) of the parameters in
+the vector ${\bm \theta}$ change while the remaining parameters are
+constant (a common occurrence in psychometric models).
+To address such situations in a unified way, the next section contains 
+a general framework for testing measurement invariance along a
+(continuous) variable $V$ that
+includes the maximum LM test as a special case.
 
 
 \section{Stochastic Processes for Measurement Invariance}
-The proposed tests of measurement invariance implicitly rely on an
-estimated factor analysis model (one that restricts parameters to be
-invariant across subgroups).  For the purposes of this paper, we
-assume that the model is estimated via Maximum Likelihood.  
-The factor analysis log-likelihood may be obtained by summing 
-Equation~\eqref{eq:caselik} across individuals.  
-Maximization of the likelihood then involves iterative 
-algorithms that seek values $\widehat{{\bm{\theta}}}$ to satisfy
-Equation~\eqref{eq:score}, where 
-$\psi(\bm{x}_i, \theta_j) = \frac{\partial}{\partial \bm{\theta}} \log
-\text{L}({\bm{x}}_i, 
-{\bm{\theta}}) \big |_{\bm{\theta} = \widehat{\bm{\theta}}}$.
-% insert derivatives of casewise evaluated at theta-hat = 0
-Such derivatives are taken across individuals, but, using individual
-terms of the log-likelihood (i.e., Equation~\eqref{eq:caselik}),
-we can also 
-evaluate the derivatives with respect to each individual.
-If a unique value of $\widehat{{\bm{\theta}}}$ maximized
-each individual likelihood, then we would have:
-% Equation: \psi(y_i, \theta) = d/d theta casewise_i = 0 \forall i.
-\begin{equation}
-    \label{eq:casederiv}
-    \psi({\bm{x}}_i, \bm{\theta}) = \frac{\partial}{\partial \bm{\theta}} \log
-\text{L}({\bm{x}}_i, 
-{\bm{\theta}}) \bigg |_{\bm{\theta} = \widehat{\bm{\theta}}} = \bm{0}\ \ \ \forall\ i.
-\end{equation}
-In practice, no value of $\widehat{{\bm{\theta}}}$ will maximize all
-individuals' likelihoods, but, if measurement invariance is satisfied, 
-we can expect the $\psi(\cdot, \cdot)$ to fluctuate around zero.  This
-is the idea underlying the tests described here.
+
+As discussed above, factor analysis models are typically
+estimated by fitting the model to all $i = 1, \dots, n$ individuals, assuming
+that the parameter vector ${\bm \theta}$ is constant across individuals.
+Having estimated the parameters $\hat {\bm \theta}$, the goal is to check that
+there are no subgroups of individuals that fail to conform with the model (for any
+of the parameters). Hence, some measure of model deviation or residual is required
+that captures the lack of fit for the $i$-th individual at the $j$-th parameter
+($i = 1, \dots, n$, $j = 1, \dots, k$). A natural measure -- that employs the ideas
+of the LM test -- is ${\bm s}(\hat {\bm \theta}; x_i)_j$: the $j$-th component of the
+contribution of the $i$-th observation to the score function. By construction the sum
+of the score contributions over all individuals is zero for each component, see
+(\ref{eq:ml1}). Moreover, if there are no systematic deviations the score contributions
+should fluctuate randomly around zero while they should be shifted away from zero for
+subgroups where the model does not fit.
+
+Therefore, to employ this quantity for tests of measurement invariance against alternatives
+of type (\ref{eq:h1}), we need to overcome two obstacles: (1)~make use of the ordering of
+the observations w.r.t.\ $V$ because we want to test for changes ``along'' $V$; (2)~account
+for potential correlations between the $k$~components of the parameters to be able to detect
+which parameter(s) change (if any).
 
 \subsection{Theory}
-Theoretical work in statistics (e.g.,
-\citeNP{BroDur75,HjoKon02,Nyb89}) has shown 
-that functions of the 
-$\psi(\cdot, \cdot)$ follow specific stochastic processes, allowing
-us to use them to generally test measurement
-invariance.  
-We rely on the null hypothesis specified in Equation~\eqref{eq:h0},
-which focuses on individuals instead of groups of individuals.
-We now review some of the main results
-for testing this $H_0$; more
-detailed accounts include Hjort and Koning \citeyear{HjoKon02} and
+
+The test problem of the null hypothesis (\ref{eq:h0}) against the alternatives
+(\ref{eq:h1}) and (\ref{eq:h1*}), respectively, has been studied extensively
+in the statistics and econometrics literature under the label ``structural change
+tests'' (see e.g., \citeNP{BroDur75,And93}) where the focus of interest is the
+detection of parameter instabilities of time series models ``along'' time.
+Specifically, it has been shown (e.g., \citeNP{Nyb89,Han92,HjoKon02,ZeiHor07})
+that cumulative sums of the empirical scores follow specific stochastic processes, allowing
+us to use them to generally test measurement invariance. Here, we review
+some of the main results from that literature and adapt it to the specific challenges
+of factor analysis models. More detailed accounts of the underlying structural
+change methods include Hjort and Koning \citeyear{HjoKon02} and
 Zeileis and Hornik \citeyear{ZeiHor07}.
 
-% New subsection starts here?
-
 For application to measurement invariance, the most important
-theoretical result involves the fact that, under $H_0$, functions of
-the $\psi(\cdot, \cdot)$ result in specific stochastic
-processes.  One such function
-is the {\em{cumulative score process}}, given as:
-\begin{equation}
-    \label{eq:cumscore}
-    W_n(t,\theta_j) = \frac{1}{\sqrt{n}} \sum_{i=1}^{\lfloor nt
-      \rfloor} \psi ({\bm{x}}_i, \theta_j),
+theoretical result involves the fact that, under $H_0$, the
+\emph{cumulative score process} converges to a specific asymptotic
+process. The $k$-dimensional cumulative score process is defined as
+\begin{equation} \label{eq:cumscore}
+  {\bm B}(t; \hat {\bm \theta}) ~=~ \hat {\bm I}^{-1/2} n^{-1/2}
+    \sum_{i = 1}^{\lfloor n t \rfloor} {\bm s}(\hat {\bm \theta}; x_i)
+  \qquad (0 \le t \le 1)
 \end{equation}
-where $t$ is a continuous variable in $(1/n,1)$ and $\lfloor nt
-\rfloor$ is the floor operator, defined as the integer part of
-$nt$.
+where $\lfloor nt \rfloor$ is the integer part of $nt$ and
+$\hat I$ is some consistent estimate of the covariance matrix of the scores,
+e.g., their outer product or the observed information matrix.
 As the equation shows, the cumulative score process adds subsets of
-casewise first derivatives across individuals who have been ordered
-based on an auxiliary variable.  Starting at $t=1/n$, only the
-first individual's derivative enters into the summation.  Once
-$t=2/n$, the first two individuals' derivatives enter into the
-summation.  This procedure continues until we reach $t=n$, at which
-point all individuals' first derivatives have entered into the
-summation.  There are $n$ cumulative sums obtained by sequentially
-inserting individuals' derivatives into the equation, and these are
-calculated 
-for each of the $p$ model parameters.  This results
-in $n\times p$
-empirical cumulative scores.
+casewise score contributions across individuals along the ordering
+w.r.t.\ the variable $V$ of interest. At $t=1/n$, only the
+first individual's contribution enters into the summation; at
+$t=2/n$, the first two individuals' contributions etc.\ until $t = n/n$
+where all contributions enter the sum. Thus, due to (\ref{eq:ml1}),
+the cumulative score process always equals zero at $t = 0$ and
+returns to zero at $t = 1$. Furthermore, multiplication by
+$\hat {\bm I}^{-1/2}$ ``decorrelates'' the $k$ cumulative score
+processes, such that each univariate process (i.e., each
+process for a single model parameter) is unrelated to (and asymptotically independent of) all other
+processes. Therefore, this cumulative process ${\bm B}(t; \hat {\bm \theta})$
+accomplishes the challenges discussed at the beginning of this section:
+it makes use of the ordering of the observations by taking cumulative sums
+and it decorrelates the contributions of the $k$ different parameters.
 
-Elements of the summation in Equation~\eqref{eq:cumscore}
-can be positive or 
-negative, so that the cumulative scores do not necessarily increase
-with $t$.  In fact, if measurement invariance (i.e., $H_0$) holds,
-then the cumulative scores should 
-follow a stochastic process that fluctuates around zero.  
-Zeileis and Hornik \citeyear{ZeiHor07} showed specifically that, under
-$H_0$:
-\begin{equation}
-    \label{eq:browbridge}
-{\bm{B}}(\cdot, \widehat{{\bm{\theta}}}) = {\bm{I}}(\widehat{{\bm{\theta}}})^{-1/2}{\bm{W}}_n(\cdot,\widehat{{\bm{\theta}}})
-\overset{d}{\rightarrow} {\bm W}^{0}(\cdot), % put d over rightarrow
+Inference can then be based on an extension of the usual central limit
+theorem. Under the assumption of independence of individuals (implicit
+already in Equation~\ref{eq:loglik}) and under
+the usual ML regularity conditions (assuring asymptotic normality
+of $\hat {\bm \theta}$), Hjort \& Koning \citeyear{HjoKon02} show
+that 
+\begin{equation} \label{eq:fclt}
+  {\bm B}(\cdot; \hat {\bm \theta}) ~\overset{d}{\rightarrow}~ {\bm B}^{0}(\cdot),
 \end{equation}
-where ${\bm{I}}(\widehat{{\bm{\theta}}})$ is the observed information
-matrix (e.g., of the factor analysis model), ${\bm{W}}_n(\cdot,\widehat{{\bm{\theta}}})$ reflects the $p$-dimensional
-cumulative sums (one for each parameter), ${\bm W}^{0}(\cdot)$ is a
-$p$-dimensional Brownian bridge, and 
-$\overset{d}{\rightarrow}$ reflects convergence in distribution.
-In words, there are $p$ cumulative score processes, one for each
+where $\overset{d}{\rightarrow}$ denotes convergence in distribution
+and ${\bm B}^{0}(\cdot)$ is a $k$-dimensional Brownian bridge.
+In words, there are $k$ cumulative score processes, one for each
 model parameter.  This collection of processes follows a
-multidimensional Brownian bridge as derivatives accumulate in the 
-summation from individual 1 to individual $n$.
-Multiplication by ${\bm{I}}(\widehat{{\bm{\theta}}})^{-1/2}$ 
-``decorrelates'' the $p$
-cumulative score processes, such that each univariate process (i.e., each
-process for a single model parameter) is unrelated to all other
-processes (and is asymptotically independent of the other processes).
+multidimensional Brownian bridge as score contributions accumulate in the 
+summation from individual 1 (with lowest value of $V$) to individual $n$
+(with highest value of $V$).
 
-The cumulative scores resulting from Equation~\eqref{eq:browbridge}
-can be arranged in an $n \times p$ matrix called an {\em{empirical
-    cumulative score process}}, which we will denote as
-${\bm{B}}^{\ast}(\widehat{\bm{\theta}})$.
-Each column of this matrix follows a univariate Brownian bridge and is
-based on a single factor analysis parameter. 
-To carry out a test of $H_0$, we need functions that collapse across
-rows (individuals) and/or columns (parameters) of the matrix.  
-These
-functions then lead to scalar test statistics and p-values.
-The specific choice of function depends on the goals of the analyst:
-the row-collapsing functions are useful for isolating subsets of
-parameters that violate measurement invariance, and the
-column-collapsing functions are useful for isolating subgroups of
-individuals who violate measurement invariance across all parameters.
-Some functions result in test
-statistics whose critical values can be derived analytically, while
-others require critical values to be derived via the
-simulation of a Brownian bridge.
+The empirical cumulative score process from (\ref{eq:cumscore}) can also be viewed
+as an $n \times k$ matrix with elements ${\bm B}(i/n; \hat {\bm \theta})_j$ that
+we also denote ${\bm B}(\hat {\bm \theta})_{ij}$ below for brevity.
+Each column of this matrix converges to a univariate Brownian bridge and pertains
+to a single factor analysis parameter. To carry out a test of $H_0$, this process/matrix
+needs to be aggregated to a scalar test statistic by collapsing across
+rows (individuals) and columns (parameters) of the matrix. The asymptotic distribution
+of this test statistic is then easily obtained by applying the same
+aggregation to the asymptotic process ${\bm B}^0$ \cite{HjoKon02,ZeiHor07},
+so that corresponding $p$-values can be derived.
 
-For example, if we wish to test a specific parameter for
-measurement invariance, ``row-collapsing''
-functions include the absolute maximum or mean of the corresponding 
-column in ${\bm{B}}^{\ast}(\widehat{\bm{\theta}})$
-\cite{ZeiHor07}. % (see ZH07 p 7)
-Conversely, if we wish to generally test 
-measurement invariance across sets of model parameters,
-``column-collapsing'' functions 
-include the maximum norm or the squared Euclidean norm of the
-corresponding row in ${\bm{B}}^{\ast}(\widehat{\bm{\theta}})$
-\cite{HjoKon02}.
-
-% A general, two-step strategy for testing measurement
-% invariance involves first collapsing over columns for each individual,
-% yielding a single statistic for each individual. 
-% These $n$ statistics (ordered according to an auxiliary variable)
-% can then be graphed to visually define groups that violate measurement
-% invariance.  Functions of these $n$ statistics can also yield scalar
-% test statistics.
-
-As a concrete example of these ideas, consider the situation
-where we carry out a Likelihood Ratio test for all possible values of
-$\eta$, then take the maximum of these test statistics.  A related
-idea here involves taking the maximum of the empirical cumulative
-score process:
+As argued above, no single aggregation function will have high power for any
+conceivable pattern of measurement invariance ${\bm \theta}(V)$ while any
+(reasonable) aggregation function will have non-trivial power under $H_1$.
+Thus, various aggregation strategies should be employed depending on which
+pattern ${\bm \theta}(V)$ is most plausible (because the exact is typically
+unknown). A particularly agnostic aggregation strategy is to reject $H_0$
+if any component of the the cumulative score process ${\bm B}(t; \hat {\bm \theta})$
+departs ``too far'' from its zero at any time, i.e., if
 \begin{equation}
-    \label{eq:doubmax}
-    DM = \max_{i=1,\ldots,n} \max_{j=1,\ldots,p} |
-    B^{\ast}_{ij}(\widehat{\bm{\theta}}) |,
+    \label{eq:dmax}
+    \mathit{DM} = \max_{i = 1,\dots, n} \max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} |,
 \end{equation}
-where $B^{\ast}_{ij}(\widehat{\bm{\theta}})$ represents the
-entry in row $i$ and column $j$ of
-${\bm{B}}^{\ast}(\widehat{\bm{\theta}})$.
-This is a 
-{\em{double-max}} statistic that allows for simultaneous isolation of 
-$\eta$ along with model parameters that change over $\eta$.
-This statistic is
-especially useful for visualization, as the fluctuation process for
+becomes large. Consquently, this double maximum statistic allows for simultaneous
+isolation of the threshold(s) of parameter change (over the individuals $i = 1, \dots, n$)
+and the parameter(s) affected by it (over $j = 1, \dots, k$). This test is
+especially useful for visualization, as the cumulative score process for
 each individual parameter can be displayed along with the appropriate
 critical value.  An example of this visualization appears in the
 Example section.
 
-As a second example of ``collapsing'' functions,
-we could first collapse over columns for each individual $i$ via the
-Euclidean norm:
-\begin{equation}
-    \label{eq:meanl2}
-    \nu_i = \lVert {\bm B}^{\ast}_{i\cdot}(\widehat{\bm \theta}) \rVert,
-\end{equation}
-where the $i\cdot$ subscript signifies row $i$ of the empirical
-fluctuation process matrix.  A univariate test statistic may then be
-obtained by taking the mean of the $\nu_i$.  This is a
-Cram\'{e}r-von Mises statistic described by, e.g., Nyblom
-\citeyear{Nyb89} and Hansen \citeyear{Han92} in the contexts of
-longitudinal models and linear regression.  In general contexts,
-this test is recommended
-when there are more than two groups exhibiting parameter instability 
-and when multiple parameters change across groups \cite{ZeiSha10}.  
-We demonstrate these recommendations' implications for
-measurement invariance later in the paper.
+However, taking maximums ``wastes'' power if many of the $k$~parameters change
+at the same threshold or if the score process takes large values for
+many of the $n$~individuals (and just a single threshold). In such
+cases, sums insteads of maximums are more suitable for collapsing across
+parameters and/or individuals because they combine the deviations instead of
+picking out only the single largest deviation. Thus, if the parameter instability
+${\bm \theta}(V)$ affects many parameters and leads to many subgroups, sums
+of (absolute or squared) values should be used for collapsing both across
+parameters and individuals. On the other hand, if there is just a single
+threshold that affects multiple parameters, then the natural aggregation
+is by sums over parameters and then by the maximum over individuals.
+More precisely, the former idea leads to a Cram{\'e}r-von Mises type
+statistic and the latter to the maximum LM statistic from the previous section:
+\begin{eqnarray}
+    \label{eq:cvm}
+    \mathit{CvM}     & = & n^{-1} \sum_{i = 1,\dots, n} \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2, \\
+    \label{eq:maxlm}
+    \max \mathit{LM} & = & \max_{i = \underline{i}, \dots, \overline{\imath}} ~
+      \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1}
+      \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2,
+\end{eqnarray}
+where the $\max \mathit{LM}$ statistic is additionally scaled by the
+asymptotic variance $t (1 - t)$ of the process ${\bm B}(t, \hat {\bm \theta})$.
+It is equivalent to the $\max_\nu \mathit{LM}(\nu)$ from the previous
+section (provided that the boundaries for the subgroups sizes $\underline{i}$/$\underline{\nu}$
+and $\overline{\imath}$/$\overline{\nu}$ are chosen analogously).
 
-% We still obtain a unidimensional process; the norm is applied
-% to each row vector.
-There exist other functions of first derivatives and of the
-empirical fluctuation process that
-result in other test statistics; these are described by, e.g.,
-Zeileis, Shah, and Patnaik \citeyear{ZeiSha10}.  
-In the analyses described later, we focus on the abilities
-of the Cram\'{e}r-von Mises test and of the double-max test.  However,
-the many 
-row- and column-collapsing functions offer a large family of tests
-that can be applied to the study of measurement invariance.
+Further aggregation functions have been suggested in the structural
+change literature (see e.g., \citeNP{Zei05,ZeiSha10}) but the three
+tests above are probably most likely to be useful in psychometric settings.
+
+\fixme{I have explicitly written down all three test statistics: DM because it is
+intuitive, max LM because we need it to connect to the previous section, and CvM
+because it nicely complements the picture. For the simulations, I think we should
+also consider all three tests, maybe also the max LR test. Of course, we shouldn't
+make things too complex but we can then still decide which results to choose.}
+
 
 \subsection{Critical Values \& $p$-values.}
-To obtain $p$-values associated with $H_0$, we can rely on analytic
-work concerning functions of Gaussian processes.
-As an example of this, we focus on use of the 
-double-max function (Equation~\eqref{eq:doubmax}) as a test statistic.
-There exist 
-analytic results for Brownian bridges that allow us to calculate
-% fix double-max notation on following line:
-$P(DM > \beta | H_0)$, where $\beta$ is a specific value
-that the test statistic may achieve.  
 
-Focusing on a univariate
-Brownian bridge under $H_0$, it can be shown that (e.g., \citeNP{ShoWel86}):
- % see Beghin & Orsingher Eq (4.12).  They cite Shorack &
-            % Wellner 1986 book
-\begin{eqnarray}
-    P(DM_j < \beta | H_0) &
-    = & \sum_{h=-\infty}^{\infty} (-1)^h \exp(-2h^2\beta^2) \\
-   & = & 1 + 2 \sum_{h=1}^{\infty} (-1)^h \exp(-2h^2\beta^2).
-\end{eqnarray}
-The associated $p$-value is therefore given by:
+As pointed out above, specifying the asymptotic distribution und $H_0$ for the test
+statistics from the previous section is straightforward: It is simply the aggregation
+of the asympotic process ${\bm B}^0(t)$ \cite{HjoKon02,ZeiHor07}. Thus, $\mathit{DM}$
+from (\ref{eq:dmax}) converges to $\sup_t || {\bm B}^0(t) ||_{\infty}$, where
+$||\cdot||_\infty$ denotes the maximum norm. Similarly, $\mathit{CvM}$
+from (\ref{eq:cvm}) converges to $\int_0^1 || {\bm B}^0(t) ||_2^2 d t$, where $||\cdot||^2$
+denotes the Euclidean norm. Finally, $\max \mathit{LM}$ from (\ref{eq:maxlm}) -- and analogously
+the maximum Wald and LR tests -- converges to $\sup_t (t (1-t))^{-1} || {\bm B}^0(t) ||_2^2$
+(which can also be interpreted as the maximum of a tied-down Bessel process, as pointed out
+previously).
+
+While it is easy to formulate these asymptotic distributions theoretically,
+it is not always easy to find closed-form solutions for computing critical
+values and $p$-values from them. In some cases -- in particular for the double maximum test --
+such a closed-form solution is available from analytic results for Gaussian
+processes (see e.g., \citeNP{ShoWel86}). For all other cases, tables of critical
+values can be obtained from direct simulation \cite{Zei06} or in combination with
+more refined techniques such as response surface regression \cite{Han97}.
+
+The analytic solution for the asymptotic $p$-value of a $\mathit{DM}$ statistic
+$d$ is
 \begin{equation}
     \label{eq:absmax_p}
-        p = P(DM_j > \beta | H_0)
-    = 1 - (1 + 2 \sum_{h=1}^{\infty} (-1)^h \exp(-2h^2\beta^2)).
+        P(\mathit{DM} > d ~|~ H_0) ~\overset{asy}{=}~ 1 - \left\{1 ~+~ 2 \sum_{h = 1}^{\infty} (-1)^h \exp(-2 h^2 d^2) \right\}^k.
 \end{equation}
-The terms in the summation quickly go to zero as $h$ goes to infinity,
-so, in practice, we only need to compute the first 100 terms (say).
-For multidimensional Brownian bridges whose dimensions have been
-``decorrelated'', $p$-values can
-be obtained similarly with a Bonferroni correction.
+This combines the crossing probability of a univariate Brownian bridge
+(see e.g., \citeNP{ShoWel86,PloKra92}) with a straightforward Bonferroni
+correction to obtain the $k$-dimensional case. As the terms in the summation
+quickly go to zero as $h$ goes to infinity, only some large finite
+number (say, 100 terms) need to be evaluated in practice.
 
-For the Cram\'{e}r-von Mises test statistic, analytic expressions for
-$p$-values are more cumbersome.  Nyblom \citeyear{Nyb89} and Hansen
-\citeyear{Han92} provide small tables of critical values, and other
-critical values are easily approximated via simulation of Brownian
-bridges.
+For the Cram\'{e}r-von Mises test statistic $\mathit{CvM}$, Nyblom \citeyear{Nyb89}
+and Hansen \citeyear{Han92} provide small tables of critical values which
+have been extended in the software provided by Zeileis \citeyear{Zei06}.
+
+Critical values for the distribution of the maximum LR/Wald/LM tests
+are provided by Hansen \citeyear{Han97}. Note that the distribution depends on
+the minimal and maximal thresholds employed in the test.
+
 
 \subsection{Locating the Invariance.}
-If a test described above implies a measurement invariance violation,
-then the researcher may want to: (1) estimate $\eta$, so that she may
-define subgroups of individuals impacted by measurement invariance;
-or (2) isolate model
-parameters affected by the invariance.  
-In the context of a Cram\'{e}r-von Mises test, we can accomplish the
-first task by graphing the $\nu_i$ (Equation~\eqref{eq:meanl2})
-and noting the location of the peaks and valleys.  We can accomplish
-the second task by taking the norm in Equation~\eqref{eq:meanl2}
-across specific columns of $B^{\ast}(\widehat{\bm \theta})$.
 
-In the context of a double-max test, we can accomplish the first task
-by defining $\eta$ to be the value
-of $V$ at which the absolute
-maximum cumulative score is achieved.  This value maximizes the
-segmented likelihood, defined as:
-\begin{equation}
-    \label{eq:seglik}
-    \sum_{i; V_i \leq \eta} L(\bm{x}_i, \bm{\theta}_{V \leq \eta}) + 
-     \sum_{i; V_i > \eta} L(\bm{x}_i, \bm{\theta}_{V > \eta}).
+If the employed parameter instability test detects a measurement invariance violation,
+the researcher is typically interested in identification of the parameter(s) affected
+by it and/or the associated threshold(s). As argued above, the double maximum test
+is particularly appealing for this because the $k$-dimensional empirical cumulative
+score process can be graphed along with boundaries for the associated critical values.
+Boundary crossing then implies a violation of measurement invariance, and the location of
+the most extreme deviation(s) in the process convey threshold(s) in the underlying
+ordering $V$.
+
+For the maximum LR/Wald/LM tests, it is natural to graph the sequence of LR/Wald/LM
+statistics along $V$ along with a boundary corresponding to the critical value.
+Again, a boundary crossing signals a significant violation, and the peak(s) in the
+sequence of statistics conveys threshold(s). Note that due to summing over all
+parameters, no specific parameter can be identified that is responsible for the
+violation. Similarly, for the Cram\'{e}r-von Mises test neither component(s) nor threshold(s)
+can be formally identified. However, graphing of (transformations of) the cumulative
+score process may still be valuable for gaining some insights.
+
+If a measurement invariance violation is detected by any of the tests,
+one may want to incorporate it into the model to account for it. How this should
+be done typically depends on the type of violation ${\bm \theta}(V)$, and the visualizations
+discussed above often prove helpful in determining a suitable parametrization.
+In particular, one approach that is often employed in practice is to adopt a model
+with one (or more) threshold(s) in all parameters (i.e., (\ref{eq:h1*}) for the
+single threshold case). In the multiple threshold case, their location can
+be determined by maximizing the corresponding segmented log-likelihood over all
+possible combinations of thresholds (\citeNP{ZeiSha10} adapt a dynamic programming
+algorithm to this task). For the single threshold case, this reduced to
+maximizing the segmented log-likelihood
+\begin{equation} \label{eq:seglik}
+  \ell(\hat {\bm \theta}^{({A)}}; x_1, \dots, x_m) ~+~ \ell(\hat {\bm \theta}^{({B)}}; x_{m+1}, \dots, x_n)
 \end{equation}
-where $\bm{\theta}_{V \leq \eta}$ and $\bm{\theta}_{V > \eta}$ are ML estimates
-for individuals with 
-$V_i \leq \eta$ and with $V_i > \eta$, respectively.
-  For multiple thresholds, we
-could heuristically define groups based on the number of peaks and
-valleys in the graph, or we could maximize a segmented likelihood
-similar to that in Equation~\eqref{eq:seglik}.
-We can accomplish the second task (isolating model parameters) by
-conducting posthoc 
-tests on specific model parameters.  
-%Some of these ideas are illustrated in
-%the example below.
+over all values of $m$ corresponding to possible thresholds $\nu$ (such that $v_m \le \nu$ and
+$v_{m+1} > \nu$). As pointed out previously, this is equivalent to maximizing the LR statistic
+from (\ref{eq:lr}) and some minimal subgroup size is typically imposed.
+
+Formally speaking, the maximization of (\ref{eq:seglik}) -- or equivalently (\ref{eq:lr}) --
+yields an estimate $\hat \nu$ of the threshold in $H_1^*$. If $H_1^*$ is in fact the true model,
+the peaks in the Wald/LM sequences and the cumulative score process, respectively, will occur at the
+same threshold asymptotically. However, in empirical samples, their location may differ somewhat
+(although often not much).
 
 These attributes give the proposed tests important advantages over
-existing tests, as existing measurement invariance methods cannot
-accomplish either of the tasks outlined above.
+existing tests, as existing measurement invariance methods cannot:
+(1) isolate specific parameters violating measurement invariance, or
+(2) test measurement invariance for unknown $\nu$. 
 In particular, Millsap \citeyear{Mil05} cites
 ``locating the invariance violation'' as a major outstanding problem
 in the field.
+
 
 \begin{figure}
 \caption{Path diagram representing the base factor analysis model used for
@@ -582,6 +593,7 @@ $\lambda_{31}$).}
 \includegraphics[height=5in]{famod.pdf}
 %\input{figs/path}
 \end{figure}
+
 
 \section{Example with Artificial Data}
 
@@ -628,9 +640,9 @@ displayed in Figure~\ref{fig:famod}) was fit to the
 data.  Casewise derivatives and 
 the observed information matrix were then obtained, and they were used
 to calculate the cumulative score process via
-Equations~\eqref{eq:cumscore} and~\eqref{eq:browbridge}.  Finally, we
+\eqref{eq:cumscore}.  Finally, we
 obtained a 
-double-max statistic via Equation~\eqref{eq:doubmax} and associated
+double-max statistic via Equation~\eqref{eq:dmax} and associated
 $p$-value via Equation~\eqref{eq:absmax_p}.  Note that, because we
 were examining only the three verbal factor loading parameters, the
 specific null hypothesis being tested is:
