@@ -22,12 +22,16 @@ fa.mod <- def.model(dat, V)
 # Fit model via OpenMx
 mx.res <- mxRun(fa.mod)
 
+## the same with a single model (not split/constrained by age)
+fa.mod1 <- def.model1(dat)
+mx.res1 <- mxRun(fa.mod1)
+
 # Organize results for strucchange:
-fa.res <- list(res = mx.res, dat = dat, V = V)
+fa.res <- list(res = mx.res1, dat = dat, V = V)
 
 ## store scores in list as well to avoid slow re-computation
 fa.res$estfun <- score.fa(fa.res)
-colnames(fa.res$estfun) <- summary(mx.res)$parameters$name
+colnames(fa.res$estfun) <- summary(mx.res1)$parameters$name
 
 # Calculate cumulative scores for first three factor loadings:
 fa.cums1 <- gefp(fa.res, fit=NULL, scores = function(x) x$estfun,
@@ -62,3 +66,25 @@ plot(fa.cums1,    functional = supLM(0.1), main = "supLM: 3 pars, Info")
 plot(fa.cums2,    functional = supLM(0.1), main = "supLM: 19 pars, Info")
 plot(fa.cums1opg, functional = supLM(0.1), main = "supLM: 3 pars, OPG")
 plot(fa.cums2opg, functional = supLM(0.1), main = "supLM: 19 pars, OPG")
+
+## compute supLR "by hand"
+lrstat <- function(age) {
+  summary(mx.res1)$Minus2LogLikelihood -
+  summary(mxRun(def.model1(dat[V <= age,])))$Minus2LogLikelihood -
+  summary(mxRun(def.model1(dat[V >  age,])))$Minus2LogLikelihood
+}
+fa.age <- sort(V[V >= quantile(V, 0.1) & V <= quantile(V, 0.9)])
+fa.lrstat <- sapply(fa.age, lrstat)
+
+## compare supLM and supLR test
+## (the critical value is the same)
+par(mfrow = c(1, 1))
+plot(fa.cums2, functional = supLM(0.1),
+  xlab = "Age", ylab = "LM and LR statistics", main = "",
+  ylim = c(0, 65))
+lines(fa.age, fa.lrstat, col = 4)
+abline(v = fa.age[which.max(fa.lrstat)], lty = 2)
+## -> in this case, the conclusions are exactly the same, the
+##    maximum is even assumed for the same value (15.96474),
+##    the remaining differences may possibly be reduced when
+##    the numerical computations are improved
