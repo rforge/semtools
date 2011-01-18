@@ -2,8 +2,8 @@
 # described in Merkle & Zeileis.
 
 # Load requisite packages
-library(OpenMx)
-library(strucchange)
+library("OpenMx")
+library("strucchange")
 
 # Read data
 obs.data <- dget("data.dat")
@@ -23,18 +23,42 @@ fa.mod <- def.model(dat, V)
 mx.res <- mxRun(fa.mod)
 
 # Organize results for strucchange:
-fa.res <- list(res=mx.res, dat=dat, V=V)
+fa.res <- list(res = mx.res, dat = dat, V = V)
+
+## store scores in list as well to avoid slow re-computation
+fa.res$estfun <- score.fa(fa.res)
+colnames(fa.res$estfun) <- summary(mx.res)$parameters$name
 
 # Calculate cumulative scores for first three factor loadings:
-fa.cums <- gefp(fa.res, fit=NULL, scores=score.fa, vcov=inf.fa, 
-                order.by=fa.res$V, sandwich=FALSE, parm=1:3)
+fa.cums1 <- gefp(fa.res, fit=NULL, scores = function(x) x$estfun,
+  vcov = inf.fa, order.by = fa.res$V, sandwich = FALSE, parm = 1:3)
+
+## the same for all parameters
+fa.cums2 <- gefp(fa.res, fit=NULL, scores = function(x) x$estfun,
+  vcov = inf.fa, order.by = fa.res$V, sandwich = FALSE)
+
+## the same with OPG (outer product of gradients) vcov estimator
+fa.cums1opg <- gefp(fa.res, fit=NULL, scores = function(x) x$estfun,
+  order.by = fa.res$V, parm = 1:3)
+fa.cums2opg <- gefp(fa.res, fit=NULL, scores = function(x) x$estfun,
+  order.by = fa.res$V)
+
 
 # Plot individual cumulative score processes:
-plot(fa.cums, agg=FALSE, ylim=c(-1.8,0.3),
-     ylab="Cumulative scores", xlab="Age")
+plot(fa.cums1, aggregate = FALSE, ylim = c(-1.8, 1.8), xlab = "Age")
 
-# Obtain results of double-max test:
-sctest(fa.cums, functional="max")
+## Cramer-von Mises test
+## -> all lead to significant results but with all 19 parameters
+##    the peak is even clearer at closer to age = 16
+par(mfrow = c(2, 2))
+plot(fa.cums1,    functional = meanL2BB, main = "CvM: 3 pars, Info")
+plot(fa.cums2,    functional = meanL2BB, main = "CvM: 19 pars, Info")
+plot(fa.cums1opg, functional = meanL2BB, main = "CvM: 3 pars, OPG")
+plot(fa.cums2opg, functional = meanL2BB, main = "CvM: 19 pars, OPG")
 
-# Obtain results of Cramer-von Mises test:
-sctest(fa.cums, functional="meanL2")
+## analogous results for supLM test (with 10% trimming)
+par(mfrow = c(2, 2))
+plot(fa.cums1,    functional = supLM(0.1), main = "supLM: 3 pars, Info")
+plot(fa.cums2,    functional = supLM(0.1), main = "supLM: 19 pars, Info")
+plot(fa.cums1opg, functional = supLM(0.1), main = "supLM: 3 pars, OPG")
+plot(fa.cums2opg, functional = supLM(0.1), main = "supLM: 19 pars, OPG")
