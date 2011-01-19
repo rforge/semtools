@@ -225,7 +225,9 @@ testing measurement invariance with $\nu$ known.  We then contrast
 these approaches with the tests proposed in this paper.
 We assume throughout that the observations $i = 1, \dots, n$ are
 ordered with respect to the random variable $V$ of interest such that
-$v_1 \le v_2 \le \dots \le v_n$.
+$v_1 \le v_2 \le \dots \le v_n$.  We also assume that the measurement
+model is correctly specified, as is implicitly assumed under traditional
+measurement invariance approaches.
 
 % MAY BE USEFUL SOMEWHERE
 % Focusing on the latter point, Millsap's \citeyear{Mil05} review of 
@@ -730,11 +732,11 @@ In this section, we conduct a simulation designed to
 examine the tests' power and Type I error rates in the context
 described previously (testing three factor loadings for measurement
 invariance).  We 
-examine the power and error rates of three tests: the double-max test, the
-Cram\'{e}r-von Mises test, and the traditional likelihood
+examine the power and error rates of four tests: the double-max test, the
+Cram\'{e}r-von Mises test, the max-LM test, and the traditional likelihood
 ratio (difference) test involving nested 
 multiple-group models.  The likelihood ratio test has an advantage over the
-other two tests here, in that it requires advance definition of
+other three tests here, in that it requires advance definition of
 $\eta$.  This test is useful for comparative purposes,
 however, as it helps indicate the extent to which the other tests
 ``lose'' power due to $\eta$ being unknown.
@@ -772,7 +774,7 @@ designations ($\eta$) were assumed to be
 known for the likelihood ratio test.
 
 \subsection{Results}
-% MODIFY RESULTS TO DISCUSS ALL THREE TESTS
+% MODIFY RESULTS TO DISCUSS ALL FOUR TESTS
 % ALSO NEED 0-SE CONDITION
 For each test statistic, power and Type I error rates for the twelve
 sample size $\times$ magnitude combinations are displayed in
@@ -801,14 +803,15 @@ and sometimes two standard errors) at the larger sample sizes, and
 they were generally unable to detect the one-standard-error violation
 at any of the sample sizes studied.
 
-Comparing only the two proposed test statistics, we see that the
-Cram\'{e}r-von Mises test has better power in all conditions.  This is
+Comparing the three proposed test statistics, we see that the
+Cram\'{e}r-von Mises test and max-LM test are comparable, and they are
+both better than the double-max test in all conditions.  This is
 similar to the general recommendation described by Zeileis et al.\
-\citeyear{ZeiSha10}, stating that the Cram\'{e}r-von Mises test
-is generally superior when multiple parameters change simultaneously.
+\citeyear{ZeiSha10}, stating that tests involving sums of scores
+are generally superior when multiple parameters change simultaneously.
 Because the three verbal factor loadings all changed
 across the two subgroups in the simulation, the Cram\'{e}r-von Mises
-test excels.
+and max-LM tests excel.
 
 In summary, we found that the proposed tests have less power than a
 likelihood ratio test with known subgroups.  However, the power levels
@@ -817,54 +820,40 @@ testing measurement invariance across all possible subgroups.  For the
 two-factor model examined here, all tests had trouble detecting small
 measurement invariance violations at small sample size.  Larger
 violations were more easily detected at larger sample sizes, with the
-Cram\'{e}r-von Mises test having better power due to multiple
+Cram\'{e}r-von Mises and max-LM tests having better power due to multiple
 parameters being involved in the invariance violation.
 
 % 0-SE column is fixed for n=100 (using 5000 reps instead of 500)
 \begin{table*}
-\caption{Simulated power and Type I error rates for three test statistics
+\caption{Simulated power and Type I error rates for four test statistics
   across three sample sizes and four magnitudes of measurement
   invariance violations. Abbreviations: CvM = Cram\'{e}r-von Mises
-  test; DM = Double-max test; $\chi^2$ = Chi-square likelihood ratio
-  test.}
+  test; MLM = Maximum Lagrange multiplier test; DM = Double-max test; 
+  $\chi^2$ = Chi-square likelihood ratio test.}
 \label{tab:sim1}
 \begin{tabular}{llcccc} \thickline
  & & \multicolumn{4}{c}{Violation Magnitude (SEs)} \\
 $n$ & Test Stat & 0 & 1 & 2 & 3 \\\hline
 100 & CvM       & 0.05 & 0.10 & 0.33 & 0.63 \\ 
+    & MLM       &      & 0.09 & 0.28 & 0.64 \\
     & DM        & 0.03 & 0.06 & 0.19 & 0.41 \\ 
     & $\chi^2$  & 0.07 & 0.16 & 0.49 & 0.83 \\ \hline
-200 & CvM       & 0.05 & 0.19 & 0.64 & 0.96 \\ 
+200 & CvM       & 0.05 & 0.19 & 0.64 & 0.96 \\
+    & MLM       &      & 0.19 & 0.63 & 0.96 \\ 
     & DM        & 0.03 & 0.12 & 0.44 & 0.88 \\ 
     & $\chi^2$  & 0.06 & 0.27 & 0.76 & 0.99 \\ \hline
 500 & CvM       & 0.05 & 0.44 & 0.98 & 1.00 \\ 
+    & MLM       &      & 0.41 & 0.99 & 1.00 \\
     & DM        & 0.04 & 0.35 & 0.94 & 1.00 \\ 
     & $\chi^2$  & 0.05 & 0.58 & 1.00 & 1.00 \\\thickline
 \end{tabular}
 \end{table*}
 
 
-
-
-
-
-
-% Need to re-do simulation to monitor specific parameters in the
-% posthoc test.
-
-% Cramer-von Mises now in Sim 1.  May skip Sim 2 for the time being.
-%\section{Simulation 2: Improving Power}
-%Simulation 2 examines whether we can improve power using a Cramer-von
-%Mises statistic (summing instead of taking maximum).
-
 % Table 2 of Nyblom89 contains critical values that may prove useful.
 % Hansen 1992 p. 524 has table of critical values that matches 
 %  Nyblom89 within reason.
 % See Zeileis05 p. 450-451
-
-
-
-% Use model that is similar to the example.
 
 \section{Discussion}
 In this paper, we have presented a new family of statistical tests for
