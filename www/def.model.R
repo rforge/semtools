@@ -46,7 +46,8 @@ def.model <- function (fadat, age)
                                              TRUE, TRUE, FALSE, FALSE),
                                     values = c(1, 1, 1, 1, 1, 1, 0, 0),
                                     labels = c("meanx1", "meanx2", "meanx3",
-                                      "meany1", "meany2", "meany3", NA, NA))), 
+                                      "meany1", "meany2", "meany3", NA, NA),
+                                    lbound=0)), 
                      mxModel("group2",
                              type = "RAM",
                              mxData(observed = dat2, type = "raw"),
@@ -90,7 +91,8 @@ def.model <- function (fadat, age)
                                              TRUE, TRUE, FALSE, FALSE), 
                                     values = c(1, 1, 1, 1, 1, 1, 0, 0),
                                     labels = c("meanx1", "meanx2", "meanx3",
-                                      "meany1", "meany2", "meany3", NA, NA))),
+                                      "meany1", "meany2", "meany3", NA, NA),
+                                    lbound=0)),
                      mxAlgebra(expression=group1.objective + group2.objective, 
                                name = "h12"),
                      mxAlgebraObjective("h12"))
@@ -142,5 +144,6 @@ def.model1 <- function(dat)
 				TRUE, TRUE, FALSE, FALSE),
 		       values = c(1, 1, 1, 1, 1, 1, 0, 0),
 		       labels = c("meanx1", "meanx2", "meanx3",
-                                  "meany1", "meany2", "meany3", NA, NA)))
+                                  "meany1", "meany2", "meany3", NA, NA),
+                       lbound=0))
 }

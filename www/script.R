@@ -4,6 +4,7 @@
 # Load requisite packages
 library("OpenMx")
 library("strucchange")
+library("numDeriv")
 
 # Read data
 obs.data <- dget("data.dat")
