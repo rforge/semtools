@@ -37,6 +37,7 @@
 
     # Initialize data matrix:
     datmat <- matrix(0,sampsize,6)
+    colnames(datmat) <- c("x1", "x2", "x3", "y1", "y2", "y3")
 
     # Generate z and u vectors:
     z <- t(rmvnorm(sampsize,rep(0,2),phi))
