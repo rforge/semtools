@@ -3,6 +3,7 @@ library("OpenMx")
 library("strucchange")
 library("mvtnorm")
 source("mz.R")
+source("sim.R")
 
 ## generate artificial data
 set.seed(1090)
@@ -19,9 +20,9 @@ mz2 <- mzfit(d[101:200,])
 ## empirical fluctuation processes (3 vs 19 pars, info vs OPG vcov)
 gefp_3_opg <- gefp(mz0, fit = NULL, order.by = d$age, parm = 1:3)
 gefp_19_opg <- gefp(mz0, fit = NULL, order.by = d$age)
-gefp_3_info <- gefp(mz0, fit = NULL, vcov = function(x, ...) solve(bread(x)),
+gefp_3_info <- gefp(mz0, fit = NULL, vcov = info.MxModel,
   order.by = d$age, sandwich = FALSE, parm = 1:3)
-gefp_19_info <- gefp(mz0, fit = NULL, vcov = function(x, ...) solve(bread(x)),
+gefp_19_info <- gefp(mz0, fit = NULL, vcov = info.MxModel,
   order.by = d$age, sandwich = FALSE)
 
 ## Double-maximum test
@@ -69,3 +70,13 @@ abline(v = mz.age[which.max(mz.lrstat)], lty = 2)
 ##     is close to supLM
 ##   - Tests with information matrix seem to be more powerful
 ##     than OPG.
+
+
+library("strucchange")
+RNGkind(kind = "default", normal.kind = "default")
+set.seed(1090)
+sc_sim <- simulation()
+
+## Results in tabular form (replication of Table 6)
+tab <- xtabs(power ~ intensity + test + angle + timing, data = sc_sim)
+ftable(tab, row.vars = c("angle", "timing", "test"), col.vars = "intensity")
