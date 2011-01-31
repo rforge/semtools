@@ -56,7 +56,7 @@ dgp <- function(nobs = 200, diff = 3)
 }
 
 ## Evaluate power simulation on a single dgp() scenario
-testpower <- function(nrep = 1000, size = 0.05, ...)
+testpower <- function(nrep = 5000, size = 0.05, verbose = TRUE, ...)
 {
   pval <- matrix(rep(NA, 6 * nrep), ncol = 6)
   colnames(pval) <- c("dmax3", "CvM3", "supLM3", "dmax19", "CvM19", "supLM19")
@@ -78,25 +78,33 @@ testpower <- function(nrep = 1000, size = 0.05, ...)
       pval[i, 6] <- sctest(mz_gefp19, functional = supLM(0.1))$p.value
     }
   }
-  return(colMeans(pval < size, na.rm = TRUE))
+  rval <- colMeans(pval < size, na.rm = TRUE)
+  if(verbose) print(rval)
+  
+  return(rval)
 }
 
 ## Loop over scenarios
-simulation <- function(diff = seq(0, 5, by = 0.5), ...)
+simulation <- function(diff = seq(0, 5, by = 0.25),
+  nobs = c(100, 200, 500), verbose = TRUE, ...)
 {
-  prs <- expand.grid(diff = diff) ## somewhat complex setup if we want to add further vars
+  prs <- expand.grid(diff = diff, nobs = nobs)
   nprs <- nrow(prs)
   
   test <- c("dmax3", "CvM3", "supLM3", "dmax19", "CvM19", "supLM19")
   ntest <- length(test)
 
   pow <- matrix(rep(NA, ntest * nprs), ncol = ntest)
-  for(i in 1:nprs) pow[i,] <- testpower(diff = prs$diff[i], ...)
+  for(i in 1:nprs) {
+    if(verbose) print(prs[i,])
+    pow[i,] <- testpower(diff = prs$diff[i], nobs = prs$nobs[i], verbose = verbose, ...)
+  }
 
   rval <- data.frame()
   for(i in 1:ntest) rval <- rbind(rval, prs)
   rval$test <- factor(rep(c("dmax", "CvM", "supLM", "dmax", "CvM", "supLM"), each = nprs), levels = c("dmax", "CvM", "supLM"))
   rval$pars <- factor(rep(c("3", "3", "3", "19", "19", "19"), each = nprs), levels = c("3", "19"))
+  rval$nobs <- factor(rval$nobs)
   rval$power <- as.vector(pow)
   return(rval)
 }
@@ -114,12 +122,29 @@ set.seed(6020)
 ## run simulation
 mz_sim <- simulation()
 save(mz_sim, file = "mz_sim.rda")
+}
+
+if(TRUE) {
+## load simulation results
+load("mz_sim.rda")
 
 ## display result in table
-ftable(xtabs(power ~ pars + test + diff, data = mz_sim), col.vars = "diff")
+## all without rounding
+ftable(xtabs(power ~ nobs + pars + test + diff, data = mz_sim), col.vars = "diff")
+## subset with rounding, in percent
+round(ftable(100 * xtabs(power ~ nobs + pars + test + diff,
+  data = mz_sim, subset = diff %in% c(seq(0, 3.5, by = 0.5))),
+  col.vars = "diff"), digits = 1)
 
 ## display result in graphic
 library("lattice")
 trellis.par.set(theme = canonical.theme(color = FALSE))
-xyplot(power ~ diff | pars, group = ~ test, data = mz_sim, type = "b")
+## all
+xyplot(power ~ diff | pars + nobs, group = ~ test, data = mz_sim, type = "b")
+## subset
+xyplot(power ~ diff | pars + nobs, group = ~ test, data = mz_sim,
+  subset = diff <= 3, type = "b")
+## subset, scaled by sqrt(n)
+xyplot(power ~ I(diff * sqrt(as.numeric(as.character(nobs)))) | pars + nobs,
+  group = ~ test, data = mz_sim, type = "b", xlim = c(-1, 50))
 }
