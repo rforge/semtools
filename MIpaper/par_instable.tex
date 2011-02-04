@@ -483,11 +483,7 @@ Further aggregation functions have been suggested in the structural
 change literature (see e.g., \citeNP{Zei05,ZeiSha10}) but the three
 tests above are probably most likely to be useful in psychometric settings.
 
-\fixme{I have explicitly written down all three test statistics: DM because it is
-intuitive, max LM because we need it to connect to the previous section, and CvM
-because it nicely complements the picture. For the simulations, I think we should
-also consider all three tests, maybe also the max LR test. Of course, we shouldn't
-make things too complex but we can then still decide which results to choose.}
+
 
 
 \subsection{Critical Values \& $p$-values.}
@@ -600,12 +596,12 @@ $\lambda_{31}$).}
 \section{Example with Artificial Data}
 
 As an example of the ideas discussed above, consider a
-hypothetical battery of six scales administered to students aged 14 to 17
+hypothetical battery of six scales administered to students aged 13 to 18
 years.  Three of the scales are intended to measure verbal ability, and
 three of the scales are intended to measure mathematical ability.  We
 may observe a maturation effect in the resulting data, whereby the scales
-measure older students better than younger students (i.e., the scales
-are too difficult for younger students).  The researcher's goal is to
+measure older students better than younger students (i.e., younger
+students have not yet learned all the material).  The researcher's goal is to
 study whether the scales are measurement invariant with
 respect to age, which is taken to be the auxiliary variable $V$.
 
@@ -619,10 +615,10 @@ scales arising from the mathematical factor.
 For measurement invariance violations, we specify that $V$
 (student age) impacts the values of 
 verbal factor loadings in the model: 
-if students are 16 or 17 years of age, then the factor
+if students are 16 through 18 years of age, then the factor
 loadings corresponding to the first 
 factor ($\lambda_{11}, \lambda_{21}, \lambda_{31}$) reflect those in
-Figure~\ref{fig:famod}.  If students are 14 or 15 years of age,
+Figure~\ref{fig:famod}.  If students are 13 through 15 years of age,
 however, then the factor loadings corresponding to the first factor
 are three standard errors lower than those in Figure~\ref{fig:famod}
 (the standard errors were obtained by fitting
@@ -643,86 +639,134 @@ data.  Casewise derivatives and
 the observed information matrix were then obtained, and they were used
 to calculate the cumulative score process via
 \eqref{eq:cumscore}.  Finally, we
-obtained a 
-double-max statistic via Equation~\eqref{eq:dmax} and associated
-$p$-value via Equation~\eqref{eq:absmax_p}.  Note that, because we
-were examining only the three verbal factor loading parameters, the
-specific null hypothesis being tested is:
+obtained various test statistics and $p$-values from the cumulative score
+process.  These include the double-max statistic from \eqref{eq:dmax},
+the Cram\'{e}r-von Mises statistic from \eqref{eq:cvm}, and the max-LM
+statistic from \eqref{eq:maxlm}.
+
+Note that the tests give us the flexibility to test various subsets of
+parameters.  For example, were we only interested in the 
+three verbal factor loading parameters, we can test
 \begin{equation}
     \label{eq:exh0}
 H_0:\ (\lambda_{i,11}\ \lambda_{i,21}\ \lambda_{i,31}) =
 (\lambda_{11}\ \lambda_{21}\ \lambda_{31}),\ i=1,\ldots,n,
 \end{equation}
 where $(\lambda_{i,11}\ \lambda_{i,21}\ \lambda_{i,31})$ represent the
-verbal factor loading parameters for student $i$.
+verbal factor loading parameters for student $i$.  Alternatively, we
+can consider all model parameters (including means), leading to a test
+of \eqref{eq:h0}.  We consider both of these tests below.
 
 \subsection{Results}
-In the results section, we first describe overall results and then 
-describe estimation of $\eta$ and 
+In the results section, we first describe overall results.  We then 
+describe estimation of $\nu$, and 
 isolation of model parameters violating
-measurement invariance.\footnote{R code for obtaining these results is
-  available at \url{http://semtools.r-forge.r-project.org}.}
+measurement invariance.  R code for obtaining these results is
+  available at \url{http://semtools.r-forge.r-project.org}.
 
 \subsubsection{Overall Results}
-Results related to the cumulative score process are displayed in
-Figure~\ref{fig:cusumex}.  In this figure, each panel represents the
-process for a single factor loading, with student age on the x-axis and
-cumulative scores on the y-axis.  The dashed horizontal
-lines represent the critical value for rejecting $H_0$ at $\alpha=.05$
-based on the double-max statistic; if any of the three processes
-crosses the horizontal line, then we reject $H_0$.  It is seen that
-the processes for both the second and third factor loadings
-($\lambda_{21}$ and $\lambda_{31}$) cross the dashed line, indeed
-implying rejection of $H_0$.  The absolute maximum across all three processes,
-corresponding to the double-max test statistic, is 1.77.  This
-statistic is obtained from the minimum of the third
-panel (whose absolute value is the maximum), close to an
-age of 16.  It achieves a $p$-value of .012.
+Test statistics for the hypotheses \eqref{eq:exh0} and~\eqref{eq:h0}
+are displayed in  
+Figure~\ref{fig:cusumex}.
+Each panel displays a test 
+statistic's fluctuation across values of student age, with the first
+column containing tests of \eqref{eq:exh0} and the second column
+containing tests of \eqref{eq:h0}.  The solid
+horizontal 
+lines represent critical values for $\alpha=.05$, and
+the Cram\'{e}r-von Mises panels 
+also contain a dashed line depicting the value of the test
+statistic (test statistics for the others are simply 
+the maxima of the processes).
+In other words, for panels in the first and third rows, \eqref{eq:exh0} is
+rejected if the process crosses the horizontal line.  For panels in
+the second row, \eqref{eq:h0} is rejected if the dashed horizontal line is
+higher than the solid horizontal line.
 
+The figures display many test attributes, all of which generally
+conform with the underlying theory.  First, when we test
+only the three verbal factor loadings, all three tests can detect the
+change.  Conversely, when all nineteen model parameters are tested,
+only the double-max test detects a change.  This implies that 
+power increases as larger proportions of tested parameters
+change.  The results also imply that the double-max test is more
+sensitive to fluctuations among a small subset of parameters.
 
+Figure~\ref{fig:lrlm} 
+compares the max-LM statistic (black line) to the max-LR
+statistic (blue line) from \eqref{eq:maxlr}, as applied to testing
+\eqref{eq:h0}.  The critical values for these two
+tests are identical, hence the single horizontal line.
+The figure
+shows that the two statistics are very similar to one another, with
+both maxima at the dotted vertical line.  This
+is generally to be expected, because the two tests are asymptotically
+equivalent.  For this specific situation, however, the max-LR
+statistic rejects \eqref{eq:h0} while the max-LM statistic does not.
+More generally, the 
+max-LR statistic cannot be obtained from the empirical fluctuation
+process, so it must be computed ``by hand'' (i.e., by computing
+the LR statistic over all values of the threshold $\nu$, re-fitting the
+factor analysis model for each value).
 
-\subsubsection{Estimation of $\eta$ and Parameter Isolation}
-The results of the test imply that the 
-verbal scales lack measurement invariance, and the age at which the
-maximum is achieved provides the estimate $\hat{\eta}$.
-The student corresponding to the maximum
-absolute cumulative sum (the solid circle in the third graph) is 15.7
-years of age, implying one subgroup of 
-students below 15.7 years and one above 15.7 years.  This agrees well
-with the true $\eta$ of 16.0 years.
+\subsubsection{Estimation of $\nu$ and Parameter Isolation}
+As described above, the tests of \eqref{eq:exh0} imply that the 
+verbal scales lack measurement invariance.  
+We can also use the tests to: (1) estimate the 
+threshold $\nu$, and (2) isolate specific parameters that violate
+measurement invariance.  
+For example, as described previously, estimates of $\nu$ can be obtained by
+examining the peaks in Figure~\ref{fig:cusumex}.  For all six panels
+in the figure, the peaks occur near an age of 16.1.  This agrees well
+with the true threshold of 16.0.
 
-The results of the test also yield information about specific
-parameters violating measurement invariance.  We simultaneously tested
-three factor loading parameters for measurement invariance.  Given
-rejection of the hypothesis of measurement invariance, we can 
-do posthoc 
+The double-max test yields specific information about 
+parameters violating measurement invariance.  Given
+rejection of the hypothesis of measurement invariance \eqref{eq:exh0},
+we can do posthoc 
 tests to study specific parameters violating measurement invariance.
-This involves individual examination of each cumulative score process
-(i.e., of each of the three graphs in Figure~\ref{fig:cusumex}),
-along with a procedure that controls for Type I error.  Taking a
-Bonferroni approach, we can examine whether each process's maximum
-surpasses the critical value associated with an $\alpha$ of
-$.05/3=.017$.  This amounts to the same critical value as that used in
-the overall test, 
-meaning that we simply examine the individual processes that cross
-the horizontal dashed lines in Figure~\ref{fig:cusumex}.  The figure
-shows that the second and third parameters (i.e., $\lambda_{21}$ and
-$\lambda_{31}$) cross the dashed line, so we would conclude a measurement
-invariance violation with respect to age in the second and third
-verbal tests.  The fact that the cumulative score process for
-$\lambda_{11}$ did not achieve the critical value represents a Type II
+This involves individual examination of each parameter's cumulative
+score process,
+along with a procedure that controls for Type I error.  
+Figure~\ref{fig:posthoc} shows the individual cumulative score processes for the
+verbal factor loadings, with the horizontal lines reflecting the
+critical value at $\alpha=.05$.
+  The figure
+shows that the third parameter (i.e., $\lambda_{31}$) crosses the
+dashed line, so we would conclude a measurement 
+invariance violation with respect to age for the third
+verbal test.  The fact that the cumulative score process for the first
+and second loadings did not achieve the critical value represents a Type II
 error, which implicitly brings into question the posthoc tests' power.  We
 generally address the issue of power in the simulations below.
 
-% NEED TO MODIFY
 \begin{figure}
-\caption{Cumulative score processes for the verbal factor loadings,
+\caption{Three test statistics of \eqref{eq:exh0} and \eqref{eq:h0}, 
   based on the example involving measurement invariance with respect
-  to student age.  Each panel represents the cumulative score process
-  for a single factor loading; the red line represents the critical values for 
-  the absolute maximum at $\alpha=.05$.}
+  to student age.  Solid, horizontal lines represent critical values
+  at $\alpha=.05$, and the dotted, horizontal lines (second row)
+  represent values of the Cram\'{e}r-von Mises test statistic.}
 \label{fig:cusumex}
-\includegraphics[height=5in]{example.pdf}
+\includegraphics[height=9in]{gefp_3_19.pdf}
+\end{figure}
+
+\begin{figure}
+\caption{A comparison of the max-LM (black line) and max-LR (blue line) test
+  statistics for \eqref{eq:h0}.  The solid, horizontal line
+  corresponds to the critical value at $\alpha=.05$.}
+\label{fig:lrlm}
+\includegraphics[height=5in]{lmlr_19.pdf}
+\end{figure}
+
+\begin{figure}
+\caption{Posthoc tests of individual verbal factor loadings, based on
+  the absolute maximum of each cumulative score process.  The top
+  panel depicts the process for $\lambda_{11}$, the middle panel
+  depicts the process for $\lambda_{21}$, and the bottom panel depicts
+  the process for $\lambda_{31}$.  The solid, horizontal lines
+  correspond to the critical value at $\alpha=.05$.}
+\label{fig:posthoc}
+\includegraphics[height=5in]{gefp_posthoc.pdf}
 \end{figure}
 
 \section{Simulation}
