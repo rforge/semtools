@@ -261,11 +261,11 @@ for the given threshold $\nu$ is then
 \end{equation}
 which has an asymptotic $\chi^2$ with degrees of freedom equal to the number
 of parameters in~${\bm \theta}$.
-\readme{You previously modified the above section so that $\theta$
+\readme{Achim: You previously modified the above section so that $\theta$
   consists only of parameters that are ``doubled'' under the
   alternative.  This appears to not allow for situations where
   parameters are restricted to be equal across subgroups.  I am ok
-  with this, but most applications of LR tests with these models have
+  with this, but many applications of LR tests with these models have
   some parameters restricted to be equal across subgroups.  So I've
   added some detail in parentheses at the beginning of the above
   paragraph.}
@@ -773,32 +773,30 @@ generally address the issue of power in the simulations below.
 % Simulations demonstrating power of test(s) at various
 % sample sizes, types of invariance violations, ?
 In this section, we conduct a simulation designed to
-examine the tests' power and Type I error rates in the context
-described previously (testing three factor loadings for measurement
-invariance).  We 
-examine the power and error rates of four tests: the double-max test, the
-Cram\'{e}r-von Mises test, the max-LM test, and the traditional likelihood
-ratio (difference) test involving nested 
-multiple-group models.  The likelihood ratio test has an advantage over the
-other three tests here, in that it requires advance definition of
-$\eta$.  This test is useful for comparative purposes,
-however, as it helps indicate the extent to which the other tests
-``lose'' power due to $\eta$ being unknown.
+examine the tests' power and Type I error rates in a context
+similar to the example.
+We examine the power and error rates of three tests: the double-max test, the
+Cram\'{e}r-von Mises test, and the max-LM test.  We also compare 
+tests involving only the parameters that changed with tests of all model
+parameters.  The example implied that the former tests had more
+power, and the simulations provide more detail on the extent to which
+power increases.  Finally, we also examine the tests' power across
+various magnitudes of measurement invariance violations.
 
 \subsection{Method}
-Simulated data were generated in a similar way to that of 
+Data were generated in a similar way to that of 
 the Example section.
 The data included verbal scales that violated measurement invariance
-with respect to students' ages, with students 14--15 years of age
-having smaller factor loadings than students 16--17 years of age.  
+with respect to students' ages, with students 13--15 years of age
+having smaller factor loadings than students 16--18 years of age.  
 Simulation data were generated from the same general factor analysis
 model (see Figure~\ref{fig:famod}), but sample size and magnitude
 of measurement 
-invariance violation was manipulated to examine power:
+invariance violation were manipulated to examine power:
 we examined power to detect 
 invariance violations across three sample sizes ($n=100,
 200, 500$) and three magnitudes of violations (factor loadings
-for the younger students being 0, 1, 2, or 3 standard
+for the younger students being $(0, 0.25, 0.5, \dots, 5)$ standard
 errors\footnote{The standard errors used here were
   obtained by fitting
   the model to a sample of size 100, where the sample consisted of all
@@ -806,68 +804,50 @@ errors\footnote{The standard errors used here were
 those for the older students).  The 0-standard error condition was
 used to study Type I error rate.
 
-For each sample size $\times$
-magnitude combination, 500 datasets were generated and tested for
-measurement invariance.  For the 0-standard error condition, we
-generated 5,000 datasets because small proportions are more
- difficult to estimate precisely.  In each dataset, half the
-students were 14--15 
-years of age and half were 16--17 years of age.  As stated previously,
-group
-designations ($\eta$) were assumed to be
-known for the likelihood ratio test.
+\readme{Achim: Is it true that you used 5000 reps per cell?}
+For each combination of sample size $\times$
+violation magnitude $\times$ number of parameters being tested,
+5,000 datasets were generated and tested.  In each dataset, half the
+students were 13--15 
+years of age and half were 16--18 years of age.
 
 \subsection{Results}
 % MODIFY RESULTS TO DISCUSS ALL FOUR TESTS
 % ALSO NEED 0-SE CONDITION
-For each test statistic, power and Type I error rates for the twelve
-sample size $\times$ magnitude combinations are displayed in
-Table~\ref{tab:sim1}.  The 0-SE column lists Type I error rates; this
-is the situation where the tests reject the hypothesis of measurement
-invariance at $\alpha=.05$ when none exist.  This column 
-shows that the Cram\'{e}r-von Mises test has accurate Type I error
-rates at all sample sizes examined.
-The double-max test, on the other hand, is conservative at
-all sample sizes examined.  Finally, the likelihood ratio test is
-slightly liberal at smaller sample sizes, with Type I error rates of
-.07 and .06 at $n=100$ and $200$, respectively.  Type I error for the
-likelihood ratio test at $n=500$ is accurate, however.
+Full simulation results are presented in Figure~\ref{fig:simres}, and
+a subset of the results (for finer distinctions) is displayed in
+Table~\ref{tab:simres}.  In describing the results, we largely refer
+to the figure.
 
-Focusing on power, the table includes many interesting results.
-First, the likelihood ratio test has superior power over the stochastic
-process-based tests at all sample sizes and invariance violations.
-This is likely due to the fact that the likelihood ratio test had
-extra information ($\eta$), whereas the other tests
-were testing measurement invariance over all values
-of $\eta$.  While power was lower for the tests developed in this
-paper, it was not terribly low.  At $n=200$ and above, all tests were
-on the same side of the traditional power cutoff of 0.8.  The tests
-were able to detect large measurement invariance violations (of three
-and sometimes two standard errors) at the larger sample sizes, and
-they were generally unable to detect the one-standard-error violation
-at any of the sample sizes studied.
+Figure~\ref{fig:simres} displays power as a function of violation
+magnitude, with panels for each combination of sample size $\times$
+number of parameters being tested.  
+Circles reflect the double-max test, triangles reflect the max-LM
+test, and plus signs reflect the Cram\`{e}r-von Mises test.  One can
+generally observe that simultaneous tests of all 19 parameters
+result in decreased power, with the tests performing very similarly at
+the larger sample sizes.  The tests distinguish themselves from one
+another when only the three factor loadings are tested, with the
+Cram\`{e}r-von Mises test having the most power, followed by max-LM,
+followed by the double-max test.  This advantage decreases with
+increases in sample size.  
+Absolute differences in power can be found in Table~\ref{tab:simres},
+which contains a subset of the results.  For example, the table shows that the
+power advantage of the Cram\`{e}r-von
+Mises test can be as large as .1 (at $n=100$, 3 parameters being
+tested).  It also shows that the Cram\`{e}r-von Mises test generally
+has true Type-I error rates, with the double-max test being slightly
+conservative and the max-LM test being slightly liberal at small
+sample sizes.
 
-Comparing the three proposed test statistics, we see that the
-Cram\'{e}r-von Mises test and max-LM test are comparable, and they are
-both better than the double-max test in all conditions.  This is
-similar to the general recommendation described by Zeileis et al.\
-\citeyear{ZeiSha10}, stating that tests involving sums of scores
-are generally superior when multiple parameters change simultaneously.
-Because the three verbal factor loadings all changed
-across the two subgroups in the simulation, the Cram\'{e}r-von Mises
-and max-LM tests excel.
+In summary, we found that the proposed tests have adequate power to detect
+measurement invariance violations in applied contexts.  The specific
+statstics' are not equivalent to one another, and we found that the
+Cram\`{e}r-von Mises statistic exhibited the best performance for the
+data generated here.  In the discussion, we consider the extent to
+which these findings may extend to other factor-analytic situations.
 
-In summary, we found that the proposed tests have less power than a
-likelihood ratio test with known subgroups.  However, the power levels
-remain adequate after considering the fact that the proposed tests are
-testing measurement invariance across all possible subgroups.  For the
-two-factor model examined here, all tests had trouble detecting small
-measurement invariance violations at small sample size.  Larger
-violations were more easily detected at larger sample sizes, with the
-Cram\'{e}r-von Mises and max-LM tests having better power due to multiple
-parameters being involved in the invariance violation.
-
-% 0-SE column is fixed for n=100 (using 5000 reps instead of 500)
+% Need to modify table and add figure
 \begin{table*}
 \caption{Simulated power and Type I error rates for four test statistics
   across three sample sizes and four magnitudes of measurement
