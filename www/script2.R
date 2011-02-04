@@ -53,12 +53,55 @@ mz.lrstat <- sapply(mz.age, lrstat)
 
 ## compare supLM and supLR test
 ## (the critical value is the same)
+#pdf("lmlr_19.pdf")
+
 par(mfrow = c(1, 1))
 plot(gefp_19_info, functional = supLM(0.1),
   xlab = "Age", ylab = "LM and LR statistics", main = "",
   ylim = c(0, 65))
 lines(mz.age, mz.lrstat, col = 4)
 abline(v = mz.age[which.max(mz.lrstat)], lty = 2)
+
+#dev.off()
+
+## Plot for example in the paper (3 parameters and 19 parameters)
+#pdf("gefp_3_19.pdf",height=9,width=6)
+par(mfcol = c(3, 2))
+
+## 3 parameters:
+plot(gefp_3_info,  functional = maxBB, main = "Three Parameters\n dmax", xlab="Age")
+plot(gefp_3_info,  functional = meanL2BB, main = "CvM", xlab="Age")
+plot(gefp_3_info,  functional = supLM(0.1), main = "supLM", xlab="Age")
+
+## 19 parameters:
+plot(gefp_19_info,  functional = maxBB, main = "Nineteen Parameters\n dmax", xlab="Age")
+plot(gefp_19_info,  functional = meanL2BB, main = "CvM", xlab="Age")
+plot(gefp_19_info,  functional = supLM(0.1), main = "supLM", xlab="Age")
+
+#dev.off()
+
+
+## Plot for posthoc tests in the example:
+#pdf("gefp_posthoc.pdf")
+
+plot(gefp_3_info,  functional = maxBB, main = "", xlab="Age", ylim=c(0,2.25),
+     aggregate=FALSE)
+
+#dev.off()
+
+
+## Find points at which test statistics achieve their maxima:
+
+# L2 statistics:
+L2_process <- zoo(apply(as.matrix(gefp_3_info$process)^2, 1, sum),
+                    time(gefp_3_info))
+L2_max <- L2_process[which.max(L2_process)]
+
+# Double max statistic:
+dmax_process <- zoo(apply(abs(as.matrix(gefp_3_info$process)), 1, max),
+                    time(gefp_3_info))
+dmax <- dmax_process[which.max(dmax_process)]
+
 
 ## EMPIRICAL RESULTS (all conforming with theory!):
 ##   - Only first 3 of all 19 parameters change.
