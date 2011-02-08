@@ -841,13 +841,25 @@ conservative and the max-LM test being slightly liberal at small
 sample sizes.
 
 In summary, we found that the proposed tests have adequate power to detect
-measurement invariance violations in applied contexts.  The specific
-statstics' are not equivalent to one another, and we found that the
+measurement invariance violations in applied contexts.  The 
 Cram\`{e}r-von Mises statistic exhibited the best performance for the
-data generated here.  In the discussion, we consider the extent to
+data generated here, though this result may not hold for all
+situations.  In the discussion, we specifically consider the extent to 
 which these findings may extend to other factor-analytic situations.
 
-% Need to modify table and add figure
+\begin{figure}
+\caption{Simulated power for three test statistics across three sample
+  sizes, two subsets of tested parameters, and measurement invariance
+  violations of 0 to 5 standard 
+  errors.  Circles reflect the double-max test, triangles reflect the
+  max-LM test, and plus signs reflect the Cram\`{e}r-von Mises test.
+  Numbers above each panel reflect the sample size and number of
+  parameters being tested, respectively.}
+\label{fig:simres}
+\includegraphics[height=5in]{simres.pdf}
+\end{figure}
+
+% Need to modify table
 \begin{table*}
 \caption{Simulated power and Type I error rates for four test statistics
   across three sample sizes and four magnitudes of measurement
