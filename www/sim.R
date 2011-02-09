@@ -135,12 +135,15 @@ ftable(xtabs(power ~ nobs + pars + test + diff, data = mz_sim), col.vars = "diff
 round(ftable(100 * xtabs(power ~ nobs + pars + test + diff,
   data = mz_sim, subset = diff %in% c(seq(0, 3.5, by = 0.5))),
   col.vars = "diff"), digits = 1)
+# To export to Latex, I wrote ftable contents to a text file, then read it
+# back in with read.fwf, then used xtable.  There must be an easier way?
 
 ## display result in graphic
 library("lattice")
 trellis.par.set(theme = canonical.theme(color = FALSE))
 ## all
-xyplot(power ~ diff | pars + nobs, group = ~ test, data = mz_sim, type = "b")
+xyplot(power ~ diff | pars + nobs, group = ~ test, data = mz_sim, type = "b",
+       xlab="Violation Magnitude", ylab="Power")
 ## subset
 xyplot(power ~ diff | pars + nobs, group = ~ test, data = mz_sim,
   subset = diff <= 3, type = "b")
