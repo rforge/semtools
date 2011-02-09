@@ -263,9 +263,10 @@ which has an asymptotic $\chi^2$ with degrees of freedom equal to the number
 of parameters in~${\bm \theta}$.
 \readme{Achim: You previously modified the above section so that $\theta$
   consists only of parameters that are ``doubled'' under the
-  alternative.  This appears to not allow for situations where
-  parameters are restricted to be equal across subgroups.  I am ok
-  with this, but many applications of LR tests with these models have
+  alternative.  This appears to not allow for situations where some 
+  parameters are restricted to be equal across subgroups.  This should
+  work for the current presentation, 
+  but many applications of LR tests with these models have
   some parameters restricted to be equal across subgroups.  So I've
   added some detail in parentheses at the beginning of the above
   paragraph.}
@@ -812,8 +813,6 @@ students were 13--15
 years of age and half were 16--18 years of age.
 
 \subsection{Results}
-% MODIFY RESULTS TO DISCUSS ALL FOUR TESTS
-% ALSO NEED 0-SE CONDITION
 Full simulation results are presented in Figure~\ref{fig:simres}, and
 a subset of the results (for finer distinctions) is displayed in
 Table~\ref{tab:simres}.  In describing the results, we largely refer
@@ -859,37 +858,44 @@ which these findings may extend to other factor-analytic situations.
 \includegraphics[height=5in]{simres.pdf}
 \end{figure}
 
-% Need to modify table
+
 \begin{table*}
-\caption{Simulated power and Type I error rates for four test statistics
-  across three sample sizes and four magnitudes of measurement
-  invariance violations. Abbreviations: CvM = Cram\'{e}r-von Mises
-  test; MLM = Maximum Lagrange multiplier test; DM = Double-max test; 
-  $\chi^2$ = Chi-square likelihood ratio test.}
-\label{tab:sim1}
-\begin{tabular}{llcccc} \thickline
- & & \multicolumn{4}{c}{Violation Magnitude (SEs)} \\
-$n$ & Test Stat & 0 & 1 & 2 & 3 \\\hline
-100 & CvM       & 0.05 & 0.10 & 0.33 & 0.63 \\ 
-    & MLM       &      & 0.09 & 0.28 & 0.64 \\
-    & DM        & 0.03 & 0.06 & 0.19 & 0.41 \\ 
-    & $\chi^2$  & 0.07 & 0.16 & 0.49 & 0.83 \\ \hline
-200 & CvM       & 0.05 & 0.19 & 0.64 & 0.96 \\
-    & MLM       &      & 0.19 & 0.63 & 0.96 \\ 
-    & DM        & 0.03 & 0.12 & 0.44 & 0.88 \\ 
-    & $\chi^2$  & 0.06 & 0.27 & 0.76 & 0.99 \\ \hline
-500 & CvM       & 0.05 & 0.44 & 0.98 & 1.00 \\ 
-    & MLM       &      & 0.41 & 0.99 & 1.00 \\
-    & DM        & 0.04 & 0.35 & 0.94 & 1.00 \\ 
-    & $\chi^2$  & 0.05 & 0.58 & 1.00 & 1.00 \\\thickline
+\caption{Simulated power for three test statistics
+  across three sample sizes, eight magnitudes of measurement
+  invariance violations, and two subsets of tested
+  parameters. Abbreviations: CvM = Cram\'{e}r-von Mises 
+  test; Max-LM = Maximum Lagrange multiplier test; DM = Double-max test.}
+\label{tab:simres}
+\begin{center}
+\begin{tabular}{lllllllllll}
+  \hline
+   & & & \multicolumn{8}{l}{Violation Magnitude (SE)} \\
+  $n$ &  npars &  Statistic    &  0 & 0.5 &    1 &  1.5
+       &    2 &  2.5  &   3 &  3.5 \\ 
+  \hline
+  100  &  3    &  DM           &  3.1 &    3.6 &    6.6 &   12.4 &   20.6 &   32.1  &  46.1 &   57.8 \\ 
+         &         &  CvM            &  5.0 &    5.7 &   10.6 &   19.1 &   32.1 &   49.2  &  67.2 &   78.8 \\ 
+         &         &  max-LM          &  6.2 &    6.2 &    9.8 &   15.0 &   24.7 &   39.7  &  57.0 &   69.2 \\ 
+         &  19   &  DM           &  2.5 &    2.8 &    3.1 &    4.9 &    7.1 &   12.4  &  19.6 &   25.3 \\ 
+         &         &  CvM            &  4.2 &    4.8 &    5.8 &    8.6 &   13.0 &   18.9  &  28.2 &   37.4 \\ 
+         &         &  max-LM          &  6.7 &    6.9 &    7.7 &    9.6 &   13.3 &   17.3  &  23.6 &   30.6 \\ 
+  200  &  3    &  DM           &  3.7 &    5.2 &   12.5 &   26.3 &   47.0 &   70.6  &  86.8 &   95.0 \\ 
+         &         &  CvM            &  5.3 &    7.9 &   18.6 &   39.1 &   64.3 &   85.8  &  96.2 &   99.0 \\ 
+         &         &  max-LM          &  6.0 &    8.0 &   14.5 &   30.2 &   54.7 &   79.4  &  93.2 &   98.5 \\ 
+         &  19   &  DM           &  3.2 &    3.6 &    5.7 &   10.8 &   21.9 &   40.2  &  61.1 &   76.5 \\ 
+         &         &  CvM            &  4.6 &    5.8 &    8.5 &   15.0 &   29.1 &   46.4  &  65.4 &   80.7 \\ 
+         &         &  max-LM          &  5.6 &    6.4 &    8.3 &   13.2 &   22.3 &   38.2  &  57.5 &   74.8 \\ 
+  500  &  3    &  DM           &  4.1 &    8.3 &   32.2 &   69.0 &   93.4 &   99.5  & 100.0 &  100.0 \\ 
+         &         &  CvM            &  4.7 &   11.8 &   42.2 &   81.3 &   98.0 &  100.0  & 100.0 &  100.0 \\ 
+         &         &  max-LM          &  4.6 &    9.8 &   33.9 &   75.5 &   97.1 &  100.0  & 100.0 &  100.0 \\ 
+         &  19   &  DM           &  3.6 &    4.4 &   14.0 &   40.1 &   75.3 &   96.0  &  99.7 &  100.0 \\ 
+         &         &  CvM            &  5.0 &    6.7 &   17.9 &   43.6 &   77.4 &   95.9  &  99.7 &   99.9 \\ 
+         &         &  max-LM          &  4.9 &    7.0 &   14.2 &   36.0 &   71.0 &   94.9  &  99.6 &  100.0 \\ 
+   \hline
 \end{tabular}
+\end{center}
 \end{table*}
 
-
-% Table 2 of Nyblom89 contains critical values that may prove useful.
-% Hansen 1992 p. 524 has table of critical values that matches 
-%  Nyblom89 within reason.
-% See Zeileis05 p. 450-451
 
 \section{Discussion}
 In this paper, we have presented a new family of statistical tests for
@@ -905,23 +911,24 @@ extension to more complex scenarios.
 % Simultaneous test of Meredith's various types of invariance
 The proposed tests give researchers a new set of tools for studying 
 measurement invariance.  For example, they give researchers the
-opportunity to simultaneously test for many types of measurement
-invariance (see, e.g., \citeNP{Mer93}).  The traditional
+flexibility to: (1) simultaneously test all model parameters, yielding
+results relevant to many types of measurement
+invariance (see, e.g., \citeNP{Mer93}), or (2) test a single subset of
+model parameters, potentially leading to improved power to detect a
+single type of measurement invariance.  The traditional
 steps have involved hypothesizing a specific type of invariance and
-then testing for it via a Likelihood Ratio Test, but the tests
-proposed here do not require one to hypothesize a specific type of
-invariance a priori.  Instead, one could define a type of measurement
-invariance after seeing the proposed tests' results.
+then testing for it via a Likelihood Ratio Test, but this is
+unnecessary under the proposed framework.
 
 % Researchers interpreting subgroups violating MI
 In addition to simultaneously testing different types of measurement
 invariance, the proposed tests allow researchers to easily interpret
 the nature of the invariance violation.  This is made possible through
-the tests' abilities to estimate $\eta$, the threshold dividing
+the tests' abilities to estimate $\nu$, the threshold dividing
 individuals into subgroups that violate
-measurement invariance.  While a single $\eta$ was estimate in this
+measurement invariance.  While a single $\nu$ was assumed in this
 paper, it is also possible to define 
-formal rules for estimating multiple $\eta$ parameters.  We plan to
+formal rules for estimating multiple $\nu$ parameters.  We plan to
 explore these ideas in the future.
 
 % \subsection{Further Issues}
@@ -1029,7 +1036,7 @@ sample size.  This results in a $K \times p$ matrix, with one entry for
 each category-by-model parameter combination.  We can test
 a specific model parameter for invariance by focusing on the associated
 column of the $K \times p$ matrix, summing over the squared entries in
-the column to obtain a $\chi^2$ statistic with
+the column to obtain a $\chi^2$-distributed statistic with
 $(K-1)$ degrees of freedom \cite{HjoKon02}.
 Alternatively, to simultaneously test multiple parameters, we can sum
 the $\chi^2$ statistics and degrees of freedom for the individual
@@ -1041,14 +1048,15 @@ it is possible to construct an algorithm that recursively defines
 groups of individuals violating measurement invariance with respect to
 multiple auxiliary variables.  Such an algorithm is related to 
 classification and regression trees \cite{BreFri84,MerSha10,StrMal09},
-and related algorithms have been developed for generalized linear
+with related algorithms being developed for generalized linear
 models \cite{ZeiHot08} and Rasch models \cite{KopZei10}.  
 
 Relatedly,
-S\'{a}nchez \citeyear{San09} describes a general
+S\'{a}nchez \citeyear{San09} described a general
 method for partitioning/segmenting structural equation models within a 
 partial least squares framework.  This method involves direct maximization of
-the likelihood ratio (i.e., fitting the model for various subgroups based on
+the likelihood ratio (i.e., fitting the model for various subgroups
+defined by 
 $V$ and choosing the subgroups with the largest likelihood ratio),
 however, instead of the tests described in this paper.  The tests
 described here are highly advantageous because they only require the
