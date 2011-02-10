@@ -5,25 +5,22 @@
 \twoauthors{Edgar C. Merkle}{Achim Zeileis}
 \twoaffiliations{Wichita State University}{Universit\"{a}t Innsbruck}
 
-\abstract{The issue of measurement invariance commonly arises in
-  factor-analytic contexts, with methods for assessment
-  including 
-  likelihood ratio tests, Lagrange multiplier tests, and
-  Wald tests.  These tests all require advance definition of the number of
-  groups, group 
-  membership, and offending model parameters.
-In this paper, we construct tests of parameter
-invariance based on stochastic processes of casewise
-derivatives of the likelihood function.  These tests can be viewed as
-generalizations of the Lagrange multiplier test, and they are especially
-useful for: (1) isolating specific parameters affected by measurement
-invariance violations, and (2) identifying subgroups of individuals
-that violated measurement invariance based on a continuous auxiliary
-variable.  The tests are presented and illustrated in detail, along
-with simulations examining the tests' abilities in controlled conditions.}
+\abstract{
+  The issue of measurement invariance commonly arises in factor-analytic
+  contexts, with methods for assessment including likelihood ratio tests,
+  Lagrange multiplier tests, and Wald tests. These tests all require advance
+  definition of the number of groups, group membership, and offending model
+  parameters. In this paper, we construct tests of parameter invariance based on
+  stochastic processes of casewise derivatives of the likelihood function. These
+  tests can be viewed as generalizations of the Lagrange multiplier test, and they
+  are especially useful for: (1)~isolating specific parameters affected by
+  measurement invariance violations, and (2)~identifying subgroups of individuals
+  that violated measurement invariance based on a continuous auxiliary variable. 
+  The tests are presented and illustrated in detail, along with simulations
+  examining the tests' abilities in controlled conditions.
+}
 
-\acknowledgements{Correspondence to Edgar C.\
-  Merkle, Department of 
+\acknowledgements{Correspondence to Edgar C.\ Merkle, Department of 
   Psychology, Wichita State University, Wichita, KS 67260-0034.
   Email: {\texttt{edgar.merkle@wichita.edu}}.}
 \shorttitle{Parameter instability tests}
@@ -34,6 +31,8 @@ with simulations examining the tests' abilities in controlled conditions.}
 %% for internal use
 \newcommand{\fixme}[1]{\emph{\marginpar{FIXME} (#1)}}
 \newcommand{\readme}[1]{\emph{\marginpar{README} (#1)}}
+
+\spacing{1}
 
 \begin{document}
 \maketitle
@@ -59,7 +58,7 @@ models, where relationships between constructs are hypothesized.  Horn
 and McArdle \citeyear{HorMca92} concisely summarize the impact of
 these issues, stating ``Lack of evidence of measurement 
 invariance equivocates conclusions and casts doubt on theory in the
-behavioral sciences'' (p.\ 141).  Borsboom \citeyear{Bor06a} also
+behavioral sciences'' (p.~141).  Borsboom \citeyear{Bor06a} also
 notes that researchers often fail to assess whether measurement
 invariance holds.
 
@@ -188,8 +187,8 @@ $v_1, \dots, v_n$, i.e.,
 \end{equation}
 where the pattern ${\bm \theta}(V)$ of deviation from measurement invariance is
 typically not known (exactly) in practice. If it were (see below for
-some concrete examples), then standard inference methods (such as likelihood
-ratio, Wald, or Lagrange multiplier tests) could be employed. However,
+some concrete examples), then standard inference methods -- such as likelihood
+ratio, Wald, or Lagrange multiplier tests -- could be employed. However,
 if the pattern is unknown, it is difficult to develop a single test
 that is well-suited for all conceivable patterns. But it is possible to
 derive a family of tests so that representatives from this family are well-suited
@@ -206,19 +205,17 @@ parameter vectors
 where ${\bm \theta}^{(A)} \neq {\bm \theta}^{(B)}$. This could pertain to 
 two different age groups, income groups, genders, etc.
 
-Note that even when adopting $H_1^*$ as the relevant alternative, the pattern ${\bm \theta}(V)$
-is not completely specified unless the cutpoint $\nu$ is known in
-advance. 
-In this situation, all individuals can be grouped based on
-$V$, and we can apply standard
-theory: nested multiple group
-models (e.g., \citeNP{Jor71,Bol89}) coupled with likelihood ratio (LR)
-tests are most common,
-though Lagrange multiplier (LM) and Wald tests may also be constructed for this
-purpose.\footnote{All three of these approaches are asymptotically
-  equivalent \cite{Sat89}.}  However, if $\nu$ is unknown (as is often
-the case for continuous $V$), then the standard theory does not apply
-and we can instead rely on the tests proposed in this paper.
+Note that even when adopting $H_1^*$ as the relevant alternative, the pattern
+${\bm \theta}(V)$ is not completely specified unless the cutpoint $\nu$ is known
+in advance.  In this situation, all individuals can be grouped based on $V$, and
+we can apply standard theory: nested multiple group models (e.g.,
+\citeNP{Jor71,Bol89}) coupled with likelihood ratio (LR) tests are most common,
+although the asymptotically equivalent (see \citeNP{Sat89}) Lagrange multiplier
+(LM) and Wald tests may also be constructed for this purpose. However, if $\nu$
+is unknown (as is often the case for continuous $V$), then the standard theory
+cannot be easily applied and instead nonstandard inference methods are required
+such as the tests proposed in this paper. \readme{Slightly rephrase but probably
+still not optimal.}
 
 In the following section, we describe the standard approaches to
 testing measurement invariance with $\nu$ known.  We then contrast
@@ -229,20 +226,16 @@ $v_1 \le v_2 \le \dots \le v_n$.  We also assume that the measurement
 model is correctly specified, as is implicitly assumed under traditional
 measurement invariance approaches.
 
-% MAY BE USEFUL SOMEWHERE
-% Focusing on the latter point, Millsap's \citeyear{Mil05} review of 
-% measurement invariance methods cites ``locating the violation of the
-% invariance'' as one of the major outstanding problems.  The tests
-% resulting from the proposed project directly address this issue,
-% leading to an important advance in measurement invariance research.
 
 \subsection{Likelihood Ratio, Wald, and Lagrange Multiplier Test for Fixed Subgroups}
 
 To employ the LR test for assessing measurement invariance, the data
 are typically separated into a certain number of given subgroups where
-the parameters are estimated separately (for ease of
-  exposition, we assume no parameters are restricted to be equal
-  across subgroups). Then, the sum of maximized likelihoods 
+the parameters are estimated separately, potentially with some parameters
+restricted to be equal across subgroups. For ease of exposition we present
+the results for the case where there are no such restrictions (although it is
+straightforward to extend all methods to the more general case).
+Then, the sum of maximized likelihoods 
 from the subgroups are compared with the original maximized full-sample likelihood
 in a $\chi^2$~test. More specifically, for the special case of two subgroups,
 the alternative $H_1^*$ from (\ref{eq:h1*}) with fixed and prespecified $\nu$ is adopted
@@ -261,15 +254,6 @@ for the given threshold $\nu$ is then
 \end{equation}
 which has an asymptotic $\chi^2$ with degrees of freedom equal to the number
 of parameters in~${\bm \theta}$.
-\readme{Achim: You previously modified the above section so that $\theta$
-  consists only of parameters that are ``doubled'' under the
-  alternative.  This appears to not allow for situations where some 
-  parameters are restricted to be equal across subgroups.  This should
-  work for the current presentation, 
-  but many applications of LR tests with these models have
-  some parameters restricted to be equal across subgroups.  So I've
-  added some detail in parentheses at the beginning of the above
-  paragraph.}
 
 Analogously to the LR test, the Wald test and LM test (also known as score test)
 can be employed to test the null hypothesis $H_1^*$ for a fixed threshold $\nu$.
@@ -310,7 +294,7 @@ becomes large. Note that this corresponds to maximizing the likelihood w.r.t.\
 an additional parameter, namely $\nu$. Hence, the asymptotic distribution of the
 maximum $\mathit{LR}$ statistic is not $\chi^2$ anymore. However, Andrews \citeyear{And93}
 showed that the asymptotic distribution is in fact tractable, but nonstandard.
-Specifically, the asymptotic distribution of the maximum is the maximum of a
+Specifically, the asymptotic distribution of (\ref{eq:maxlr}) is the maximum of a
 certain tied-down Bessel process whose specifics also depend on the minimal
 and maximal thresholds $\underline{\nu}$ and $\overline{\nu}$, respectively.
 See below for more details.
@@ -325,12 +309,12 @@ while the other two techniques require reestimation of the subgroup model for ea
 $\nu$.
 
 So far, the discussion focused on the alternative $H_1^*$: The maximum LR, Wald, and LM
-tests are designed for a situation where there is a single threshold at which the full
-parameter vector ${\bm \theta}$ changes. While this is plausible and intuitive
+tests are designed for a situation where there is a single threshold at which all
+parameters in the vector ${\bm \theta}$ change. While this is plausible and intuitive
 in many applications, it would also be desirable to obtain tests that direct their power
 against other types of alternatives, i.e., against $H_1$ with other patterns ${\bm \theta}(V)$.
-For example, there might be multiple thresholds at which the parameters change or parameters
-fluctuate randomly. Alternatively, only one (or just a few) of the parameters in
+For example, the parameters may fluctuate randomly or there might be multiple thresholds
+at which the parameters change. Alternatively, only one (or just a few) of the parameters in
 the vector ${\bm \theta}$ change while the remaining parameters are
 constant (a common occurrence in psychometric models).
 To address such situations in a unified way, the next section contains 
@@ -451,11 +435,11 @@ and the parameter(s) affected by it (over $j = 1, \dots, k$). This test is
 especially useful for visualization, as the cumulative score process for
 each individual parameter can be displayed along with the appropriate
 critical value.  An example of this visualization appears in the
-Example section.
+example section. \readme{Maybe give the explicit figure reference?}
 
 However, taking maximums ``wastes'' power if many of the $k$~parameters change
 at the same threshold or if the score process takes large values for
-many of the $n$~individuals (and just a single threshold). In such
+many of the $n$~individuals (and not just a single threshold). In such
 cases, sums insteads of maximums are more suitable for collapsing across
 parameters and/or individuals because they combine the deviations instead of
 picking out only the single largest deviation. Thus, if the parameter instability
@@ -484,7 +468,14 @@ Further aggregation functions have been suggested in the structural
 change literature (see e.g., \citeNP{Zei05,ZeiSha10}) but the three
 tests above are probably most likely to be useful in psychometric settings.
 
-
+Finally, all tests can be easily modified to address the situation of
+so-called ``partial structural changes'' \cite{And93}. This refers to the case of some
+parameters being known to be stable, i.e., restricted to be constant across
+potential subgroups. Tests for potential changes/instabilities only in the
+remaining parameters are easily constructed by omitting those columns from
+${\bm B}(\hat {\bm \theta})_{ij}$ that are restricted/stable and only retaining those
+that are potentially instable. \readme{I guess we should say something like
+this in the theory section. Is this intelligible enough?}
 
 
 \subsection{Critical Values \& $p$-values.}
@@ -547,7 +538,8 @@ sequence of statistics conveys threshold(s). Note that due to summing over all
 parameters, no specific parameter can be identified that is responsible for the
 violation. Similarly, for the Cram\'{e}r-von Mises test neither component(s) nor threshold(s)
 can be formally identified. However, graphing of (transformations of) the cumulative
-score process may still be valuable for gaining some insights.
+score process may still be valuable for gaining some insights.  \readme{Maybe give figure
+references for the example?}
 
 If a measurement invariance violation is detected by any of the tests,
 one may want to incorporate it into the model to account for it. How this should
@@ -558,7 +550,7 @@ with one (or more) threshold(s) in all parameters (i.e., (\ref{eq:h1*}) for the
 single threshold case). In the multiple threshold case, their location can
 be determined by maximizing the corresponding segmented log-likelihood over all
 possible combinations of thresholds (\citeNP{ZeiSha10} adapt a dynamic programming
-algorithm to this task). For the single threshold case, this reduced to
+algorithm to this task). For the single threshold case, this reduces to
 maximizing the segmented log-likelihood
 \begin{equation} \label{eq:seglik}
   \ell(\hat {\bm \theta}^{({A)}}; x_1, \dots, x_m) ~+~ \ell(\hat {\bm \theta}^{({B)}}; x_{m+1}, \dots, x_n)
@@ -584,7 +576,7 @@ in the field.
 
 \begin{figure}
 \caption{Path diagram representing the base factor analysis model used for
-  the Example and Simulations.  To induce measurement invariance
+  the example and simulations.  To induce measurement invariance
   violations, a seventh observed variable (student age) determines the
 values of the verbal factor loadings ($\lambda_{11}$, $\lambda_{21}$,
 $\lambda_{31}$).}
@@ -606,6 +598,11 @@ students have not yet learned all the material).  The researcher's goal is to
 study whether the scales are measurement invariant with
 respect to age, which is taken to be the auxiliary variable $V$.
 
+\fixme{I think it would be useful to say early on that a single static
+data set is drawn from the model first for illustration -- and subsequently
+a full simulation study using the same scenario is considered.}
+
+
 \subsection{Method}
 
 To formally represent these ideas, we specify that the data arise from
@@ -625,6 +622,9 @@ are three standard errors lower than those in Figure~\ref{fig:famod}
 (the standard errors were obtained by fitting
   the model to a sample of size 200, where the sample consisted of all
   ``older'' subjects).
+\fixme{This wasn't fully clear to me before and I probably should
+have asked earlier. I think we should employ the asymptotic standard
+errors divided by $\sqrt{n}$.}
 This violation states that the verbal ability scales
 lack measurement invariance with respect to age.  For simplicity, we
 assume that the mathematical scales are invariant.
@@ -651,19 +651,24 @@ three verbal factor loading parameters, we can test
 \begin{equation}
     \label{eq:exh0}
 H_0:\ (\lambda_{i,11}\ \lambda_{i,21}\ \lambda_{i,31}) =
-(\lambda_{11}\ \lambda_{21}\ \lambda_{31}),\ i=1,\ldots,n,
+(\lambda_{0, 11}\ \lambda_{0, 21}\ \lambda_{0, 31}),\ i=1,\ldots,n,
 \end{equation}
 where $(\lambda_{i,11}\ \lambda_{i,21}\ \lambda_{i,31})$ represent the
 verbal factor loading parameters for student $i$.  Alternatively, we
 can consider all model parameters (including means), leading to a test
 of \eqref{eq:h0}.  We consider both of these tests below.
 
+\fixme{I think the paragraph above should say something like ``If we
+knew or suspected which coefficients are subject to change\dots'' or
+something else along those lines. Just to make clear that we assume
+additional knowledge here. Also it may help to refer back to the
+paragraph that I added in the theory section about partial changes.}
+
 \subsection{Results}
 In the results section, we first describe overall results.  We then 
 describe estimation of $\nu$, and 
 isolation of model parameters violating
-measurement invariance.  R code for obtaining these results is
-  available at \url{http://semtools.r-forge.r-project.org}.
+measurement invariance.
 
 \subsubsection{Overall Results}
 Test statistics for the hypotheses \eqref{eq:exh0} and~\eqref{eq:h0}
@@ -684,42 +689,55 @@ rejected if the process crosses the horizontal line.  For panels in
 the second row, \eqref{eq:h0} is rejected if the dashed horizontal line is
 higher than the solid horizontal line.
 
-The figures display many test attributes, all of which generally
-conform with the underlying theory.  First, when we test
-only the three verbal factor loadings, all three tests can detect the
-change.  Conversely, when all nineteen model parameters are tested,
-only the double-max test detects a change.  This implies that 
-power increases as larger proportions of tested parameters
-change.  The results also imply that the double-max test is more
+The figures convey information about several properties
+of the tests. First, all three tests are more powerful (and in
+this example significant) if only those parameters are tested
+that are subject to instabilities. Conversely, if all 19~model
+parameters are assessed (including those that are in fact invariant),
+the power is decreased. This decrease, however, is less pronounced
+for the double-max test as it is more 
 sensitive to fluctuations among a small subset of parameters.
 
 Figure~\ref{fig:lrlm} 
-compares the max-LM statistic (black line) to the max-LR
-statistic (blue line) from \eqref{eq:maxlr}, as applied to testing
+compares the max-LM statistic (solid line) to the max-LR
+statistic (dashed line) from \eqref{eq:maxlr}, as applied to testing
 \eqref{eq:h0}.  The critical values for these two
 tests are identical, hence the single horizontal line.
 The figure
 shows that the two statistics are very similar to one another, with
 both maxima at the dotted vertical line.  This
 is generally to be expected, because the two tests are asymptotically
-equivalent.  For this specific situation, however, the max-LR
-statistic rejects \eqref{eq:h0} while the max-LM statistic does not.
-More generally, the 
+equivalent.  More generally, the 
 max-LR statistic cannot be obtained from the empirical fluctuation
-process, so it must be computed ``by hand'' (i.e., by computing
-the LR statistic over all values of the threshold $\nu$, re-fitting the
-factor analysis model for each value).
+process, so the factor analysis model must be refitted before and after
+each of the possible threshold values $\nu$.
+\readme{With the modified DGP code, both max-LR and max-LM, are
+nonsignificant in the example.}
 
 \subsubsection{Estimation of $\nu$ and Parameter Isolation}
 As described above, the tests of \eqref{eq:exh0} imply that the 
 verbal scales lack measurement invariance.  
-We can also use the tests to: (1) estimate the 
-threshold $\nu$, and (2) isolate specific parameters that violate
+We can also use the tests to: (1)~estimate the 
+threshold $\nu$, and (2)~isolate specific parameters that violate
 measurement invariance.  
 For example, as described previously, estimates of $\nu$ can be obtained by
 examining the peaks in Figure~\ref{fig:cusumex}.  For all six panels
 in the figure, the peaks occur near an age of 16.1.  This agrees well
 with the true threshold of 16.0.
+
+\fixme{I'm not really happy with the following paragraph. I think
+I wouldn't call this a posthoc test. It is really a test of the same
+hypothesis as before, but now using the double-max
+statistic. Would it be possible to simply show this and say that
+it is an advantage of the double-max test that both the threshold
+and the parameter affected by the invariance can be ``seen'' in the
+visualization. Then, we can still go on and talk about the power issue:
+The double-max test potentially wastes a lot of power, namely
+in the case where many of the parameters change at the same time. Note
+that in the case where all parameters change, we wouldn't have to ask
+the question ``Which parameter did change?''. Thus, luckily, the double-max test
+is more powerful when we need it. But, unfortunately, we don't know that
+in advance.}
 
 The double-max test yields specific information about 
 parameters violating measurement invariance.  Given
@@ -752,9 +770,10 @@ generally address the issue of power in the simulations below.
 \end{figure}
 
 \begin{figure}
-\caption{A comparison of the max-LM (black line) and max-LR (blue line) test
-  statistics for \eqref{eq:h0}.  The solid, horizontal line
-  corresponds to the critical value at $\alpha=.05$.}
+\caption{A comparison of the max-LM (solid line) and max-LR (dashed line) test
+  statistics for \eqref{eq:h0}.  The solid horizontal line
+  corresponds to the critical value at $\alpha=.05$ while the dotted vertical
+  line highlights the threshold at which the test statistics are maximized.}
 \label{fig:lrlm}
 \includegraphics[height=5in]{lmlr_19.pdf}
 \end{figure}
@@ -771,6 +790,10 @@ generally address the issue of power in the simulations below.
 \end{figure}
 
 \section{Simulation}
+
+\readme{I didn't look at this section in detail because I think we
+should rerun the simulations first with the modified DGP.}
+
 % Simulations demonstrating power of test(s) at various
 % sample sizes, types of invariance violations, ?
 In this section, we conduct a simulation designed to
@@ -786,7 +809,7 @@ various magnitudes of measurement invariance violations.
 
 \subsection{Method}
 Data were generated in a similar way to that of 
-the Example section.
+the example section.
 The data included verbal scales that violated measurement invariance
 with respect to students' ages, with students 13--15 years of age
 having smaller factor loadings than students 16--18 years of age.  
@@ -805,7 +828,6 @@ errors\footnote{The standard errors used here were
 those for the older students).  The 0-standard error condition was
 used to study Type I error rate.
 
-\readme{Achim: Is it true that you used 5000 reps per cell?}
 For each combination of sample size $\times$
 violation magnitude $\times$ number of parameters being tested,
 5,000 datasets were generated and tested.  In each dataset, half the
@@ -822,26 +844,26 @@ Figure~\ref{fig:simres} displays power as a function of violation
 magnitude, with panels for each combination of sample size $\times$
 number of parameters being tested.  
 Circles reflect the double-max test, triangles reflect the max-LM
-test, and plus signs reflect the Cram\`{e}r-von Mises test.  One can
+test, and plus signs reflect the Cram{\'e}r-von Mises test.  One can
 generally observe that simultaneous tests of all 19 parameters
 result in decreased power, with the tests performing very similarly at
 the larger sample sizes.  The tests distinguish themselves from one
 another when only the three factor loadings are tested, with the
-Cram\`{e}r-von Mises test having the most power, followed by max-LM,
+Cram\'{e}r-von Mises test having the most power, followed by max-LM,
 followed by the double-max test.  This advantage decreases with
 increases in sample size.  
 Absolute differences in power can be found in Table~\ref{tab:simres},
 which contains a subset of the results.  For example, the table shows that the
-power advantage of the Cram\`{e}r-von
+power advantage of the Cram\'{e}r-von
 Mises test can be as large as .1 (at $n=100$, 3 parameters being
-tested).  It also shows that the Cram\`{e}r-von Mises test generally
+tested).  It also shows that the Cram\'{e}r-von Mises test generally
 has true Type-I error rates, with the double-max test being slightly
 conservative and the max-LM test being slightly liberal at small
 sample sizes.
 
 In summary, we found that the proposed tests have adequate power to detect
 measurement invariance violations in applied contexts.  The 
-Cram\`{e}r-von Mises statistic exhibited the best performance for the
+Cram\'{e}r-von Mises statistic exhibited the best performance for the
 data generated here, though this result may not hold for all
 situations.  In the discussion, we specifically consider the extent to 
 which these findings may extend to other factor-analytic situations.
@@ -851,7 +873,7 @@ which these findings may extend to other factor-analytic situations.
   sizes, two subsets of tested parameters, and measurement invariance
   violations of 0 to 5 standard 
   errors.  Circles reflect the double-max test, triangles reflect the
-  max-LM test, and plus signs reflect the Cram\`{e}r-von Mises test.
+  max-LM test, and plus signs reflect the Cram\'{e}r-von Mises test.
   Numbers above each panel reflect the sample size and number of
   parameters being tested, respectively.}
 \label{fig:simres}
@@ -902,7 +924,7 @@ In this paper, we have presented a new family of statistical tests for
 the study of measurement invariance in psychometrics.  The tests,
 based on stochastic processes, have reasonable power, can isolate
 groups of individuals violating measurement invariance based on a
-continuous, auxiliary variable, and can
+continuous auxiliary variable, and can
 isolate specific model parameters affected by the violation.  In this
 section, we consider the tests' use in practice and their 
 extension to more complex scenarios.
@@ -911,13 +933,13 @@ extension to more complex scenarios.
 % Simultaneous test of Meredith's various types of invariance
 The proposed tests give researchers a new set of tools for studying 
 measurement invariance.  For example, they give researchers the
-flexibility to: (1) simultaneously test all model parameters, yielding
+flexibility to: (1)~simultaneously test all model parameters, yielding
 results relevant to many types of measurement
-invariance (see, e.g., \citeNP{Mer93}), or (2) test a single subset of
+invariance (see, e.g., \citeNP{Mer93}), or (2)~test a single subset of
 model parameters, potentially leading to improved power to detect a
 single type of measurement invariance.  The traditional
 steps have involved hypothesizing a specific type of invariance and
-then testing for it via a Likelihood Ratio Test, but this is
+then testing for it via a LR test, but this is
 unnecessary under the proposed framework.
 
 % Researchers interpreting subgroups violating MI
@@ -943,7 +965,7 @@ explore these ideas in the future.
 % straightforward way to formally estimate $\eta$ is through
 % the location of the maximum of the cumulative score process.  Assuming
 % a single threshold, the maximum should be achieved close to the true
-% $\eta$.  Referring to the Example (see
+% $\eta$.  Referring to the example (see
 % Figure~\ref{fig:cusumex}), we defined $\eta$ as the 
 % age corresponding to the solid dot in the third panel.
 
@@ -1017,30 +1039,35 @@ explore these ideas in the future.
 One issue that was largely unaddressed in this paper involved the use
 of categorical $V$ to study measurement invariance.  In this case,
 groups are 
-already specified in advance, and so traditional methods (i.e.,
-Likelihood Ratio tests) may suffice.
-However, we could use the framework developed here to obtain an
-alternative $\chi^2$ statistic testing measurement invariance.
-Assume the observations are divided into $K$ categories $I_1, I_2,
-\ldots, I_K$.
-First, we can sum scores within each category of the
-demographic variable via:
+already specified in advance, and so traditional methods for fixed
+subgroups (i.e., LR, Wald, and LM tests) may suffice.
+Furthermore, we can also obtain an LM-type statistic from the
+framework developed here. Assume the observations are divided into
+$C$ categories $I_1, I_2, \ldots, I_C$. Then, the increment of
+the cumulative score process $\Delta_{I_c} {\bm B}(\hat {\bm \theta})$
+within in each category is just the sum of the corresponding scores.
+In somewhat sloppy notation:
 \begin{equation}
     \label{eq:catsum}
-    \Delta W_n(I_k) = \frac{1}{n_k\sqrt{n}} \sum_{i \in I_k}
-    {\bm{I}}(\widehat{\bm{\theta}})^{-1/2} {\bm{\psi}}({\bm{y}}_i, \widehat{{\bm
-      \theta}}),
+    \Delta_{I_c} {\bm B}(\hat {\bm \theta}) ~=~ \hat {\bm I}^{-1/2} n^{-1/2}
+    \sum_{i \in I_c} {\bm s}(\hat {\bm \theta}; x_i)
+%% \\
+%%    X^2 & = & \sum_{c = 1}^C n_c^{-1} n^{-1} || \Delta_{I_c} {\bm B}(\hat {\bm \theta}) ||^2
 \end{equation}
-where $n_k$ is the sample size in category $k$ and $n$ is the overall
-sample size.  This results in a $K \times p$ matrix, with one entry for
+This results in a $C \times k$ matrix, with one entry for
 each category-by-model parameter combination.  We can test
 a specific model parameter for invariance by focusing on the associated
-column of the $K \times p$ matrix, summing over the squared entries in
-the column to obtain a $\chi^2$-distributed statistic with
-$(K-1)$ degrees of freedom \cite{HjoKon02}.
+column of the $C \times k$ matrix and employing a weighted squared sum of
+the entries in the column to obtain a $\chi^2$-distributed statistic with
+$(C-1)$ degrees of freedom \cite{HjoKon02}.
 Alternatively, to simultaneously test multiple parameters, we can sum
 the $\chi^2$ statistics and degrees of freedom for the individual
 parameters.
+
+\readme{Should we also say something about ordinal variables and
+variables with a lot of ties? These may also be better treated as categorical
+variables if the number of potential thresholds is very low -- because
+the asymptotics go in the number of thresholds.}
 
 \subsection{Extensions}
 The proposed family of tests can be extended in various ways.  First,
@@ -1052,15 +1079,18 @@ with related algorithms being developed for generalized linear
 models \cite{ZeiHot08} and Rasch models \cite{KopZei10}.  
 
 Relatedly,
-S\'{a}nchez \citeyear{San09} described a general
+S\'{a}nchez \citeyear{San09} describes a general
 method for partitioning/segmenting structural equation models within a 
 partial least squares framework.  This method involves direct maximization of
 the likelihood ratio (i.e., fitting the model for various subgroups
 defined by 
-$V$ and choosing the subgroups with the largest likelihood ratio),
-however, instead of the tests described in this paper.  The tests
-described here are highly advantageous because they only require the
-model to be estimated once.
+$V$ and choosing the subgroups with the largest likelihood ratio).
+Thus, unlike the tests described in this paper, this approach does not
+provide a formal significance test with a controlled level of Type~I errors.
+
+\readme{For PATHMOX, I would just use the argument that it is not a formal
+test. Whether or not it is computationally more expensive would only be
+a second argument, but I would probably avoid to use it.}
 
 % Recursive method
 % \subsubsection{Recursive Multiple-Groups Models}
@@ -1113,18 +1143,19 @@ example, it would be possible to assess whether relationships between
 latent variables are stronger for some students than for
 others.  Secondly, 
 the tests may be extended to study differential item functioning (DIF)
-in item response models (e.g., \citeNP{KopZei10}, who focused on an
-application to Rasch models).  
-DIF methods are similar to those for factor analysis in
-that subgroups must be specified in advance.  The tests proposed here
-can detect subgroups automatically, however, offering a unified way of
-studying both 
-measurement invariance in factor analysis and differential item
-functioning in item response.  While these
-two methods have developed largely independently of one another,
+in item response models (e.g., \citeNP{KopZei10}, who focused on recursive
+partitioning of Rasch models).  
+Traditional DIF methods are similar to those for factor analysis in
+that subgroups must be specified in advance.
+%% The tests proposed here can detect subgroups automatically, however, offering a unified way of
+%% studying both  measurement invariance in factor analysis and differential item
+%% functioning in item response.
+While these two methods have developed largely independently of one another,
 some treatments \cite{Mcd99} and recent research \cite{StaChe06} have
 sought to unify the methods.  Extensions of the proposed tests can
 support this endeavor.
+\readme{I have omitted (= commented) one sentence in the last paragraph.
+I feel the paragraph may be somewhat more intelligible like this.}
 
 \subsection{Summary}
 We have outlined a family of 
@@ -1142,12 +1173,16 @@ models.
 
 \section*{Computational Details}
 
+\readme{Instead of just giving a single URL, I prefer to give some more details
+about the computational methods used. Especially in this case this makes sense,
+because an OpenMx paper is forthcoming in Psychometrika.}
+
 All results were obtained using the {R}~system for statistical computing \cite{R2010},
 version~2.11.1, employing the add-on packages {OpenMx}~0.9.1-1421 \cite{BokNea11} for
 fitting of the factor analysis models and {strucchange}~1.4.2 \cite{ZeiLei02,Zei06}
 for evaluating the parameter instability tests. {R} and {strucchange} are
 freely available under the General Public License~2 from the
-Comprehensive \proglang{R} Archive Network at \url{http://CRAN.R-project.org/}
+Comprehensive {R} Archive Network at \url{http://CRAN.R-project.org/}
 while {OpenMx} is available under the
 Apache License~2.0 from \url{http://openmx.psyc.virginia.edu/}.
 R code for replication of our results is

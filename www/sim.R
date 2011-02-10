@@ -27,7 +27,8 @@ dgp <- function(nobs = 200, diff = 3)
 
   # Loadings for "old" individuals:
   lambda.o <- matrix(0,6,2)
-  lambda.o[,1] <- lambda.y[,1] - (ses * c(.87,.6,1.32,rep(0,3)))
+  #old# lambda.o[,1] <- lambda.y[,1] - (ses * c(.87,.6,1.32,rep(0,3)))
+  lambda.o[,1] <- lambda.y[,1] - (ses * c(8.66, 5.52, 9.19, rep(0, 3))/sqrt(nobs))
   lambda.o[,2] <- c(0,0,0,3.24,4.32,7.21)
   
   phi <- matrix(.48,2,2)
@@ -102,7 +103,8 @@ simulation <- function(diff = seq(0, 5, by = 0.25),
 
   rval <- data.frame()
   for(i in 1:ntest) rval <- rbind(rval, prs)
-  rval$test <- factor(rep(c("dmax", "CvM", "supLM", "dmax", "CvM", "supLM"), each = nprs), levels = c("dmax", "CvM", "supLM"))
+  rval$test <- factor(rep(c("dmax", "CvM", "supLM", "dmax", "CvM", "supLM"), each = nprs),
+    levels = c("dmax", "CvM", "supLM"))
   rval$pars <- factor(rep(c("3", "3", "3", "19", "19", "19"), each = nprs), levels = c("3", "19"))
   rval$nobs <- factor(rval$nobs)
   rval$power <- as.vector(pow)
@@ -117,14 +119,15 @@ library("mvtnorm")
 source("mz.R")
 
 ## seed for replication
-set.seed(6020)
+RNGkind(kind = "default", normal.kind = "default")
+set.seed(1090)
 
 ## run simulation
 mz_sim <- simulation()
 save(mz_sim, file = "mz_sim.rda")
 }
 
-if(TRUE) {
+if(FALSE) {
 ## load simulation results
 load("mz_sim.rda")
 
@@ -135,8 +138,6 @@ ftable(xtabs(power ~ nobs + pars + test + diff, data = mz_sim), col.vars = "diff
 round(ftable(100 * xtabs(power ~ nobs + pars + test + diff,
   data = mz_sim, subset = diff %in% c(seq(0, 3.5, by = 0.5))),
   col.vars = "diff"), digits = 1)
-# To export to Latex, I wrote ftable contents to a text file, then read it
-# back in with read.fwf, then used xtable.  There must be an easier way?
 
 ## display result in graphic
 library("lattice")
