@@ -15,7 +15,7 @@ source("sim.R")
 
 ## generate single artificial data set
 set.seed(1090)
-d <- dgp(200, 3)
+d <- dgp(200, 2)
 
 ## full sample and "true" subsample models 
 mz0 <- mzfit(d)

@@ -28,7 +28,7 @@ dgp <- function(nobs = 200, diff = 3)
   # Loadings for "old" individuals:
   lambda.o <- matrix(0,6,2)
   #old# lambda.o[,1] <- lambda.y[,1] - (ses * c(.87,.6,1.32,rep(0,3)))
-  lambda.o[,1] <- lambda.y[,1] - (ses * c(8.66, 5.52, 9.19, rep(0, 3))/sqrt(nobs))
+  lambda.o[,1] <- lambda.y[,1] - (ses * c(8.66, 5.52, 9.19, rep(0, 3))/sqrt(nobs/2))
   lambda.o[,2] <- c(0,0,0,3.24,4.32,7.21)
   
   phi <- matrix(.48,2,2)
