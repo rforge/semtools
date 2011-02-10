@@ -86,7 +86,7 @@ testpower <- function(nrep = 5000, size = 0.05, verbose = TRUE, ...)
 }
 
 ## Loop over scenarios
-simulation <- function(diff = seq(0, 5, by = 0.25),
+simulation <- function(diff = seq(0, 3.5, by = 0.25),
   nobs = c(100, 200, 500), verbose = TRUE, ...)
 {
   prs <- expand.grid(diff = diff, nobs = nobs)
