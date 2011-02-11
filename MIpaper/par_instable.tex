@@ -236,8 +236,9 @@ measurement invariance approaches.
 To employ the LR test for assessing measurement invariance, model
 parameters are estimated separately for a certain number of subgroups
 of the data (with some parameters potentially restricted to be equal across
-subgroups).\footnote{For ease of exposition we present
-the results for the case where there are no such restrictions, although it is
+subgroups).\footnote{For ease of exposition, we describe
+the case where there are no such parameter restrictions.  As shown in
+the example and simulation below, it is
 straightforward to extend all methods to the more general case.}
 Then, the sum of maximized likelihoods 
 from the subgroups are compared with the original maximized full-sample likelihood
@@ -550,7 +551,7 @@ parameters, no specific parameter can be identified that is responsible for the
 violation. Similarly,  neither component(s) nor threshold(s)
 can be formally identified for the Cram\'{e}r-von Mises test. However, graphing of (transformations of) the cumulative
 score process may still be valuable for gaining some insights (see,
-e.g., Figure~\ref{fig:gefp_3_19}).
+e.g., Figure~\ref{fig:cusumex}).
 
 If a measurement invariance violation is detected by any of the tests,
 one may want to incorporate it into the model to account for it. The
@@ -670,8 +671,6 @@ verbal factor loading parameters for student $i$.  Alternatively, we
 can consider all model parameters (including means), leading to a test
 of \eqref{eq:h0}.  We consider both of these tests below.
 
-% stopped here Feb 10 2011
-
 \subsection{Results}
 In the results section, we first describe overall results.  We then 
 describe estimation of $\nu$ and 
@@ -699,7 +698,7 @@ higher than the solid horizontal line.
 
 The figures convey information about several properties
 of the tests. First, all three tests are more powerful (and in
-this example significant) if only those parameters are tested
+this example significant) if we test only those parameters 
 that are subject to instabilities. Conversely, if all 19~model
 parameters are assessed (including those that are in fact invariant),
 the power is decreased. This decrease, however, is less pronounced
@@ -715,12 +714,11 @@ The figure
 shows that the two statistics are very similar to one another, with
 both maxima at the dotted vertical line.  This
 is generally to be expected, because the two tests are asymptotically
-equivalent.  More generally, the 
+equivalent.  The 
 max-LR statistic cannot be obtained from the empirical fluctuation
-process, so the factor analysis model must be refitted before and after
-each of the possible threshold values $\nu$.
-\readme{With the modified DGP code, both max-LR and max-LM, are
-nonsignificant in the example.}
+process, however, so the factor analysis model must be refitted before
+and after each of the possible threshold values $\nu$.
+
 
 \subsubsection{Estimation of $\nu$ and Parameter Isolation}
 As described above, the tests of \eqref{eq:exh0} imply that the 
@@ -733,28 +731,24 @@ examining the peaks in Figure~\ref{fig:cusumex}.  For all six panels
 in the figure, the peaks occur near an age of 16.1.  This agrees well
 with the true threshold of 16.0.
 
-\fixme{I'm not really happy with the following paragraph. I think
+\readme{Achim previous comment: I'm not really happy with the following
+  paragraph. I think 
 I wouldn't call this a posthoc test. It is really a test of the same
 hypothesis as before, but now using the double-max
-statistic. Would it be possible to simply show this and say that
-it is an advantage of the double-max test that both the threshold
-and the parameter affected by the invariance can be ``seen'' in the
-visualization. Then, we can still go on and talk about the power issue:
-The double-max test potentially wastes a lot of power, namely
-in the case where many of the parameters change at the same time. Note
-that in the case where all parameters change, we wouldn't have to ask
-the question ``Which parameter did change?''. Thus, luckily, the double-max test
-is more powerful when we need it. But, unfortunately, we don't know that
-in advance.}
+statistic. \\ \ \\
+Ed response: I am fine with not calling it a posthoc test.  However,
+it could sometimes be advantageous to first test the hypothesis using the CvM
+statistic, then, if CvM rejects the hypothesis, employ the double-max
+statistic to say something about individual model parameters.  This
+would be useless if all parameters change, but, for measurement
+invariance problems, one often expects many model parameters to be stable.}
 
-The double-max test yields specific information about 
-parameters violating measurement invariance.  Given
-rejection of the hypothesis of measurement invariance \eqref{eq:exh0},
-we can do posthoc 
-tests to study specific parameters violating measurement invariance.
-This involves individual examination of each parameter's cumulative
-score process,
-along with a procedure that controls for Type I error.  
+As mentioned previously, the double-max test is advantageous because
+it yields information about individual 
+parameters violating measurement invariance.  
+That is, it allows us to examine whether or not individual parameters' 
+cumulative score processes lead one to reject the hypothesis of
+measurement invariance.
 Figure~\ref{fig:lambdas} shows the individual cumulative score processes for the
 verbal factor loadings, with the horizontal lines reflecting the
 critical value at $\alpha=.05$.
@@ -764,7 +758,10 @@ dashed line, so we would conclude a measurement
 invariance violation with respect to age for the third
 verbal test.  The fact that the cumulative score process for the first
 and second loadings did not achieve the critical value represents a Type II
-error, which implicitly brings into question the posthoc tests' power.  We
+error, which implicitly brings into question the posthoc tests' power.
+This is an example of a situation where the double-max test ``wastes''
+power, as it cannot make use of the fact that multiple model
+parameters change simultaneously.  We
 generally address the issue of power in the simulations below.
 
 \begin{figure}
@@ -787,11 +784,9 @@ generally address the issue of power in the simulations below.
 \end{figure}
 
 \begin{figure}
-\caption{Posthoc tests of individual verbal factor loadings, based on
-  the absolute maximum of each cumulative score process.  The top
-  panel depicts the process for $\lambda_{11}$, the middle panel
-  depicts the process for $\lambda_{21}$, and the bottom panel depicts
-  the process for $\lambda_{31}$.  The solid, horizontal lines
+\caption{Cumulative score processes for each verbal factor
+  loadings, with critical values stemming from the double-max test. 
+  The solid, horizontal lines
   correspond to the critical value at $\alpha=.05$.}
 \label{fig:lambdas}
 \includegraphics[height=5in]{gefp_lambdas.pdf}
@@ -931,7 +926,7 @@ which these findings may extend to other factor-analytic situations.
 In this paper, we have presented a new family of statistical tests for
 the study of measurement invariance in psychometrics.  The tests,
 based on stochastic processes, have reasonable power, can isolate
-groups of individuals violating measurement invariance based on a
+subgroups of individuals violating measurement invariance based on a
 continuous auxiliary variable, and can
 isolate specific model parameters affected by the violation.  In this
 section, we consider the tests' use in practice and their 
@@ -959,7 +954,7 @@ individuals into subgroups that violate
 measurement invariance.  While a single $\nu$ was assumed in this
 paper, it is also possible to define 
 formal rules for estimating multiple $\nu$ parameters.  We plan to
-explore these ideas in the future.
+explore these issues in the future.
 
 % \subsection{Further Issues}
 % Further issues associated with the proposed tests include: (1)
@@ -1070,12 +1065,11 @@ the entries in the column to obtain a $\chi^2$-distributed statistic with
 $(C-1)$ degrees of freedom \cite{HjoKon02}.
 Alternatively, to simultaneously test multiple parameters, we can sum
 the $\chi^2$ statistics and degrees of freedom for the individual
-parameters.
-
-\readme{Should we also say something about ordinal variables and
-variables with a lot of ties? These may also be better treated as categorical
-variables if the number of potential thresholds is very low -- because
-the asymptotics go in the number of thresholds.}
+parameters.  In addition to categorical $V$, this framework may also
+be useful for continuous $V$ with many ties and ordinal $V$.  
+The number of potential thresholds may be very low in these
+situations, which impacts the extent to which asymptotic results hold
+for the main test statistics described in this paper.
 
 \subsection{Extensions}
 The proposed family of tests can be extended in various ways.  First,
@@ -1095,10 +1089,6 @@ defined by
 $V$ and choosing the subgroups with the largest likelihood ratio).
 Thus, unlike the tests described in this paper, this approach does not
 provide a formal significance test with a controlled level of Type~I errors.
-
-\readme{For PATHMOX, I would just use the argument that it is not a formal
-test. Whether or not it is computationally more expensive would only be
-a second argument, but I would probably avoid to use it.}
 
 % Recursive method
 % \subsubsection{Recursive Multiple-Groups Models}
@@ -1141,14 +1131,14 @@ a second argument, but I would probably avoid to use it.}
 % auxiliary variables is an important future direction.
 
 %\subsubsection{Other Latent Variable Models}
-Aside from recursive measurement invariance detection, the proposed tests
+The proposed tests also 
 readily extend to other popular psychometric models.  
 Instead of studying measurement invariance in factor
 analysis, the tests can be used to generally 
 study the stability of structural equation model parameters across
 observations.  For 
 example, it would be possible to assess whether relationships between
-latent variables are stronger for some students than for
+latent variables are stronger for some individuals than for
 others.  Secondly, 
 the tests may be extended to study differential item functioning (DIF)
 in item response models (e.g., \citeNP{KopZei10}, who focused on recursive
@@ -1158,12 +1148,13 @@ that subgroups must be specified in advance.
 %% The tests proposed here can detect subgroups automatically, however, offering a unified way of
 %% studying both  measurement invariance in factor analysis and differential item
 %% functioning in item response.
-While these two methods have developed largely independently of one another,
+While factor-analytic measurement invariance methods and DIF methods
+have developed 
+largely independently of one another, 
 some treatments \cite{Mcd99} and recent research \cite{StaChe06} have
 sought to unify the methods.  Extensions of the proposed tests can
 support this endeavor.
-\readme{I have omitted (= commented) one sentence in the last paragraph.
-I feel the paragraph may be somewhat more intelligible like this.}
+
 
 \subsection{Summary}
 We have outlined a family of 
@@ -1180,10 +1171,6 @@ factor-analytic context and through application of the tests to new
 models.
 
 \section*{Computational Details}
-
-\readme{Instead of just giving a single URL, I prefer to give some more details
-about the computational methods used. Especially in this case this makes sense,
-because an OpenMx paper is forthcoming in Psychometrika.}
 
 All results were obtained using the {R}~system for statistical computing \cite{R2010},
 version~2.11.1, employing the add-on packages {OpenMx}~0.9.1-1421 \cite{BokNea11} for
