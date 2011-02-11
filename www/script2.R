@@ -60,7 +60,7 @@ abline(v = mz.age[which.max(mz.lrstat)], lty = 3)
 
 
 ## Figure 4
- # pdf("gefp_posthoc.pdf", height = 7, width = 6)
+ # pdf("gefp_lambdas.pdf", height = 7, width = 6)
 plot(gefp_3_info,  functional = maxBB, aggregate = FALSE, ylim = c(-2, 2),
   main = "", xlab = "Age", ylab = expression(lambda[11], lambda[21], lambda[31]))
  # dev.off()

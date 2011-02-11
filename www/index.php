@@ -43,12 +43,11 @@ echo $contents; } ?>
 
 <!-- end of project description -->
 
-<p> R files for carrying out the example described in Merkle & Zeileis: </p>
+<p> R files for carrying out the example and simulation described in Merkle & Zeileis: </p>
 <ul>
-<li> <a href=data.dat>Data file</a> containing data for the example.</li>
-<li> <a href=def.model.R>Factor analysis file</a> that contains OpenMx specification of the factor analysis model.</li>
-<li> <a href=fa_score_extraction.R>Score extraction file</a> containing code to extract scores and information matrix from the fitted model.</li>
-<li> <a href=script.R>Script file</a> containing code to run the example, using the above files.</li>
+<li> <a href=sim.R>Simulation functions</a> for data generation, power evaluation, and power summaries.</li>
+<li> <a href=mz.R>Factor analysis functions</a> for OpenMx model estimation and manual score abstraction.</li>
+<li> <a href=script2.R>Script file</a> containing code to run and summarize the example and simulations, using the above files.</li>
 </ul>
 
 <p> The <strong>project summary page</strong> resides <a href="http://<?php echo $domain; ?>/projects/<?php echo $group_name; ?>/"><strong>here</strong></a>. </p>
