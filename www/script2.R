@@ -99,7 +99,11 @@ round(ftable(100 * xtabs(power ~ nobs + pars + test + diff,
 ## display result in graphic
 library("lattice")
 trellis.par.set(theme = canonical.theme(color = FALSE))
-levels(mz_sim$pars) <- paste("k =", levels(mz_sim$pars))
-levels(mz_sim$nobs) <- paste("n =", levels(mz_sim$nobs))
+
 xyplot(power ~ diff | pars + nobs, group = ~ test, data = mz_sim, type = "b",
-       xlab = "Violation Magnitude", ylab = "Power", ylim = c(0, 1))
+       xlab = "Violation Magnitude", ylab = "Power", ylim = c(0, 1),
+       strip=function(which.given, ..., factor.levels){
+         levs <- if (which.given == 1) c(expression(k^symbol("\052") == 3),
+                                         expression(k^symbol("\052") == 19))
+                 else paste("n =", levels(mz_sim$nobs))
+         strip.default(which.given, ..., factor.levels=levs)})
