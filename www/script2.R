@@ -4,6 +4,7 @@
 
 ## packages and code
 library("OpenMx")
+library("lavaan")
 library("strucchange")
 library("mvtnorm")
 source("mz.R")
@@ -27,9 +28,9 @@ round((coef(mz1) - coef(mz2)) / sqrt(diag(vcov(mz1)) + diag(vcov(mz2))), digits 
 
 ## empirical fluctuation processes (3 vs all 19 pars)
 gefp_3_info <- gefp(mz0, fit = NULL, order.by = d$age, parm = 1:3,
-  vcov = info.MxModel, sandwich = FALSE)
+  vcov = info.mzfit, sandwich = FALSE)
 gefp_19_info <- gefp(mz0, fit = NULL, order.by = d$age,
-  vcov = info.MxModel, sandwich = FALSE)
+  vcov = info.mzfit, sandwich = FALSE)
 
 ## Figure 2
  # pdf("gefp_3_19.pdf",height = 9, width = 6)
@@ -53,7 +54,7 @@ mz.lrstat <- sapply(mz.age, lrstat)
 par(mfrow = c(1, 1))
 plot(gefp_19_info, functional = supLM(0.1),
   xlab = "Age", ylab = "LR and LM statistics", main = "", ylim = c(0, 50))
-legend("topleft", c("LR", "LM"), lty = c(1, 2), bty = "n")
+legend("topleft", c("LR", "LM"), lty = c(2, 1), bty = "n")
 lines(mz.age, mz.lrstat, lty = 2)
 abline(v = mz.age[which.max(mz.lrstat)], lty = 3)
  # dev.off()
