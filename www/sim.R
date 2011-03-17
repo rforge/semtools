@@ -59,24 +59,30 @@ dgp <- function(nobs = 200, diff = 3)
 ## Evaluate power simulation on a single dgp() scenario
 testpower <- function(nrep = 5000, size = 0.05, verbose = TRUE, ...)
 {
-  pval <- matrix(rep(NA, 6 * nrep), ncol = 6)
-  colnames(pval) <- c("dmax3", "CvM3", "supLM3", "dmax19", "CvM19", "supLM19")
+  pval <- matrix(rep(NA, 9 * nrep), ncol = 9)
+  colnames(pval) <- c("dmax3", "CvM3", "supLM3", "dmax13", "CvM13", "supLM13", "dmax19", "CvM19", "supLM19")
   
   for(i in 1:nrep) {
     d <- dgp(...)
     mz <- mzfit(d)
-    mz_gefp3  <- try(gefp(mz, fit = NULL, vcov = info.MxModel, order.by = d$age, sandwich = FALSE, parm = 1:3), silent = TRUE)
-    mz_gefp19 <- try(gefp(mz, fit = NULL, vcov = info.MxModel, order.by = d$age, sandwich = FALSE), silent = TRUE)
+    mz_gefp3  <- try(gefp(mz, fit = NULL, vcov = info.mzfit, order.by = d$age, sandwich = FALSE, parm = 1:3), silent = TRUE)
+    mz_gefp13 <- try(gefp(mz, fit = NULL, vcov = info.mzfit, order.by = d$age, sandwich = FALSE, parm = 1:13), silent = TRUE)
+    mz_gefp19 <- try(gefp(mz, fit = NULL, vcov = info.mzfit, order.by = d$age, sandwich = FALSE), silent = TRUE)
 
     if(!inherits(mz_gefp3, "try-error")) {
       pval[i, 1] <- sctest(mz_gefp3,  functional = maxBB)$p.value
       pval[i, 2] <- sctest(mz_gefp3,  functional = meanL2BB)$p.value
       pval[i, 3] <- sctest(mz_gefp3,  functional = supLM(0.1))$p.value
     }
+    if(!inherits(mz_gefp13, "try-error")) {
+      pval[i, 4] <- sctest(mz_gefp13,  functional = maxBB)$p.value
+      pval[i, 5] <- sctest(mz_gefp13,  functional = meanL2BB)$p.value
+      pval[i, 6] <- sctest(mz_gefp13,  functional = supLM(0.1))$p.value
+    }
     if(!inherits(mz_gefp19, "try-error")) {
-      pval[i, 4] <- sctest(mz_gefp19, functional = maxBB)$p.value
-      pval[i, 5] <- sctest(mz_gefp19, functional = meanL2BB)$p.value
-      pval[i, 6] <- sctest(mz_gefp19, functional = supLM(0.1))$p.value
+      pval[i, 7] <- sctest(mz_gefp19, functional = maxBB)$p.value
+      pval[i, 8] <- sctest(mz_gefp19, functional = meanL2BB)$p.value
+      pval[i, 9] <- sctest(mz_gefp19, functional = supLM(0.1))$p.value
     }
   }
   rval <- colMeans(pval < size, na.rm = TRUE)
@@ -86,13 +92,13 @@ testpower <- function(nrep = 5000, size = 0.05, verbose = TRUE, ...)
 }
 
 ## Loop over scenarios
-simulation <- function(diff = seq(0, 3.5, by = 0.25),
+simulation <- function(diff = seq(0, 4, by = 0.25),
   nobs = c(100, 200, 500), verbose = TRUE, ...)
 {
   prs <- expand.grid(diff = diff, nobs = nobs)
   nprs <- nrow(prs)
   
-  test <- c("dmax3", "CvM3", "supLM3", "dmax19", "CvM19", "supLM19")
+  test <- c("dmax3", "CvM3", "supLM3", "dmax13", "CvM13", "supLM13", "dmax19", "CvM19", "supLM19")
   ntest <- length(test)
 
   pow <- matrix(rep(NA, ntest * nprs), ncol = ntest)
@@ -103,17 +109,17 @@ simulation <- function(diff = seq(0, 3.5, by = 0.25),
 
   rval <- data.frame()
   for(i in 1:ntest) rval <- rbind(rval, prs)
-  rval$test <- factor(rep(c("dmax", "CvM", "supLM", "dmax", "CvM", "supLM"), each = nprs),
+  rval$test <- factor(rep(c("dmax", "CvM", "supLM", "dmax", "CvM", "supLM", "dmax", "CvM", "supLM"), each = nprs),
     levels = c("dmax", "CvM", "supLM"))
-  rval$pars <- factor(rep(c("3", "3", "3", "19", "19", "19"), each = nprs), levels = c("3", "19"))
+  rval$pars <- factor(rep(c("3", "3", "3", "13", "13", "13", "19", "19", "19"), each = nprs), levels = c("3", "13", "19"))
   rval$nobs <- factor(rval$nobs)
   rval$power <- as.vector(pow)
   return(rval)
 }
 
-if(FALSE) {
+if(TRUE) {
 ## code and packages
-library("OpenMx")
+library("lavaan")
 library("strucchange")
 library("mvtnorm")
 source("mz.R")
@@ -145,10 +151,4 @@ trellis.par.set(theme = canonical.theme(color = FALSE))
 ## all
 xyplot(power ~ diff | pars + nobs, group = ~ test, data = mz_sim, type = "b",
        xlab="Violation Magnitude", ylab="Power")
-## subset
-xyplot(power ~ diff | pars + nobs, group = ~ test, data = mz_sim,
-  subset = diff <= 3, type = "b")
-## subset, scaled by sqrt(n)
-xyplot(power ~ I(diff * sqrt(as.numeric(as.character(nobs)))) | pars + nobs,
-  group = ~ test, data = mz_sim, type = "b", xlim = c(-1, 50))
 }
