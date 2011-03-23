@@ -117,7 +117,7 @@ simulation <- function(diff = seq(0, 4, by = 0.25),
   return(rval)
 }
 
-if(TRUE) {
+if(FALSE) {
 ## code and packages
 library("lavaan")
 library("strucchange")

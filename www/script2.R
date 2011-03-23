@@ -89,22 +89,18 @@ set.seed(1090)
 ## run simulation
 mz_sim <- simulation()
 
-## display result in table
-## all without rounding
-ftable(xtabs(power ~ nobs + pars + test + diff, data = mz_sim), col.vars = "diff")
-## subset with rounding, in percent
+## display subset of results in table
+## (with rounding, in percent)
+mz_sim_sub <- subset(mz_sim, pars %in% c(3, 19))
+mz_sim_sub$pars <- factor(mz_sim_sub$pars)
+levels(mz_sim_sub$pars) <- paste("k* =", levels(mz_sim_sub$pars))
+levels(mz_sim_sub$nobs) <- paste("n =", levels(mz_sim_sub$nobs))
 round(ftable(100 * xtabs(power ~ nobs + pars + test + diff,
-  data = mz_sim, subset = diff %in% c(seq(0, 3.5, by = 0.5))),
+  data = mz_sim_sub, subset = diff %in% c(seq(0, 3.5, by = 0.5))),
   col.vars = "diff"), digits = 1)
 
 ## display result in graphic
 library("lattice")
 trellis.par.set(theme = canonical.theme(color = FALSE))
-
-xyplot(power ~ diff | pars + nobs, group = ~ test, data = mz_sim, type = "b",
-       xlab = "Violation Magnitude", ylab = "Power", ylim = c(0, 1),
-       strip=function(which.given, ..., factor.levels){
-         levs <- if (which.given == 1) c(expression(k^symbol("\052") == 3),
-                                         expression(k^symbol("\052") == 19))
-                 else paste("n =", levels(mz_sim$nobs))
-         strip.default(which.given, ..., factor.levels=levs)})
+xyplot(power ~ diff | pars + nobs, group = ~ test, data = mz_sim_sub, type = "b",
+  xlab = "Violation Magnitude", ylab = "Power", ylim = c(0, 1))
