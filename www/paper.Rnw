@@ -1,5 +1,8 @@
 \documentclass[man]{apa}
 \usepackage{graphicx,epsfig,amsmath,alltt,setspace,bm}
+%% need no \usepackage{Sweave}
+\SweaveOpts{engine = R, eps = FALSE, echo = FALSE, results = hide}
+
 \title{Studying measurement invariance in factor analysis models
   via stochastic processes}
 \twoauthors{Edgar C. Merkle}{Achim Zeileis}
@@ -36,6 +39,16 @@
 
 \begin{document}
 \maketitle
+
+<<preliminaries>>=
+library("OpenMx")
+library("lavaan")
+library("strucchange")
+library("mvtnorm")
+library("lattice")
+source("mz.R")
+source("sim.R")
+@
 
 The assumption that parameters are
 invariant across observations is a
@@ -233,7 +246,7 @@ measurement invariance approaches.
 
 \subsection{Likelihood Ratio, Wald, and Lagrange Multiplier Test for Fixed Subgroups}
 
-To employ the LR test for assessing measurement invariance, model
+To employ the LR~test for assessing measurement invariance, model
 parameters are estimated separately for a certain number of subgroups
 of the data (with some parameters potentially restricted to be equal across
 subgroups).\footnote{For ease of exposition, we describe
@@ -248,7 +261,7 @@ and the null hypothesis $H_0$ from (\ref{eq:h0}) reduces to ${\bm \theta}^{(A)} 
 The parameter estimated $\hat {\bm \theta}^{(A)}$ can then be obtained from the
 observations $i = 1, \dots, m$, say, for which $v_i \le \nu$. Analogously,
 $\hat {\bm \theta}^{(B)}$ is obtained by maximizing the likelihood for the
-observations $i = m + 1, \dots, n$, for which $v_i > \nu$. The LR test statistic
+observations $i = m + 1, \dots, n$, for which $v_i > \nu$. The LR~test statistic
 for the given threshold $\nu$ is then
 \begin{equation} \label{eq:lr}
   \mathit{LR}(\nu) ~=~ -2 \left[
@@ -260,16 +273,16 @@ for the given threshold $\nu$ is then
 which has an asymptotic $\chi^2$ with degrees of freedom equal to the number
 of parameters in~${\bm \theta}$.
 
-Analogously to the LR test, the Wald test and LM test (also known as score test)
+Analogously to the LR~test, the Wald test and LM test (also known as score test)
 can be employed to test the null hypothesis $H_1^*$ for a fixed threshold $\nu$.
 For the Wald test, the idea is to compute the Wald statistic $W(\nu)$ as a quadratic
 form in $\hat {\bm \theta}^{(A)} - \hat {\bm \theta}^{(B)}$, utilizing its estimated
 covariance matrix for standardization. For the LM test, the LM statistic
 $\mathit{LM}(\nu)$ is a quadratic form in ${\bm s}(\hat {\bm \theta}; x_1, \dots, x_m)$
 and ${\bm s}(\hat {\bm \theta}; x_{m+1}, \dots, x_n)$. Thus, the three tests all assess
-differences that should be zero under $H_0$: for the LR test the difference of maximized
+differences that should be zero under $H_0$: for the LR~test the difference of maximized
 likelihoods; for the Wald test, the difference of parameter estimates; and for the
-LM test, the differences of likelihood scores from zero. In the LR case, the parameters
+LM test, the differences of likelihood scores from zero. In the LR~case, the parameters
 have to be estimated under both the null hypothesis and alternative.
 Conversely, the Wald case requires  
 only the estimates under the alternative, while the LM case requires
@@ -500,7 +513,7 @@ from (\ref{eq:dmax}) converges to $\sup_t || {\bm B}^0(t) ||_{\infty}$, where
 $||\cdot||_\infty$ denotes the maximum norm. Similarly, $\mathit{CvM}$
 from (\ref{eq:cvm}) converges to $\int_0^1 || {\bm B}^0(t) ||_2^2 d t$, where $||\cdot||^2$
 denotes the Euclidean norm. Finally, $\max \mathit{LM}$ from (\ref{eq:maxlm}) -- and analogously
-the maximum Wald and LR tests -- converges to $\sup_t (t (1-t))^{-1} || {\bm B}^0(t) ||_2^2$
+the maximum Wald and LR~tests -- converges to $\sup_t (t (1-t))^{-1} || {\bm B}^0(t) ||_2^2$
 (which can also be interpreted as the maximum of a tied-down Bessel process, as pointed out
 previously).
 
@@ -569,7 +582,7 @@ maximizing the segmented log-likelihood
   \ell(\hat {\bm \theta}^{({A)}}; x_1, \dots, x_m) ~+~ \ell(\hat {\bm \theta}^{({B)}}; x_{m+1}, \dots, x_n)
 \end{equation}
 over all values of $m$ corresponding to possible thresholds $\nu$ (such that $v_m \le \nu$ and
-$v_{m+1} > \nu$). As pointed out previously, this is equivalent to maximizing the LR statistic
+$v_{m+1} > \nu$). As pointed out previously, this is equivalent to maximizing the LR~statistic
 from (\ref{eq:lr}) (with some minimal subgroup size typically imposed).
 
 Formally speaking, the maximization of (\ref{eq:seglik}) -- or equivalently (\ref{eq:lr}) --
@@ -599,7 +612,6 @@ values of the verbal factor loadings ($\lambda_{11}$, $\lambda_{21}$,
 $\lambda_{31}$).}
 \label{fig:famod}
 \includegraphics[height=5in]{famod.pdf}
-%\input{figs/path}
 \end{figure}
 
 
@@ -614,8 +626,6 @@ factor loadings for older students are larger than those for younger
 students.  The researcher's goal is to
 study whether the scales are measurement invariant with
 respect to age, which is taken to be the auxiliary variable $V$.
-
-
 
 \subsection{Method}
 
@@ -639,6 +649,10 @@ This violation states that the verbal ability scales
 lack measurement invariance with respect to age.  For simplicity, we
 assume that the mathematical scales are invariant.
 
+<<dgp>>=
+set.seed(1090)
+d <- dgp(200, 2)
+@
 
 
 A sample of size 200 was generated from the model described above, and
@@ -676,6 +690,20 @@ In the results section, we first describe overall results.  We then
 describe estimation of $\nu$ and 
 isolation of model parameters violating
 measurement invariance.
+
+<<mz_mod>>=
+if(file.exists("mz_mod.rda")) {
+  load("mz_mod.rda")
+} else {
+  ## full sample model
+  mz0 <- mzfit(d)
+  ## subsample models
+  lrstat <- function(age) 2 * as.vector(logLik(mzfit(d[d$age <= age,])) + logLik(mzfit(d[d$age > age,])) - logLik(mz0))
+  mz.age <- sort(d$age[d$age >= quantile(d$age, 0.1) & d$age <= quantile(d$age, 0.9)])
+  mz.lrstat <- sapply(mz.age, lrstat)
+  save(mz0, mz.age, mz.lrstat, file = "mz_mod.rda")
+}
+@
 
 \subsubsection{Overall Results}
 Test statistics for the hypotheses \eqref{eq:exh0} and~\eqref{eq:h0}
@@ -715,7 +743,7 @@ shows that the two statistics are very similar to one another, with
 both maxima at the dotted vertical line.  This
 is generally to be expected, because the two tests are asymptotically
 equivalent.  The 
-max-LR statistic cannot be obtained from the empirical fluctuation
+max-LR~statistic cannot be obtained from the empirical fluctuation
 process, however, so the factor analysis model must be refitted before
 and after each of the possible threshold values $\nu$.
 
@@ -768,10 +796,26 @@ generally address the issue of power in the simulations below.
 \caption{Three test statistics of \eqref{eq:exh0} and \eqref{eq:h0}, 
   based on the example involving measurement invariance with respect
   to student age.  Solid, horizontal lines represent critical values
-  at $\alpha=.05$, and the dotted, horizontal lines (second row)
+  at $\alpha = 0.05$, and the dotted, horizontal lines (second row)
   represent values of the Cram\'{e}r-von Mises test statistic.}
 \label{fig:cusumex}
-\includegraphics[height=9in]{gefp_3_19.pdf}
+\setkeys{Gin}{width=\textwidth}
+<<gefp-3-19, fig=TRUE, height=8, width=6>>=
+## empirical fluctuation processes (3 vs all 19 pars)
+gefp_3_info <- gefp(mz0, fit = NULL, order.by = d$age, parm = 1:3,
+  vcov = info.mzfit, sandwich = FALSE)
+gefp_19_info <- gefp(mz0, fit = NULL, order.by = d$age,
+  vcov = info.mzfit, sandwich = FALSE)
+
+## visualization
+par(mfcol = c(3, 2))
+plot(gefp_3_info,  functional = maxBB, main = "DM, k* = 3", xlab = "Age")
+plot(gefp_3_info,  functional = meanL2BB, main = "CvM, k* = 3", xlab = "Age")
+plot(gefp_3_info,  functional = supLM(0.1), main = "max-LM, k* = 3", xlab = "Age")
+plot(gefp_19_info, functional = maxBB, main = "DM, k* = 19", xlab = "Age")
+plot(gefp_19_info, functional = meanL2BB, main = "CvM, k* = 19", xlab = "Age")
+plot(gefp_19_info, functional = supLM(0.1), main = "max-LM, k* = 19", xlab = "Age")
+@
 \end{figure}
 
 \begin{figure}
@@ -780,7 +824,14 @@ generally address the issue of power in the simulations below.
   corresponds to the critical value at $\alpha=.05$ while the dotted vertical
   line highlights the threshold at which the test statistics are maximized.}
 \label{fig:lrlm}
-\includegraphics[height=5in]{lmlr_19.pdf}
+\setkeys{Gin}{width=\textwidth}
+<<lm-lr-19, fig=TRUE, height=5, width=6>>=
+plot(gefp_19_info, functional = supLM(0.1),
+  xlab = "Age", ylab = "LR and LM statistics", main = "", ylim = c(0, 50))
+legend("topleft", c("LR", "LM"), lty = c(2, 1), bty = "n")
+lines(mz.age, mz.lrstat, lty = 2)
+abline(v = mz.age[which.max(mz.lrstat)], lty = 3)
+@
 \end{figure}
 
 \begin{figure}
@@ -789,13 +840,15 @@ generally address the issue of power in the simulations below.
   The solid, horizontal lines
   correspond to the critical value at $\alpha=.05$.}
 \label{fig:lambdas}
-\includegraphics[height=5in]{gefp_lambdas.pdf}
+\setkeys{Gin}{width=\textwidth}
+<<gefp-lambdas, fig=TRUE, height=8, width=6>>=
+plot(gefp_3_info,  functional = maxBB, aggregate = FALSE, ylim = c(-2, 2),
+  main = "", xlab = "Age", ylab = expression(lambda[11], lambda[21], lambda[31]))
+@
 \end{figure}
 
 \section{Simulation}
 
-% Simulations demonstrating power of test(s) at various
-% sample sizes, types of invariance violations, ?
 In this section, we conduct a simulation designed to
 examine the tests' power and Type I error rates in a context
 similar to the example.
@@ -825,7 +878,7 @@ involved the younger students' values of $\{\lambda_{11},
 \lambda_{21}, \lambda_{31}\}$ deviating from the older students'
 values by $d$ 
 times the parameters' asymptotic standard errors, with $d = 0, 0.25,
-0.5, \dots, 3.5$.  The 0-standard error condition was
+0.5, \dots, 4$.  The 0-standard error condition was
 used to study Type I error rate.
 
 For each combination of sample size ($n$) $\times$
@@ -834,6 +887,27 @@ violation magnitude ($d$) $\times$ number of parameters being tested
 5,000 datasets were generated and tested.  In each dataset, half the
 students were 13--15 
 years of age and half were 16--18 years of age.
+
+<<mz_sim>>=
+if(file.exists("mz_sim.rda")) {
+  load("mz_sim.rda")
+} else {
+  ## seed for replication
+  RNGkind(kind = "default", normal.kind = "default")
+  set.seed(1090)
+  ## run simulation
+  mz_sim <- simulation()
+  save(mz_sim, file = "mz_sim.rda")
+}
+
+## select only subset
+mz_sim_sub <- subset(mz_sim, pars %in% c(3, 19))
+mz_sim_sub$pars <- factor(mz_sim_sub$pars)
+## labeling
+levels(mz_sim_sub$pars) <- paste("k* =", levels(mz_sim_sub$pars))
+levels(mz_sim_sub$nobs) <- paste("n =", levels(mz_sim_sub$nobs))
+@
+
 
 \subsection{Results}
 Full simulation results are presented in Figure~\ref{fig:simres}, and
@@ -882,7 +956,13 @@ analysis and beyond.
   Numbers above each panel reflect the sample size and number of
   parameters being tested, respectively.}
 \label{fig:simres}
-\includegraphics[height=9in]{simres.pdf}
+\setkeys{Gin}{width=\textwidth}
+<<mzsim-xyplot, fig=TRUE, height=7, width=7>>=
+## visualization
+trellis.par.set(theme = canonical.theme(color = FALSE))
+print(xyplot(power ~ diff | pars + nobs, group = ~ test, data = mz_sim_sub, type = "b",
+  xlab = "Violation Magnitude", ylab = "Power", ylim = c(0, 1)))
+@
 \end{figure}
 
 
@@ -891,34 +971,29 @@ analysis and beyond.
   across three sample sizes, fifteen magnitudes of measurement
   invariance violations, and two subsets of tested
   parameters. Abbreviations: CvM = Cram\'{e}r-von Mises 
-  test; Max-LM = Maximum Lagrange multiplier test; DM = Double-max test.}
+  test; max-LM = Maximum Lagrange multiplier test; DM = Double-max test.}
 \label{tab:simres}
 \begin{center}
-\begin{tabular}{lllllllllll}
+\begin{tabular}{lrlrrrrrrrrr}
   \hline
-   & & & \multicolumn{8}{l}{Violation Magnitude (SE)} \\
-  $n$ &  npars &  Statistic    &  0 & 0.5 &    1 &  1.5
-       &    2 &  2.5  &   3 &  3.5 \\ 
-  \hline
-100 & 3 & DM & 3.1 & 4.1 & 8.5 & 16.1 & 27.2 & 43.2 & 57.1 & 67.4 \\ 
-   &  & CvM & 4.9 & 6.6 & 13.1 & 26.4 & 45.0 & 65.9 & 80.4 & 89.2 \\ 
-   &  & Max-LM & 4.9 & 6.8 & 11.4 & 20.6 & 34.8 & 54.8 & 71.4 & 82.9 \\ 
-   & 19 & DM & 2.4 & 3.0 & 4.3 & 5.9 & 9.5 & 15.9 & 23.8 & 31.5 \\ 
-   &  & CvM & 4.6 & 4.4 & 7.0 & 11.1 & 17.1 & 27.1 & 38.1 & 49.2 \\ 
-   &  & Max-LM & 7.0 & 7.1 & 9.0 & 11.2 & 16.2 & 21.4 & 31.0 & 39.7 \\ 
-  200 & 3 & DM & 3.7 & 5.0 & 9.0 & 17.8 & 32.0 & 49.3 & 67.1 & 84.0 \\ 
-   &  & CvM & 4.9 & 6.5 & 13.9 & 26.2 & 48.2 & 68.1 & 85.5 & 95.1 \\ 
-   &  & Max-LM & 5.5 & 6.1 & 11.1 & 20.9 & 39.1 & 58.6 & 78.5 & 92.0 \\ 
-   & 19 & DM & 3.8 & 3.4 & 4.6 & 7.1 & 13.1 & 22.0 & 34.7 & 52.5 \\ 
-   &  & CvM & 4.6 & 4.9 & 7.3 & 11.8 & 20.1 & 31.7 & 45.8 & 64.0 \\ 
-   &  & Max-LM & 6.0 & 6.1 & 8.2 & 11.3 & 16.3 & 24.4 & 37.6 & 54.3 \\ 
-  500 & 3 & DM & 3.9 & 5.6 & 9.7 & 19.5 & 34.3 & 52.3 & 71.9 & 87.0 \\ 
-   &  & CvM & 4.8 & 7.3 & 12.9 & 26.9 & 47.3 & 69.1 & 86.7 & 94.9 \\ 
-   &  & Max-LM & 5.5 & 6.7 & 11.4 & 21.4 & 38.5 & 60.1 & 81.4 & 93.2 \\ 
-   & 19 & DM & 3.7 & 4.4 & 5.3 & 8.7 & 14.6 & 25.6 & 41.6 & 60.9 \\ 
-   &  & CvM & 4.8 & 5.3 & 7.1 & 11.9 & 20.6 & 32.3 & 50.3 & 68.8 \\ 
-   &  & Max-LM & 5.6 & 6.2 & 7.5 & 10.4 & 15.9 & 25.8 & 41.6 & 60.8 \\ 
-   \hline
+   & & & \multicolumn{9}{l}{Violation Magnitude (SE)} \\
+<<mz_sim-table, results=tex>>=
+## labeling
+levels(mz_sim_sub$pars) <- gsub("k* = ", "", levels(mz_sim_sub$pars), fixed = TRUE)
+levels(mz_sim_sub$nobs) <- gsub( "n = ", "", levels(mz_sim_sub$nobs), fixed = TRUE)
+levels(mz_sim_sub$test) <- gsub("supLM", "max-LM", levels(mz_sim_sub$test), fixed = TRUE)
+
+## table
+mz_tab <- round(ftable(100 * xtabs(power ~ nobs + pars + test + diff,
+  data = mz_sim_sub, subset = diff %in% c(seq(0, 4, by = 0.5))),
+  col.vars = "diff"), digits = 1)
+mz_tab <- format(mz_tab, quote = FALSE)[-2, -4]
+mz_tab[1,] <- c("$n$", "$k^*$", "Statistic", format(seq(0, 4, by = 0.5)))
+mz_tab <- paste(apply(mz_tab, 1, paste, collapse = " & "), "\\\\")
+mz_tab[c(1, length(mz_tab))] <- paste(mz_tab[c(1, length(mz_tab))], "\\hline")
+writeLines(mz_tab)
+@
+
 \end{tabular}
 \end{center}
 \end{table*}
@@ -944,7 +1019,7 @@ invariance (see, e.g., \citeNP{Mer93}), or (2)~test a single subset of
 model parameters, potentially leading to improved power to detect a
 single type of measurement invariance.  The traditional
 steps have involved hypothesizing a specific type of invariance and
-then testing for it via a LR test, but this is
+then testing for it via a LR~test, but this is
 unnecessary under the proposed framework.
 
 % Researchers interpreting subgroups violating MI
@@ -1174,17 +1249,19 @@ models.
 
 \section*{Computational Details}
 
-All results were obtained using the {R}~system for statistical computing \cite{R2010},
-version~2.11.1, employing the add-on packages {OpenMx}~0.9.1-1421 \cite{BokNea11} for
-fitting of the factor analysis models and {strucchange}~1.4.2 \cite{ZeiLei02,Zei06}
-for evaluating the parameter instability tests. {R} and {strucchange} are
+All results were obtained using the {R}~system for statistical computing \cite{R11},
+version~\Sexpr{paste(R.Version()[6:7], collapse = ".")}, employing the add-on packages
+{lavaan}~\Sexpr{packageDescription("lavaan")["Version"]} \cite{lavaan11} and
+{OpenMx}~\Sexpr{packageDescription("OpenMx")["Version"]} \cite{BokNea11} for fitting of the factor analysis models and
+{strucchange}~\Sexpr{packageDescription("strucchange")["Version"]} \cite{ZeiLei02,Zei06}
+for evaluating the parameter instability tests. {R}~and the packages {lavaan} and {strucchange} are
 freely available under the General Public License~2 from the
 Comprehensive {R} Archive Network at \url{http://CRAN.R-project.org/}
 while {OpenMx} is available under the
 Apache License~2.0 from \url{http://openmx.psyc.virginia.edu/}.
-R code for replication of our results is
+{R}~code for replication of our results is
 available at \url{http://semtools.R-Forge.R-project.org/}.
 
-\bibliography{list}
+\bibliography{refs}
 
 \end{document}
