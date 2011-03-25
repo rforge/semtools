@@ -119,58 +119,66 @@ bread.mzfit <- function(x, ...) vcov(x) * nrow(x$data)
 
 info.mzfit <- function(x, ...) solve(vcov(x) * nrow(x$data))
 
-estfun.mzfit <- function(x, type = c("analytic", "numeric"), ...)
+estfun.mzfit <- function(x, ...)
 {
-  ## numeric or analytic derivatives
-  type <- match.arg(type)
-  if(type == "numeric") stopifnot(require("numDeriv"))
-
   ## estimated coefficients
-  theta <- coef(x)
+  cf <- coef(x)
 
-  ## extract observed data
-  dat <- x$data
-  dat <- as.matrix(dat)
-  n <- nrow(dat)
+  ## observed data
+  X <- as.matrix(x$data)
+  nvar <- ncol(X)
+  nobs <- nrow(X)
 
-  # score matrix
-  scores <- matrix(NA, n, length(theta))
-  colnames(scores) <- names(theta)
-  rownames(scores) <- rownames(dat)
+  rval <- switch(x$engine,
   
-  switch(type,
-  
-  "numeric" = {    
-    # casewise likelihood function
-    likefun <- function(x, ind.dat){
-      mu <- x[14:19]
-      lam <- matrix(c(x[1:3], rep(0,6), x[4:6]), 6, 2) # loadings
-      phi <- matrix(c(1,x[13], x[13], 1), 2, 2)        # factor covs
-      psi <- diag(x[7:12])			       # error vars
+  ## for lavaan we could in principle also handle
+  ## other models:
+  "lavaan" = {
+    # fitted moments
+    moments <- fitted(x$model)
+    Sigma.hat <- moments$cov
+    Mu.hat <- moments$mean
+    Sigma.inv <- solve(Sigma.hat)
 
-      impl.cov <- lam %*% phi %*% t(lam) + psi
+    # scores.H1 (H1 = saturated model)
+    pstar <- nvar * (nvar + 1)/2 + nvar
+    scores.H1 <- matrix(NA, nobs, pstar)
 
-      fval <- (-1/2) * (log(det(impl.cov)) + t(ind.dat - mu) %*% solve(impl.cov) %*% (ind.dat - mu))
-      fval
+    # compute H1 scores per case
+    for(i in 1:nrow(X)) {
+      diff.i <- t(X[i,] - Mu.hat)
+      dx.Mu <- -1 * t(diff.i %*% Sigma.inv)
+      dx.Sigma <- (-1 * (Sigma.inv %*% (crossprod(diff.i) - Sigma.hat) %*% Sigma.inv))
+      # correction for symmetry
+      diag(dx.Sigma) <- diag(dx.Sigma)/2
+      # in lavaan: first the means, then the covariances
+      scores.H1[i,] <- c(dx.Mu, lavaan:::vecs(dx.Sigma))
     }
 
-    for(j in 1:n) {
-      scores[j,] <- grad(likefun, theta, ind.dat = as.matrix(dat)[j, ], method = "Richardson")
-    }
+    # scores.H0
+    Delta <- lavaan:::computeDelta(x$model@Model)[[1]]
+    scores.H0 <- scores.H1 %*% Delta
+    -scores.H0
   },
+
+  ## for OpenMx the particular Merkle & Zeileis model
+  ## is hard-coded
+  "OpenMx" = {
+
+    # score matrix
+    scores <- matrix(NA, nobs, length(cf))
   
-  "analytic" = {
-    mu <- theta[14:19]
-    Lambda <- matrix(c(theta[1:3], rep(0, 6), theta[4:6]), 6, 2) # loadings
-    Phi <- matrix(c(1, theta[13], theta[13], 1), 2, 2)           # factor covs
+    mu <- cf[14:19]
+    Lambda <- matrix(c(cf[1:3], rep(0, 6), cf[4:6]), 6, 2) # loadings
+    Phi <- matrix(c(1, cf[13], cf[13], 1), 2, 2)	   # factor covs
     Psi <- matrix(0, 6, 6)
-    diag(Psi) <- theta[7:12]                                     # error vars
+    diag(Psi) <- cf[7:12]				   # error vars
 
     Sigma <- Lambda %*% Phi %*% t(Lambda) + Psi  
     Sig.inv <- solve(Sigma)
-    
-    for (i in 1:n){
-      Xmu <- (dat[i,] - mu)
+  
+    for (i in 1:nobs){
+      Xmu <- (X[i,] - mu)
       SigiXmu <- Sig.inv %*% Xmu %*% t(Xmu) %*% Sig.inv
       dFdmu <- -as.vector(Sig.inv %*% Xmu)
       dFdlam <- as.vector((Sig.inv - SigiXmu) %*% Lambda %*% Phi)[c(1:3, 10:12)]
@@ -178,7 +186,12 @@ estfun.mzfit <- function(x, type = c("analytic", "numeric"), ...)
       dFdpsi <- (1/2) * diag(Sig.inv - SigiXmu)  
       scores[i,] <- -c(dFdlam, dFdpsi, dFdphi, dFdmu)
     }
+
+    scores
   })
 
-  return(scores)
+  ## assign nice names and return
+  colnames(rval) <- names(cf)
+  rownames(rval) <- rownames(X)
+  return(rval)
 }
