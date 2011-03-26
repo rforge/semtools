@@ -156,10 +156,6 @@ Evaluation of the score function at $\hat{\bm{\theta}}$ for $i=1,
 \dots, n$ essentially measures the extent to which each individual's
 likelihood is maximized.
 
-\readme{I added a sentence above about score functions because I don't think
-  they are well known in psychometrics.  You might check to see whether my
-  interpretation is reasonable.}
- 
 One central assumption -- sometimes made implicitly -- is that
 the same model parameters $\bm{\theta}$ hold for all individuals $i = 1, \dots, n$.
 If this is not satisfied, the estimates $\hat{\bm{\theta}}$ are typically
@@ -496,12 +492,11 @@ Finally, all tests can be easily modified to address the situation of
 so-called ``partial structural changes'' \cite{And93}. This refers to the case of some
 parameters being known to be stable, i.e., restricted to be constant across
 potential subgroups. Tests for potential changes/instabilities only in the
-remaining parameters are easily constructed by omitting those columns from
-${\bm B}(\hat {\bm \theta})_{ij}$ that are restricted/stable,
-retaining only those
-that are potentially instable. This may be of special interest to
-those wishing to test specific types of measurement invariance, where
-subsets of model parameters are assumed to be stable.
+$k^*$ remaining parameters (from overall $k$ parameters) are easily constructed
+by omitting those $k - k^*$ columns from ${\bm B}(\hat {\bm \theta})_{ij}$ that are
+restricted/stable, retaining only those $k^*$ columns that are potentially instable.
+This may be of special interest to those wishing to test specific types of measurement
+invariance, where subsets of model parameters are assumed to be stable.
 
 
 \subsection{Critical Values \& $p$-values.}
@@ -634,7 +629,7 @@ a factor analysis model with two factors.  The base model, displayed in
 Figure~\ref{fig:famod}, specifies that measurement invariance holds,
 with three scales arising from the verbal factor and three 
 scales arising from the mathematical factor.
-For measurement invariance violations, we specify that $V$
+For the measurement invariance violation, we specify that $V$
 (student age) impacts the values of 
 verbal factor loadings in the model: 
 if students are 16 through 18 years of age, then the factor
@@ -642,9 +637,8 @@ loadings corresponding to the first
 factor ($\lambda_{11}, \lambda_{21}, \lambda_{31}$) reflect those in
 Figure~\ref{fig:famod}.  If students are 13 through 15 years of age,
 however, then the factor loadings corresponding to the first factor
-are three standard errors lower than those in Figure~\ref{fig:famod}
-(the standard errors are based on the asymptotic standard errors
-divided by $\sqrt{n}$).
+are three standard errors ($=$ asymptotic standard errors divided by $\sqrt{n}$)
+lower than those in Figure~\ref{fig:famod}.
 This violation states that the verbal ability scales
 lack measurement invariance with respect to age.  For simplicity, we
 assume that the mathematical scales are invariant.
@@ -666,7 +660,7 @@ to calculate the cumulative score process via
 \eqref{eq:cumscore}.  Finally, we
 obtained various test statistics and $p$-values from the cumulative score
 process.  These include the double-max statistic from \eqref{eq:dmax},
-the Cram\'{e}r-von Mises statistic from \eqref{eq:cvm}, and the max-LM
+the Cram\'{e}r-von Mises statistic from \eqref{eq:cvm}, and the $\max \mathit{LM}$
 statistic from \eqref{eq:maxlm}.
 
 As mentioned in the theory section, the 
@@ -681,9 +675,10 @@ H_0:\ (\lambda_{i,11}\ \lambda_{i,21}\ \lambda_{i,31}) =
 (\lambda_{0, 11}\ \lambda_{0, 21}\ \lambda_{0, 31}),\ i=1,\ldots,n,
 \end{equation}
 where $(\lambda_{i,11}\ \lambda_{i,21}\ \lambda_{i,31})$ represent the
-verbal factor loading parameters for student $i$.  Alternatively, we
-can consider all model parameters (including means), leading to a test
-of \eqref{eq:h0}.  We consider both of these tests below.
+verbal factor loading parameters for student $i$. Thus, here only $k^* = 3$
+from the overall $k = 19$~model parameters (including means) are assessed.
+Alternatively, we can consider all $k^* = k = 19$~parameters, leading to a test
+of~\eqref{eq:h0}.  We consider both of these tests below.
 
 \subsection{Results}
 In the results section, we first describe overall results.  We then 
@@ -711,10 +706,10 @@ are displayed in
 Figure~\ref{fig:cusumex}.
 Each panel displays a test 
 statistic's fluctuation across values of student age, with the first
-column containing tests of \eqref{eq:exh0} and the second column
-containing tests of \eqref{eq:h0}.  The solid
+column containing tests of~\eqref{eq:exh0} and the second column
+containing tests of~\eqref{eq:h0}.  The solid
 horizontal 
-lines represent critical values for $\alpha=.05$, and
+lines represent critical values for $\alpha= 0.05$, and
 the Cram\'{e}r-von Mises panels 
 also contain a dashed line depicting the value of the test
 statistic (test statistics for the others are simply 
@@ -734,7 +729,7 @@ for the double-max test as it is more
 sensitive to fluctuations among a small subset of parameters.
 
 Figure~\ref{fig:lrlm} 
-compares the max-LM statistic (solid line) to the max-LR
+compares the $\max \mathit{LM}$ statistic (solid line) to the $\max \mathit{LR}$
 statistic (dashed line) from \eqref{eq:maxlr}, as applied to testing
 \eqref{eq:h0}.  The critical values for these two
 tests are identical, hence the single horizontal line.
@@ -743,13 +738,14 @@ shows that the two statistics are very similar to one another, with
 both maxima at the dotted vertical line.  This
 is generally to be expected, because the two tests are asymptotically
 equivalent.  The 
-max-LR~statistic cannot be obtained from the empirical fluctuation
+$\max \mathit{LR}$~statistic cannot be obtained from the empirical fluctuation
 process, however, so the factor analysis model must be refitted before
-and after each of the possible threshold values $\nu$.
+and after each of the possible threshold values $\nu$ (i.e., here
+$\Sexpr{2 * length(mz.lrstat)}$~model fits for $\Sexpr{length(mz.lrstat)}$~thresholds).
 
 
 \subsubsection{Estimation of $\nu$ and Parameter Isolation}
-As described above, the tests of \eqref{eq:exh0} imply that the 
+As described above, the tests of~\eqref{eq:exh0} imply that the 
 verbal scales lack measurement invariance.  
 We can also use the tests to: (1)~estimate the 
 threshold $\nu$, and (2)~isolate specific parameters that violate
@@ -759,18 +755,6 @@ examining the peaks in Figure~\ref{fig:cusumex}.  For all six panels
 in the figure, the peaks occur near an age of 16.1.  This agrees well
 with the true threshold of 16.0.
 
-\readme{Achim previous comment: I'm not really happy with the following
-  paragraph. I think 
-I wouldn't call this a posthoc test. It is really a test of the same
-hypothesis as before, but now using the double-max
-statistic. \\ \ \\
-Ed response: I am fine with not calling it a posthoc test.  However,
-it could sometimes be advantageous to first test the hypothesis using the CvM
-statistic, then, if CvM rejects the hypothesis, employ the double-max
-statistic to say something about individual model parameters.  This
-would be useless if all parameters change, but, for measurement
-invariance problems, one often expects many model parameters to be stable.}
-
 As mentioned previously, the double-max test is advantageous because
 it yields information about individual 
 parameters violating measurement invariance.  
@@ -779,21 +763,22 @@ cumulative score processes lead one to reject the hypothesis of
 measurement invariance.
 Figure~\ref{fig:lambdas} shows the individual cumulative score processes for the
 verbal factor loadings, with the horizontal lines reflecting the
-critical value at $\alpha=.05$.
+critical value at $\alpha= 0.05$.
   The figure
 shows that the third parameter (i.e., $\lambda_{31}$) crosses the
 dashed line, so we would conclude a measurement 
 invariance violation with respect to age for the third
 verbal test.  The fact that the cumulative score process for the first
 and second loadings did not achieve the critical value represents a Type II
-error, which implicitly brings into question the posthoc tests' power.
+error, which implicitly brings into question the tests' power.
 This is an example of a situation where the double-max test ``wastes''
 power, as it cannot make use of the fact that multiple model
 parameters change simultaneously.  We
 generally address the issue of power in the simulations below.
 
 \begin{figure}
-\caption{Three test statistics of \eqref{eq:exh0} and \eqref{eq:h0}, 
+\caption{Three test statistics of~\eqref{eq:exh0} (with $k^* = 3$)
+  and~\eqref{eq:h0} (with $k^* = 19$), 
   based on the example involving measurement invariance with respect
   to student age.  Solid, horizontal lines represent critical values
   at $\alpha = 0.05$, and the dotted, horizontal lines (second row)
@@ -811,23 +796,23 @@ gefp_19_info <- gefp(mz0, fit = NULL, order.by = d$age,
 par(mfcol = c(3, 2))
 plot(gefp_3_info,  functional = maxBB, main = "DM, k* = 3", xlab = "Age")
 plot(gefp_3_info,  functional = meanL2BB, main = "CvM, k* = 3", xlab = "Age")
-plot(gefp_3_info,  functional = supLM(0.1), main = "max-LM, k* = 3", xlab = "Age")
+plot(gefp_3_info,  functional = supLM(0.1), main = "max LM, k* = 3", xlab = "Age")
 plot(gefp_19_info, functional = maxBB, main = "DM, k* = 19", xlab = "Age")
 plot(gefp_19_info, functional = meanL2BB, main = "CvM, k* = 19", xlab = "Age")
-plot(gefp_19_info, functional = supLM(0.1), main = "max-LM, k* = 19", xlab = "Age")
+plot(gefp_19_info, functional = supLM(0.1), main = "max LM, k* = 19", xlab = "Age")
 @
 \end{figure}
 
 \begin{figure}
-\caption{A comparison of the max-LM (solid line) and max-LR (dashed line) test
-  statistics for \eqref{eq:h0}.  The solid horizontal line
-  corresponds to the critical value at $\alpha=.05$ while the dotted vertical
-  line highlights the threshold at which the test statistics are maximized.}
+\caption{A comparison of the $\max \mathit{LM}$ (solid line) and $\max \mathit{LR}$ (dashed line) test
+  statistics for~\eqref{eq:h0} (i.e., $k^* = 19$).  The solid horizontal line
+  corresponds to the critical value at $\alpha= 0.05$ while the dotted vertical
+  line highlights the threshold at which both test statistics assume their maximum.}
 \label{fig:lrlm}
 \setkeys{Gin}{width=\textwidth}
 <<lm-lr-19, fig=TRUE, height=5, width=6>>=
 plot(gefp_19_info, functional = supLM(0.1),
-  xlab = "Age", ylab = "LR and LM statistics", main = "", ylim = c(0, 50))
+  xlab = "Age", ylab = "LR and LM statistics (k* = 19)", main = "", ylim = c(0, 50))
 legend("topleft", c("LR", "LM"), lty = c(2, 1), bty = "n")
 lines(mz.age, mz.lrstat, lty = 2)
 abline(v = mz.age[which.max(mz.lrstat)], lty = 3)
@@ -838,7 +823,7 @@ abline(v = mz.age[which.max(mz.lrstat)], lty = 3)
 \caption{Cumulative score processes for each verbal factor
   loadings, with critical values stemming from the double-max test. 
   The solid, horizontal lines
-  correspond to the critical value at $\alpha=.05$.}
+  correspond to the critical value at $\alpha= 0.05$.}
 \label{fig:lambdas}
 \setkeys{Gin}{width=\textwidth}
 <<gefp-lambdas, fig=TRUE, height=8, width=6>>=
@@ -850,20 +835,19 @@ plot(gefp_3_info,  functional = maxBB, aggregate = FALSE, ylim = c(-2, 2),
 \section{Simulation}
 
 In this section, we conduct a simulation designed to
-examine the tests' power and Type I error rates in a context
-similar to the example.
+examine the tests' power and Type I error rates in the context also
+employed for the previous example.
 We examine the power and error rates of three tests: the double-max test, the
-Cram\'{e}r-von Mises test, and the max-LM test.  We also compare 
-tests involving only the parameters that changed with tests of all model
-parameters.  The example implied that the former tests had more
+Cram\'{e}r-von Mises test, and the $\max \mathit{LM}$ test.  We also compare 
+tests involving only the $k^* = 3$ parameters that changed with tests of all
+$k^* = k = 19$ model parameters.  The example implied that the former tests had more
 power, and the simulations provide more detail on the extent to which
 the tests' power levels differ.
 Finally, we also examine the tests' power across
 various magnitudes of measurement invariance violations.
 
 \subsection{Method}
-Data were generated in a similar way to that of 
-the example section.
+Data were generated analogously to the example section.
 The data included verbal scales that violated measurement invariance
 with respect to students' ages, with students 13--15 years of age
 having smaller factor loadings than students 16--18 years of age.  
@@ -873,12 +857,12 @@ of measurement
 invariance violation were manipulated to examine power:
 we examined power to detect 
 invariance violations across three sample sizes ($n=100,
-200, 500$) and fifteen magnitudes of violations.  These violations
+200, 500$) and 17~magnitudes of violations.  These violations
 involved the younger students' values of $\{\lambda_{11},
 \lambda_{21}, \lambda_{31}\}$ deviating from the older students'
 values by $d$ 
-times the parameters' asymptotic standard errors, with $d = 0, 0.25,
-0.5, \dots, 4$.  The 0-standard error condition was
+times the parameters' asymptotic standard errors (scaled by $\sqrt{n}$),
+with $d = 0, 0.25, 0.5, \dots, 4$.  The 0-standard error condition was
 used to study Type I error rate.
 
 For each combination of sample size ($n$) $\times$
@@ -911,20 +895,20 @@ levels(mz_sim_sub$nobs) <- paste("n =", levels(mz_sim_sub$nobs))
 
 \subsection{Results}
 Full simulation results are presented in Figure~\ref{fig:simres}, and
-a subset of the results (for finer distinctions) is displayed in
+the underlying numeric values for a subset of the results is additionally displayed in
 Table~\ref{tab:simres}.  In describing the results, we largely refer
 to the figure.
 
-Figure~\ref{fig:simres} displays power as a function of violation
+Figure~\ref{fig:simres} displays power curves as a function of violation
 magnitude, with panels for each combination of sample size ($n$) $\times$
 number of parameters being tested ($k^{\ast}$).  
-Circles reflect the double-max test, triangles reflect the max-LM
-test, and plus signs reflect the Cram{\'e}r-von Mises test.  One can
-generally observe that simultaneous tests of all 19 parameters
+Separate curves are drawn for the double-max test (solid lines), 
+the Cram{\'e}r-von Mises test (dashed lines), and the $\max \mathit{LM}$ (dotted lines).
+One can generally observe that simultaneous tests of all 19~parameters
 result in decreased power, with the tests performing more similarly at
 the larger sample sizes.  The tests distinguish themselves from one
 another when only the three factor loadings are tested, with the
-Cram\'{e}r-von Mises test having the most power, followed by max-LM,
+Cram\'{e}r-von Mises test having the most power, followed by $\max \mathit{LM}$,
 followed by the double-max test.  This advantage decreases with
 increases in sample size.  
 Table~\ref{tab:simres} presents the same results as
@@ -932,46 +916,49 @@ Figure~\ref{fig:simres}, but it is easier to see exact power
 magnitudes in the table.
 The table shows that the
 power advantage of the Cram\'{e}r-von
-Mises test can be as large as .1, most notably when three parameters
+Mises test can be as large as 0.1, most notably when three parameters
 are being tested.
   It also shows that the Cram\'{e}r-von Mises test generally
-has true Type-I error rates, with the double-max test being slightly
-conservative and the max-LM test being slightly liberal.
+has true Type-I error rates, with the double-max test being somewhat
+conservative and the $\max \mathit{LM}$ test being slightly liberal.
 
 In summary, we found that the proposed tests have adequate power to detect
 measurement invariance violations in applied contexts.  The 
 Cram\'{e}r-von Mises statistic exhibited the best performance for the
 data generated here, though more simulations are warranted to examine
-the generality of this finding.
+the generality of this finding in other models or other parameter constellations.
 In the discussion, we describe extensions of the tests in factor
 analysis and beyond.
 
 \begin{figure}
-\caption{Simulated power for three test statistics across three sample
-  sizes, two subsets of tested parameters, and measurement invariance
-  violations of 0--3.5 standard 
-  errors (scaled by $n$).  Circles reflect the double-max test,
-  triangles reflect the 
-  max-LM test, and plus signs reflect the Cram\'{e}r-von Mises test.
-  Numbers above each panel reflect the sample size and number of
-  parameters being tested, respectively.}
+\caption{Simulated power curves for the double-max test (solid), 
+  Cram\'{e}r-von Mises test (dashed), and $\max \mathit{LM}$ test (dotted)
+  across three sample sizes $n$, two subsets of tested parameters $k^*$, and
+  measurement invariance violations of 0--4 standard errors (scaled by $\sqrt{n}$). 
+  See Table~\ref{tab:simres} for the underlying numeric values (using a
+  subset of nine violation magnitudes).}
 \label{fig:simres}
 \setkeys{Gin}{width=\textwidth}
-<<mzsim-xyplot, fig=TRUE, height=7, width=7>>=
+<<mzsim-xyplot, fig=TRUE, height=7.5, width=7>>=
 ## visualization
 trellis.par.set(theme = canonical.theme(color = FALSE))
-print(xyplot(power ~ diff | pars + nobs, group = ~ test, data = mz_sim_sub, type = "b",
-  xlab = "Violation Magnitude", ylab = "Power", ylim = c(0, 1)))
+mykey <- simpleKey(c("CvM", "max LM", "DM"), points = FALSE, lines = TRUE)
+mykey$lines$pch <- c(2, 3, 1)
+mykey$lines$lty <- c(1.2, 2, 1.2)
+print(xyplot(power ~ diff | pars + nobs, group = ~ test, data = mz_sim_sub,
+  type = "l", lwd = c(1, 1, 2), ylim = c(0, 1), key = mykey,
+  xlab = "Violation Magnitude", ylab = "Power"))
 @
 \end{figure}
 
 
 \begin{table*}
 \caption{Simulated power for three test statistics
-  across three sample sizes, fifteen magnitudes of measurement
+  across three sample sizes $n$, nine magnitudes of measurement
   invariance violations, and two subsets of tested
-  parameters. Abbreviations: CvM = Cram\'{e}r-von Mises 
-  test; max-LM = Maximum Lagrange multiplier test; DM = Double-max test.}
+  parameters $k^*$. Abbreviations: CvM = Cram\'{e}r-von Mises 
+  test; $\max \mathit{LM}$ = Maximum Lagrange multiplier test; DM = Double-max test.
+  See Figure~\ref{fig:simres} for a visualization (using all 17~violation magnitudes).}
 \label{tab:simres}
 \begin{center}
 \begin{tabular}{lrlrrrrrrrrr}
@@ -981,7 +968,7 @@ print(xyplot(power ~ diff | pars + nobs, group = ~ test, data = mz_sim_sub, type
 ## labeling
 levels(mz_sim_sub$pars) <- gsub("k* = ", "", levels(mz_sim_sub$pars), fixed = TRUE)
 levels(mz_sim_sub$nobs) <- gsub( "n = ", "", levels(mz_sim_sub$nobs), fixed = TRUE)
-levels(mz_sim_sub$test) <- gsub("supLM", "max-LM", levels(mz_sim_sub$test), fixed = TRUE)
+levels(mz_sim_sub$test) <- c("$\\mathit{DM}$", "$\\mathit{CvM}$", "$\\max \\mathit{LM}$")
 
 ## table
 mz_tab <- round(ftable(100 * xtabs(power ~ nobs + pars + test + diff,
@@ -1030,8 +1017,8 @@ the tests' abilities to estimate $\nu$, the threshold dividing
 individuals into subgroups that violate
 measurement invariance.  While a single $\nu$ was assumed in this
 paper, it is also possible to define 
-formal rules for estimating multiple $\nu$ parameters.  We plan to
-explore these issues in the future.
+formal rules for estimating multiple $\nu$ parameters
+(see \citeNP{ZeiSha10}).  We plan to explore these issues in the future.
 
 % \subsection{Further Issues}
 % Further issues associated with the proposed tests include: (1)
@@ -1154,8 +1141,8 @@ it is possible to construct an algorithm that recursively defines
 groups of individuals violating measurement invariance with respect to
 multiple auxiliary variables.  Such an algorithm is related to 
 classification and regression trees \cite{BreFri84,MerSha10,StrMal09},
-with related algorithms being developed for generalized linear
-models \cite{ZeiHot08} and Rasch models \cite{KopZei10}.  
+with related algorithms being developed for general parametric models
+\cite{ZeiHot08} and Rasch models in particular \cite{KopZei10}.  
 
 Relatedly,
 S\'{a}nchez \citeyear{San09} describes a general
@@ -1258,7 +1245,7 @@ for evaluating the parameter instability tests. {R}~and the packages {lavaan} an
 freely available under the General Public License~2 from the
 Comprehensive {R} Archive Network at \url{http://CRAN.R-project.org/}
 while {OpenMx} is available under the
-Apache License~2.0 from \url{http://openmx.psyc.virginia.edu/}.
+Apache License~2.0 from \url{http://OpenMx.psyc.virginia.edu/}.
 {R}~code for replication of our results is
 available at \url{http://semtools.R-Forge.R-project.org/}.
 
