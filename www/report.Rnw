@@ -6,8 +6,10 @@
 
 \newcommand{\argmax}{\operatorname{argmax}\displaylimits}
 
-\title{\vspace*{-0.4cm} A Generalization of Classical Measurement Invariance Tests for Factor Analysis}
-\Plaintitle{A Generalization of Classical Measurement Invariance Tests for Factor Analysis}
+\title{\vspace*{-0.4cm} Generalized Measurement Invariance Tests with
+  Application to Factor Analysis}
+\Plaintitle{Generalized Measurement Invariance Tests with Application
+  to Factor Analysis}
 \Shorttitle{Generalized Measurement Invariance Tests for Factor Analysis}
 
 \author{Edgar C. Merkle\\Wichita State University
@@ -19,7 +21,7 @@
   contexts, with methods for assessment including likelihood ratio tests,
   Lagrange multiplier tests, and Wald tests. These tests all require advance
   definition of the number of groups, group membership, and offending model
-  parameters. In this paper, we construct tests of parameter invariance based on
+  parameters. In this paper, we construct tests of measurement invariance based on
   stochastic processes of casewise derivatives of the likelihood function. These
   tests can be viewed as generalizations of the Lagrange multiplier test, and they
   are especially useful for: (1)~isolating specific parameters affected by
@@ -99,7 +101,7 @@ In this paper, we consider a new family of tests for assessing
 measurement invariance that has important advantages over existing
 tests.  We begin by developing a general framework for the tests.
 This leads to a discussion of theoretical results relevant to the
-proposed tests, as well as a comparison of the proposed tests with
+proposed tests, as well as a comparison of the proposed tests to the 
 existing tests.  Next,
 we study the 
 proposed tests' abilities through example and simulation.  Finally,
@@ -139,7 +141,7 @@ a factor analysis model with assumed multivariate normality:
 \end{eqnarray}
 with model-implied mean vector ${\bm{\mu}}({\bm{\theta}})$ and
 covariance matrix ${\bm{\Sigma}}({\bm{\theta}})$. As pointed out above,
-the assumptions for the tests introduced below do not require this specific
+the assumptions for the tests introduced here do not require this specific
 form of the likelihood, but it is presented for illustration due to
 its importance in practice.  Many expositions of factor analysis
 utilize the likelihood for the sample covariance matrix, which is
@@ -150,7 +152,7 @@ to the likelihood; this situation is also generally
 encountered in structural equation models with missing data (e.g.,
 \citealp{Wot00}).
 
-Within the general framework outlined above, and under the usual
+Within the general framework outlined above and under the usual
 regularity conditions, the model parameters $\bm{\theta}$ can
 be estimated by maximum likelihood (ML), i.e.,
 \begin{equation} \label{eq:ml}
@@ -179,7 +181,7 @@ likelihood is maximized.
 One central assumption -- sometimes made implicitly -- is that
 the same model parameters $\bm{\theta}$ hold for all individuals $i = 1, \dots, n$.
 If this is not satisfied, the estimates $\hat{\bm{\theta}}$ are typically
-not meaningful and cannot easily be interpreted.
+not meaningful and cannot be easily interpreted.
 One potential source of deviation from this assumption is lack of
 measurement invariance, investigated in the following section.
 
@@ -267,16 +269,16 @@ measurement invariance approaches.
 To employ the LR~test for assessing measurement invariance, model
 parameters are estimated separately for a certain number of subgroups
 of the data (with some parameters potentially restricted to be equal across
-subgroups).\footnote{For ease of exposition, we describe
-the case where there are no such parameter restrictions.  As shown in
-the example and simulation below, it is
-straightforward to extend all methods to the more general case.}
-Then, the sum of maximized likelihoods 
+subgroups).  For ease of exposition, we describe
+the case where there are no such parameter restrictions; as shown in
+the example and simulation below, however, it is
+straightforward to extend all methods to the more general case.
+After fitting the model to each subgroup, the sum of maximized likelihoods 
 from the subgroups are compared with the original maximized full-sample likelihood
-in a $\chi^2$~test. More specifically, for the special case of two subgroups,
+in a $\chi^2$~test. For the special case of two subgroups,
 the alternative $H_1^*$ from (\ref{eq:h1*}) with fixed and prespecified $\nu$ is adopted
 and the null hypothesis $H_0$ from (\ref{eq:h0}) reduces to ${\bm \theta}^{(A)} = {\bm \theta}^{(B)}$.
-The parameter estimated $\hat {\bm \theta}^{(A)}$ can then be obtained from the
+The parameter estimates $\hat {\bm \theta}^{(A)}$ can then be obtained from the
 observations $i = 1, \dots, m$, say, for which $v_i \le \nu$. Analogously,
 $\hat {\bm \theta}^{(B)}$ is obtained by maximizing the likelihood for the
 observations $i = m + 1, \dots, n$, for which $v_i > \nu$. The LR~test statistic
@@ -329,8 +331,8 @@ reject if their maximum
 \end{equation}
 becomes large. Note that this corresponds to maximizing the likelihood w.r.t.\
 an additional parameter, namely $\nu$. Hence, the asymptotic distribution of the
-maximum $\mathit{LR}$ statistic is not $\chi^2$ anymore. However, \cite{And93}
-showed that the asymptotic distribution is in fact tractable, but nonstandard.
+maximum $\mathit{LR}$ statistic is not $\chi^2$ anymore. \cite{And93}
+showed that the asymptotic distribution is in fact tractable but nonstandard.
 Specifically, the asymptotic distribution of (\ref{eq:maxlr}) is the maximum of a
 certain tied-down Bessel process whose specifics also depend on the minimal
 and maximal thresholds $\underline{\nu}$ and $\overline{\nu}$, respectively.
@@ -367,14 +369,14 @@ As discussed above, factor analysis models are typically
 estimated by fitting the model to all $i = 1, \dots, n$ individuals, assuming
 that the parameter vector ${\bm \theta}$ is constant across individuals.
 Having estimated the parameters $\hat {\bm \theta}$, the goal is to check that
-there are no subgroups of individuals that fail to conform with the model (for any
+all subgroups of individuals conform with the model (for all
 of the parameters). Hence, some measure of model deviation or residual is required
 that captures the lack of fit for the $i$-th individual at the $j$-th parameter
 ($i = 1, \dots, n$, $j = 1, \dots, k$). A natural measure -- that employs the ideas
 of the LM test -- is ${\bm s}(\hat {\bm \theta}; x_i)_j$: the $j$-th component of the
 contribution of the $i$-th observation to the score function. By construction, the sum
 of the score contributions over all individuals is zero for each
-component, see
+component; see
 (\ref{eq:ml1}). Moreover, if there are no systematic deviations, the score contributions
 should fluctuate randomly around zero.  Conversely, the score
 contributions should be shifted away from zero for
@@ -464,7 +466,7 @@ pattern ${\bm \theta}(V)$ is most plausible (because the exact pattern
 is typically
 unknown). A particularly agnostic aggregation strategy is to reject $H_0$
 if any component of the the cumulative score process ${\bm B}(t; \hat {\bm \theta})$
-departs ``too far'' from zero at any time, i.e., if
+strays ``too far'' from zero at any time, i.e., if
 \begin{equation}
     \label{eq:dmax}
     \mathit{DM} = \max_{i = 1,\dots, n} \max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} |,
@@ -506,7 +508,7 @@ and $\overline{\imath}$/$\overline{\nu}$ are chosen analogously).
 
 Further aggregation functions have been suggested in the structural
 change literature (see e.g., \citealp{Zei05,ZeiSha10}) but the three
-tests above are probably most likely to be useful in psychometric settings.
+tests above are most likely to be useful in psychometric settings.
 
 Finally, all tests can be easily modified to address the situation of
 so-called ``partial structural changes'' \citep{And93}. This refers to the case of some
@@ -549,7 +551,7 @@ $d$ is
 This combines the crossing probability of a univariate Brownian bridge
 (see e.g., \citealp{ShoWel86,PloKra92}) with a straightforward Bonferroni
 correction to obtain the $k$-dimensional case. The terms in the summation
-quickly go to zero as $h$ goes to infinity, so only some large finite
+quickly go to zero as $h$ goes to infinity, so that only some large finite
 number of terms (say, 100) need to be evaluated in practice.
 
 For the Cram\'{e}r-von Mises test statistic $\mathit{CvM}$, \cite{Nyb89}
@@ -572,7 +574,7 @@ the most extreme deviation(s) in the process convey threshold(s) in the underlyi
 ordering $V$.
 
 For the maximum LR/Wald/LM tests, it is natural to graph the sequence of LR/Wald/LM
-statistics along $V$ along with a boundary corresponding to the critical value.
+statistics along $V$, with a boundary corresponding to the critical value.
 Again, a boundary crossing signals a significant violation, and the peak(s) in the
 sequence of statistics conveys threshold(s). Note that, due to summing over all
 parameters, no specific parameter can be identified that is responsible for the
@@ -604,7 +606,7 @@ Formally speaking, the maximization of (\ref{eq:seglik}) -- or equivalently (\re
 yields an estimate $\hat \nu$ of the threshold in $H_1^*$. If $H_1^*$ is in fact the true model,
 the peaks in the Wald/LM sequences and the cumulative score process, respectively, will occur at the
 same threshold asymptotically. However, in empirical samples, their location may differ somewhat
-(although often not much).
+(although often not by much).
 
 These attributes give the proposed tests important advantages over
 existing tests, as existing measurement invariance methods cannot:
@@ -634,23 +636,26 @@ $\lambda_{31}$).
 
 \section{Example with artificial data}
 
-Consider a 
-hypothetical battery of six scales administered to students aged 13 to 18
-years.  Three of the scales are intended to measure verbal ability, and
-three of the scales are intended to measure mathematical ability.  We
-may observe a maturation effect in the resulting data, whereby the
+Consider the factor analysis model in Figure~\ref{fig:famod}, which
+includes six manifest variables, two 
+correlated factors, and a single auxiliary variable $V$.  Though an
+applied framework is unnecessary for the example, we may imagine that
+six scales have been administered to students aged 13 to 18
+years, with three of the scales intended to measure verbal ability and
+three of the scales intended to measure mathematical ability.  We
+assume a measurement invariance violation for the factor loading
+parameters, whereby the factor loadings for individuals with low
+values of $V$ are smaller than the factor loadings for individuals
+with high values of $V$ (e.g.,  
 factor loadings for older students are larger than those for younger
-students.  The researcher's goal is to
-study whether the scales are measurement invariant with
-respect to age, which is taken to be the auxiliary variable $V$.
+students).  We generally wish to assess measurement invariance with
+respect to $V$ (student age).
 
 \subsection{Method}
 
-To formally represent these ideas, we specify that the data arise from
-a factor analysis model with two factors.  The base model, displayed in
-Figure~\ref{fig:famod}, specifies that measurement invariance holds,
-with three scales arising from the verbal factor and three 
-scales arising from the mathematical factor.
+The base factor analysis model, displayed in
+Figure~\ref{fig:famod} with set parameter values, specifies that
+measurement invariance holds.
 For the measurement invariance violation, we specify that $V$
 (student age) impacts the values of 
 verbal factor loadings in the model: 
@@ -661,7 +666,7 @@ Figure~\ref{fig:famod}.  If students are 13 through 15 years of age,
 however, then the factor loadings corresponding to the first factor
 are three standard errors ($=$ asymptotic standard errors divided by $\sqrt{n}$)
 lower than those in Figure~\ref{fig:famod}.
-This violation states that the verbal ability scales
+This violation states, e.g., that the verbal ability scales
 lack measurement invariance with respect to age.  For simplicity, we
 assume that the mathematical scales are invariant.
 
@@ -854,7 +859,7 @@ critical value at $\alpha= 0.05$.
   The figure
 shows that the third parameter (i.e., $\lambda_{31}$) crosses the
 dashed line, so we would conclude a measurement 
-invariance violation with respect to age for the third
+invariance violation for the third
 verbal test.  The fact that the cumulative score process for the first
 and second loadings did not achieve the critical value represents a Type II
 error, which implicitly brings into question the tests' power.
@@ -879,11 +884,11 @@ various magnitudes of measurement invariance violations.
 
 \subsection{Method}
 Data were generated analogously to the example section.
-The data included verbal scales that violated measurement invariance
-with respect to students' ages, with students 13--15 years of age
-having smaller factor loadings than students 16--18 years of age.  
-Simulation data were generated from the same general factor analysis
-model (see Figure~\ref{fig:famod}), but sample size and magnitude
+The data were generated from a factor analysis model with two
+correlated factor and six manifest variables, with individuals with
+low $V$ (13--15) having smaller factor loadings than individuals with
+large $V$ (16--18).
+Sample size and magnitude
 of measurement 
 invariance violation were manipulated to examine power:
 we examined power to detect 
@@ -900,8 +905,8 @@ For each combination of sample size ($n$) $\times$
 violation magnitude ($d$) $\times$ number of parameters being tested
 ($k^{\ast}$),
 5,000 datasets were generated and tested.  In each dataset, half the
-students were 13--15 
-years of age and half were 16--18 years of age.
+individuals had ``low $V$'' (e.g., 13--15 
+years of age) and half had ``high $V$'' (e.g., 16--18 years of age).
 
 <<mz_sim>>=
 if(file.exists("mz_sim.rda")) {
@@ -1053,89 +1058,8 @@ paper, it is also possible to define
 formal rules for estimating multiple $\nu$ parameters
 (see \citealp{ZeiSha10}).  We plan to explore these issues in the future.
 
-% \subsection{Further issues}
-% Further issues associated with the proposed tests include: (1)
-% alternative methods for estimating $\eta$;
-% and (2) dealing
-% with categorical $V$.  We address each in turn below. 
 
-% % More than two groups violating MI
-% \subsubsection{Estimation of $\eta$}
-% Given rejection of the hypothesis of measurement invariance, the most
-% straightforward way to formally estimate $\eta$ is through
-% the location of the maximum of the cumulative score process.  Assuming
-% a single threshold, the maximum should be achieved close to the true
-% $\eta$.  Referring to the example (see
-% Figure~\ref{fig:cusumex}), we defined $\eta$ as the 
-% age corresponding to the solid dot in the third panel.
-
-% To study this method in more detail, we used
-% results of our simulation to examine the age at which the maximum of
-% the cumulative score process occurs.
-% If the test accurately recovers the violating subgroups,
-% then the maximum should be close to 16 years
-% of age.\footnote{The data generated for these
-%   simulations 
-%   contained ages measured in days, as opposed to years.  Thus,
-%   the tests could split students at continuous values like 15.6 or
-%   16.3 years of age.}
-%   For each simulation condition, Table~\ref{tab:age1}
-%   displays confidence intervals for the location of the maximum
-%   absolute cumulative score.  These confidence intervals were
-%   calculated across generated 
-%   datasets, with each dataset contributing one maximum absolute cumulative
-%   score
-%   (regardless of whether the hypothesis of
-%   measurement invariance was rejected).
-% It is observed that these confidence intervals slightly underestimate
-% the true age dividing the subgroups, with the degree of bias
-% decreasing as sample size increases.  The interval widths
-% are impacted by both the magnitude of the invariance and the sample
-% size.  In future work, we plan to study alternative ways of
-% identifying subgroups.
-
-% \begin{table*}
-% \caption{Confidence intervals for the location of the maximum absolute
-%   cumulative score across the conditions from the simulation.}
-% \label{tab:age1}
-%   \begin{tabular}{lccc} \thickline
-%   & \multicolumn{3}{c}{Violation Magnitude} \\
-%   $n$ & 1SE & 2SE & 3SE \\\hline
-%   100 & (15.61; 15.73) & (15.55; 15.65) & (15.50; 15.59) \\
-%   200 & (15.67; 15.77) & (15.64; 15.72) & (15.67; 15.73) \\
-%   500 & (15.71; 15.81) & (15.77; 15.83) & (15.80; 15.83) \\\thickline
-%   \end{tabular}
-% \end{table*}
-
-% Differing proportions of people in each group
-%\subsubsection{Subgroup proportions}
-%The power of the proposed tests is impacted by the proportion of
-%individuals within each subgroup.  
-
-% Ties on auxiliary variable (mention use in categorical contexts)
 \subsection{Categorical auxiliary variable}
-% There remain unaddressed theoretical issues specific to the 
-% tests' application to measurement invariance.  These
-% issues generally stem from the types of auxiliary variables on which
-% researchers may study measurement invariance.  In
-% the example described earlier, researchers wanted to know whether a
-% scale was measurement invariant with respect to student age.
-% Students could then be ordered based on age, and a test could be 
-% constructed via Equation~\eqref{eq:cumscore}.  However, an issue arises if there
-% are ties on age; that is, if two students' ages are exactly
-% the same.  The proposed tests assume complete ordering of the
-% students, but these two students cannot be ordered.  In this case, we
-% may randomly order the two students, but there is an
-% arbitrariness associated with this strategy.  Alternatively, to obtain
-% tests that liberally reject the hypothesis of measurement invariance,
-% we may choose the ordering that results in the largest test
-% statistic.  If there are many tied students, then there are many
-% possible orderings that must be examined.  However, examination of all
-% possible orderings remains computationally feasible because the
-% casewise first derivatives need to be calculated only once; the
-% derivatives simply need to be reordered for each ordering of tied
-% students.
-
 One issue that was largely unaddressed in this paper involved the use
 of categorical $V$ to study measurement invariance.  In this case,
 groups are 
@@ -1145,7 +1069,7 @@ Furthermore, we can also obtain an LM-type statistic from the
 framework developed here. Assume the observations are divided into
 $C$ categories $I_1, I_2, \ldots, I_C$. Then, the increment of
 the cumulative score process $\Delta_{I_c} {\bm B}(\hat {\bm \theta})$
-within in each category is just the sum of the corresponding scores.
+within each category is just the sum of the corresponding scores.
 In somewhat sloppy notation:
 \begin{equation}
     \label{eq:catsum}
@@ -1163,7 +1087,7 @@ $(C-1)$ degrees of freedom \citep{HjoKon02}.
 Alternatively, to simultaneously test multiple parameters, we can sum
 the $\chi^2$ statistics and degrees of freedom for the individual
 parameters.  In addition to categorical $V$, this framework may also
-be useful for continuous $V$ with many ties and ordinal $V$.  
+be useful for both continuous $V$ with many ties and ordinal $V$.  
 The number of potential thresholds may be very low in these
 situations, which impacts the extent to which asymptotic results hold
 for the main test statistics described in this paper.
@@ -1187,54 +1111,14 @@ $V$ and choosing the subgroups with the largest likelihood ratio).
 Thus, unlike the tests described in this paper, this approach does not
 provide a formal significance test with a controlled level of Type~I errors.
 
-% Recursive method
-% \subsubsection{Recursive Multiple-Groups Models}
-% The proposed tests have the ability to automatically define groups of
-% individuals violating measurement invariance with respect to a single
-% auxiliary (often demographic) variable.  If a researcher has multiple
-% auxiliary variables that he/she wishes to assess for measurement
-% invariance, then the proposed tests can be inserted into a recursive
-% algorithm 
-% that isolates groups of individuals violating measurement
-% invariance.   and
-% C4.5 \citep{Qui93}.  The algorithm would proceed via the following
-% steps: 
-% \begin{enumerate}
-%   \item Fit a confirmatory factor analysis model to the data, with all
-%   parameters constrained to be equal across observations.
-%   \item Conduct a measurement invariance test with respect to each
-%     auxiliary variable (auxiliary variables are determined in
-%     advance by the researcher).
-%   \item If violations of measurement invariance are detected,
-%   split the data into two (or more) groups based on the auxiliary variable
-%     corresponding to the largest test statistic.
-%   \item Fit a multiple-groups factor analysis model based on step 3.
-%   \item Repeat steps 2--5.
-% \end{enumerate}
-% The algorithm would continue until it reaches a
-% predefined stopping rule.  For example, we may stop 
-% the algorithm when the tests fail to indicate measurement invariance
-% violations.  Alternatively, the algorithm may be stopped when the
-% sample size within any subgroup reaches a minimum level.
 
-% The algorithm described in the previous paragraph is related to one
-% developed by \cite{ZeiHot08} for representing
-% parameter invariance violations in generalized linear models.  Zeileis
-% et al.\ present the results in a tree structure, which is
-% suboptimal for factor analysis models.  Instead, the subgroups
-% discovered by the algorithm are used here to adaptively define a
-% multiple-groups factor analysis model.  The
-% simultaneous study of measurement invariance with respect to multiple
-% auxiliary variables is an important future direction.
-
-%\subsubsection{Other Latent Variable Models}
 The proposed tests also 
 readily extend to other popular psychometric models.  
 Instead of studying measurement invariance in factor
 analysis, the tests can be used to generally 
 study the stability of structural equation model parameters across
 observations.  For 
-example, it would be possible to assess whether relationships between
+example, it would be possible to assess whether paths between
 latent variables are stronger for some individuals than for
 others.  Secondly, 
 the tests may be extended to study differential item functioning (DIF)
@@ -1256,11 +1140,11 @@ support this endeavor.
 \subsection{Summary}
 We have outlined a family of 
 stochastic process-based parameter instability tests from theoretical
-statistics to the issue of measurement invariance in psychometrics.
+statistics and applied them to the issue of measurement invariance in psychometrics.
 The paper included both theoretical development and 
-study of the tests' performance.  The tests were found via simulation
-to have good properties, making them useful for many psychometric
-applications.  More generally, the tests help to
+study of the tests' performance.  The tests were found to have good
+properties via simulation, making them useful for many psychometric
+applications.  More generally, the tests help 
 solve standing problems in
 measurement invariance research and provide many avenues for
 future research, both through extensions of the tests within a
