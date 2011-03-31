@@ -6,11 +6,9 @@
 
 \newcommand{\argmax}{\operatorname{argmax}\displaylimits}
 
-\title{\vspace*{-0.4cm} Generalized Measurement Invariance Tests with
-  Application to Factor Analysis}
-\Plaintitle{Generalized Measurement Invariance Tests with Application
-  to Factor Analysis}
-\Shorttitle{Generalized Measurement Invariance Tests for Factor Analysis}
+\title{\vspace*{-0.4cm} Generalized Measurement Invariance Tests with Application to Factor Analysis}
+\Plaintitle{Generalized Measurement Invariance Tests with Application to Factor Analysis}
+\Shorttitle{Generalized Measurement Invariance Tests}
 
 \author{Edgar C. Merkle\\Wichita State University
    \And Achim Zeileis\\Universit\"{a}t Innsbruck}
