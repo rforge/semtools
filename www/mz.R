@@ -152,7 +152,7 @@ estfun.mzfit <- function(x, ...)
       # correction for symmetry
       diag(dx.Sigma) <- diag(dx.Sigma)/2
       # in lavaan: first the means, then the covariances
-      scores.H1[i,] <- c(dx.Mu, lavaan:::vecs(dx.Sigma))
+      scores.H1[i,] <- c(dx.Mu, lavaan:::vech(dx.Sigma))
     }
 
     # scores.H0
