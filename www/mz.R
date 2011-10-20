@@ -140,21 +140,19 @@ estfun.mzfit <- function(x, ...)
     Mu.hat <- moments$mean
     Sigma.inv <- solve(Sigma.hat)
 
+    # Junk matrices for multiplication
+    J <- matrix(1, 1, nobs)
+    J2 <- matrix(1, nvar, nvar); diag(J2) <- .5
+
     # scores.H1 (H1 = saturated model)
-    pstar <- nvar * (nvar + 1)/2 + nvar
-    scores.H1 <- matrix(NA, nobs, pstar)
+    mean.diff <- t(t(X) - Mu.hat %*% J)
 
-    # compute H1 scores per case
-    for(i in 1:nrow(X)) {
-      diff.i <- t(X[i,] - Mu.hat)
-      dx.Mu <- -1 * t(diff.i %*% Sigma.inv)
-      dx.Sigma <- (-1 * (Sigma.inv %*% (crossprod(diff.i) - Sigma.hat) %*% Sigma.inv))
-      # correction for symmetry
-      diag(dx.Sigma) <- diag(dx.Sigma)/2
-      # in lavaan: first the means, then the covariances
-      scores.H1[i,] <- c(dx.Mu, lavaan:::vech(dx.Sigma))
-    }
+    dx.Mu <- -1 * mean.diff %*% Sigma.inv
 
+    dx.Sigma <- t(apply(mean.diff,1,function(x) lavaan:::vech(-J2 * (Sigma.inv %*% (tcrossprod(x) - Sigma.hat) %*% Sigma.inv))))
+
+    scores.H1 <- cbind(dx.Mu, dx.Sigma)
+    
     # scores.H0
     Delta <- lavaan:::computeDelta(x$model@Model)[[1]]
     scores.H0 <- scores.H1 %*% Delta
