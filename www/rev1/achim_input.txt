@@ -1,0 +1,18 @@
+Comment 1.6. Also, many "nuisance" variable that are hypothesized to affect indicators, say, in cognitive testing (e.g., see Wicherts et al.'s work on measurement invariance and stereotype threat) in a given multi-group CFA are expected to linearly affect these indicators. Now I can come up with a host of scenarios in which the measurement bias is approximately linear and so can be modeled in simple terms because the regression on V results in an additional factor in the model.  Surely I don't expect the authors to deal with all of such potential scenarios' of failures of measurement invariance in CFA. However, I do wish to point out that underlying the current approach is a specific kind of measurement bias that is expected to be discontinuous while many failures of invariance are expected to be continuous and approximately linear. Therefore, the authors should go into more detail on the nature of the measurement bias that the approach is trying to uncover. Their approach may be generic, but it is not really general in the sense that many failures of strict factorial invariance can be modeled in more straightforward and traditional ways. The step function in Eq. 10 should be discussed in more detail and may be supplemented by a hypothetical example of why it occurs in linear factor models.
+
+Achim: I believe it is true that, while Eq 10 was useful for explanatory purposes, the tests can handle more than one step (i.e., more than 2 groups).  So we might argue that the tests can get at "linear" failures of invariance by having many small steps in the step function.
+
+
+Comment 3.2. The weak convergence of the monitoring process is proved in the paper by Hjort and Koning in two cases: (i) for theta_0 the true parameter, and (ii)   for local alternatives O(1/sqrt(n)) from theta_0. In the latter case the monitoring process is shown to be a Brownian bridge including a constant (bias) even when using -E{u'u}, Fisher's information (which is consistent up to O(1/n)). I would imagine this is important since model misspecification (measurement invariance) is the topic of the manuscript. This result allows the authors to to determine exactly what the result of misspecification is. It fits well with their line of reasoning, which I agree with. The misspecification is determined by a deviation h/sqrt(n) of the true parameter. This corresponds exactly to the misspecification in the simulations. Measurement invariance can be imagined as a latent variable acting on the factor loadings, and can therefore be incorporated in the parameter theta. If there were no
+measurement invariance, theta_v woold be 0, but in the case of misspecification, it is exactly the same as that of Hjort and Koning. I would recommend that the authors use this result by Hjort and Koning in the manuscript to show analytically what happens to the distribution and tests.
+
+Achim: I need to go back to Hjort and Koning, but he seems to be saying that we could use their results to show exactly what happens to the Brownian bridge under our artificial measurement invariance violations.  However, the reviewer then goes on to say:
+
+"p. 7 second paragraph: Assuming that the model is correctly specified is bonus when the second point above is incorporated. I think this would improve the manuscript."
+
+But this still doesn't seem to get at violations of normality.  Do you have additional insights here?
+
+
+Comment 4.2. Page 9:	The authors should give a reference or a short explanation of the “tied-down Bessel process”. Readers might be unfamiliar with the process.
+
+Achim: Do you know of a good reference?
