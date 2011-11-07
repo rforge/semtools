@@ -1,18 +1,132 @@
-Comment 1.6. Also, many "nuisance" variable that are hypothesized to affect indicators, say, in cognitive testing (e.g., see Wicherts et al.'s work on measurement invariance and stereotype threat) in a given multi-group CFA are expected to linearly affect these indicators. Now I can come up with a host of scenarios in which the measurement bias is approximately linear and so can be modeled in simple terms because the regression on V results in an additional factor in the model.  Surely I don't expect the authors to deal with all of such potential scenarios' of failures of measurement invariance in CFA. However, I do wish to point out that underlying the current approach is a specific kind of measurement bias that is expected to be discontinuous while many failures of invariance are expected to be continuous and approximately linear. Therefore, the authors should go into more detail on the nature of the measurement bias that the approach is trying to uncover. Their approach may be generic, but it is not really general in the sense that many failures of strict factorial invariance can be modeled in more straightforward and traditional ways. The step function in Eq. 10 should be discussed in more detail and may be supplemented by a hypothetical example of why it occurs in linear factor models.
+Comment 1.6. Also, many "nuisance" variable that are hypothesized to affect
+indicators, say, in cognitive testing (e.g., see Wicherts et al.'s work on
+measurement invariance and stereotype threat) in a given multi-group CFA are
+expected to linearly affect these indicators. Now I can come up with a host of
+scenarios in which the measurement bias is approximately linear and so can be
+modeled in simple terms because the regression on V results in an additional
+factor in the model.  Surely I don't expect the authors to deal with all of such
+potential scenarios' of failures of measurement invariance in CFA. However, I do
+wish to point out that underlying the current approach is a specific kind of
+measurement bias that is expected to be discontinuous while many failures of
+invariance are expected to be continuous and approximately linear. Therefore,
+the authors should go into more detail on the nature of the measurement bias
+that the approach is trying to uncover. Their approach may be generic, but it is
+not really general in the sense that many failures of strict factorial
+invariance can be modeled in more straightforward and traditional ways. The step
+function in Eq. 10 should be discussed in more detail and may be supplemented by
+a hypothetical example of why it occurs in linear factor models.
 
-Achim: I believe it is true that, while Eq 10 was useful for explanatory purposes, the tests can handle more than one step (i.e., more than 2 groups).  So we might argue that the tests can get at "linear" failures of invariance by having many small steps in the step function.
+Achim: I believe it is true that, while Eq 10 was useful for explanatory
+purposes, the tests can handle more than one step (i.e., more than 2 groups). 
+So we might argue that the tests can get at "linear" failures of invariance by
+having many small steps in the step function.
+
+Z: The step function from Equation 10 is employed as an illustrative example
+because it highlights the connection between nested model comparisons and the
+proposed techniques. Also the maxLM statistic from Equation 17 has particularly
+high power for this scenario. However, the proposed tests typically have
+non-trivial power for all (non-constant) deviation patterns theta(v_i)
+(considered in Equation 9). Thus, the tests will also have power for linear
+deviations from parameter constancy, altough other techniques will perform
+better in this particular case. Moreover, if the change in parameters is
+continuous but not exactly linear - e.g., a sigmoidal shift from one set
+of parameters to another one - then the simple single shift model in Equation 10
+may in fact be a useful first approximation in practice and have better power
+than linear techniques.
+
+To do: It is probably worth pointing out something like this in the paper.
+I'm not sure, though, what would be the best place. Probably not too early to
+keep the discussion simple at first. Maybe in the "Discussion" section?
 
 
-Comment 3.2. The weak convergence of the monitoring process is proved in the paper by Hjort and Koning in two cases: (i) for theta_0 the true parameter, and (ii)   for local alternatives O(1/sqrt(n)) from theta_0. In the latter case the monitoring process is shown to be a Brownian bridge including a constant (bias) even when using -E{u'u}, Fisher's information (which is consistent up to O(1/n)). I would imagine this is important since model misspecification (measurement invariance) is the topic of the manuscript. This result allows the authors to to determine exactly what the result of misspecification is. It fits well with their line of reasoning, which I agree with. The misspecification is determined by a deviation h/sqrt(n) of the true parameter. This corresponds exactly to the misspecification in the simulations. Measurement invariance can be imagined as a latent variable acting on the factor loadings, and can therefore be incorporated in the parameter theta. If there were no
-measurement invariance, theta_v woold be 0, but in the case of misspecification, it is exactly the same as that of Hjort and Koning. I would recommend that the authors use this result by Hjort and Koning in the manuscript to show analytically what happens to the distribution and tests.
+----------
 
-Achim: I need to go back to Hjort and Koning, but he seems to be saying that we could use their results to show exactly what happens to the Brownian bridge under our artificial measurement invariance violations.  However, the reviewer then goes on to say:
+Comment 3.2. The weak convergence of the monitoring process is proved in the
+paper by Hjort and Koning in two cases: (i) for theta_0 the true parameter, and
+(ii)   for local alternatives O(1/sqrt(n)) from theta_0. In the latter case the
+monitoring process is shown to be a Brownian bridge including a constant (bias)
+even when using -E{u'u}, Fisher's information (which is consistent up to
+O(1/n)). I would imagine this is important since model misspecification
+(measurement invariance) is the topic of the manuscript. This result allows the
+authors to to determine exactly what the result of misspecification is. It fits
+well with their line of reasoning, which I agree with. The misspecification is
+determined by a deviation h/sqrt(n) of the true parameter. This corresponds
+exactly to the misspecification in the simulations. Measurement invariance can
+be imagined as a latent variable acting on the factor loadings, and can
+therefore be incorporated in the parameter theta. If there were no measurement
+invariance, theta_v woold be 0, but in the case of misspecification, it is
+exactly the same as that of Hjort and Koning. I would recommend that the authors
+use this result by Hjort and Koning in the manuscript to show analytically what
+happens to the distribution and tests.
 
-"p. 7 second paragraph: Assuming that the model is correctly specified is bonus when the second point above is incorporated. I think this would improve the manuscript."
+Achim: I need to go back to Hjort and Koning, but he seems to be saying that we
+could use their results to show exactly what happens to the Brownian bridge
+under our artificial measurement invariance violations.  However, the reviewer
+then goes on to say:
 
-But this still doesn't seem to get at violations of normality.  Do you have additional insights here?
+"p. 7 second paragraph: Assuming that the model is correctly specified is bonus
+when the second point above is incorporated. I think this would improve the
+manuscript."
+
+But this still doesn't seem to get at violations of normality.  Do you have
+additional insights here?
+
+Z: After "Critical Values & p-values" and before "Locating the Invariance" we
+could include another subsection "Local Alternatives". In this we could point
+out that using the results of Hjort & Koning and Zeileis & Hornik we can also
+capture the behaviour of the process B(t, \hat \theta) under the alternative
+of parameter instability. In particular, we can assume that the pattern
+of deviation theta(v_i) can be described as a constant parameter plus some
+non-constant deviation g(i/n):
+
+  theta(v_i) = theta_0 + n^{-1/2} g(i/n)
+
+In that case, the scores s(theta_0; x_i) from Equation 6 do not have zero
+expectation but
+
+  E[s(theta_0; x_i)] = 0 + n^{-1/2} C(theta_0) g(i/n)
+
+where the covariance matrix C(theta) from the expected outer product of
+gradients is
+
+  C(theta) = E[s(theta; x_i) s(theta; x_i)']
+
+which at theta_0 coincides with the expected information matrix.
+
+Under this local alternative, Hjort & Koning show that the process
+B(t, \hat theta) behaves asymptotically like
+
+  B^0(t) + \hat I^{-1/2} C(\hat \theta) G^0(t)
+
+i.e., a zero-mean Brownian bridge plus a term with non-zero mean driven by
+G^0(t) = G(t) - t G(1), where G(t) = \int_0^t g(t). Hence, unless the local
+alternative has g(t) \equiv 0, the empirical process B(t, \hat theta) will
+have a non-zero mean and hence the corresponding tests will have non-trivial
+power (asymptotically).
+
+In our simulation we use a simple step function g(t) = I(t > 0.5) multiplied
+with the violation magnitude for some parameters. Thus, the functions G(t) is
+I(t > 0.5) * (t - 0.5) and G^0(t) = {I(t > 0.5) - 0.5 } * t - I(t > 0.5) * 0.5,
+both again multiplied with the violation magnitude. Thus, the mean under the
+alternative is driven by a function that is triangle-shaped with a peak at the
+changepoint t = 0.5 for the parameters affected by the change (and equal to zero
+for all remaining parameters).
+
+To do: If we decide to include this discussion in the manuscript, incorporate
+it into the .Rnw.
 
 
-Comment 4.2. Page 9:	The authors should give a reference or a short explanation of the “tied-down Bessel process”. Readers might be unfamiliar with the process.
+----------
+
+Comment 4.2. Page 9:	The authors should give a reference or a short
+explanation of the "tied-down Bessel process". Readers might be unfamiliar
+with the process.
 
 Achim: Do you know of a good reference?
+
+Z: Andrews (1993) uses this terminology which is the reference that we already
+use in that paragraph. We could modify the sentence "See below for more details."
+to "See below for more details and Andrews (1993) for the original results and
+further references." Or something along those lines.
+
+----------
