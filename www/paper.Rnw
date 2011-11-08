@@ -1013,28 +1013,78 @@ section, we consider the tests' use in practice and their
 extension to more complex scenarios.
 
 \subsection{Use in Practice}
-% Simultaneous test of Meredith's various types of invariance
 The proposed tests give researchers a new set of tools for studying 
-measurement invariance.  For example, they give researchers the
-flexibility to: (1)~simultaneously test all model parameters, yielding
+measurement invariance, allowing them the 
+flexibility to: (1)~simultaneously test all model parameters across
+all individuals, yielding
 results relevant to many types of measurement
-invariance (see, e.g., \citeNP{Mer93}), or (2)~test a single subset of
-model parameters, potentially leading to improved power to detect a
-single type of measurement invariance.  The traditional
-steps have involved hypothesizing a specific type of invariance and
-then testing for it via a LR~test, but this is
-unnecessary under the proposed framework.
+invariance (see, e.g., \citeNP{Mer93}), (2)~test a subset of
+model parameters, either across all individuals or within a
+multiple-group model, and (3)~use the tests as a type of modification
+index following significant LR~tests.
+Traditional steps to studying measurement invariance have involved
+sequential LR~tests for various types of invariance using
+multiple-group models.  As shown in the Example section, it can be
+beneficial to employ the traditional steps in tandem with the proposed
+tests.  Further, when groups are not defined in advance (e.g.,
+continuous $V$), the traditional steps fail unless further assumptions
+about the nature of the groups are made.
 
-% Researchers interpreting subgroups violating MI
-In addition to simultaneously testing different types of measurement
-invariance, the proposed tests allow researchers to easily interpret
-the nature of the invariance violation.  This is made possible through
-the tests' abilities to estimate $\nu$, the threshold dividing
+In addition to providing general information about whether or not
+measurement 
+invariance holds, the proposed tests allow researchers to interpret
+the nature of the invariance violation.  This is made possible, e.g.,
+through the tests' abilities to estimate $\nu$, the threshold dividing
 individuals into subgroups that violate
-measurement invariance.  While a single $\nu$ was assumed in this
-paper, it is also possible to define 
-formal rules for estimating multiple $\nu$ parameters
-(see \citeNP{ZeiSha10}).  We plan to explore these issues in the future.
+measurement invariance (see Equation~\eqref{eq:h1*}).  It is also
+possible to define formal rules for estimating multiple $\nu$
+parameters (see \citeNP{ZeiSha10}).
+
+\subsection{Comparison to Other Methods}
+The step
+functions from~\eqref{eq:h18} were employed in the current paper to
+highlight connections with nested model
+comparison, but the proposed tests typically have non-trivial power for
+all (non-constant) deviation patterns $\theta(v_i)$ (considered in
+Equation~\eqref{eq:h1}). Thus, the tests will also have power for linear
+deviations from parameter constancy, although other techniques may 
+perform better in this particular case.  Examples include the 
+class of moderated factor models \cite{BauHus09,MolDol10,Pur02}, 
+whereby continuous moderators are allowed to linearly impact model
+parameters (Purcell also considers quadratic effects of the
+moderators).   
+Returning to deviations in parameter constancy, if the change in
+parameters is continuous but not exactly linear - e.g., a sigmoidal
+shift from one set of parameters to another one - then the simple
+single shift model in~\eqref{eq:h1*} may be a useful first
+approximation and have better power than linear
+techniques. 
+
+% paragraph on factor mixture models
+The proposed tests are also similar to factor mixture models (e.g.,
+\citeNP{DolMaa98,LubMut05}) in that they can handle unknown subgroups
+violating measurement invariance.  Covariates can also be used to
+predict the unknown subgroups under both approaches.
+For example, for the 
+data used in our simulations, one could employ a factor mixture
+model with two latent classes.  This would typically involve the
+specification that student age has a linear effect on logit(P(Class
+2)), which highlights the main difference between the two techniques:
+the factor mixture model requires a specific assumption about the type
+of deviation from parameter constancy, while the proposed tests do
+not.
+
+More generally, all the approaches described above can be distinguished
+from the proposed tests in that they require estimation of a new model
+with increased complexity (due to the moderator/covariate).
+The proposed tests, on the other hand, are of the
+``posthoc'' variety, relying only on results calculated during the
+original model estimation.  While no method clearly dominates 
+across all situations, use of the proposed tests can at least reduce 
+some of the technical issues associated with estimating and
+interpreting models of greater complexity.  This may not be a
+good reason to use the tests, but it is a consideration that is often
+meaningful in practice.
 
 
 \subsection{Categorical Auxiliary Variable}
