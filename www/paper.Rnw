@@ -61,14 +61,14 @@ parameter invariance, measurement invariance, has implications for the
 general design and use of psychometric scales.
 This concept is 
 particularly important because violations can render the scales
-useless.  
+difficult to interpret.  
 That is, if a set of scales violates measurement invariance,
 then individuals with the same ``amount'' of a latent variable 
 may systematically receive 
 different scale scores.
 This may lead researchers to conclude subgroup
 differences on a wide variety of interesting constructs 
-when, in reality, the scales are the sole cause of the 
+when, in reality, the scales impact the magnitude of the 
 differences.  Further, it can be inappropriate to incorporate scales
 violating measurement invariance into structural equation
 models, where relationships between latent variables are hypothesized.  Horn
@@ -135,7 +135,8 @@ encountered in structural equation models with missing data (e.g.,
 \citeNP{Wot00}).
 
 Within the general framework outlined above and under the usual
-regularity conditions, the model parameters $\bm{\theta}$ can
+regularity conditions (e.g., \citeNP{Fer96}), the model parameters
+$\bm{\theta}$ can 
 be estimated by maximum likelihood (ML), i.e.,
 \begin{equation} \label{eq:ml}
   \hat{\bm{\theta}} ~=~ \argmax_{\bm{\theta}} \ell(\bm{\theta}; x_1, \dots, x_n),
@@ -179,11 +180,11 @@ invariant with respect to an auxiliary variable $V$ if:
 \end{equation}
 where ${\bf X}$ is a data matrix, $T$ is the latent
 variable that the scales purport to measure, and $f$ is the model's
-distributional form.  In the parametric framework
-adopted here, this means that the parameter vector ${\bm \theta}$ (or
-some subset of ${\bm \theta}$; see \citeNP{Mer93}) is equal
-across subgroups of individuals and thus does not vary
-with any variable $V$.
+distributional form \cite{Mel89}.  In the parametric,
+factor-analytic framework
+adopted here, this implies that the measurement parameters are equal
+across subgroups of individuals and, thus, do not vary with any
+variable $V$ \cite{Mer93}.
 
 To frame this as a formal hypothesis, we assume that -- in principle --
 Model~(\ref{eq:loglik}) holds for all individuals but with a
@@ -241,7 +242,9 @@ We assume throughout that the observations $i = 1, \dots, n$ are
 ordered with respect to the random variable $V$ of interest such that
 $v_1 \le v_2 \le \dots \le v_n$.  We also assume that the measurement
 model is correctly specified, as is implicitly assumed under traditional
-measurement invariance approaches.
+measurement invariance approaches.  In particular, violations of
+normality may lead to spurious results in the proposed tests just as
+they do in other approaches (e.g., \citeNP{BauCur04}).
 
 
 \subsection{Likelihood Ratio, Wald, and Lagrange Multiplier Test for Fixed Subgroups}
@@ -316,7 +319,8 @@ showed that the asymptotic distribution is in fact tractable but nonstandard.
 Specifically, the asymptotic distribution of (\ref{eq:maxlr}) is the maximum of a
 certain tied-down Bessel process whose specifics also depend on the minimal
 and maximal thresholds $\underline{\nu}$ and $\overline{\nu}$, respectively.
-See below for more details.
+See Andrews for the original results and further references, and see 
+below for more details on the results' application to measurement invariance.
 
 Analogously, one can consider $\max W(\nu)$ and
 $\max \mathit{LM}(\nu)$, respectively, which both have the same asymptotic properties
@@ -396,12 +400,16 @@ process. The $k$-dimensional cumulative score process is defined as
 where $\lfloor nt \rfloor$ is the integer part of $nt$ and
 $\hat I$ is some consistent estimate of the covariance matrix of the scores,
 e.g., their outer product or the observed information matrix.
+The $k$ dimensions of the 
+process arise from the fact that a separate cumulative score is
+maintained for each of the $k$ model parameters.  
 As the equation shows, the cumulative score process adds subsets of
 casewise score contributions across individuals along the ordering
-w.r.t.\ the variable $V$ of interest. At $t=1/n$, only the
+w.r.t.\ the variable $V$ of interest.  At $t=1/n$, only the
 first individual's contribution enters into the summation; at
-$t=2/n$, the first two individuals' contributions etc.\ until $t = n/n$
-where all contributions enter the sum. Thus, due to (\ref{eq:ml1}),
+$t=2/n$, the first two individuals' contributions enter into the
+summation, etc., until $t = n/n$
+where all contributions enter into the summation. Thus, due to (\ref{eq:ml1}),
 the cumulative score process always equals zero at $t = 0$ and
 returns to zero at $t = 1$. Furthermore, multiplication by
 $\hat {\bm I}^{-1/2}$ ``decorrelates'' the $k$ cumulative score
@@ -432,16 +440,23 @@ summation from individual 1 (with lowest value of $V$) to individual $n$
 The empirical cumulative score process from (\ref{eq:cumscore}) can also be viewed
 as an $n \times k$ matrix with elements ${\bm B}(i/n; \hat {\bm \theta})_j$ that
 we also denote ${\bm B}(\hat {\bm \theta})_{ij}$ below for brevity.
-Each column of this matrix converges to a univariate Brownian bridge and pertains
-to a single factor analysis parameter. To carry out a test of $H_0$, this process/matrix
+That is, assuming that individuals are ordered by $V$, the first row
+of ${\bm B}(\hat {\bm \theta})$ corresponds to the first individual's
+scores.  The second row of ${\bm B}(\hat {\bm \theta})$ corresponds to
+the sum of the first two individuals' scores, etc., until the last row
+of ${\bm B}(\hat {\bm \theta})$ corresponds to the sum of all
+individuals' scores (which will be a row of zeroes).
+Under this setup, each column of ${\bm B}(\hat {\bm \theta})$
+converges to a univariate Brownian bridge and pertains 
+to a single factor analysis parameter. To carry out a test of $H_0$, the process/matrix
 needs to be aggregated to a scalar test statistic by collapsing across
 rows (individuals) and columns (parameters) of the matrix. The asymptotic distribution
 of this test statistic is then easily obtained by applying the same
-aggregation to the asymptotic process ${\bm B}^0$ \cite{HjoKon02,ZeiHor07},
+aggregation to the asymptotic Brownian bridge \cite{HjoKon02,ZeiHor07},
 so that corresponding $p$-values can be derived.
 
-As argued above, no single aggregation function will have high power for any
-conceivable pattern of measurement invariance ${\bm \theta}(V)$, while any
+As argued above, no single aggregation function will have high power for all
+conceivable patterns of measurement invariance ${\bm \theta}(V)$, while any
 (reasonable) aggregation function will have non-trivial power under $H_1$.
 Thus, various aggregation strategies should be employed depending on which
 pattern ${\bm \theta}(V)$ is most plausible (because the exact pattern
@@ -453,19 +468,20 @@ strays ``too far'' from zero at any time, i.e., if
     \label{eq:dmax}
     \mathit{DM} = \max_{i = 1,\dots, n} \max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} |,
 \end{equation}
-becomes large. Consquently, this double maximum statistic allows for simultaneous
-isolation of the threshold(s) of parameter change (over the individuals $i = 1, \dots, n$)
+becomes large.  In determining where in ${\bm B}(\hat {\bm \theta})$
+this maximum occurred, we are able to determine  
+threshold(s) of parameter change (over the individuals $i = 1, \dots, n$)
 and the parameter(s) affected by it (over $j = 1, \dots, k$). This test is
 especially useful for visualization, as the cumulative score process for
 each individual parameter can be displayed along with the appropriate
-critical value.  An example of this visualization appears in the
-example section (Figure~\ref{fig:lambdas}).
+critical value.  An example of this visualization appears in the 
+example section (first row, second column of Figure~\ref{fig:cusumex}).
 
 However, taking maximums ``wastes'' power if many of the $k$~parameters change
 at the same threshold, or if the score process takes large values for
 many of the $n$~individuals (and not just a single threshold). In such
-cases, sums insteads of maximums are more suitable for collapsing across
-parameters and/or individuals because they combine the deviations instead of
+cases, sums insteads of maxima are more suitable for collapsing across
+parameters and/or individuals, because they combine the deviations instead of
 picking out only the single largest deviation. Thus, if the parameter instability
 ${\bm \theta}(V)$ affects many parameters and leads to many subgroups, sums
 of (absolute or squared) values should be used for collapsing both across
@@ -484,10 +500,9 @@ statistic and the latter to the maximum LM statistic from the previous section:
 \end{eqnarray}
 where the $\max \mathit{LM}$ statistic is additionally scaled by the
 asymptotic variance $t (1 - t)$ of the process ${\bm B}(t, \hat {\bm \theta})$.
-It is equivalent to the $\max_\nu \mathit{LM}(\nu)$ from the previous
-section (provided that the boundaries for the subgroups sizes $\underline{i}$/$\underline{\nu}$
-and $\overline{\imath}$/$\overline{\nu}$ are chosen analogously).
-
+It is equivalent to the $\max_\nu \mathit{LM}(\nu)$ statistic from the previous
+section, provided that the boundaries for the subgroups sizes $\underline{i}$/$\underline{\nu}$
+and $\overline{\imath}$/$\overline{\nu}$ are chosen analogously.
 Further aggregation functions have been suggested in the structural
 change literature (see e.g., \citeNP{Zei05,ZeiSha10}) but the three
 tests above are most likely to be useful in psychometric settings.
@@ -503,10 +518,10 @@ This may be of special interest to those wishing to test specific types of measu
 invariance, where subsets of model parameters are assumed to be stable.
 
 
-\subsection{Critical Values \& $p$-values.}
+\subsection{Critical Values \& $p$-values}
 
 As pointed out above, specification of the asymptotic distribution under $H_0$ for the test
-statistics from the previous section is straightforward: It is simply the aggregation
+statistics from the previous section is straightforward: it is simply the aggregation
 of the asympotic process ${\bm B}^0(t)$ \cite{HjoKon02,ZeiHor07}. Thus, $\mathit{DM}$
 from (\ref{eq:dmax}) converges to $\sup_t || {\bm B}^0(t) ||_{\infty}$, where
 $||\cdot||_\infty$ denotes the maximum norm. Similarly, $\mathit{CvM}$
@@ -543,8 +558,51 @@ Critical values for the distribution of the maximum LR/Wald/LM tests
 are provided by Hansen \citeyear{Han97}. Note that the distribution depends on
 the minimal and maximal thresholds employed in the test.
 
+\subsection{Local Alternatives}
+Using results from Hjort and Koning \citeyear{HjoKon02} and Zeileis
+and Hornik \citeyear{ZeiHor07}, we can also
+capture the behaviour of the process $\bm{B}(t, \hat{\bm{\theta}})$
+under specific alternatives 
+of parameter instability. In particular, we can assume that the pattern
+of deviation $\bm{theta}(v_i)$ can be described as a constant
+parameter plus some non-constant deviation $\bm{g}(i/n)$:
+\begin{equation}
+    \label{eq:local}
+  \bm{\theta}(v_i) = \bm{\theta}_0 + n^{-1/2} \bm{g}(i/n).
+\end{equation}
+In this case, the scores $\bm{s}(\bm{\theta}_0; x_i)$ from
+Equation~\eqref{eq:score} do not have zero expectation but rather
+\begin{equation}
+    \label{eq:localE}
+  E[\bm{s}(\bm{\theta}_0; x_i)] = \bm{0} + n^{-1/2}
+  \bm{C}(\bm{\theta}_0) \bm{g}(i/n).
+\end{equation}
+In this case, the covariance matrix $\bm{C}(\bm{\theta})$ from the expected
+outer product of gradients is
+\begin{equation}
+    \label{eq:localS}
+  \bm{C}(\bm{\theta}_0) = E[\bm{s}(\bm{\theta}_0; x_i) \bm{s}(\bm{\theta}; x_i)']    
+\end{equation}
+which, at $\bm{\theta}_0$, coincides with the expected information matrix.
 
-\subsection{Locating the Invariance.}
+Under the local alternative described above, Hjort and Koning
+\citeyear{HjoKon02} show that the process
+$\bm{B}(t, \hat{\bm{\theta}})$ behaves asymptotically like
+\begin{equation}
+    \label{eq:localB}
+    \bm{B}^0(t) + \hat{\bm{I}}^{-1/2} \bm{C}(\hat{\bm{\theta}}) \bm{G}^0(t),
+\end{equation}
+i.e., a zero-mean Brownian bridge plus a term with non-zero mean driven by
+$\bm{G}^0(t) = \bm{G}(t) - t \bm{G}(1)$, where $\bm{G}(t) = \int_0^t
+\bm{g}(y) dy$.  Hence, unless the local
+alternative has $\bm{g}(t) \equiv \bm{0}$, the empirical process $\bm{B}(t,
+\hat{\bm{theta}})$ will 
+have a non-zero mean.  Hence, the corresponding tests will have non-trivial
+power (asymptotically).  We use these results in the Simulation
+section to describe the expected behavior of the Brownian bridge.
+
+
+\subsection{Locating the Invariance}
 
 If the employed parameter instability test detects a measurement invariance violation,
 the researcher is typically interested in identification of the parameter(s) affected
@@ -847,8 +905,8 @@ Figure~\ref{fig:famod}, with measurement invariance violations in the
 ``verbal'' factor loadings with respect to a continuous auxliary variable.
 For simplicity, we
 assume other model parameters are invariant.  We also employ a
-single-group model to reflect situations where there exist only continuous
-$V$, so that no groups can be predefined.
+single-group model, reflecting situations where there exist only continuous
+$V$ (so that no groups can be predefined).
 
 We examine the power and error rates of the three
 tests used in the Example section: the double-max test, the
@@ -886,6 +944,19 @@ violation magnitude ($d$) $\times$ number of parameters being tested
 5,000 datasets were generated and tested.  In each dataset, half the
 individuals had ``low $V$'' (e.g., 13--15 
 years of age) and half had ``high $V$'' (e.g., 16--18 years of age).
+
+Using results discussed previously in the ``Local Alternatives''
+section, we can derive the expected behavior of the univariate 
+Brownian bridges for the parameters $\{\lambda_{11},
+\lambda_{21}, \lambda_{31}\}$.  For these parameters, 
+we use a simple step function $g(t) = \text{I}(t > 0.5)$ multiplied
+by the violation magnitude.  Thus, $G(t) = 
+\text{I}(t > 0.5) \times (t - 0.5)$ and $G^0(t) = \{\text{I}(t > 0.5) - 0.5 } \times t - \text{I}(t > 0.5) \times 0.5$,
+both again multiplied by the violation magnitude. Thus, the mean under the
+alternative is driven by a function that is triangle-shaped, with a peak at the
+changepoint $t = 0.5$ for the parameters affected by the change (and
+equal to zero for all remaining parameters). 
+
 
 <<mz_sim>>=
 if(file.exists("mz_sim.rda")) {
@@ -1042,7 +1113,7 @@ parameters (see \citeNP{ZeiSha10}).
 
 \subsection{Comparison to Other Methods}
 The step
-functions from~\eqref{eq:h18} were employed in the current paper to
+functions from~\eqref{eq:h1*} were employed in the current paper to
 highlight connections with nested model
 comparison, but the proposed tests typically have non-trivial power for
 all (non-constant) deviation patterns $\theta(v_i)$ (considered in
