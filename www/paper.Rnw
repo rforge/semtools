@@ -951,7 +951,7 @@ Brownian bridges for the parameters $\{\lambda_{11},
 \lambda_{21}, \lambda_{31}\}$.  For these parameters, 
 we use a simple step function $g(t) = \text{I}(t > 0.5)$ multiplied
 by the violation magnitude.  Thus, $G(t) = 
-\text{I}(t > 0.5) \times (t - 0.5)$ and $G^0(t) = \{\text{I}(t > 0.5) - 0.5 } \times t - \text{I}(t > 0.5) \times 0.5$,
+\text{I}(t > 0.5) \times (t - 0.5)$ and $G^0(t) = \{\text{I}(t > 0.5) - 0.5 \} \times t - \text{I}(t > 0.5) \times 0.5$,
 both again multiplied by the violation magnitude. Thus, the mean under the
 alternative is driven by a function that is triangle-shaped, with a peak at the
 changepoint $t = 0.5$ for the parameters affected by the change (and
@@ -1029,8 +1029,8 @@ analysis and beyond.
 ## visualization
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(c("CvM", "max LM", "DM"), points = FALSE, lines = TRUE)
-mykey$lines$pch <- c(2, 3, 1)
-mykey$lines$lty <- c(1.2, 2, 1.2)
+mykey$lines$lty <- c(2, 3, 1)
+mykey$lines$lwd <- c(1.2, 2, 1.2)
 print(xyplot(power ~ diff | pars + nobs, group = ~ test, data = mz_sim_sub,
   type = "l", lwd = c(1, 1, 2), ylim = c(0, 1), key = mykey,
   xlab = "Violation Magnitude", ylab = "Power"))
@@ -1063,8 +1063,10 @@ mz_tab <- format(mz_tab, quote = FALSE)[-2, -4]
 mz_tab[1,] <- c("$n$", "$k^*$", "Statistic", format(seq(0, 4, by = 0.5)))
 mz_tab <- paste(apply(mz_tab, 1, paste, collapse = " & "), "\\\\")
 mz_tab[c(1, length(mz_tab))] <- paste(mz_tab[c(1, length(mz_tab))], "\\hline")
-mz_tab <- c(mz_tab,"\\multicolumn{12}{l}{{\\scriptsize{Abbreviations: CvM = Cram\\'{e}r-von Mises 
-  test; $\\max \\mathit{LM}$ = Maximum Lagrange multiplier test; DM = Double-max test.}}}")
+mz_tab <- c(mz_tab,"\\multicolumn{2}{l}{{\\scriptsize{Abbreviations:}}} &
+\\multicolumn{10}{l}{{\\scriptsize{CvM = Cram\\'{e}r-von Mises 
+  test; $\\max \\mathit{LM}$ = Maximum Lagrange multiplier test;}}} \\\\")
+mz_tab <- c(mz_tab," & & \\multicolumn{10}{l}{{\\scriptsize{DM = Double-max test.}}}")
 writeLines(mz_tab)
 @
 
