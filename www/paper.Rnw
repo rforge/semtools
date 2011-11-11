@@ -791,7 +791,7 @@ wdh0.1 <- wdhfit2(d)
 @ 
 
 Test statistics for the hypotheses \eqref{eq:exh0}
-and~\eqref{eq:exh0.2} are displayed in Figure~\ref{cusumex}.
+and~\eqref{eq:exh0.2} are displayed in Figure~\ref{fig:cusumex}.
 Each panel displays a test 
 statistic's fluctuation across values of student GPA, with the first
 column containing tests of~\eqref{eq:exh0} (testing $k*=4$ parameters)
@@ -810,7 +810,7 @@ the second row, \eqref{eq:h0} is rejected if the dashed horizontal line is
 higher than the solid horizontal line.
 
 %% Details on test results
-The results displayed in Figure~\ref{cusumex} generally show that the
+The results displayed in Figure~\ref{fig:cusumex} generally show that the
 ``minority, stereotype prime'' group lacks invariance with respect to
 GPA.  All three tests are significant at the .05 level when the four
 group-specific parameters are tested simultaneously (first column).
