@@ -38,7 +38,7 @@
 \newcommand{\fixme}[1]{\emph{\marginpar{FIXME} (#1)}}
 \newcommand{\readme}[1]{\emph{\marginpar{README} (#1)}}
 
-%\spacing{1}
+\spacing{1}
 
 \begin{document}
 \maketitle
