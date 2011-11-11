@@ -775,6 +775,9 @@ d <- dget("WichertsEtAl2005_Study1.txt")
 
 wdh0 <- wdhfit(d)
 
+# Refit model with new identification constraints
+wdh0.1 <- wdhfit2(d)
+
 ## subsample models
 ## This could be used to compare sequential LRTs with the LM
 ## statistic that tests all parameters simultaneously.
@@ -845,15 +848,19 @@ occurs in the three panels around a GPA of 7.0 (`B' range).
 \label{fig:cusumex}
 \setkeys{Gin}{width=\textwidth}
 <<gefp-4-1, fig=TRUE, height=8, width=6>>=
-## add small amount of random noise to duplicated GPAs, so that everything
-## works with zoo.  (Without this, one can still obtain DM and CvM test 
-##                   results but not supLM results.)
+## add a small amount of random noise to duplicated GPAs, so that everything
+## works with gefp().  (Without this, one can still obtain DM and CvM test 
+##                      results but not supLM results.)
 set.seed(1090)
 ties <- duplicated(d$gpa)
 d$gpa[ties] <- runif(sum(ties), d$gpa[ties]-.01, d$gpa[ties]+.01)
 ## empirical fluctuation processes (4 vs 1 par)
 gefp_4_info <- gefp(wdh0, fit = NULL, order.by = d$gpa[d$grouping=="exp:minority"], parm = 15:18, vcov = info.wdhfit, sandwich = FALSE)
 gefp_1_info <- gefp(wdh0, fit = NULL, order.by = d$gpa[d$grouping=="exp:minority"], parm = 18, vcov = info.wdhfit, sandwich = FALSE)
+
+# processes for second identification constraints
+gefp_4_info_1 <- gefp(wdh0.1, fit = NULL, order.by = d$gpa[d$grouping=="exp:minority"], parm = 15:18, vcov = info.wdhfit, sandwich = FALSE)
+gefp_1_info_1 <- gefp(wdh0.1, fit = NULL, order.by = d$gpa[d$grouping=="exp:minority"], parm = 18, vcov = info.wdhfit, sandwich = FALSE)
 
 ## visualization
 par(mfcol = c(3, 2))
@@ -929,7 +936,7 @@ Sample size and magnitude
 of measurement 
 invariance violation were manipulated to examine power:
 we examined power to detect 
-invariance violations across three sample sizes ($n=100,
+invariance violations across four sample sizes ($n=50, 100,
 200, 500$) and 17~magnitudes of violations.  These violations
 involved the younger students' values of $\{\lambda_{11},
 \lambda_{21}, \lambda_{31}\}$ deviating from the older students'
@@ -995,9 +1002,13 @@ result in decreased power, with the tests performing more similarly at
 the larger sample sizes.  The tests distinguish themselves from one
 another when only the three factor loadings are tested, with the
 Cram\'{e}r-von Mises test having the most power, followed by $\max \mathit{LM}$,
-followed by the double-max test.  This advantage decreases with
-increases in sample size.  
-Table~\ref{tab:simres} presents the same results as
+followed by the double-max test.  
+This advantage decreases at larger sample sizes.  
+At $n=50$, generally regarded as a
+small sample size for factor analysis, the power functions break down
+and are not monotonic with respect to violation magnitude.
+
+Table~\ref{tab:simres} presents a subset of the results displayed in 
 Figure~\ref{fig:simres}, but it is easier to see exact power
 magnitudes in the table.
 The table shows that the
@@ -1019,7 +1030,7 @@ analysis and beyond.
 \begin{figure}
 \caption{Simulated power curves for the double-max test (solid), 
   Cram\'{e}r-von Mises test (dashed), and $\max \mathit{LM}$ test (dotted)
-  across three sample sizes $n$, two subsets of tested parameters $k^*$, and
+  across four sample sizes $n$, two subsets of tested parameters $k^*$, and
   measurement invariance violations of 0--4 standard errors (scaled by $\sqrt{n}$). 
   See Table~\ref{tab:simres} for the underlying numeric values (using a
   subset of nine violation magnitudes).}
@@ -1040,7 +1051,7 @@ print(xyplot(power ~ diff | pars + nobs, group = ~ test, data = mz_sim_sub,
 
 \begin{table*}
 \caption{Simulated power for three test statistics
-  across three sample sizes $n$, nine magnitudes of measurement
+  across four sample sizes $n$, nine magnitudes of measurement
   invariance violations, and two subsets of tested
   parameters $k^*$. 
   See Figure~\ref{fig:simres} for a visualization (using all 17~violation magnitudes).}
@@ -1085,6 +1096,25 @@ isolate specific model parameters affected by the violation.  In this
 section, we consider the tests' use in practice and their 
 extension to more complex scenarios.
 
+<<<constraint_study>>=
+tests <- c("maxBB", "meanL2BB", "supLM(0.1)")
+
+p.diffs <- matrix(NA, 2*length(tests), 2)
+
+for (i in 1:length(tests)){
+  p.diffs[i,1] <- unlist(sctest(gefp_4_info, functional=
+                                eval(parse(text=tests[i])))[2])
+  p.diffs[i,2] <- unlist(sctest(gefp_4_info_1, functional=
+                                     eval(parse(text=tests[i])))[2])
+  }
+for (i in (length(tests)+1):(2*length(tests))){
+  p.diffs[i,1] <- unlist(sctest(gefp_1_info, functional=
+                                     eval(parse(text=tests[i-length(tests)])))[2])
+  p.diffs[i,2] <- unlist(sctest(gefp_1_info_1, functional=
+                                   eval(parse(text=tests[i-length(tests)])))[2])
+}
+@ 
+
 \subsection{Use in Practice}
 The proposed tests give researchers a new set of tools for studying 
 measurement invariance, allowing them the 
@@ -1103,6 +1133,21 @@ tests.  Further, when groups are not defined in advance (e.g.,
 continuous $V$), the traditional steps fail unless further assumptions
 about the nature of the groups are made.
 
+Another difference between the proposed tests and traditional tests
+involves the fact that, for the proposed tests, one's choice of
+identification constraints can influence tests of the remaining
+parameters.  This essentially reflects the fact that, while the model
+fits equally well regardless of identification constraint, the
+free model parameters adjust themselves to the specific identification
+constraint chosen.  To examine this issue in more detail, we refit the model
+used in the Example section, using an alternative identification
+constraint (i.e., fixing a different factor loading at 1).  Across the 6
+tests presented in the example section (see, e.g.,
+Figure~\ref{fig:cusumex}), the largest difference in p-values for the
+two identification constraints 
+was~$\Sexpr{round(max(abs(p.diffs[,2] - p.diffs[,1])),3)}$.  This is not a large difference, though further
+study is warranted. 
+
 In addition to providing general information about whether or not
 measurement 
 invariance holds, the proposed tests allow researchers to interpret
@@ -1112,6 +1157,8 @@ individuals into subgroups that violate
 measurement invariance (see Equation~\eqref{eq:h1*}).  It is also
 possible to define formal rules for estimating multiple $\nu$
 parameters (see \citeNP{ZeiSha10}).
+
+
 
 \subsection{Comparison to Other Methods}
 The step
@@ -1149,13 +1196,13 @@ not.
 
 More generally, all the approaches described above can be distinguished
 from the proposed tests in that they require estimation of a new model
-with increased complexity (due to the moderator/covariate).
+of increased complexity (due to the moderator/covariate).
 The proposed tests, on the other hand, are of the
 ``posthoc'' variety, relying only on results calculated during the
 original model estimation.  While no method clearly dominates 
 across all situations, use of the proposed tests can at least reduce 
 some of the technical issues associated with estimating and
-interpreting models of greater complexity.  This may not be a
+interpreting models of greater complexity.  This alone is not a
 good reason to use the tests, but it is a consideration that is often
 meaningful in practice.
 
@@ -1215,16 +1262,20 @@ provide a formal significance test with a controlled level of Type~I errors.
 
 The proposed tests also 
 readily extend to other popular psychometric models.  
-Instead of studying measurement invariance in factor
-analysis, the tests can be used to generally 
+For example, the tests can be used to generally 
 study the stability of structural equation model parameters across
-observations.  For 
-example, it would be possible to assess whether paths between
+observations.  Under this framework, it is possible to assess whether
+paths between 
 latent variables are stronger for some individuals than for
-others.  Secondly, 
-the tests may be extended to study differential item functioning (DIF)
-in item response models (e.g., \citeNP{KopZei10}, who focused on recursive
-partitioning of Rasch models).  
+others.  Further, in applying the proposed tests to factor mean
+parameters (as was done in the example), implications of measurement
+invariance violations for structural equation modeling may be better
+understood.
+
+The proposed tests also naturally extend to the study of differential
+item functioning (DIF) 
+in item response models (e.g., \citeNP{KopZei10}, who focused on Rasch
+models).   
 Traditional DIF methods are similar to those for factor analysis in
 that subgroups must be specified in advance.
 %% The tests proposed here can detect subgroups automatically, however, offering a unified way of
@@ -1232,24 +1283,24 @@ that subgroups must be specified in advance.
 %% functioning in item response.
 While factor-analytic measurement invariance methods and DIF methods
 have developed 
-largely independently of one another, 
-some treatments \cite{Mcd99} and recent research \cite{StaChe06} have
-sought to unify the methods.  Extensions of the proposed tests can
-support this endeavor.
+largely independently of one another, the methods can certainly be
+treated from a unified perspective (e.g.,
+\citeNP{Mcd99,Mil11,StaChe06}).   
+The tests proposed here were designed with this perspective in mind.
 
 
 \subsection{Summary}
 We have outlined a family of 
 stochastic process-based parameter instability tests from theoretical
 statistics and applied them to the issue of measurement invariance in psychometrics.
-The paper included both theoretical development and 
+The paper included theoretical development, an applied example, and 
 study of the tests' performance.  The tests were found to have good
 properties via simulation, making them useful for many psychometric
 applications.  More generally, the tests help 
 solve standing problems in
 measurement invariance research and provide many avenues for
-future research, both through extensions of the tests within a
-factor-analytic context and through application of the tests to new
+future research.  This can happen both through extensions of the tests
+within a factor-analytic context and through application of the tests to new
 models.
 
 \section*{Computational Details}
