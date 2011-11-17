@@ -71,11 +71,11 @@ differences on a wide variety of interesting constructs
 when, in reality, the scales impact the magnitude of the 
 differences.  Further, it can be inappropriate to incorporate scales
 violating measurement invariance into structural equation
-models, where relationships between latent variables are hypothesized.  Horn
-and McArdle \citeyear{HorMca92} concisely summarize the impact of
+models, where relationships between latent variables are hypothesized.
+\citeA{HorMca92} concisely summarize the impact of
 these issues, stating ``Lack of evidence of measurement 
 invariance equivocates conclusions and casts doubt on theory in the
-behavioral sciences'' (p.~141).  Borsboom \citeyear{Bor06a} further 
+behavioral sciences'' (p.~141).  \citeA{Bor06a} further 
 notes that researchers often fail to assess whether measurement
 invariance holds.
 
@@ -314,7 +314,7 @@ reject if their maximum
 \end{equation}
 becomes large. Note that this corresponds to maximizing the likelihood w.r.t.\
 an additional parameter, namely $\nu$. Hence, the asymptotic distribution of the
-maximum $\mathit{LR}$ statistic is not $\chi^2$ anymore. Andrews \citeyear{And93}
+maximum $\mathit{LR}$ statistic is not $\chi^2$ anymore. \citeA{And93}
 showed that the asymptotic distribution is in fact tractable but nonstandard.
 Specifically, the asymptotic distribution of (\ref{eq:maxlr}) is the maximum of a
 certain tied-down Bessel process whose specifics also depend on the minimal
@@ -385,8 +385,7 @@ that cumulative sums of the empirical scores follow specific stochastic processe
 us to use them to generally test measurement invariance. Here, we review
 some of the main results from that literature and adapt it to the specific challenges
 of factor analysis models. More detailed accounts of the underlying structural
-change methods include Hjort and Koning \citeyear{HjoKon02} and
-Zeileis and Hornik \citeyear{ZeiHor07}.
+change methods include \citeA{HjoKon02} and \citeA{ZeiHor07}.
 
 For application to measurement invariance, the most important
 theoretical result involves the fact that, under the $H_0$ in \eqref{eq:h0}, the
@@ -424,7 +423,7 @@ Inference can then be based on an extension of the usual central limit
 theorem. Under the assumption of independence of individuals (implicit
 already in Equation~\ref{eq:loglik}) and under
 the usual ML regularity conditions (assuring asymptotic normality
-of $\hat {\bm \theta}$), Hjort \& Koning \citeyear{HjoKon02} show
+of $\hat {\bm \theta}$), \citeA{HjoKon02} show
 that 
 \begin{equation} \label{eq:fclt}
   {\bm B}(\cdot; \hat {\bm \theta}) ~\overset{d}{\rightarrow}~ {\bm B}^{0}(\cdot),
@@ -551,20 +550,19 @@ correction to obtain the $k$-dimensional case. The terms in the summation
 quickly go to zero as $h$ goes to infinity, so that only some large finite
 number of terms (say, 100) need to be evaluated in practice.
 
-For the Cram\'{e}r-von Mises test statistic $\mathit{CvM}$, Nyblom \citeyear{Nyb89}
-and Hansen \citeyear{Han92} provide small tables of critical values which
-have been extended in the software provided by Zeileis \citeyear{Zei06}.
+For the Cram\'{e}r-von Mises test statistic $\mathit{CvM}$, \citeA{Nyb89}
+and \citeA{Han92} provide small tables of critical values which
+have been extended in the software provided by \citeA{Zei06}.
 Critical values for the distribution of the maximum LR/Wald/LM tests
-are provided by Hansen \citeyear{Han97}. Note that the distribution depends on
+are provided by \citeA{Han97}. Note that the distribution depends on
 the minimal and maximal thresholds employed in the test.
 
 \subsection{Local Alternatives}
-Using results from Hjort and Koning \citeyear{HjoKon02} and Zeileis
-and Hornik \citeyear{ZeiHor07}, we can also
+Using results from \citeA{HjoKon02} and \citeA{ZeiHor07}, we can also
 capture the behaviour of the process $\bm{B}(t, \hat{\bm{\theta}})$
 under specific alternatives 
 of parameter instability. In particular, we can assume that the pattern
-of deviation $\bm{theta}(v_i)$ can be described as a constant
+of deviation $\bm{\theta}(v_i)$ can be described as a constant
 parameter plus some non-constant deviation $\bm{g}(i/n)$:
 \begin{equation}
     \label{eq:local}
@@ -585,8 +583,7 @@ outer product of gradients is
 \end{equation}
 which, at $\bm{\theta}_0$, coincides with the expected information matrix.
 
-Under the local alternative described above, Hjort and Koning
-\citeyear{HjoKon02} show that the process
+Under the local alternative described above, \citeA{HjoKon02} show that the process
 $\bm{B}(t, \hat{\bm{\theta}})$ behaves asymptotically like
 \begin{equation}
     \label{eq:localB}
@@ -596,7 +593,7 @@ i.e., a zero-mean Brownian bridge plus a term with non-zero mean driven by
 $\bm{G}^0(t) = \bm{G}(t) - t \bm{G}(1)$, where $\bm{G}(t) = \int_0^t
 \bm{g}(y) dy$.  Hence, unless the local
 alternative has $\bm{g}(t) \equiv \bm{0}$, the empirical process $\bm{B}(t,
-\hat{\bm{theta}})$ will 
+\hat{\bm{\theta}})$ will 
 have a non-zero mean.  Hence, the corresponding tests will have non-trivial
 power (asymptotically).  We use these results in the Simulation
 section to describe the expected behavior of the Brownian bridge.
@@ -652,18 +649,18 @@ These attributes give the proposed tests important advantages over
 existing tests, as existing measurement invariance methods cannot:
 (1) isolate specific parameters violating measurement invariance, or
 (2) test measurement invariance for unknown $\nu$. 
-In particular, Millsap \citeyear{Mil05} cites
+In particular, \citeA{Mil05} cites
 ``locating the invariance violation'' as a major outstanding problem
 in the field.
 
 In the next section, we employ the proposed tests to analyze existing
-data from Wicherts, Dolan, and Hessen \citeyear{WicDol05}.
+data from \citeA{WicDol05}.
 Following the example, we consider a
 full simulation study involving artificial data.
 
 \section{Example: Stereotype Threat}
 
-Wicherts, Dolan, and Hessen \citeyear{WicDol05} utilized confirmatory
+\citeA{WicDol05} utilized confirmatory
 factor models to study measurement invariance in a series of
 general intelligence scales.  They were interested in the
 notion of {\em{stereotype threat}}, whereby stereotypes concerning a
@@ -673,23 +670,24 @@ ethnic minorities' performance on tests of general intelligence.  In this sectio
 
 \subsection{Background}
 
-To study stereotype threat in a measurement invariance framework,
-Study 1 of Wicherts et al.\ \citeyear{WicDol05} involved 295 high school
-students completing three intelligence tests in two between-subjects
-conditions.  Conditions were defined by
-whether or not students received primes about ethnic stereotypes prior to testing.
-To study the data, Wicherts et al.\ employed a four-group,
-one-factor model with the three intelligence tests as manifest variables.
-The groups were defined by ethnicity (majority/minority) and by the
-experimental manipulation (received/did not receive stereotype prime).
-Results indicated that the intelligence tests lacked measurement
-invariance, with the minority group receiving stereotype primes being
-particularly different from the other three groups on the most
-difficult intelligence test.  Most notably, the factor loading and
-intercept for the "minority, stereotype prime" group were smaller, and the unique variance
-was larger. 
+To study stereotype threat in a measurement invariance framework, Study 1 of
+\citeA{WicDol05} involved 295 high school students
+completing three intelligence tests in two between-subjects conditions. 
+Conditions were defined by whether or not students received primes about ethnic
+stereotypes prior to testing. To study the data, Wicherts et al.\ employed a
+four-group, one-factor model with the three intelligence tests as manifest
+variables. The groups were defined by ethnicity (majority/minority) and by the
+experimental manipulation (received/did not receive stereotype prime). Results
+indicated that the intelligence tests lacked measurement invariance, with the
+minority group receiving stereotype primes being particularly different from the
+other three groups on the most difficult intelligence test.  Most notably, the
+factor loading and intercept for the ``minority, stereotype prime'' group were
+smaller, and the unique variance was larger. 
 
-As Wicherts et al. describe, one explanation for this pattern of results involves the idea that ability is positively related to "domain identification" \cite{Ste97}: individuals who are high on ability may be more prone to stereotype threat because they are more "tied in" to the domain of interest and are more aware of stereotypes.  To test this idea, we employ a four-group, confirmatory factor model used by Wicherts et al.\ in tandem with the tests proposed in this paper.  Our $V$ variable is participants' grade point averages (which were unused in the original analyses), which will reflect participants' identification with the academic domain.
+As Wicherts et al. describe, one explanation for this pattern of results involves the idea that ability is positively related to ``domain identification''
+\cite{Ste97}: individuals who are high on ability may be more prone to stereotype threat because they are more ``tied in'' to the domain of interest and are
+more aware of stereotypes.  To test this idea, we employ a four-group, confirmatory factor model used by Wicherts et al.\ in tandem with the tests proposed
+in this paper.  Our $V$ variable is participants' grade point averages (GPA, which were unused in the original analyses), which will reflect participants' identification with the academic domain.
 
 \subsection{Method}
 Wicherts et al.\ tested a series of confirmatory factor models for
@@ -699,7 +697,8 @@ across-group parameter restrictions on the factor loadings, unique
 variances, intercepts, and factor variances.  These parameters were
 typically restricted to be equal across groups, though a subset of the
 parameters were allowed to be group-specific upon examination of
-modification indices.  Most notably, the most difficult intelligence test's factor loading, unique variance, and intercept differed for the "minority, stereotype threat" group, as compared to the other groups.
+modification indices.  Most notably, the most difficult intelligence test's factor loading, unique variance, and intercept differed for the ``minority,
+stereotype threat'' group, as compared to the other groups.
 Factor means were also estimated for three of the groups.  The model
 provided a reasonable fit to the data, as judged by examination of
 $\chi^2$, RMSEA, and CFI statistics.  Wicherts et al.\ also had a Step
@@ -770,7 +769,7 @@ below.
 
 
 \subsection{Results}
-<<<mz_mod>>=
+<<mz_mod>>=
 d <- dget("WichertsEtAl2005_Study1.txt")
 
 wdh0 <- wdhfit(d)
@@ -875,7 +874,7 @@ plot(gefp_1_info, functional = supLM(0.1), main = "max LM, k* = 1", xlab = "GPA"
 
 \subsection{Discussion}
 Application of the proposed measurement invariance tests to the
-Wicherts et al.\ \citeyear{WicDol05} data allowed us to study the
+\citeA{WicDol05} data allowed us to study the
 domain identification's impact on stereotype threat in a
 straightforward manner.  The tests focused on a set of group-specific
 parameters within a four-group confirmatory factor model, and they
@@ -1096,7 +1095,7 @@ isolate specific model parameters affected by the violation.  In this
 section, we consider the tests' use in practice and their 
 extension to more complex scenarios.
 
-<<<constraint_study>>=
+<<constraint_study>>=
 tests <- c("maxBB", "meanL2BB", "supLM(0.1)")
 
 p.diffs <- matrix(NA, 2*length(tests), 2)
@@ -1249,8 +1248,7 @@ classification and regression trees \cite{BreFri84,MerSha10,StrMal09},
 with related algorithms being developed for general parametric models
 \cite{ZeiHot08} and Rasch models in particular \cite{KopZei10}.  
 
-Relatedly,
-S\'{a}nchez \citeyear{San09} describes a general
+Relatedly, \citeA{San09} describes a general
 method for partitioning/segmenting structural equation models within a 
 partial least squares framework.  This method involves direct maximization of
 the likelihood ratio (i.e., fitting the model for various subgroups
