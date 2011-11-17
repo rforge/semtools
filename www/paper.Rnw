@@ -692,7 +692,7 @@ in this paper.  Our $V$ variable is participants' grade point averages (GPA, whi
 \subsection{Method}
 Wicherts et al.\ tested a series of confirmatory factor models for
 various types of measurement invariance.  We focus on the model used
-in their Step 5b (see pp.\ 703--704 of their paper), which involved
+in their Step~5b (see pp.~703--704 of their paper), which involved
 across-group parameter restrictions on the factor loadings, unique
 variances, intercepts, and factor variances.  These parameters were
 typically restricted to be equal across groups, though a subset of the
@@ -701,8 +701,9 @@ modification indices.  Most notably, the most difficult intelligence test's fact
 stereotype threat'' group, as compared to the other groups.
 Factor means were also estimated for three of the groups.  The model
 provided a reasonable fit to the data, as judged by examination of
-$\chi^2$, RMSEA, and CFI statistics.  Wicherts et al.\ also had a Step
-6 (the final step), where they examined a model that was simpler than
+$\chi^2$, RMSEA (root-mean-square error of approximation), and CFI
+(comparative fit index) statistics.  Wicherts et al.\ also had a
+Step~6 (the final step), where they examined a model that was simpler than
 described above and that provided a slightly better fit to the data.
 This model restricted factor means to be equal across a subset of the
 groups, however, which was not helpful for our purposes (because we are focusing on a single group).
@@ -793,9 +794,9 @@ Test statistics for the hypotheses \eqref{eq:exh0}
 and~\eqref{eq:exh0.2} are displayed in Figure~\ref{fig:cusumex}.
 Each panel displays a test 
 statistic's fluctuation across values of student GPA, with the first
-column containing tests of~\eqref{eq:exh0} (testing $k*=4$ parameters)
+column containing tests of~\eqref{eq:exh0} (testing $k^*=4$ parameters)
 and the second column containing tests of~\eqref{eq:exh0.2} (testing
-$k*=1$ parameter).
+$k^*=1$ parameter).
 The solid
 horizontal 
 lines represent critical values for $\alpha= 0.05$, and
@@ -817,7 +818,7 @@ When the intercept parameter is tested individually, two of the three
 tests achieve significance (the CvM test and $\max \mathit{LM}$
 statistics).  These results generally support the notion that domain
 identification (as measured by GPA) influences the magnitude of
-stereotype threat.  The $k*=1$ results also imply that the tests
+stereotype threat.  The $k^*=1$ results also imply that the tests
 differ in power and/or in error rates, an issue we address later in the
 paper.
 
@@ -826,7 +827,7 @@ We can also use the test results to estimate the threshold $\nu$,
 which in this context can be used to define GPA-based subgroups whose
 measurement parameters differ.  As described previously, estimates of
 $\nu$ can be obtained by 
-examining the peaks in Figure~\ref{fig:cusumex}.  For the $k*=4$
+examining the peaks in Figure~\ref{fig:cusumex}.  For the $k^*=4$
 panels (first column), two peaks occur near GPAs of 6.0 and of 6.3 (6
 corresponds to the American `C' range).  These peaks roughly divide
 individuals into those receiving D's and F's, those receiving solid
