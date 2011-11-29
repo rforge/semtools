@@ -21,6 +21,9 @@ estfun.lavaan <- function(x, ...)
   scores.H0 <- matrix(NA, nobs, x$model@Model@nx.free)
   
   for (i in 1:ngrp){
+    tmpX <- X[[i]]
+    tmpnobs <- x$model@Sample@nobs[[i]]
+
     ## fitted moments
     if(ngrp > 1){
       moments <- fitted(x$model)[[i]]
@@ -29,11 +32,12 @@ estfun.lavaan <- function(x, ...)
       moments <- fitted(x$model)
     }
     Sigma.hat <- moments$cov
+    ## deal with wishart likelihood?
+    if (x$model@Options$likelihood == "wishart"){
+      Sigma.hat <- ((tmpnobs-1)/(tmpnobs))*Sigma.hat
+    }
     Mu.hat <- moments$mean
     Sigma.inv <- solve(Sigma.hat)
-
-    tmpX <- X[[i]]
-    tmpnobs <- x$model@Sample@nobs[[i]]
 
     ## Junk matrices for multiplication
     J <- matrix(1, 1, tmpnobs)
