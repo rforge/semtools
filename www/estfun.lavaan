@@ -1,0 +1,66 @@
+estfun.lavaan <- function(x, ...)
+{
+  ## x is a list containing
+  ## "model", the fitted lavaan model
+  ## "data", the observed data with grouping variable
+  ## estimated coefficients
+  ## This does not work if the lavaan model is estimated with
+  ## likelihood="wishart".
+  
+  ## observed data
+  X <- x$model@Sample@data.obs
+  ## number variables/sample size
+  nvar <- x$model@Sample@nvar
+  nobs <- x$model@Sample@ntotal
+
+  ## number of groups
+  ngrp <- x$model@Model@ngroups
+
+  ## Define matrix that will hold all scores
+  ## Assumes means are estimated
+  scores.H0 <- matrix(NA, nobs, x$model@Model@nx.free)
+  
+  for (i in 1:ngrp){
+    ## fitted moments
+    if(ngrp > 1){
+      moments <- fitted(x$model)[[i]]
+      grp.name <- x$model@Sample@group.label[i]
+    }else{
+      moments <- fitted(x$model)
+    }
+    Sigma.hat <- moments$cov
+    Mu.hat <- moments$mean
+    Sigma.inv <- solve(Sigma.hat)
+
+    tmpX <- X[[i]]
+    tmpnobs <- x$model@Sample@nobs[[i]]
+
+    ## Junk matrices for multiplication
+    J <- matrix(1, 1, tmpnobs)
+    J2 <- matrix(1, nvar, nvar); diag(J2) <- .5
+
+    ## scores.H1 (H1 = saturated model)
+    mean.diff <- t(t(tmpX) - Mu.hat %*% J)
+
+    dx.Mu <- -1 * mean.diff %*% Sigma.inv
+
+    dx.Sigma <- t(apply(mean.diff,1,function(x) lavaan:::vech(-J2 * (Sigma.inv %*% (tcrossprod(x) - Sigma.hat) %*% Sigma.inv))))
+
+    scores.H1 <- cbind(dx.Mu, dx.Sigma)
+    
+    ## scores.H0
+    Delta <- lavaan:::computeDelta(x$model@Model)[[i]]
+
+    if (ngrp > 1){
+      grp.rows <- which(eval(parse(text=paste("x$data$",
+                                     x$model@Options$group,"== grp.name",
+                                     sep=""))))
+
+      scores.H0[grp.rows,] <- scores.H1 %*% Delta
+    }else{
+      scores.H0[1:nobs,] <- scores.H1 %*% Delta
+    }
+  }
+
+  -scores.H0
+}
