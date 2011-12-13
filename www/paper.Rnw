@@ -666,7 +666,7 @@ general intelligence scales.  They were interested in the
 notion of {\em{stereotype threat}}, whereby stereotypes concerning a
 subgroup's ability adversely impact the subgroup's performance on tests of that
 ability.  The authors specifically focused on stereotypes concerning
-ethnic minorities' performance on tests of general intelligence.  In this section, we used the proposed tests to supplement the authors' original analyses.
+ethnic minorities' performance on tests of general intelligence.  In this section, we use the proposed tests to supplement the authors' original analyses.
 
 \subsection{Background}
 
@@ -680,14 +680,9 @@ variables. The groups were defined by ethnicity (majority/minority) and by the
 experimental manipulation (received/did not receive stereotype prime). Results
 indicated that the intelligence tests lacked measurement invariance, with the
 minority group receiving stereotype primes being particularly different from the
-other three groups on the most difficult intelligence test.  Most notably, the
-factor loading and intercept for the ``minority, stereotype prime'' group were
-smaller, and the unique variance was larger. 
-
-As Wicherts et al. describe, one explanation for this pattern of results involves the idea that ability is positively related to ``domain identification''
-\cite{Ste97}: individuals who are high on ability may be more prone to stereotype threat because they are more ``tied in'' to the domain of interest and are
-more aware of stereotypes.  To test this idea, we employ a four-group, confirmatory factor model used by Wicherts et al.\ in tandem with the tests proposed
-in this paper.  Our $V$ variable is participants' grade point averages (GPA, which were unused in the original analyses), which will reflect participants' identification with the academic domain.
+other three groups on the most difficult intelligence test.  In the
+example below, we employ one of the models used by Wicherts et al.
+Our $V$ variable is participants' grade point averages, which were unused in the original analyses.
 
 \subsection{Method}
 Wicherts et al.\ tested a series of confirmatory factor models for
@@ -697,42 +692,21 @@ across-group parameter restrictions on the factor loadings, unique
 variances, intercepts, and factor variances.  These parameters were
 typically restricted to be equal across groups, though a subset of the
 parameters were allowed to be group-specific upon examination of
-modification indices.  Most notably, the most difficult intelligence test's factor loading, unique variance, and intercept differed for the ``minority,
-stereotype threat'' group, as compared to the other groups.
-Factor means were also estimated for three of the groups.  The model
+modification indices.    The model
 provided a reasonable fit to the data, as judged by examination of
 $\chi^2$, RMSEA (root-mean-square error of approximation), and CFI
-(comparative fit index) statistics.  Wicherts et al.\ also had a
-Step~6 (the final step), where they examined a model that was simpler than
-described above and that provided a slightly better fit to the data.
-This model restricted factor means to be equal across a subset of the
-groups, however, which was not helpful for our purposes (because we are focusing on a single group).
-
-The stereotype threat effect of interest is most relevant to the
-"minority, stereotype prime" group.  Thus, to test the idea that
-domain identification impacts the magnitude of stereotype threat
-effect, we focus on parameters specific to this group.  We test these
-parameters for measurement invariance across the GPA variable, with
-violations supporting the hypothesis that domain identification
-impacts the magnitude of the stereotype threat effect.  We also test
-the intercept parameter individually.  This is because, if domain
-identification does impact stereotype threat, it could be
-conceptualized as the error term having a nonzero expectation across
-individuals (i.e., individuals with high domain identification have a
-negative error expectation and individuals with low domain
-identification have a positive error expectation).  The expected value
-for the error term cannot be uniquely separated from the intercept, so
-that the estimated intercept would display a lack of measurement
-invariance (see, e.g., \citeNP{Mil11}, p.\ 77).  
+(comparative fit index) statistics.  While the model included four
+groups as described above, we focus only on the submodel for the minority
+group that received stereotype primes.
 
 To carry out
-the tests, the four-group confirmatory factor model described above
-was first fit to the data.  Casewise derivatives and 
-the observed information matrix were then obtained, and they were used
-to calculate the cumulative score process via
-\eqref{eq:cumscore}.  Finally, we
-obtained various test statistics and $p$-values from the cumulative score
-process.  These include the double-max statistic from \eqref{eq:dmax},
+the tests, we first fit the four-group model to the data,
+calculating casewise derivatives and 
+the observed information matrix.  We then
+calculated the cumulative score process wrt student GPA via
+\eqref{eq:cumscore}, allowing us to
+obtain various test statistics and $p$-values from this 
+process.  Test statistics include the double-max statistic from \eqref{eq:dmax},
 the Cram\'{e}r-von Mises statistic from \eqref{eq:cvm}, and the $\max \mathit{LM}$
 statistic from \eqref{eq:maxlm}.
 
@@ -743,51 +717,62 @@ test various subsets of
 parameters.  For the Wicherts et al.\ data, we first test
 \begin{equation}
     \label{eq:exh0}
-H_0:\ (\nu_{i,1,\text{MSP}}\ \lambda_{i,1,\text{MSP}}\
-\theta_{i,1,\text{MSP}}\ \alpha_{i,1,\text{MSP}}) = 
-(\nu_{0,1,\text{MSP}}\ \lambda_{0,1,\text{MSP}}\
-\theta_{0,1,\text{MSP}}\ \alpha_{0,1,\text{MSP}}),\ i=1,\ldots,n_{\text{MSP}},
+H_0:\ (\nu_{i}\ \lambda_{i}\
+\theta_{i}\ \alpha_{i}) = 
+(\nu_{0}\ \lambda_{0}\
+\theta_{0}\ \alpha_{0}),\ i=1,\ldots,n_{\text{MSP}},
 \end{equation}
-where $\nu_{i,1,\text{MSP}}$ reflects the intercept for student $i$ on intelligence
-test 1 in the ``minority, stereotype prime'' group, with other
-subscripts defined similarly.  Additionally, $\lambda$ is a factor loading, $\theta$
-is a unique variance, and $\alpha$ is a factor mean, and the
+where $\nu_{i}$ is the intercept for student $i$ on intelligence
+test 1, $\lambda_{i}$ the factor loading, $\theta_{i}$ the unique
+variance, and $\alpha_i$ the factor mean.
+The individuals are ordered according to GPA, and the 
 hypothesis is taken only wrt the $n_{\text{MSP}}$ individuals in the
-``minority, stereotype prime'' group.  In words, the hypothesis states
-that the four group-specific model parameters are invariant with
+``minority, stereotype prime'' group.  Thus, \eqref{eq:exh0} states 
+that these four group-specific model parameters are invariant with
 respect to GPA.
 
 We can construct a similar hypothesis involving only the intercept
 parameter
 \begin{equation}
     \label{eq:exh0.2}
-H_0:\ \nu_{i,1,\text{MSP}}\ = \nu_{0,1,\text{MSP}},\ i=1,\ldots,n_{\text{MSP}},
+H_0:\ \nu_{i}\ = \nu_{0},\ i=1,\ldots,n_{\text{MSP}},
 \end{equation}
-which, as described previously, tests a more specific theory of the
-manner in which domain identification impacts stereotype threat.
+which, e.g., may be used to isolate the impact of stereotype threat.
 We consider tests of both \eqref{eq:exh0} and \eqref{eq:exh0.2}
 below.
 
 
 \subsection{Results}
 <<mz_mod>>=
-d <- dget("WichertsEtAl2005_Study1.txt")
+load("wicherts05_study1.rda")
 
-wdh0 <- wdhfit(d)
+d <- subset(d, !is.na(gpa))
 
-# Refit model with new identification constraints
-wdh0.1 <- wdhfit2(d)
+## fit model 5b
+wdh5b <- lavaan(
+   'ability   =~ label(c(rep("load_n", 3), "load_n:min_t")) * numerical + label(rep("load_v", 4)) * verbal + 1 * abstract
+    ability   ~  label(c(NA, "lmean:min_c", "lmean:maj_t", "lmean:min_t")) * 1 + c(0, NA, NA, NA) * 1
+    ability   ~~ label(c("lvar:maj", "lvar:min", "lvar:maj", "lvar:min")) * ability
+    numerical ~  label(c(rep("mean_n", 3), "mean_n:min_t")) * 1
+    abstract  ~  label(c("mean_a:maj_c", "mean_a:min_c", rep("mean_a", 2))) * 1
+    verbal    ~  label(rep("mean_v", 4)) * 1
+    numerical ~~ label(c(rep("var_n", 3), "var_n:min_t")) * numerical
+    abstract  ~~ label(rep("var_a", 4)) * abstract
+    verbal    ~~ label(rep("var_v", 4)) * verbal',
+  data = d, meanstructure = TRUE, group = "group") ##, likelihood = "wishart")
 
-## subsample models
-## This could be used to compare sequential LRTs with the LM
-## statistic that tests all parameters simultaneously.
-## (This is not done in the data example.)
-##############################################################
-## lrstat <- function(gpa) 2 * as.vector(logLik(wdhfit(d[d$gpa <= gpa,])) + logLik(wdhfit(d[d$gpa > gpa,])) - logLik(wdh0))
-## wdh.gpa <- sort(d$gpa[d$gpa >= quantile(d$gpa, 0.1) & d$gpa <= quantile(d$gpa, 0.9)])
-## # Results in many "computationally singular" errors:
-## wdh.lrstat <- sapply(wdh.gpa, lrstat)
-## save(wdh0, wdh.gpa, wdh.lrstat, file = "wicherts_mod.rda")
+## Refit model with new identification constraints
+wdh5b.2 <- lavaan(
+   'ability   =~ 1 * verbal + label(c(rep("load_n", 3), "load_n:min_t")) * numerical  + label(rep("load_a", 4)) * abstract
+    ability   ~  label(c(NA, "lmean:min_c", "lmean:maj_t", "lmean:min_t")) * 1 + c(0, NA, NA, NA) * 1
+    ability   ~~ label(c("lvar:maj", "lvar:min", "lvar:maj", "lvar:min")) * ability
+    numerical ~  label(c(rep("mean_n", 3), "mean_n:min_t")) * 1
+    abstract  ~  label(c("mean_a:maj_c", "mean_a:min_c", rep("mean_a", 2))) * 1
+    verbal    ~  label(rep("mean_v", 4)) * 1
+    numerical ~~ label(c(rep("var_n", 3), "var_n:min_t")) * numerical
+    abstract  ~~ label(rep("var_a", 4)) * abstract
+    verbal    ~~ label(rep("var_v", 4)) * verbal',
+  data = d, meanstructure = TRUE, group = "group") #, likelihood = "wishart")
 @ 
 
 Test statistics for the hypotheses \eqref{eq:exh0}
@@ -812,29 +797,23 @@ higher than the solid horizontal line.
 %% Details on test results
 The results displayed in Figure~\ref{fig:cusumex} generally show that the
 ``minority, stereotype prime'' group lacks invariance with respect to
-GPA.  All three tests are significant at the .05 level when the four
-group-specific parameters are tested simultaneously (first column).
-When the intercept parameter is tested individually, two of the three
-tests achieve significance (the CvM test and $\max \mathit{LM}$
-statistics).  These results generally support the notion that domain
-identification (as measured by GPA) influences the magnitude of
-stereotype threat.  The $k^*=1$ results also imply that the tests
-differ in power and/or in error rates, an issue we address later in the
-paper.
+GPA.  All three tests are significant at the .05 level, both when the four
+group-specific parameters are tested simultaneously (first column) and
+when the intercept parameter is tested individually (second column).
 
-%% add paragraph about peaks of graphs
 We can also use the test results to estimate the threshold $\nu$,
 which in this context can be used to define GPA-based subgroups whose
 measurement parameters differ.  As described previously, estimates of
 $\nu$ can be obtained by 
 examining the peaks in Figure~\ref{fig:cusumex}.  For the $k^*=4$
-panels (first column), two peaks occur near GPAs of 6.0 and of 6.3 (6
+panels (first column), two peaks occur near GPAs of 5.9 and of 6.3 (6
 corresponds to the American `C' range).  These peaks roughly divide
 individuals into those receiving D's and F's, those receiving solid
 C's, and those receiving high C's, B's, and A's.  Parameter-specific
 results can also be obtained, as shown for the intercept parameter in
-the second column of Figure~\ref{fig:cusumex}.  Here, a single peak
-occurs in the three panels around a GPA of 7.0 (`B' range).  
+the second column of Figure~\ref{fig:cusumex}.  The peak locations are
+generally similar to those of all four parameters, though this finding
+will not hold in general.
 
 
 \begin{figure}
@@ -853,14 +832,23 @@ occurs in the three panels around a GPA of 7.0 (`B' range).
 ##                      results but not supLM results.)
 set.seed(1090)
 ties <- duplicated(d$gpa)
-d$gpa[ties] <- runif(sum(ties), d$gpa[ties]-.01, d$gpa[ties]+.01)
+d$gpa[ties] <- runif(sum(ties), min = d$gpa[ties] - .001, max = d$gpa[ties] + .001)
+
+## FIXME It seems like info_full should go in lavaan_S3.R.
+info_full <- function(x, ...) solve(vcov(x) * nobs(x))
+scores_min_t <- function(x, ...) {
+  ef <- estfun(x, ...)
+  ef[d$group == "exp:minority", ]
+}
+gpa_min_t <- subset(d, group == "exp:minority")$gpa
+
 ## empirical fluctuation processes (4 vs 1 par)
-gefp_4_info <- gefp(wdh0, fit = NULL, order.by = d$gpa[d$grouping=="exp:minority"], parm = 15:18, vcov = info.wdhfit, sandwich = FALSE)
-gefp_1_info <- gefp(wdh0, fit = NULL, order.by = d$gpa[d$grouping=="exp:minority"], parm = 18, vcov = info.wdhfit, sandwich = FALSE)
+gefp_4_info <- gefp(wdh5b, fit = NULL, scores = scores_min_t, order.by = gpa_min_t, vcov = info_full, sandwich = FALSE, parm = 15:18)
+gefp_1_info <- gefp(wdh5b, fit = NULL, scores = scores_min_t, order.by = gpa_min_t, vcov = info_full, sandwich = FALSE, parm = 18)
 
 # processes for second identification constraints
-gefp_4_info_1 <- gefp(wdh0.1, fit = NULL, order.by = d$gpa[d$grouping=="exp:minority"], parm = 15:18, vcov = info.wdhfit, sandwich = FALSE)
-gefp_1_info_1 <- gefp(wdh0.1, fit = NULL, order.by = d$gpa[d$grouping=="exp:minority"], parm = 18, vcov = info.wdhfit, sandwich = FALSE)
+gefp_4_info_1 <- gefp(wdh5b.2, fit = NULL, scores = scores_min_t, order.by = gpa_min_t, vcov = info_full, sandwich = FALSE, parm = 15:18)
+gefp_1_info_1 <- gefp(wdh5b.2, fit = NULL, scores = scores_min_t, order.by = gpa_min_t, vcov = info_full, sandwich = FALSE, parm = 18)
 
 ## visualization
 par(mfcol = c(3, 2))
@@ -875,21 +863,19 @@ plot(gefp_1_info, functional = supLM(0.1), main = "max LM, k* = 1", xlab = "GPA"
 
 \subsection{Discussion}
 Application of the proposed measurement invariance tests to the
-\citeA{WicDol05} data allowed us to study the
-domain identification's impact on stereotype threat in a
-straightforward manner.  The tests focused on a set of group-specific
+\citeA{WicDol05} data allowed us to study the extent to which model
+parameters are invariant wrt GPA in a straightforward manner.
+The tests focused on a set of group-specific
 parameters within a four-group confirmatory factor model, and they
 could be carried out using the results from a single estimated model.
 The latter fact is important, as other approaches to the problem
-described here may adversely impact model fit and degrees of freedom (e.g., if
-GPA is inserted directly into the model) or require multiple models to
-be estimated (e.g., for LRTs).  Further, through examination of both
-test statistics and cumulative score processes, the tests were easily
+described here may require multiple models to
+be estimated (e.g., for LRTs) or adversely impact model fit and
+degrees of freedom (e.g., if GPA is inserted directly into the model).
+Further, through examination of both 
+test statistics and cumulative score processes, the tests were
 interpretable from both a theoretical and applied standpoint.  In the
 next section, we study the proposed tests' power via simulation.
-
-
-
 
 
 \begin{figure}
