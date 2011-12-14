@@ -1,7 +1,7 @@
 \documentclass[man]{apa}
 \usepackage{graphicx,epsfig,amsmath,alltt,setspace,bm}
 %% need no \usepackage{Sweave}
-\SweaveOpts{engine = R, eps = TRUE, echo = FALSE, results = hide}
+\SweaveOpts{engine = R, eps = FALSE, echo = FALSE, results = hide}
 
 \title{Generalized measurement invariance tests with application to
   factor analysis}
@@ -948,7 +948,6 @@ alternative is driven by a function that is triangle-shaped, with a peak at the
 changepoint $t = 0.5$ for the parameters affected by the change (and
 equal to zero for all remaining parameters). 
 
-
 <<mz_sim>>=
 if(file.exists("mz_sim.rda")) {
   load("mz_sim.rda")
@@ -1156,11 +1155,23 @@ below.
 
 
 \subsection{Results}
-<<mz_mod>>=
-load("wicherts05_study1.rda")
+<<wdh_data>>=
+## data and transformations
+data("StereotypeThreat", package = "psychotools")
+## include group variable
+StereotypeThreat <- transform(StereotypeThreat, group = interaction(ethnicity, condition))
+StereotypeThreat <- StereotypeThreat[order(StereotypeThreat$group),]
+## omit NAs in GPA and break ties randomly
+StereotypeThreat <- subset(StereotypeThreat, !is.na(gpa))
+ties <- duplicated(StereotypeThreat$gpa)
+set.seed(1090)
+StereotypeThreat$gpa[ties] <- runif(sum(ties),
+  min = StereotypeThreat$gpa[ties] - 0.001, max = StereotypeThreat$gpa[ties] + 0.01)
+## keep only data with NAs in GPA
+wdh <- subset(StereotypeThreat, !is.na(gpa))
+@
 
-d <- subset(d, !is.na(gpa))
-
+<<wdh_model>>=
 ## fit model 5b
 wdh5b <- lavaan(
    'ability   =~ label(c(rep("load_n", 3), "load_n:min_t")) * numerical + label(rep("load_v", 4)) * verbal + 1 * abstract
@@ -1172,9 +1183,9 @@ wdh5b <- lavaan(
     numerical ~~ label(c(rep("var_n", 3), "var_n:min_t")) * numerical
     abstract  ~~ label(rep("var_a", 4)) * abstract
     verbal    ~~ label(rep("var_v", 4)) * verbal',
-  data = d, meanstructure = TRUE, group = "group") ##, likelihood = "wishart")
+  data = wdh, meanstructure = TRUE, group = "group") ##, likelihood = "wishart")
 
-## Refit model with new identification constraints
+## refit model with new identification constraints
 wdh5b.2 <- lavaan(
    'ability   =~ 1 * verbal + label(c(rep("load_n", 3), "load_n:min_t")) * numerical  + label(rep("load_a", 4)) * abstract
     ability   ~  label(c(NA, "lmean:min_c", "lmean:maj_t", "lmean:min_t")) * 1 + c(0, NA, NA, NA) * 1
@@ -1185,7 +1196,7 @@ wdh5b.2 <- lavaan(
     numerical ~~ label(c(rep("var_n", 3), "var_n:min_t")) * numerical
     abstract  ~~ label(rep("var_a", 4)) * abstract
     verbal    ~~ label(rep("var_v", 4)) * verbal',
-  data = d, meanstructure = TRUE, group = "group") #, likelihood = "wishart")
+  data = wdh, meanstructure = TRUE, group = "group") #, likelihood = "wishart")
 @ 
 
 Test statistics for the hypotheses \eqref{eq:exh0}
@@ -1229,6 +1240,24 @@ generally similar to those of all four parameters, though this finding
 will not hold in general.
 
 
+<<gefp-4-1>>=
+## FIXME It seems like info_full should go in lavaan_S3.R.
+info_full <- function(x, ...) solve(vcov(x) * nobs(x))
+scores_min_t <- function(x, ...) {
+  ef <- estfun(x, ...)
+  ef[wdh$group == "minority.threat", ]
+}
+gpa_min_t <- subset(wdh, group == "minority.threat")$gpa
+
+## empirical fluctuation processes (4 vs 1 par)
+gefp_4_info <- gefp(wdh5b, fit = NULL, scores = scores_min_t, order.by = gpa_min_t, vcov = info_full, sandwich = FALSE, parm = 15:18)
+gefp_1_info <- gefp(wdh5b, fit = NULL, scores = scores_min_t, order.by = gpa_min_t, vcov = info_full, sandwich = FALSE, parm = 18)
+
+# processes for second identification constraints
+gefp_4_info_1 <- gefp(wdh5b.2, fit = NULL, scores = scores_min_t, order.by = gpa_min_t, vcov = info_full, sandwich = FALSE, parm = 15:18)
+gefp_1_info_1 <- gefp(wdh5b.2, fit = NULL, scores = scores_min_t, order.by = gpa_min_t, vcov = info_full, sandwich = FALSE, parm = 18)
+@
+
 \begin{figure}
 \caption{Three test statistics of~\eqref{eq:exh0} (set of
   group-specific parameters)
@@ -1239,31 +1268,7 @@ will not hold in general.
   represent values of the Cram\'{e}r-von Mises test statistic.}
 \label{fig:cusumex}
 \setkeys{Gin}{width=\textwidth}
-<<gefp-4-1, fig=TRUE, height=8, width=6>>=
-## add a small amount of random noise to duplicated GPAs, so that everything
-## works with gefp().  (Without this, one can still obtain DM and CvM test 
-##                      results but not supLM results.)
-set.seed(1090)
-ties <- duplicated(d$gpa)
-d$gpa[ties] <- runif(sum(ties), min = d$gpa[ties] - .001, max = d$gpa[ties] + .001)
-
-## FIXME It seems like info_full should go in lavaan_S3.R.
-info_full <- function(x, ...) solve(vcov(x) * nobs(x))
-scores_min_t <- function(x, ...) {
-  ef <- estfun(x, ...)
-  ef[d$group == "exp:minority", ]
-}
-gpa_min_t <- subset(d, group == "exp:minority")$gpa
-
-## empirical fluctuation processes (4 vs 1 par)
-gefp_4_info <- gefp(wdh5b, fit = NULL, scores = scores_min_t, order.by = gpa_min_t, vcov = info_full, sandwich = FALSE, parm = 15:18)
-gefp_1_info <- gefp(wdh5b, fit = NULL, scores = scores_min_t, order.by = gpa_min_t, vcov = info_full, sandwich = FALSE, parm = 18)
-
-# processes for second identification constraints
-gefp_4_info_1 <- gefp(wdh5b.2, fit = NULL, scores = scores_min_t, order.by = gpa_min_t, vcov = info_full, sandwich = FALSE, parm = 15:18)
-gefp_1_info_1 <- gefp(wdh5b.2, fit = NULL, scores = scores_min_t, order.by = gpa_min_t, vcov = info_full, sandwich = FALSE, parm = 18)
-
-## visualization
+<<gefp-4-1-plot, fig=TRUE, height=8, width=6>>=
 par(mfcol = c(3, 2))
 plot(gefp_4_info,  functional = maxBB, main = "DM, k* = 4", xlab = "GPA")
 plot(gefp_4_info,  functional = meanL2BB, main = "CvM, k* = 4", xlab = "GPA")
@@ -1288,9 +1293,6 @@ degrees of freedom (e.g., if GPA is inserted directly into the model).
 Further, through examination of both 
 test statistics and cumulative score processes, the tests were
 interpretable from both a theoretical and applied standpoint.
-
-
-
 
 
 \section{General Discussion}
