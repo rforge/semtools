@@ -17,6 +17,8 @@
   \frametitle{}
   \tableofcontents}
 
+% TODO: Add something like Fig 3 from paper to show test stat construction?
+
 \section{Background}
 % Define measurement invariance
 \frame{
@@ -33,6 +35,7 @@
   \end{itemize}}
 
 % FA path diagram, types of MI
+% TODO: Overlays with different parameter values on graphic
 \frame{
   \frametitle{Studying Measurement Invariance}
   % path diagram illustrating parameters being the same for everyone
@@ -47,7 +50,7 @@
     % \item There exist many types of measurement invariance,
     %   based on specific subsets of parameters being allowed
     %   to vary across individuals (e.g., Meredith, 1993).\\ \ \\
-    \item Hypothesis of ``full'' measurement invariance:\\
+    \item Hypothesis of ``full'' measurement invariance ($\bm{\theta}_i$ is the full parameter vector for individual $i$):\\
       \begin{center}
           $H_0: \bm{\theta}_i = \bm{\theta}_0, i=1,\ldots,n$\\
           $H_1: \text{Not all the }\bm{\theta}_i = \bm{\theta}_0$
@@ -83,34 +86,36 @@
       \end{itemize}
   \end{itemize}}
 
+% TODO Consistent notation with paper
 \frame{
   \frametitle{Proposed Tests}
   \begin{itemize}
     \item The proposed family of tests rely on first derivatives of
       the model's log-likelihood function.
+    \item We can also consider individual terms ({\em scores}) of the gradient.  These scores tell us how well a particular parameter describes a particular individual.
   % Equation of gradient vs scores for individuals
   \end{itemize}
 \begin{eqnarray*}
   \displaystyle\sum_{i=1}^{n} \psi(\bm{x}_i, \hat{\bm{\theta}}) =
   {\bm 0},\text{ where} \\
  \\
-  \psi(\bm{x}_i, {\bm \theta}) = \frac{\partial}{\partial \bm{\theta}} \log
+  \psi(\bm{x}_i, \hat{{\bm \theta}}) = \frac{\partial}{\partial \bm{\theta}} \log
 \text{L}({\bm{x}}_i, {\bm{\theta}}) \big |_{\bm{\theta} = \widehat{\bm{\theta}}}
 \end{eqnarray*}}
 
-\frame{
-  \frametitle{Proposed Tests}
-  \begin{itemize}
-    \item We can also consider individual terms ({\em{scores}}) of the
-      gradient.  These scores tell us how well a particular
-      parameter describes a particular individual.  If your score is
-      0 for some parameter, that parameter describes you well.  If your score
-      is far from 0, that parameter describes you poorly. \\ \ \\
-  \end{itemize}
-  \begin{equation*}
-  \psi(\bm{x}_i, {\bm \theta}) = \frac{\partial}{\partial \bm{\theta}} \log
-  \text{L}({\bm{x}}_i, {\bm{\theta}}) \big |_{\bm{\theta} = \widehat{\bm{\theta}}}      
-  \end{equation*}}
+% \frame{
+%   \frametitle{Proposed Tests}
+%   \begin{itemize}
+%     \item We can also consider individual terms ({\em{scores}}) of the
+%       gradient.  These scores tell us how well a particular
+%       parameter describes a particular individual.  If your score is
+%       0 for some parameter, that parameter describes you well.  If your score
+%       is far from 0, that parameter describes you poorly. \\ \ \\
+%   \end{itemize}
+%   \begin{equation*}
+%   \psi(\bm{x}_i, {\bm \theta}) = \frac{\partial}{\partial \bm{\theta}} \log
+%   \text{L}({\bm{x}}_i, {\bm{\theta}}) \big |_{\bm{\theta} = \widehat{\bm{\theta}}}      
+%   \end{equation*}}
 
 \frame{
   \frametitle{Proposed Tests}
@@ -165,14 +170,15 @@
     \item Theorem (Zeileis \& Hornik, 2007): Under the hypothesis of
       measurement invariance, the following functional central limit
       theorem holds:
-  \end{itemize}
-  \begin{center}
+  \begin{equation}
   ${\bm{I}}(\widehat{{\bm{\theta}}})^{-1/2}{\bm{W}}_n(\cdot,\widehat{{\bm{\theta}}}) 
-\overset{d}{\rightarrow} {\bm W}^{0}(\cdot),$\\ \ \\
- where ${\bm{I}}(\widehat{{\bm{\theta}}})^{-1/2}$ is the observed
+\overset{d}{\rightarrow} {\bm W}^{0}(\cdot),$
+  \end{equation}
+ where ${\bm{I}}(\widehat{{\bm{\theta}}})$ is the observed
  information matrix and ${\bm W}^{0}(\cdot)$ is a
- $p$-dimensional Brownian bridge.
-\end{center}}
+ $p$-dimensional Brownian bridge (where $p$ is the number of parameters).
+  \end{itemize}
+}
 
 % \frame{
 %   \frametitle{Brownian Bridge}
@@ -188,11 +194,11 @@
 %   \end{itemize}}
 
 % Picture of Brownian bridge
-\frame{
-  \frametitle{Brownian Bridge}
-  \begin{center}
-      \includegraphics[height=3in]{brownian.pdf}
-  \end{center}}
+% \frame{
+%   \frametitle{Brownian Bridge}
+%   \begin{center}
+%       \includegraphics[height=3in]{brownian.pdf}
+%   \end{center}}
 
 % \frame{
 %   \frametitle{Theorem}
@@ -209,16 +215,7 @@
 %       \end{itemize}
 %   \end{itemize}}
 
-\frame{
-  \frametitle{Software}
-  \begin{itemize}
-    \item To carry out the tests, we use
-      \begin{itemize}
-        \item \texttt{lavaan} for model estimation.
-        \item A combination of \texttt{lavaan} and our own code for calculating scores of fitted models.
-        \item \texttt{strucchange} for carrying out the proposed tests with the scores.
-      \end{itemize}
-  \end{itemize}}
+
 
 % INSERT WICHERTS EXAMPLE HERE
 \section{Illustration}
@@ -253,12 +250,13 @@
       \end{itemize}
   \end{itemize}}
 
-% Insert new results
+% TODO: Break up results over multiple slides
 \frame{
   \frametitle{Results}
   \begin{center}
       \includegraphics[height=3in]{paper-gefp-4-1.pdf}
   \end{center}}
+
 
 \frame{
   \frametitle{Simulation}
@@ -299,6 +297,19 @@
       specific circumstances.
   \end{itemize}}
 
+% TODO: Add some detail on software
+\frame{
+  \frametitle{Software}
+  \begin{itemize}
+    \item To carry out the tests, we use
+      \begin{itemize}
+        \item \texttt{lavaan} for model estimation.
+        \item A combination of \texttt{lavaan} and our own code for calculating scores of fitted models.
+        \item \texttt{strucchange} for carrying out the proposed tests with the scores.
+      \end{itemize}
+  \end{itemize}}
+
+
 \frame{
   \frametitle{Current Work}
   \begin{itemize}
@@ -306,6 +317,7 @@
     \item Detailed examination of test properties via simulation.\\ \ \\
     \item Extension to related psychometric issues (modification
       indices, mediation).
+   % TODO: URL for working paper
   \end{itemize}}
 
 \frame{
