@@ -13,9 +13,9 @@ df.residual.lavaan <- function(object, ...) NULL
 estfun.lavaan <- function(x, group = NULL, ...)
 {
   ## observed data
-  X <- x@Sample@data.obs
+  X <- x@Data
   ## number variables/sample size
-  nvar <- x@Sample@nvar
+  nvar <- x@Model@nvar
   nobs <- x@Sample@ntotal
   ntab <- unlist(x@Sample@nobs)
 
@@ -53,7 +53,7 @@ estfun.lavaan <- function(x, group = NULL, ...)
 
     ## Junk matrices for multiplication
     J <- matrix(1, 1L, ntab[i]) ## FIXME: needed? better maybe rowSums/colSums?
-    J2 <- matrix(1, nvar, nvar)
+    J2 <- matrix(1, nvar[i], nvar[i])
     diag(J2) <- 0.5
 
     ## scores.H1 (H1 = saturated model)

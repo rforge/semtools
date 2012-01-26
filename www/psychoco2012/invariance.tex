@@ -35,14 +35,14 @@
 
 % FA path diagram, types of MI
 \frame{
-  \frametitle{Studying Measurement Invariance: Age <= 16}
+  \frametitle{Studying Measurement Invariance: Age $\leq$ 16}
   % path diagram illustrating parameters being the same for everyone
   \begin{center}
       \includegraphics[height=3in]{model_under16.pdf}
   \end{center}}
 
 \frame{
-  \frametitle{Studying Measurement Invariance: Age > 16}
+  \frametitle{Studying Measurement Invariance: Age $>$ 16}
   % path diagram illustrating parameters being the same for everyone
   \begin{center}
       \includegraphics[height=3in]{model_over16.pdf}
@@ -79,10 +79,11 @@
 \frame{
   \frametitle{Lack of Grouping}
   \begin{itemize}
-    \item If we did not know the groups in advance, we could conduct a LRT wrt to all possible groups, taking the maximum.  The proposed tests are related to this idea.
-  \end{itemize}
- % TODO Insert Fig 3
-}
+    \item If we did not know the groups in advance, we could conduct a LRT wrt for each possible grouping, then take the maximum.  The proposed tests are related to this idea.
+  \begin{center}
+      \includegraphics[height=2.65in]{paper-lm-lr-19.pdf}
+  \end{center}
+  \end{itemize}}
 
 \section{Proposed Tests}
 \frame{
@@ -139,7 +140,7 @@
       stray from zero.
   \end{itemize}}
 
-\frame{
+\begin{frame}[fragile]
   \frametitle{Aggregating Scores}
  % define cumulative scores and other notation
   \begin{itemize}
@@ -149,14 +150,15 @@
         \item Order individuals by an auxiliary variable.\\ \ \\
         \item Define $t \in (1/n, n)$.
           The {\em empirical cumulative score process} is defined by:\\
+  \begin{equation*}
+    \bm{B}(\hat{\bm{\theta}}; t) = \frac{1}{\sqrt{n}}
+    \displaystyle\sum_{i=1}^{\lfloor nt 
+      \rfloor} \psi ({\bm{x}}_i, \bm{\theta}).
+    \end{equation*}
+  where $\lfloor nt \rfloor$ is the integer part of $nt$.
       \end{itemize}
   \end{itemize}
-  \begin{center}
-    $\bm{B}(\hat{\bm{\theta}}; t) = \frac{1}{\sqrt{n}}
-    \displaystyle\sum_{i=1}^{\lfloor nt 
-      \rfloor} \psi ({\bm{x}}_i, \bm{\theta}).$\\ \ \\
-  where $\lfloor nt \rfloor$ is the integer part of $nt$.
-\end{center}}
+\end{frame}
 
 % EXAMPLE OF CUMULATIVE SCORE
 % \frame{
@@ -175,22 +177,22 @@
 % \end{tabular}
 % \end{center}}
 
-\frame{
+\begin{frame}[fragile]
   \frametitle{Theorem}
  % show that cumulative scores follow a Brownian bridge under H_0
   \begin{itemize}
     \item Theorem (Zeileis \& Hornik, 2007): Under the hypothesis of
       measurement invariance, the following functional central limit
       theorem holds:
-  \begin{equation}
-  ${\bm{I}}(\widehat{{\bm{\theta}}})^{-1/2}{\bm{B}}(\widehat{{\bm{\theta}}}; \cdot) 
-\overset{d}{\rightarrow} {\bm B}^{0}(\cdot),$
-  \end{equation}
+  \begin{equation*}
+  {\bm{I}}(\widehat{{\bm{\theta}}})^{-1/2}{\bm{B}}(\widehat{{\bm{\theta}}}; \cdot) 
+\overset{d}{\rightarrow} {\bm B}^{0}(\cdot),
+  \end{equation*}
  where ${\bm{I}}(\widehat{{\bm{\theta}}})$ is the observed
  information matrix and ${\bm B}^{0}(\cdot)$ is a
  $p$-dimensional Brownian bridge ($p$ is the number of parameters).
   \end{itemize}
-}
+\end{frame}
 
 % \frame{
 %   \frametitle{Brownian Bridge}
@@ -262,13 +264,17 @@
       \end{itemize}
   \end{itemize}}
 
-% TODO: Break up results over multiple slides
 \frame{
-  \frametitle{Results}
+  \frametitle{Results for Single Parameters}
   \begin{center}
-      \includegraphics[height=3in]{paper-gefp-4-1.pdf}
+      \includegraphics[height=3in]{gefp_4_ind.pdf}
   \end{center}}
 
+\frame{
+  \frametitle{Aggregated Results}
+  \begin{center}
+      \includegraphics[height=3in]{gefp_4_agg.pdf}
+  \end{center}}
 
 \frame{
   \frametitle{Simulation}
@@ -315,7 +321,7 @@
     \item To carry out the tests, we utilize
       \begin{itemize}
         \item \texttt{lavaan} for model estimation.
-        \item \texttt{estfun()} for score extraction, which is (currently) a combination of our own code and \texttt{lavaan} code.
+        \item \texttt{estfun()} for score extraction, which is currently a combination of our own code and \texttt{lavaan} code.
         \item \texttt{strucchange} for carrying out the proposed tests with the scores.
           \begin{itemize}
             \item Required input: Fitted model, function for score extraction, and information matrix (optional)
@@ -332,7 +338,7 @@
     \item Continued test implementation via \texttt{strucchange} and \texttt{lavaan} (and possibly \texttt{OpenMx}).\\ \ \\
     \item Detailed examination of test properties via simulation.\\ \ \\
     \item Extension to related psychometric issues (modification
-      indices, mediation).
+      indices, mediation).\\ \ \\
     \item Working paper: \url{http://econpapers.repec.org/RePEc:inn:wpaper:2011-09}
   \end{itemize}}
 
