@@ -35,14 +35,14 @@
 
 % FA path diagram, types of MI
 \frame{
-  \frametitle{Studying Measurement Invariance: Age $\leq$ 16}
+  \frametitle{Example (Age $\leq$ 16)}
   % path diagram illustrating parameters being the same for everyone
   \begin{center}
       \includegraphics[height=3in]{model_under16.pdf}
   \end{center}}
 
 \frame{
-  \frametitle{Studying Measurement Invariance: Age $>$ 16}
+  \frametitle{Example (Age~$>$~16)}
   % path diagram illustrating parameters being the same for everyone
   \begin{center}
       \includegraphics[height=3in]{model_over16.pdf}
@@ -55,11 +55,13 @@
     % \item There exist many types of measurement invariance,
     %   based on specific subsets of parameters being allowed
     %   to vary across individuals (e.g., Meredith, 1993).\\ \ \\
-    \item Hypothesis of ``full'' measurement invariance ($\bm{\theta}_i$ is the full parameter vector for individual $i$):\\
+    \item Hypothesis of ``full'' measurement invariance:\\
       \begin{center}
           $H_0: \bm{\theta}_i = \bm{\theta}_0, i=1,\ldots,n$\\
           $H_1: \text{Not all the }\bm{\theta}_i = \bm{\theta}_0$
       \end{center}
+      where $\bm{\theta}_i = (\lambda_{i, 1, 1}, \dots, \psi_{i, 1, 1}, \dots, \varphi_{i, 1, 2}, \dots)^\top$
+      is the full $p$-dimensional parameter vector for individual $i$.
   \end{itemize}}
 
 % Too difficult to assess, so use an auxiliary variable to place
@@ -73,17 +75,19 @@
     \item We typically place people into groups based on a meaningful
       auxiliary variable, then study measurement invariance across
       those groups (via Likelihood Ratio tests, Lagrange multiplier
-      tests, Wald tests).
+      tests, Wald tests).\\ \ \\
+    \item If we did not know the groups in advance, we could conduct
+      a LR or LM test for each possible grouping, then take the maximum.
+      Requires different critical values! (Can be obtained from proposed
+      tests.)
   \end{itemize}}
 
 \frame{
   \frametitle{Lack of Grouping}
-  \begin{itemize}
-    \item If we did not know the groups in advance, we could conduct a LRT wrt for each possible grouping, then take the maximum.  The proposed tests are related to this idea.
   \begin{center}
-      \includegraphics[height=2.65in]{paper-lm-lr-19.pdf}
+      \includegraphics[height=3in]{paper-lm-lr-19.pdf}
   \end{center}
-  \end{itemize}}
+}
 
 \section{Proposed Tests}
 \frame{
@@ -178,11 +182,11 @@
 % \end{center}}
 
 \begin{frame}[fragile]
-  \frametitle{Theorem}
+  \frametitle{Tests}
  % show that cumulative scores follow a Brownian bridge under H_0
   \begin{itemize}
-    \item Theorem (Zeileis \& Hornik, 2007): Under the hypothesis of
-      measurement invariance, the following functional central limit
+    \item Theorem: Under the hypothesis of
+      measurement invariance, a functional central limit
       theorem holds:
   \begin{equation*}
   {\bm{I}}(\widehat{{\bm{\theta}}})^{-1/2}{\bm{B}}(\widehat{{\bm{\theta}}}; \cdot) 
@@ -190,9 +194,36 @@
   \end{equation*}
  where ${\bm{I}}(\widehat{{\bm{\theta}}})$ is the observed
  information matrix and ${\bm B}^{0}(\cdot)$ is a
- $p$-dimensional Brownian bridge ($p$ is the number of parameters).
+ $p$-dimensional Brownian bridge.\\ \ \\
+
+   \item Testing procedure: Compute an aggregated statistic of empirical
+     score process and compare with corresponding quantile of aggregated
+     Brownian motion.\\ \ \\
+
+    \item Test statistics: Special cases include double maximum (DM), Cram\'er-von Mises
+      (CvM), maximum of LM statistics.
   \end{itemize}
 \end{frame}
+
+\frame{
+  \frametitle{Simulation}
+  \begin{itemize}
+    \item Simulation: What is the power of the proposed tests?\\ \ \\
+      \begin{itemize}
+        \item Two-factor model, with three indicators each.
+        \item Measurement invariance violation in three factor loading parameters, with magnitude from 0--4 standard errors.
+        \item Sample size in $\{100, 200, 500\}$.
+        \item Model parameters tested in $\{3, 19\}$.
+        \item Three test statistics.
+      \end{itemize}
+  \end{itemize}}
+
+\frame{
+  \frametitle{Simulation}
+  \begin{center}
+      \includegraphics[height=3in]{paper-mzsim-xyplot.pdf}
+  \end{center}
+}
 
 % \frame{
 %   \frametitle{Brownian Bridge}
@@ -276,26 +307,6 @@
       \includegraphics[height=3in]{gefp_4_agg.pdf}
   \end{center}}
 
-\frame{
-  \frametitle{Simulation}
-  \begin{itemize}
-    \item Simulation: What is the power of the proposed tests?\\ \ \\
-      \begin{itemize}
-        \item Two-factor model, with three indicators each.
-        \item Measurement invariance violation in three factor loading parameters, with magnitude from 0--4 standard errors.
-        \item Sample size in $\{100, 200, 500\}$
-        \item Model parameters tested in $\{3, 19\}$
-        \item Three test statistics
-      \end{itemize}
-  \end{itemize}}
-
-\frame{
-  \frametitle{Simulation}
-  \begin{center}
-      \includegraphics[height=3in]{paper-mzsim-xyplot.pdf}
-  \end{center}
-}
-
 \section{Conclusions}
 \frame{
   \frametitle{Conclusions}
@@ -308,7 +319,7 @@
           specific types of measurement invariance ``post hoc''
           instead of ``a priori''.
         \item Isolating
-          groups of individuals whose parameter values differ.\\ \ \\
+          groups of individuals whose parameter values differ.
         \item Studying the impact of continuous variables on model estimates, without ``ruining'' the rest of the model.
       \end{itemize}
     \item Power is reasonable, with specific tests being better in
@@ -324,7 +335,7 @@
         \item \texttt{estfun()} for score extraction, which is currently a combination of our own code and \texttt{lavaan} code.
         \item \texttt{strucchange} for carrying out the proposed tests with the scores.
           \begin{itemize}
-            \item Required input: Fitted model, function for score extraction, and information matrix (optional)
+            \item Required input: Fitted model, function for score extraction, and information matrix (optional).
             \item \texttt{gefp()} constructs the process.
             \item \texttt{sctest()} and \texttt{plot()} calculate and visualize test statistics.
           \end{itemize}
