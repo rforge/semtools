@@ -19,8 +19,9 @@
   are especially useful for: (1)~isolating specific parameters affected by
   measurement invariance violations, and (2)~identifying subgroups of individuals
   that violated measurement invariance based on a continuous auxiliary variable. 
-  The tests are presented and illustrated in detail, along with simulations
-  examining the tests' abilities in controlled conditions.
+  The tests are presented and illustrated in detail, along with an application
+  to a study of stereotype threat and simulations examining the tests'
+  abilities in controlled conditions.
 }
 
 \acknowledgements{This work was supported by National Science
@@ -97,7 +98,7 @@ test or scale.
 \section{Framework}
 
 The methods proposed here are generally relevant to situations where the
-$p$-dimensional random variable $X$ with associated observations $\bm{x}_i, i=1,\cdots,n$
+$p$-dimensional random variable $X$ with associated observations $\bm{x}_i, i=1,\dots,n$
 is specified to arise from a model with density $f(\bm{x}_i; \bm{\theta})$ and
 associated joint log-likelihood
 \begin{equation} \label{eq:loglik}
@@ -117,7 +118,7 @@ a factor analysis model with assumed multivariate normality:
     f(\bm{x}_i; \bm{\theta}) & = & \frac{1}{(2\pi)^{p/2} |
       \bm{\Sigma}(\bm{\theta}) |^{1/2}} ~ \exp \left\{ -\frac{1}{2}(\bm{x}_i -
     \bm{\mu}(\bm{\theta}))^{\top} \bm{\Sigma}(\bm{\theta})^{-1} (\bm{x}_i -
-    \bm{\mu}(\bm{\theta}) \right\}, \\
+    \bm{\mu}(\bm{\theta})) \right\}, \\
     \label{eq:caselik}
     \ell(\bm{\theta}; \bm{x}_i) & = & -\frac{1}{2} \left\{
       (\bm{x}_i - \bm{\mu}(\bm{\theta}))^{\top} \bm{\Sigma}(\bm{\theta})^{-1} (\bm{x}_i - \bm{\mu}(\bm{\theta}))
@@ -127,14 +128,17 @@ with model-implied mean vector ${\bm{\mu}}({\bm{\theta}})$ and
 covariance matrix ${\bm{\Sigma}}({\bm{\theta}})$. As pointed out above,
 the assumptions for the tests introduced here do not require this specific
 form of the likelihood, but it is presented for illustration due to
-its importance in practice.  Many expositions of factor analysis
-utilize the likelihood for the sample covariance matrix, which is
-based on a Wishart distribution when the $\bm{x}_i$ are assumed to be
-multivariate normal.
-However, the techniques presented below require the casewise contributions
-to the likelihood; this situation is also generally
-encountered in structural equation models with missing data (e.g.,
-\citeNP{Wot00}).
+its importance in practice.  
+
+Many expositions of factor analysis utilize the likelihood for the sample
+covariance matrix (instead of the likelihood of the individual observations $\bm{x}_i$),
+employing a Wishart distribution. However, in that approach the sample covariance
+matrix can also be disaggregated to the sum of its individual-specific contributions
+leading essentially to a likelihood like \eqref{eq:mvndensity} with multivariate normal
+observations $\bm{x}_i$. This situation is also generally encountered in structural
+equation models with missing data (e.g., \citeNP{Wot00}).
+
+\readme{maybe like this?}
 
 Within the general framework outlined above and under the usual
 regularity conditions (e.g., \citeNP{Fer96}), the model parameters
@@ -230,7 +234,7 @@ in advance (i.e., unless there is observed heterogeneity).  In this situation, a
 we can apply standard theory: nested multiple group models (e.g.,
 \citeNP{Jor71,Bol89}) coupled with likelihood ratio (LR) tests are most common,
 although the asymptotically equivalent  Lagrange multiplier
-(LM) and Wald tests may also be constructed for this purpose (see
+(LM) tests (also known as score tests) and Wald tests may also be constructed for this purpose (see
 \citeNP{Sat89}). If $\nu$
 is unknown (as is often the case for continuous $V$), however, then
 there is unobserved heterogeneity and standard theory 
@@ -278,7 +282,7 @@ for the given threshold $\nu$ is then
 which, when \eqref{eq:h1*} holds, has an asymptotic $\chi^2$ with degrees
 of freedom equal to the number of parameters in~${\bm \theta}$.
 
-Analogously to the LR~test, the Wald test and LM test (also known as score test)
+Analogously to the LR~test, the Wald test and LM test
 can be employed to test the null hypothesis $H_1^*$ for a fixed threshold $\nu$.
 For the Wald test, the idea is to compute the Wald statistic $W(\nu)$ as a quadratic
 form in $\hat {\bm \theta}^{(A)} - \hat {\bm \theta}^{(B)}$, utilizing its estimated
@@ -332,7 +336,7 @@ particularly convenient
 because it requires just a single set of estimated parameters $\hat {\bm \theta}$
 which is employed for all thresholds $\nu$ in $[\underline{\nu},
 \overline{\nu}]$.  
-The other two tests require reestimation of the subgroup model for each
+The other two tests require reestimation of the subgroup models for each
 $\nu$.
 
 So far, the discussion focused on the alternative $H_1^*$: The maximum LR, Wald, and LM
@@ -342,7 +346,7 @@ in many applications, it would also be desirable to obtain tests that direct the
 against other types of alternatives, i.e., against $H_1$ with other patterns ${\bm \theta}(V)$.
 For example, the parameters may fluctuate randomly or there might be multiple thresholds
 at which the parameters change. Alternatively, only one (or just a few) of the parameters in
-the vector ${\bm \theta}$ change while the remaining parameters are
+the vector ${\bm \theta}$ may change while the remaining parameters are
 constant (a common occurrence in psychometric models).
 To address such situations in a unified way, the next section contains 
 a general framework for testing measurement invariance along a
@@ -401,7 +405,7 @@ process. The $k$-dimensional cumulative score process is defined as
 where $\lfloor nt \rfloor$ is the integer part of $nt$ and
 $\hat I$ is some consistent estimate of the covariance matrix of the scores,
 e.g., their outer product or the observed information matrix.
-The $k$ dimensions of the 
+The $k$~dimensions of the 
 process arise from the fact that a separate cumulative score is
 maintained for each of the $k$ model parameters.  
 As the equation shows, the cumulative score process adds subsets of
@@ -413,7 +417,7 @@ summation, etc., until $t = n/n$
 where all contributions enter into the summation. Thus, due to (\ref{eq:ml1}),
 the cumulative score process always equals zero at $t = 0$ and
 returns to zero at $t = 1$. Furthermore, multiplication by
-$\hat {\bm I}^{-1/2}$ ``decorrelates'' the $k$ cumulative score
+$\hat {\bm I}^{-1/2}$ ``decorrelates'' the $k$~cumulative score
 processes, such that each univariate process (i.e., each
 process for a single model parameter) is unrelated to (and asymptotically independent of) all other
 processes. Therefore, this cumulative process ${\bm B}(t; \hat {\bm \theta})$
@@ -475,8 +479,9 @@ threshold(s) of parameter change (over the individuals $i = 1, \dots, n$)
 and the parameter(s) affected by it (over $j = 1, \dots, k$). This test is
 especially useful for visualization, as the cumulative score process for
 each individual parameter can be displayed along with the appropriate
-critical value.  An example of this visualization appears in the 
-example section (first row, second column of Figure~\ref{fig:cusumex}).
+critical value. For an example of this see Figure~\ref{fig:lambdas}
+(in the ``Example'' section) which shows the the cumulative score processes for three
+factor loadings along with the critical values at 5\% level.
 
 However, taking maximums ``wastes'' power if many of the $k$~parameters change
 at the same threshold, or if the score process takes large values for
@@ -597,7 +602,7 @@ $\bm{G}^0(t) = \bm{G}(t) - t \bm{G}(1)$, where $\bm{G}(t) = \int_0^t
 alternative has $\bm{g}(t) \equiv \bm{0}$, the empirical process $\bm{B}(t,
 \hat{\bm{\theta}})$ will 
 have a non-zero mean.  Hence, the corresponding tests will have non-trivial
-power (asymptotically).  We use these results in the Simulation
+power (asymptotically).  We use these results in the ``Simulation''
 section to describe the expected behavior of the Brownian bridge.
 
 
@@ -607,20 +612,22 @@ If the employed parameter instability test detects a measurement invariance viol
 the researcher is typically interested in identification of the parameter(s) affected
 by it and/or the associated threshold(s). As argued above, the double maximum test
 is particularly appealing for this because the $k$-dimensional empirical cumulative
-score process can be graphed along with boundaries for the associated critical values.
+score process can be graphed along with boundaries for the associated critical values
+(see Figure~\ref{fig:lambdas}).
 Boundary crossing then implies a violation of measurement invariance, and the location of
 the most extreme deviation(s) in the process convey threshold(s) in the underlying
 ordering $V$.
 
 For the maximum LR/Wald/LM tests, it is natural to graph the sequence of LR/Wald/LM
-statistics along $V$, with a boundary corresponding to the critical value.
+statistics along $V$, with a boundary corresponding to the critical value
+(see Figure~\ref{fig:lrlm} and the third row of Figure~\ref{fig:cusumex}).
 Again, a boundary crossing signals a significant violation, and the peak(s) in the
 sequence of statistics conveys threshold(s). Note that, due to summing over all
 parameters, no specific parameter can be identified that is responsible for the
 violation. Similarly,  neither component(s) nor threshold(s)
 can be formally identified for the Cram\'{e}r-von Mises test. However, graphing of (transformations of) the cumulative
 score process may still be valuable for gaining some insights (see,
-e.g., Figure~\ref{fig:cusumex}).
+e.g., the second row of Figure~\ref{fig:cusumex}).
 
 If a measurement invariance violation is detected by any of the tests,
 one may want to incorporate it into the model to account for it. The
@@ -631,7 +638,7 @@ involves adoptions of a model
 with one (or more) threshold(s) in all parameters (i.e., (\ref{eq:h1*}) for the
 single threshold case). In the multiple threshold case, their location can
 be determined by maximizing the corresponding segmented log-likelihood over all
-possible combinations of thresholds (\citeNP{ZeiSha10} adapt a dynamic programming
+possible combinations of thresholds (\citeNP{ZeiSha10}, adapt a dynamic programming
 algorithm to this task). For the single threshold case, this reduces to
 maximizing the segmented log-likelihood
 \begin{equation} \label{eq:seglik}
@@ -644,13 +651,13 @@ from (\ref{eq:lr}) (with some minimal subgroup size typically imposed).
 Formally speaking, the maximization of (\ref{eq:seglik}) -- or equivalently (\ref{eq:lr}) --
 yields an estimate $\hat \nu$ of the threshold in $H_1^*$. If $H_1^*$ is in fact the true model,
 the peaks in the Wald/LM sequences and the cumulative score process, respectively, will occur at the
-same threshold asymptotically. However, in empirical samples, their location may differ somewhat
+same threshold asymptotically. However, in empirical samples, their location may differ
 (although often not by much).
 
 These attributes give the proposed tests important advantages over
 existing tests, as existing measurement invariance methods cannot:
-(1) isolate specific parameters violating measurement invariance, or
-(2) test measurement invariance for unknown $\nu$. 
+(1)~test measurement invariance for unknown $\nu$, or
+(2)~isolate specific parameters violating measurement invariance.
 In particular, \citeA{Mil05} cites
 ``locating the invariance violation'' as a major outstanding problem
 in the field.  In the following sections, we demonstrate the proposed
@@ -659,9 +666,11 @@ describe an example and simulation with artificial data, and we then
 provide an illustrative example with real data.  Finally, we conclude
 the paper with a discussion of test extensions and general summary.
 
+\section{Example with Artificial Data}
+
 \begin{figure}
 \caption{Path diagram representing the base factor analysis model used for
-  the example and simulations.  To induce measurement invariance
+  the artificial example and simulations.  To induce measurement invariance
   violations, a seventh observed variable (student age) determines the
 values of the verbal factor loadings ($\lambda_{11}$, $\lambda_{21}$,
 $\lambda_{31}$).}
@@ -669,10 +678,7 @@ $\lambda_{31}$).}
 \includegraphics[height=5in]{famod.pdf}
 \end{figure}
 
-\section{Example with Artificial Data}
-
-Consider a 
-hypothetical battery of six scales administered to students aged 13 to 18
+Consider a hypothetical battery of six scales administered to students aged 13 to 18
 years.  Three of the scales are intended to measure verbal ability, and
 three of the scales are intended to measure mathematical ability.  We
 may observe a maturation effect in the resulting data, whereby the
@@ -729,20 +735,21 @@ test various subsets of
 parameters.  For example, if we suspected that the verbal factor loadings
 lacked measurement invariance, we could test
 \begin{equation}
-    \label{eq:exh0}
+    \label{eq:simh0}
 H_0:\ (\lambda_{i,11}\ \lambda_{i,21}\ \lambda_{i,31}) =
 (\lambda_{0, 11}\ \lambda_{0, 21}\ \lambda_{0, 31}),\ i=1,\ldots,n,
 \end{equation}
 where $(\lambda_{i,11}\ \lambda_{i,21}\ \lambda_{i,31})$ represent the
 verbal factor loading parameters for student $i$. Thus, here only $k^* = 3$
 from the overall $k = 19$~model parameters (including means) are assessed.
+\fixme{Explain what the 19 parameters are.}
 Alternatively, we can consider all $k^* = k = 19$~parameters, leading to a test
 of~\eqref{eq:h0}.  We consider both of these tests below.
 
 \subsection{Results}
-In the results section, we first describe overall results.  We then 
-describe estimation of $\nu$ and 
-isolation of model parameters violating
+
+Here, we first describe overall results and subsequently
+the identification of $\nu$ and isolation of model parameters violating
 measurement invariance.
 
 <<mz_mod>>=
@@ -759,13 +766,19 @@ if(file.exists("mz_mod.rda")) {
 }
 @
 
+<<gefp-3-19>>=
+## empirical fluctuation processes (3 vs all 19 pars)
+gefp_3_info <- gefp(mz0, fit = NULL, order.by = d$age, parm = 1:3,
+  vcov = info.mzfit, sandwich = FALSE)
+gefp_19_info <- gefp(mz0, fit = NULL, order.by = d$age,
+  vcov = info.mzfit, sandwich = FALSE)
+@
+
 \subsubsection{Overall Results}
-Test statistics for the hypotheses \eqref{eq:exh0} and~\eqref{eq:h0}
-are displayed in  
-Figure~\ref{fig:cusumex}.
-Each panel displays a test 
+Test statistics for the hypotheses \eqref{eq:simh0} and~\eqref{eq:h0}
+are displayed in Figure~\ref{fig:cusumex}. Each panel displays a test 
 statistic's fluctuation across values of student age, with the first
-column containing tests of~\eqref{eq:exh0} and the second column
+column containing tests of~\eqref{eq:simh0} and the second column
 containing tests of~\eqref{eq:h0}.  The solid
 horizontal 
 lines represent critical values for $\alpha= 0.05$, and
@@ -773,7 +786,7 @@ the Cram\'{e}r-von Mises panels
 also contain a dashed line depicting the value of the test
 statistic (test statistics for the others are simply 
 the maxima of the processes).
-In other words, for panels in the first and third rows, \eqref{eq:exh0} is
+In other words, for panels in the first and third rows, \eqref{eq:simh0} is
 rejected if the process crosses the horizontal line.  For panels in
 the second row, \eqref{eq:h0} is rejected if the dashed horizontal line is
 higher than the solid horizontal line.
@@ -785,82 +798,8 @@ that are subject to instabilities. Conversely, if all 19~model
 parameters are assessed (including those that are in fact invariant),
 the power is decreased. This decrease, however, is less pronounced
 for the double-max test as it is more 
-sensitive to fluctuations among a small subset of parameters.
-
-Figure~\ref{fig:lrlm} 
-compares the $\max \mathit{LM}$ statistic (solid line) to the $\max \mathit{LR}$
-statistic (dashed line) from \eqref{eq:maxlr}, as applied to testing
-\eqref{eq:h0}.  The critical values for these two
-tests are identical, hence the single horizontal line.
-The figure
-shows that the two statistics are very similar to one another, with
-both maxima at the dotted vertical line.  This
-is generally to be expected, because the two tests are asymptotically
-equivalent.  The 
-$\max \mathit{LR}$~statistic cannot be obtained from the empirical fluctuation
-process, however, so the factor analysis model must be refitted before
-and after each of the possible threshold values $\nu$ (i.e., here
-$\Sexpr{2 * length(mz.lrstat)}$~model fits for $\Sexpr{length(mz.lrstat)}$~thresholds).
-
-
-\subsubsection{Estimation of $\nu$ and Parameter Isolation}
-As described above, the tests of~\eqref{eq:exh0} imply that the 
-verbal scales lack measurement invariance.  
-We can also use the tests to: (1)~estimate the 
-threshold $\nu$, and (2)~isolate specific parameters that violate
-measurement invariance.  
-For example, as described previously, estimates of $\nu$ can be obtained by
-examining the peaks in Figure~\ref{fig:cusumex}.  For all six panels
-in the figure, the peaks occur near an age of 16.1.  This agrees well
-with the true threshold of 16.0.
-
-As mentioned previously, the double-max test is advantageous because
-it yields information about individual 
-parameters violating measurement invariance.  
-That is, it allows us to examine whether or not individual parameters' 
-cumulative score processes lead one to reject the hypothesis of
-measurement invariance.
-Figure~\ref{fig:lambdas} shows the individual cumulative score processes for the
-verbal factor loadings, with the horizontal lines reflecting the
-critical value at $\alpha= 0.05$.
-  The figure
-shows that the third parameter (i.e., $\lambda_{31}$) crosses the
-dashed line, so we would conclude a measurement 
-invariance violation with respect to age for the third
-verbal test.  The fact that the cumulative score process for the first
-and second loadings did not achieve the critical value represents a Type II
-error, which implicitly brings into question the tests' power.
-This is an example of a situation where the double-max test ``wastes''
-power, as it cannot make use of the fact that multiple model
-parameters change simultaneously.  We
-generally address the issue of power in the simulations below.
-
-\begin{figure}
-\caption{Three test statistics of~\eqref{eq:exh0} (with $k^* = 3$)
-  and~\eqref{eq:h0} (with $k^* = 19$), 
-  based on the example involving measurement invariance with respect
-  to student age.  Solid, horizontal lines represent critical values
-  at $\alpha = 0.05$, and the dotted, horizontal lines (second row)
-  represent values of the Cram\'{e}r-von Mises test statistic.}
-\label{fig:cusumex}
-\setkeys{Gin}{width=\textwidth}
-<<gefp-3-19, fig=TRUE, height=8, width=6>>=
-## empirical fluctuation processes (3 vs all 19 pars)
-gefp_3_info <- gefp(mz0, fit = NULL, order.by = d$age, parm = 1:3,
-  vcov = info.mzfit, sandwich = FALSE)
-gefp_19_info <- gefp(mz0, fit = NULL, order.by = d$age,
-  vcov = info.mzfit, sandwich = FALSE)
-
-## visualization
-par(mfcol = c(3, 2))
-plot(gefp_3_info,  functional = maxBB, main = "DM, k* = 3", xlab = "Age")
-plot(gefp_3_info,  functional = meanL2BB, main = "CvM, k* = 3", xlab = "Age")
-plot(gefp_3_info,  functional = supLM(0.1), main = "max LM, k* = 3", xlab = "Age")
-plot(gefp_19_info, functional = maxBB, main = "DM, k* = 19", xlab = "Age")
-plot(gefp_19_info, functional = meanL2BB, main = "CvM, k* = 19", xlab = "Age")
-plot(gefp_19_info, functional = supLM(0.1), main = "max LM, k* = 19", xlab = "Age")
-@
-\end{figure}
+sensitive to fluctuations among a small subset of parameters
+(3 out of 19 here).
 
 \begin{figure}
 \caption{A comparison of the $\max \mathit{LM}$ (solid line) and $\max \mathit{LR}$ (dashed line) test
@@ -878,16 +817,84 @@ abline(v = mz.age[which.max(mz.lrstat)], lty = 3)
 @
 \end{figure}
 
+Figure~\ref{fig:lrlm} 
+compares the $\max \mathit{LM}$ statistic (solid line) to the $\max \mathit{LR}$
+statistic (dashed line) from \eqref{eq:maxlr}, as applied to testing
+\eqref{eq:h0}. (Note also that the visualization of the $\max \mathit{LM}$ in
+Figure~\ref{fig:lrlm} is identical to the bottom right panel of Figure~\ref{fig:cusumex}.)
+The critical values for these two
+tests are identical, hence the single horizontal line.
+The figure
+shows that the two statistics are very similar to one another, with
+both maxima at the dotted vertical line.  This
+is generally to be expected, because the two tests are asymptotically
+equivalent.  The 
+$\max \mathit{LR}$~statistic cannot be obtained from the empirical fluctuation
+process, however, so the factor analysis model must be refitted before
+and after each of the possible threshold values $\nu$ (i.e., here
+$\Sexpr{2 * length(mz.lrstat)}$~model fits for $\Sexpr{length(mz.lrstat)}$~thresholds).
+
+
+\subsubsection{Interpretation of Test Results}
+As described above, the tests of~\eqref{eq:simh0} imply that the 
+verbal scales lack measurement invariance.  
+We can also use the tests to: (1)~locate the threshold $\nu$, and
+(2)~isolate specific parameters that violate measurement invariance.  
+For example, as described previously, information about the location of $\nu$
+can be obtained by examining the peaks in Figure~\ref{fig:cusumex}.  For all six panels
+in the figure, the peaks occur near an age of 16.1.  This agrees well
+with the true threshold of 16.0.
+
 \begin{figure}
-\caption{Cumulative score processes for each verbal factor
-  loadings, with critical values stemming from the double-max test. 
-  The solid, horizontal lines
-  correspond to the critical value at $\alpha= 0.05$.}
+\centering
+\caption{Cumulative score processes for each verbal factor loading. 
+  The horizontal lines correspond to the critical value of the
+  double-max test at $\alpha= 0.05$.}
 \label{fig:lambdas}
-\setkeys{Gin}{width=\textwidth}
-<<gefp-lambdas, fig=TRUE, height=8, width=6>>=
+\setkeys{Gin}{width=0.8\textwidth}
+<<gefp-3-visualization, fig=TRUE, height=8, width=5.5>>=
 plot(gefp_3_info,  functional = maxBB, aggregate = FALSE, ylim = c(-2, 2),
-  main = "", xlab = "Age", ylab = expression(lambda[11], lambda[21], lambda[31]))
+  main = "DM, k* = 3", xlab = "Age", ylab = expression(lambda[11], lambda[21], lambda[31]))
+@
+\end{figure}
+
+As mentioned previously, the double-max test is advantageous because
+it yields information about individual parameters violating measurement invariance.  
+That is, it allows us to examine whether or not individual parameters' 
+cumulative score processes lead one to reject the hypothesis of
+measurement invariance.
+Figure~\ref{fig:lambdas} shows the individual cumulative score processes for the
+three verbal factor loadings and the top left panel of Figure~\ref{fig:cusumex} shows
+the same processes aggregated over the three parameters. In both graphics, horizontal lines reflecting the
+same critical value at $\alpha= 0.05$. The figure
+shows that the third parameter (i.e., $\lambda_{31}$) crosses the
+dashed line, so we would conclude a measurement 
+invariance violation with respect to age for the third
+verbal test.  The fact that the cumulative score process for the first
+and second loadings did not achieve the critical value represents a type~II
+error, which implicitly brings into question the tests' power.
+This is an example of a situation where the double-max test ``wastes''
+power, as it cannot make use of the fact that multiple model
+parameters change simultaneously.  We
+generally address the issue of power in the simulations below.
+
+\begin{figure}
+\caption{Three test statistics of~\eqref{eq:simh0} (with $k^* = 3$)
+  and~\eqref{eq:h0} (with $k^* = 19$), 
+  based on the example involving measurement invariance with respect
+  to student age.  Solid, horizontal lines represent critical values
+  at $\alpha = 0.05$, and the dotted, horizontal lines (second row)
+  represent values of the Cram\'{e}r-von Mises test statistic.}
+\label{fig:cusumex}
+\setkeys{Gin}{width=\textwidth}
+<<gefp-3-19-visualization, fig=TRUE, height=8, width=6>>=
+par(mfcol = c(3, 2))
+plot(gefp_3_info,  functional = maxBB, main = "DM, k* = 3", xlab = "Age")
+plot(gefp_3_info,  functional = meanL2BB, main = "CvM, k* = 3", xlab = "Age")
+plot(gefp_3_info,  functional = supLM(0.1), main = "max LM, k* = 3", xlab = "Age")
+plot(gefp_19_info, functional = maxBB, main = "DM, k* = 19", xlab = "Age")
+plot(gefp_19_info, functional = meanL2BB, main = "CvM, k* = 19", xlab = "Age")
+plot(gefp_19_info, functional = supLM(0.1), main = "max LM, k* = 19", xlab = "Age")
 @
 \end{figure}
 
@@ -895,7 +902,7 @@ plot(gefp_3_info,  functional = maxBB, aggregate = FALSE, ylim = c(-2, 2),
 \section{Simulation}
 
 In this section, we conduct a simulation designed to
-examine the tests' power and Type I error rates in situations where
+examine the tests' power and type~I error rates in situations where
 measurement invariance violations are known to exist.  Specifically,
 we generated data from the factor analysis model used in the previous
 section, with measurement invariance violations in the
@@ -914,7 +921,7 @@ various magnitudes of measurement invariance violations.
 
 \subsection{Method}
 Data were generated from the same model and with the same type of
-measurement invariance as was described in the Artificial Example section.
+measurement invariance as was described in the ``Artificial Example'' section.
 Sample size and magnitude
 of measurement 
 invariance violation were manipulated to examine power:
@@ -926,7 +933,7 @@ involved the younger students' values of $\{\lambda_{11},
 values by $d$ 
 times the parameters' asymptotic standard errors (scaled by $\sqrt{n}$),
 with $d = 0, 0.25, 0.5, \dots, 4$.  The 0-standard error condition was
-used to study Type I error rate.
+used to study type~I error rate.
 
 For each combination of sample size ($n$) $\times$
 violation magnitude ($d$) $\times$ number of parameters being tested
@@ -997,9 +1004,8 @@ magnitudes in the table.
 The table shows that the
 power advantage of the Cram\'{e}r-von
 Mises test can be as large as 0.1, most notably when three parameters
-are being tested.
-  It also shows that the Cram\'{e}r-von Mises test generally
-has true Type-I error rates, with the double-max test being somewhat
+are being tested. It also shows that the Cram\'{e}r-von Mises test generally
+is very close to its nominal type~I error rate, with the double-max test being somewhat
 conservative and the $\max \mathit{LM}$ test being slightly liberal.
 
 In summary, we found that the proposed tests have adequate power to detect
@@ -1070,9 +1076,11 @@ writeLines(mz_tab)
 
 
 
-\section{Example: Stereotype Threat}
+\section{Application: Stereotype Threat}
 
-\citeA{WicDol05} utilized confirmatory
+\readme{now called ``Application'' as opposed to the artificial ``Example''}
+
+\citeA{WicDol05}, henceforth WDH, utilized confirmatory
 factor models to study measurement invariance in a series of
 general intelligence scales.  They were interested in the
 notion of {\em{stereotype threat}}, whereby stereotypes concerning a
@@ -1082,22 +1090,27 @@ ethnic minorities' performance on tests of general intelligence.  In this sectio
 
 \subsection{Background}
 
-To study stereotype threat in a measurement invariance framework, Study 1 of
+\fixme{Include path diagram and a bit more background so that the paper is more
+accessible for readers that are not familiar with the WDH paper.}
+
+To study stereotype threat in a measurement invariance framework, Study~1 of
 \citeA{WicDol05} involved 295 high school students
 completing three intelligence tests in two between-subjects conditions. 
 Conditions were defined by whether or not students received primes about ethnic
-stereotypes prior to testing. To study the data, Wicherts et al.\ employed a
+stereotypes prior to testing. To study the data, WDH employed a
 four-group, one-factor model with the three intelligence tests as manifest
 variables. The groups were defined by ethnicity (majority/minority) and by the
 experimental manipulation (received/did not receive stereotype prime). Results
 indicated that the intelligence tests lacked measurement invariance, with the
 minority group receiving stereotype primes being particularly different from the
 other three groups on the most difficult intelligence test.  In the
-example below, we employ one of the models used by Wicherts et al.
-Our $V$ variable is participants' grade point averages, which were unused in the original analyses.
+example below, we employ one of the models used by WDH.
+Our $V$ variable is participants' grade point averages (GPAs), which were unused in the original analyses.
+\fixme{Maybe add: ``\dots as a measure of aptitude.'' Or something along these lines? I'm not
+sure what the appropriate psychometric terminology is.}
 
 \subsection{Method}
-Wicherts et al.\ tested a series of confirmatory factor models for
+WDH tested a series of confirmatory factor models for
 various types of measurement invariance.  We focus on the model used
 in their Step~5b (see pp.~703--704 of their paper), which involved
 across-group parameter restrictions on the factor loadings, unique
@@ -1115,7 +1128,7 @@ To carry out
 the tests, we first fit the four-group model to the data,
 calculating casewise derivatives and 
 the observed information matrix.  We then
-calculated the cumulative score process wrt student GPA via
+calculated the cumulative score process with respect to student GPA via
 \eqref{eq:cumscore}, allowing us to
 obtain various test statistics and $p$-values from this 
 process.  Test statistics include the double-max statistic from \eqref{eq:dmax},
@@ -1123,38 +1136,31 @@ the Cram\'{e}r-von Mises statistic from \eqref{eq:cvm}, and the $\max \mathit{LM
 statistic from \eqref{eq:maxlm}.
 
 As mentioned in the theory section, the 
-tests give us the flexibility to study hypotheses of partial change.
-That is, we have the ability to 
-test various subsets of 
-parameters.  For the Wicherts et al.\ data, we first test
+tests give us the flexibility to study hypotheses of partial change. That is, we
+have the ability to  test various subsets of  parameters.  For the WDH data, we
+first test
 \begin{equation}
     \label{eq:exh0}
-H_0:\ (\nu_{i}\ \lambda_{i}\
-\theta_{i}\ \alpha_{i}) = 
-(\nu_{0}\ \lambda_{0}\
-\theta_{0}\ \alpha_{0}),\ i=1,\ldots,n_{\text{MSP}},
+H_0:\ (\lambda_{i, \text{num}}\ \eta_{i}\ \mu_{i, \text{num}}\ \psi_{i, \text{num}}) = 
+      (\lambda_{0, \text{num}}\ \eta_{0}\ \mu_{0, \text{num}}\ \psi_{0, \text{num}}),\
+      i = 1,\ldots, n_{\text{MSP}},
 \end{equation}
-where $\nu_{i}$ is the intercept for student $i$ on intelligence
-test 1, $\lambda_{i}$ the factor loading, $\theta_{i}$ the unique
-variance, and $\alpha_i$ the factor mean.
-The individuals are ordered according to GPA, and the 
-hypothesis is taken only wrt the $n_{\text{MSP}}$ individuals in the
-``minority, stereotype prime'' group.  Thus, \eqref{eq:exh0} states 
-that these four group-specific model parameters are invariant with
-respect to GPA.
+where
+$\lambda_{i, \text{num}}$ is the factor loading of student $i$'s intelligence on the numerical scale,
+$\eta_{i}$ is student $i$'s factor mean,
+$\mu_{i, \text{num}}$ is student $i$'s intercept on the numerical scale, and
+$\psi_{i, \text{num}}$ is student $i$'s unique variance on the numerical scale.
+The students are ordered according to GPA (i.e.,  in this application the variable $V$),
+and the  hypothesis is taken only with respect to the $n_{\text{MSP}}$ individuals in the
+``minority, stereotype prime'' group.  Thus, \eqref{eq:exh0} states  that these four group-specific
+model parameters are invariant with respect to GPA.
 
-We can construct a similar hypothesis involving only the intercept
-parameter
-\begin{equation}
-    \label{eq:exh0.2}
-H_0:\ \nu_{i}\ = \nu_{0},\ i=1,\ldots,n_{\text{MSP}},
-\end{equation}
-which, e.g., may be used to isolate the impact of stereotype threat.
-We consider tests of both \eqref{eq:exh0} and \eqref{eq:exh0.2}
-below.
+\readme{I have omitted the single parameter hypothesis. Still it would be good to
+double-check the estfun method once more, though.}
 
 
 \subsection{Results}
+
 <<wdh_data>>=
 ## data and transformations
 data("StereotypeThreat", package = "psychotools")
@@ -1167,7 +1173,7 @@ ties <- duplicated(StereotypeThreat$gpa)
 set.seed(1090)
 StereotypeThreat$gpa[ties] <- runif(sum(ties),
   min = StereotypeThreat$gpa[ties] - 0.001, max = StereotypeThreat$gpa[ties] + 0.01)
-## keep only data with NAs in GPA
+## keep only data without NAs in GPA
 wdh <- subset(StereotypeThreat, !is.na(gpa))
 @
 
@@ -1186,7 +1192,7 @@ wdh5b <- lavaan(
   data = wdh, meanstructure = TRUE, group = "group") ##, likelihood = "wishart")
 
 ## refit model with new identification constraints
-wdh5b.2 <- lavaan(
+wdh5b_1 <- lavaan(
    'ability   =~ 1 * verbal + label(c(rep("load_n", 3), "load_n:min_t")) * numerical  + label(rep("load_a", 4)) * abstract
     ability   ~  label(c(NA, "lmean:min_c", "lmean:maj_t", "lmean:min_t")) * 1 + c(0, NA, NA, NA) * 1
     ability   ~~ label(c("lvar:maj", "lvar:min", "lvar:maj", "lvar:min")) * ability
@@ -1199,49 +1205,22 @@ wdh5b.2 <- lavaan(
   data = wdh, meanstructure = TRUE, group = "group") #, likelihood = "wishart")
 @ 
 
-Test statistics for the hypotheses \eqref{eq:exh0}
-and~\eqref{eq:exh0.2} are displayed in Figure~\ref{fig:cusumex}.
-Each panel displays a test 
-statistic's fluctuation across values of student GPA, with the first
-column containing tests of~\eqref{eq:exh0} (testing $k^*=4$ parameters)
-and the second column containing tests of~\eqref{eq:exh0.2} (testing
-$k^*=1$ parameter).
-The solid
-horizontal 
-lines represent critical values for $\alpha= 0.05$, and
-the Cram\'{e}r-von Mises panels 
-also contain a dashed line depicting the value of the test
-statistic (test statistics for the others are simply 
-the maxima of the processes).
-In other words, for panels in the first and third rows, \eqref{eq:exh0} is
-rejected if the process crosses the horizontal line.  For panels in
-the second row, \eqref{eq:h0} is rejected if the dashed horizontal line is
-higher than the solid horizontal line.
-
-%% Details on test results
-The results displayed in Figure~\ref{fig:cusumex} generally show that the
-``minority, stereotype prime'' group lacks invariance with respect to
-GPA.  All three tests are significant at the .05 level, both when the four
-group-specific parameters are tested simultaneously (first column) and
-when the intercept parameter is tested individually (second column).
-
-We can also use the test results to estimate the threshold $\nu$,
-which in this context can be used to define GPA-based subgroups whose
-measurement parameters differ.  As described previously, estimates of
-$\nu$ can be obtained by 
-examining the peaks in Figure~\ref{fig:cusumex}.  For the $k^*=4$
-panels (first column), two peaks occur near GPAs of 5.9 and of 6.3 (6
-corresponds to the American `C' range).  These peaks roughly divide
-individuals into those receiving D's and F's, those receiving solid
-C's, and those receiving high C's, B's, and A's.  Parameter-specific
-results can also be obtained, as shown for the intercept parameter in
-the second column of Figure~\ref{fig:cusumex}.  The peak locations are
-generally similar to those of all four parameters, though this finding
-will not hold in general.
-
+The double-max test for the hypothesis~\eqref{eq:exh0} is shown in
+Figure~\ref{fig:cusumgpa}, displaying the cumulative score processes
+for each of the four group-specific parameters across GPA along
+with horizontal lines representing the critical value for $\alpha= 0.05$.
+This shows that the ``minority, stereotype prime'' group lacks invariance
+with respect to GPA,
+because one of the processes crosses its boundaries. Furthermore, as this
+process pertains to the variance $\psi_\text{num}$ of the numerical scale
+(bottom panel) it can be concluded that the invariance violation is associated
+with this parameter. However, also the factor loading for the numerical scale
+$\lambda_\text{num}$ and the factor mean $\eta$ exhibit increased fluctuation
+albeit they are just non-significant at level $\alpha = 0.05$. Only the process
+associated with the intercept $\mu_\text{num}$ just shows moderate (and hence
+clearly non-significant) fluctuation across GPA.
 
 <<gefp-4-1>>=
-## FIXME It seems like info_full should go in lavaan_S3.R.
 info_full <- function(x, ...) solve(vcov(x) * nobs(x))
 scores_min_t <- function(x, ...) {
   ef <- estfun(x, ...)
@@ -1254,41 +1233,53 @@ gefp_4_info <- gefp(wdh5b, fit = NULL, scores = scores_min_t, order.by = gpa_min
 gefp_1_info <- gefp(wdh5b, fit = NULL, scores = scores_min_t, order.by = gpa_min_t, vcov = info_full, sandwich = FALSE, parm = 18)
 
 # processes for second identification constraints
-gefp_4_info_1 <- gefp(wdh5b.2, fit = NULL, scores = scores_min_t, order.by = gpa_min_t, vcov = info_full, sandwich = FALSE, parm = 15:18)
-gefp_1_info_1 <- gefp(wdh5b.2, fit = NULL, scores = scores_min_t, order.by = gpa_min_t, vcov = info_full, sandwich = FALSE, parm = 18)
+gefp_4_info_1 <- gefp(wdh5b_1, fit = NULL, scores = scores_min_t, order.by = gpa_min_t, vcov = info_full, sandwich = FALSE, parm = 15:18)
+gefp_1_info_1 <- gefp(wdh5b_1, fit = NULL, scores = scores_min_t, order.by = gpa_min_t, vcov = info_full, sandwich = FALSE, parm = 18)
 @
 
 \begin{figure}
-\caption{Three test statistics of~\eqref{eq:exh0} (set of
-  group-specific parameters)
-  and~\eqref{eq:exh0.2} (intercept only) across values of student GPA, 
-  using data from Study 1 of Wicherts et al.\ (2005).
-  Solid, horizontal lines represent critical values
-  at $\alpha = 0.05$, and the dotted, horizontal lines (second row)
-  represent values of the Cram\'{e}r-von Mises test statistic.}
-\label{fig:cusumex}
-\setkeys{Gin}{width=\textwidth}
-<<gefp-4-1-plot, fig=TRUE, height=8, width=6>>=
-par(mfcol = c(3, 2))
-plot(gefp_4_info,  functional = maxBB, main = "DM, k* = 4", xlab = "GPA")
-plot(gefp_4_info,  functional = meanL2BB, main = "CvM, k* = 4", xlab = "GPA")
-plot(gefp_4_info,  functional = supLM(0.1), main = "max LM, k* = 4", xlab = "GPA")
-plot(gefp_1_info, functional = maxBB, main = "DM, k* = 1", xlab = "GPA")
-plot(gefp_1_info, functional = meanL2BB, main = "CvM, k* = 1", xlab = "GPA")
-plot(gefp_1_info, functional = supLM(0.1), main = "max LM, k* = 1", xlab = "GPA")
+\centering
+\caption{Cumulative score processes for the four group-specific parameters across GPA
+  in the ``minority, stereotype prime'' group
+  using data from Study 1 of Wicherts et al.\ (2005). %% \citeA{WicDol05} does not work in caption
+  The horizontal lines correspond to the critical value of
+  the doule-max test at $\alpha = 0.05$.}
+\label{fig:cusumgpa}
+\setkeys{Gin}{width=0.8\textwidth}
+<<gefp-4-plot, fig=TRUE, height=8, width=5.5>>=
+plot(gefp_4_info,  functional = maxBB, aggregate = FALSE,
+  ylim = c(-2.15, 2.15), main = "DM, k* = 4", xlab = "GPA",
+  ylab = expression(lambda[num], eta, mu[num], psi[num]))
 @
 \end{figure}
+
+We can also use the test results to locate the threshold $\nu$,
+which in this context can be used to define GPA-based subgroups whose
+measurement parameters differ.  As described previously, information about
+the location of $\nu$ can be obtained by 
+examining the peaks in Figure~\ref{fig:cusumgpa}. The main peak occurs
+around a GPA of~6.3 and a second one near~5.9
+(6~corresponds to the American `C' range).  These peaks roughly divide
+individuals into those receiving D's and F's, those receiving solid
+C's, and those receiving high C's, B's, and A's.
+
+In addition to the double-max test, the Cram\'er-von Mises or $\max \mathit{LM}$
+statistics could also be employed. They also lead to clearly significant
+violations of measurement invariance ($p < 0.005$ for both tests) and
+the corresponding visualizations bring out similar
+peaks as the double-max test in Figure~\ref{fig:cusumgpa} (and hence
+are omitted here).
 
 \subsection{Summary}
 Application of the proposed measurement invariance tests to the
 \citeA{WicDol05} data allowed us to study the extent to which model
-parameters are invariant wrt GPA in a straightforward manner.
+parameters are invariant with respect to GPA in a straightforward manner.
 The tests focused on a set of group-specific
 parameters within a four-group confirmatory factor model, and they
 could be carried out using the results from a single estimated model.
 The latter fact is important, as other approaches to the problem
 described here may require multiple models to
-be estimated (e.g., for LRTs) or adversely impact model fit and
+be estimated (e.g., for LR tests) or adversely impact model fit and
 degrees of freedom (e.g., if GPA is inserted directly into the model).
 Further, through examination of both 
 test statistics and cumulative score processes, the tests were
@@ -1306,21 +1297,13 @@ section, we consider the tests' use in practice and their
 extension to more complex scenarios.
 
 <<constraint_study>>=
-tests <- c("maxBB", "meanL2BB", "supLM(0.1)")
-
-p.diffs <- matrix(NA, 2*length(tests), 2)
-
+tests <- list(maxBB, meanL2BB, supLM(0.1))
+p.diffs <- matrix(NA, nrow = 2 * length(tests), ncol = 2)
 for (i in 1:length(tests)){
-  p.diffs[i,1] <- unlist(sctest(gefp_4_info, functional=
-                                eval(parse(text=tests[i])))[2])
-  p.diffs[i,2] <- unlist(sctest(gefp_4_info_1, functional=
-                                     eval(parse(text=tests[i])))[2])
-  }
-for (i in (length(tests)+1):(2*length(tests))){
-  p.diffs[i,1] <- unlist(sctest(gefp_1_info, functional=
-                                     eval(parse(text=tests[i-length(tests)])))[2])
-  p.diffs[i,2] <- unlist(sctest(gefp_1_info_1, functional=
-                                   eval(parse(text=tests[i-length(tests)])))[2])
+  p.diffs[                i, 1] <- sctest(gefp_4_info,   functional = tests[[i]])$p.value
+  p.diffs[length(tests) + i, 1] <- sctest(gefp_1_info,   functional = tests[[i]])$p.value
+  p.diffs[                i, 2] <- sctest(gefp_4_info_1, functional = tests[[i]])$p.value
+  p.diffs[length(tests) + i, 2] <- sctest(gefp_1_info_1, functional = tests[[i]])$p.value
 }
 @ 
 
@@ -1336,42 +1319,39 @@ multiple-group model, and (3)~use the tests as a type of modification
 index following significant LR~tests.
 Traditional steps to studying measurement invariance have involved
 sequential LR~tests for various types of invariance using
-multiple-group models.  As shown in the Example section, it can be
+multiple-group models.  As shown in the ``Application'' section, it can be
 beneficial to employ the traditional steps in tandem with the proposed
-tests.  Further, when groups are not defined in advance (e.g.,
+tests.  Furthermore, when groups are not defined in advance (e.g.,
 continuous $V$), the traditional steps fail unless further assumptions
 about the nature of the groups are made.
 
-Another difference between the proposed tests and traditional tests
-involves the fact that, for the proposed tests, one's choice of
-identification constraints can influence tests of the remaining
-parameters.  This essentially reflects the fact that, while the model
-fits equally well regardless of identification constraint, the
-free model parameters adjust themselves to the specific identification
-constraint chosen.  To examine this issue in more detail, we refit the model
-used in the Example section, using an alternative identification
-constraint (i.e., fixing a different factor loading at 1).  Across the 6
-tests presented in the example section (see, e.g.,
-Figure~\ref{fig:cusumex}), the largest difference in p-values for the
-two identification constraints 
-was~$\Sexpr{round(max(abs(p.diffs[,2] - p.diffs[,1])),3)}$.  This is not a large difference, though further
-study is warranted. 
+It is worth mentioning that the proposed tests are not invariant
+with respect to the choice of identification constraints. They share this
+property with both LM and Wald tests (while LR tests are invariant to
+the choice of identification constraints). However, asymptotically
+the influence of the parametrization disappears and also in finite
+samples it typically does not change the results significantly.
+For example, in the stereotype threat application, we assessed the p-values
+of all three tests under the constraint that the abstract reasoning
+loading is fixed to 1 \fixme{figure ref} and compared them to the p-values
+under the constraint that the verbal loading is fixed to 1. All p-values
+remained clearly significant and the changes were all smaller than
+\Sexpr{format(round(max(abs(p.diffs[1:3,2] - p.diffs[1:3,1])), digits = 5), scientific = FALSE)}.
 
-In addition to providing general information about whether or not
-measurement 
+In addition to providing general information about whether or not measurement 
 invariance holds, the proposed tests allow researchers to interpret
 the nature of the invariance violation.  This is made possible, e.g.,
-through the tests' abilities to estimate $\nu$, the threshold dividing
+through the tests' abilities to locate $\nu$, the threshold dividing
 individuals into subgroups that violate
 measurement invariance (see Equation~\eqref{eq:h1*}).  It is also
-possible to define formal rules for estimating multiple $\nu$
-parameters (see \citeNP{ZeiSha10}).
+possible to formally estimate one or more $\nu$ thresholds by
+adopting a (partially) segmented model (see e.g., \citeNP{ZeiSha10}).
 
 
 
 \subsection{Comparison to Other Methods}
-The step
-functions from~\eqref{eq:h1*} were employed in the current paper to
+
+The step functions from~\eqref{eq:h1*} were employed in the current paper to
 highlight connections with nested model
 comparison, but the proposed tests typically have non-trivial power for
 all (non-constant) deviation patterns $\theta(v_i)$ (considered in
@@ -1381,27 +1361,28 @@ perform better in this particular case.  Examples include the
 class of moderated factor models \cite{BauHus09,MolDol10,Pur02}, 
 whereby continuous moderators are allowed to linearly impact model
 parameters (Purcell also considers quadratic effects of the
-moderators).   
-Returning to deviations in parameter constancy, if the change in
-parameters is continuous but not exactly linear - e.g., a sigmoidal
-shift from one set of parameters to another one - then the simple
+moderators). Moreover, if the change in
+parameters is continuous but not exactly linear -- e.g., a sigmoidal
+shift from one set of parameters to another one -- then the simple
 single shift model in~\eqref{eq:h1*} may be a useful first
-approximation and have better power than linear
-techniques. 
+approximation and may have better power than linear techniques
+(depending on how clearly the two regimes are separated). 
 
-% paragraph on factor mixture models
 The proposed tests are also similar to factor mixture models (e.g.,
 \citeNP{DolMaa98,LubMut05}) in that they can handle unknown subgroups
-violating measurement invariance.  Covariates can also be used to
-predict the unknown subgroups under both approaches.
-For example, for the 
+violating measurement invariance. Covariates can also be used to
+predict the unknown subgroups under both approaches. For example, for the 
 data used in our simulations, one could employ a factor mixture
-model with two latent classes.  This would typically involve the
-specification that student age has a linear effect on logit(P(Class
-2)), which highlights the main difference between the two techniques:
-the factor mixture model requires a specific assumption about the type
-of deviation from parameter constancy, while the proposed tests do
-not.
+model with two latent classes where the class probabilities depend
+on student's age through a logit link. If the assumptions of such
+a mixture hold, i.e., that each observation is a weighted combination
+from a (known) number of classes, the fitted model has more power
+uncovering this structure and makes it easy to interpret. However,
+the proposed tests are easier to use with fewer assumptions about
+the type of deviations (as long as they occur along the selected
+variable $V$).
+
+\readme{slightly rephrased}
 
 More generally, all the approaches described above can be distinguished
 from the proposed tests in that they require estimation of a new model
@@ -1444,7 +1425,20 @@ $(C-1)$ degrees of freedom \cite{HjoKon02}.
 Alternatively, to simultaneously test multiple parameters, we can sum
 the $\chi^2$ statistics and degrees of freedom for the individual
 parameters.  In addition to categorical $V$, this framework may also
-be useful for both continuous $V$ with many ties and ordinal $V$.  
+be useful for ordinal $V$ (or continuous $V$ with many ties).
+Furthermore, in this situation, one could also adapt the statistics
+\eqref{eq:dmax}, \eqref{eq:cvm}, and \eqref{eq:maxlm} computed from the same cumulative score
+process as usual. The only modification required should be that the statistics
+should not depend on the process's values ``within'' a category (or group
+of ties). This is easily achieved by taking the maximum (or sum) not over
+all observations $i = 1, \dots, n$ but only those $i$ at the ``end'' of a
+category.
+%% If $i_j$ is the cumulative frequency of category $j$ or lower
+%% (with $j = 1, \dots, C$), then one could take the outer maximum in
+%% \eqref{} over $i = i_1, i_2, \dots, i_{C-1}$.
+
+\readme{Is this intelligible or do we need more information?}
+
 The number of potential thresholds may be very low in these
 situations, which impacts the extent to which asymptotic results hold
 for the main test statistics described in this paper.
@@ -1465,7 +1459,7 @@ the likelihood ratio (i.e., fitting the model for various subgroups
 defined by 
 $V$ and choosing the subgroups with the largest likelihood ratio).
 Thus, unlike the tests described in this paper, this approach does not
-provide a formal significance test with a controlled level of Type~I errors.
+provide a formal significance test with a controlled level of type~I errors.
 
 
 The proposed tests also 
@@ -1498,14 +1492,13 @@ The tests proposed here were designed with this perspective in mind.
 
 
 \subsection{Summary}
-We have outlined a family of 
+We outline a family of 
 stochastic process-based parameter instability tests from theoretical
-statistics and applied them to the issue of measurement invariance in psychometrics.
-The paper included theoretical development, an applied example, and 
-study of the tests' performance.  The tests were found to have good
+statistics and apply them to the issue of measurement invariance in psychometrics.
+The paper includes theoretical development, an applied example, and 
+study of the tests' performance under controlled conditions.  The tests are found to have good
 properties via simulation, making them useful for many psychometric
-applications.  More generally, the tests help 
-solve standing problems in
+applications.  More generally, the tests help solve standing problems in
 measurement invariance research and provide many avenues for
 future research.  This can happen both through extensions of the tests
 within a factor-analytic context and through application of the tests to new
