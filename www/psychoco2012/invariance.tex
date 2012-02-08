@@ -60,7 +60,7 @@
           $H_0: \bm{\theta}_i = \bm{\theta}_0, i=1,\ldots,n$\\
           $H_1: \text{Not all the }\bm{\theta}_i = \bm{\theta}_0$
       \end{center}
-      where $\bm{\theta}_i = (\lambda_{i, 1, 1}, \dots, \psi_{i, 1, 1}, \dots, \varphi_{i, 1, 2}, \dots)^\top$
+      where $\bm{\theta}_i = (\lambda_{i, 1, 1}, \dots, \psi_{i, 1, 1}, \dots, \varphi_{i, 1, 2})^\top$
       is the full $p$-dimensional parameter vector for individual $i$.
   \end{itemize}}
 
@@ -109,7 +109,7 @@
   \begin{itemize}
     \item The proposed family of tests rely on first derivatives of
       the model's log-likelihood function.
-    \item We can also consider individual terms ({\em scores}) of the gradient.  These scores tell us how well a particular parameter describes a particular individual.
+    \item We consider individual terms ({\em scores}) of the gradient.  These scores tell us how well a particular parameter describes a particular individual.
   % Equation of gradient vs scores for individuals
   \end{itemize}
 \begin{eqnarray*}
@@ -185,7 +185,7 @@
   \frametitle{Tests}
  % show that cumulative scores follow a Brownian bridge under H_0
   \begin{itemize}
-    \item Theorem: Under the hypothesis of
+    \item Under the hypothesis of
       measurement invariance, a functional central limit
       theorem holds:
   \begin{equation*}
@@ -196,7 +196,7 @@
  information matrix and ${\bm B}^{0}(\cdot)$ is a
  $p$-dimensional Brownian bridge.\\ \ \\
 
-   \item Testing procedure: Compute an aggregated statistic of empirical
+   \item Testing procedure: Compute an aggregated statistic of the empirical
      score process and compare with corresponding quantile of aggregated
      Brownian motion.\\ \ \\
 
@@ -290,10 +290,16 @@
   \begin{itemize}
     \item We utilize a model employed by Wicherts et al., where four model parameters are specific to the ``minority, stereotype prime'' group.
       \begin{itemize}
-        \item Test for measurement invariance in these parameters wrt the student GPA variable (either all four together or only the factor mean).
+        \item Test for measurement invariance in these parameters wrt the student GPA variable (either all four together or individually).
         \item Violations of measurement invariance imply that stereotype threat is more problematic for students of low or high GPA.
       \end{itemize}
   \end{itemize}}
+
+\frame{
+  \frametitle{Model}
+  \begin{center}
+      \includegraphics[height=3in]{wicherts_msp.pdf}
+  \end{center}}
 
 \frame{
   \frametitle{Results for Single Parameters}
@@ -347,7 +353,7 @@
   \frametitle{Current Work}
   \begin{itemize}
     \item Continued test implementation via \texttt{strucchange} and \texttt{lavaan} (and possibly \texttt{OpenMx}).\\ \ \\
-    \item Detailed examination of test properties via simulation.\\ \ \\
+    \item Detailed examination of test properties.\\ \ \\
     \item Extension to related psychometric issues.\\ \ \\
     \item Working paper: \url{http://econpapers.repec.org/RePEc:inn:wpaper:2011-09}
   \end{itemize}}
