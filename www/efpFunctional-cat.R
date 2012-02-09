@@ -116,6 +116,18 @@ sctest(scus, functional = ordfun)
 
 ## corresponding visualization
 plot(scus, functional = ordfun)
+abline(h = ordfun$computeCritval(alpha = 0.05, nproc = 2), col = 4)
+
+## comparison with supLM(0.1) test with broken ties
+d$zcont <- d$z + rep(-29:0/116, 10)
+scus2 <- gefp(y ~ x, order.by = ~ zcont, data = d)
+plot(scus2, functional = supLM(0.1),
+  col = "gray", lwd = 2, alpha = 0.0001,
+  xlim = c(0, 10), ylim = c(0, 20), xlab = "z")
+par(new = TRUE)
+plot(scus, functional = ordfun,
+  xlim = c(0, 10), ylim = c(0, 20), xlab = "", ylab = "")
+abline(h = supLM(0.1)$computeCritval(alpha = 0.05, nproc = 2), col = 2, lty = 2)
 abline(h = ordfun$computeCritval(alpha = 0.05, nproc = 2), col = 2)
 
 }
