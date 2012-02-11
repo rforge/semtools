@@ -16,10 +16,10 @@
   parameters. In this paper, we construct tests of measurement invariance based on
   stochastic processes of casewise derivatives of the likelihood function. These
   tests can be viewed as generalizations of the Lagrange multiplier test, and they
-  are especially useful for: (1)~isolating specific parameters affected by
+  are especially useful for: (1)~identifying specific parameters impacted by
   measurement invariance violations, and (2)~identifying subgroups of individuals
   that violated measurement invariance based on a continuous auxiliary variable. 
-  The tests are presented and illustrated in detail, along with an application
+  The tests are presented and illustrated in detail, including an application
   to a study of stereotype threat and simulations examining the tests'
   abilities in controlled conditions.
 }
@@ -135,7 +135,7 @@ covariance matrix (instead of the likelihood of the individual observations $\bm
 employing a Wishart distribution. However, in that approach the sample covariance
 matrix can also be disaggregated to the sum of its individual-specific contributions, 
 leading essentially to a likelihood like \eqref{eq:mvndensity} with multivariate normal
-observations $\bm{x}_i$. This situation is also generally encountered in structural
+observations $\bm{x}_i$. This situation is similar to that encountered in structural
 equation models with missing data (e.g., \citeNP{Wot00}).
 
 Within the general framework outlined above and under the usual
@@ -300,8 +300,7 @@ only the estimates under the null hypothesis.
 
 For assessing measurement invariance in psychometric models, the major limitation of
 the three tests is that the potential subgroups have to be known in advance. 
-Even if the variable $V$ w.r.t.\ which the violation of invariance occurs is
-known, the threshold $\nu$ from (\ref{eq:h1*}) is often unknown in practice.
+Even if the scales are known to violate measurement invariance w.r.t.\ the variable $V$, the threshold $\nu$ from (\ref{eq:h1*}) is often unknown in practice.
 For example, if $V$ represents yearly income, there are many possible
 values of $\nu$ that could be used to divide individuals into poorer and richer
 groups.  The ultimate $\nu$ that we
@@ -632,7 +631,7 @@ one may want to incorporate it into the model to account for it. The
 procedure for doing this  typically depends on the type of violation ${\bm \theta}(V)$, and the visualizations
 discussed above often prove helpful in determining a suitable parameterization.
 In particular, one approach that is often employed in practice
-involves adoptions of a model
+involves adoption of a model
 with one (or more) threshold(s) in all parameters (i.e., (\ref{eq:h1*}) for the
 single threshold case). In the multiple threshold case, their location can
 be determined by maximizing the corresponding segmented log-likelihood over all
@@ -855,14 +854,14 @@ plot(gefp_3_info,  functional = maxBB, aggregate = FALSE, ylim = c(-2, 2),
 @
 \end{figure}
 
-As mentioned previously, the double-max test is advantageous because
+We previously noted that the double-max test is advantageous because
 it yields information about individual parameters violating measurement invariance.  
 That is, it allows us to examine whether or not individual parameters' 
 cumulative score processes lead one to reject the hypothesis of
 measurement invariance.
 Figure~\ref{fig:lambdas} shows the individual cumulative score processes for the
 three verbal factor loadings and the top left panel of Figure~\ref{fig:cusumex} shows
-the same processes aggregated over the three parameters. In both graphics, horizontal lines reflecting the
+the same processes aggregated over the three parameters. In both graphics, horizontal lines reflect the
 same critical value at $\alpha= 0.05$. The figure
 shows that the third parameter (i.e., $\lambda_{31}$) crosses the
 dashed line, so we would conclude a measurement 
@@ -870,9 +869,10 @@ invariance violation with respect to age for the third
 verbal test.  The fact that the cumulative score process for the first
 and second loadings did not achieve the critical value represents a type~II
 error, which implicitly brings into question the tests' power.
-This is an example of a situation where the double-max test ``wastes''
-power, as it cannot make use of the fact that multiple model
-parameters change simultaneously.  We
+% This is an example of a situation where the double-max test ``wastes''
+% power, as it cannot make use of the fact that multiple model
+% parameters change simultaneously.
+We
 generally address the issue of power in the simulations below.
 
 \begin{figure}
@@ -1115,7 +1115,7 @@ provided a reasonable fit to the data, as judged by examination of
 $\chi^2$, RMSEA (root-mean-square error of approximation), and CFI
 (comparative fit index) statistics.  While the model included four
 groups as described above, we focus only on the submodel for the minority
-group that received stereotype primes, which is pictured in Figure~\ref{fig:wpath}.  In the figure, paths with dashed lines and red parameters signify group-specific parameters.  These include the factor mean $\eta$, numerical factor loading $\lambda_{\text{num}}$, numerical intercept $\mu_{\text{num}}$, and numerical unique variance $\psi_{\text{num}}$.  Other parameters (not displayed) were restricted to be equal across all four groups, with the exception of the factor variance.  This parameter was restricted to be equal within both minority groups, and separately within both majority groups.
+group that received stereotype primes, which is pictured in Figure~\ref{fig:wpath}.  In the figure, paths with dashed lines and red parameters signify group-specific parameters.  These include the factor mean $\eta$, numerical factor loading $\lambda_{\text{num}}$, numerical intercept $\mu_{\text{num}}$, and numerical unique variance $\psi_{\text{num}}$.  Other parameters (not displayed) were restricted to be equal across all four groups, with the exception of the factor variance.  The factor variance was restricted to be equal within both minority groups, and separately within both majority groups.
 
 \begin{figure}
 \caption{Path diagram representing the submodel for the ``minority, stereotype'' group in model 5b of WDH.  Dashed paths and red parameters are group specific.  Other parameters (not displayed) were restricted to be equal across all four groups, with the factor variance only being restricted across the two minority groups.}
@@ -1135,7 +1135,7 @@ the Cram\'{e}r-von Mises statistic from \eqref{eq:cvm}, and the $\max \mathit{LM
 statistic from \eqref{eq:maxlm}.
 
 As mentioned in the theory section, the 
-tests give us the flexibility to study hypotheses of partial change. That is, we
+tests give us the flexibility to study hypotheses of partial change: we
 have the ability to  test various subsets of  parameters.  For the WDH data, we
 first test
 \begin{equation}
@@ -1211,10 +1211,10 @@ with respect to GPA,
 because one of the processes crosses its boundaries. Furthermore, as this
 process pertains to the variance $\psi_\text{num}$ of the numerical scale
 (bottom panel) it can be concluded that the invariance violation is associated
-with this parameter. However, also the factor loading for the numerical scale
-$\lambda_\text{num}$ and the factor mean $\eta$ exhibit increased fluctuation
-albeit they are just non-significant at level $\alpha = 0.05$. Only the process
-associated with the intercept $\mu_\text{num}$ just shows moderate (and hence
+with this parameter.  Both the factor loading for the numerical scale
+$\lambda_\text{num}$ and the factor mean $\eta$ also exhibit increased fluctuation, 
+although they are just non-significant at level $\alpha = 0.05$. Only the process
+associated with the intercept $\mu_\text{num}$ shows moderate (and hence
 clearly non-significant) fluctuation across GPA.
 
 <<gefp-4-1>>=
@@ -1399,7 +1399,7 @@ of categorical $V$ to study measurement invariance.  In this case,
 groups are 
 already specified in advance, and so traditional methods for fixed
 subgroups (i.e., LR, Wald, and LM tests) may suffice.
-Furthermore, we can also obtain an LM-type statistic from the
+However, we can also obtain an LM-type statistic from the
 framework developed here. Assume the observations are divided into
 $C$ categories $I_1, I_2, \ldots, I_C$. Then, the increment of
 the cumulative score process $\Delta_{I_c} {\bm B}(\hat {\bm \theta})$
@@ -1408,7 +1408,7 @@ In somewhat sloppy notation:
 \begin{equation}
     \label{eq:catsum}
     \Delta_{I_c} {\bm B}(\hat {\bm \theta}) ~=~ \hat {\bm I}^{-1/2} n^{-1/2}
-    \sum_{i \in I_c} {\bm s}(\hat {\bm \theta}; x_i)
+    \sum_{i \in I_c} {\bm s}(\hat {\bm \theta}; x_i).
 %% \\
 %%    X^2 & = & \sum_{c = 1}^C n_c^{-1} n^{-1} || \Delta_{I_c} {\bm B}(\hat {\bm \theta}) ||^2
 \end{equation}
