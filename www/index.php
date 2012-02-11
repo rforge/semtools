@@ -43,11 +43,13 @@ echo $contents; } ?>
 
 <!-- end of project description -->
 
-<p> R files for carrying out the example and simulation described in Merkle & Zeileis: </p>
+<p> <a href="psychoco2012.pdf">Psychoco 2012 presentation</a> on generalizations of measurement invariance tests when subgroups are unknown.</p>
+
+<p> <a href="http://eeecon.uibk.ac.at/wopec2/repec/inn/wpaper/2011-09.pdf">Working paper</a> on generalizations of measurement invariance tests when subgroups are unknown.  Below are R files for carrying out the examples and simulation described in the paper: </p>
 <ul>
+<li> <a href="mz.R">Artificial example functions</a> for lavaan or OpenMx model estimation, along with score extraction.</li>
 <li> <a href="sim.R">Simulation functions</a> for data generation, power evaluation, and power summaries.</li>
-<li> <a href="mz.R">Factor analysis functions</a> for lavaan or OpenMx model estimation and manual score abstraction.</li>
-<li> <a href="replication.R">Replication script</a> containing code to run and summarize the example and simulations, using the above files.</li>
+<li> <a href="replication.R">Replication script</a> containing code to run and summarize the examples and simulations, using the above files.</li>
 </ul>
 
 <p> The <strong>project summary page</strong> resides <a href="http://<?php echo $domain; ?>/projects/<?php echo $group_name; ?>/"><strong>here</strong></a>. </p>
