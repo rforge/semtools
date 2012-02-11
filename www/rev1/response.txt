@@ -6,14 +6,13 @@ result.
 The main addition to the manuscript is an application of our proposed tests to a
 four-group model with mean structure in a study of stereotype threat by
 Wicherts, Dolan, and Hessen (2005), as suggested by Reviewer 1.  We elected to
-use this real example to supplement, vs replace, the artificial example. While
+use this real example to supplement, vs replace, the artificial example.  While
 the real application allows us to illustrate how the tests can be adapted to
 specific challenges, the artificial example is more flexible in the illustration
-of other general aspects of the tests. Also, it serves as a gateway to the
+of other general aspects of the tests.  Also, it serves as a gateway to the
 simulation.  We are willing to streamline this further if you or the reviewers
 feel that there is too much redundancy between the artificial and the real
 example, however.
-README
 
 Furthermore, we have added some theory for the study of local alternatives as
 well as details on the use of our methods with categorical V, the ability of our
@@ -97,7 +96,6 @@ example and hope that it brings out more clearly how the proposed tests can
 be adapted to some of the challenges you and the reviewers raised. However,
 we have also kept the artificial example because we feel that some of the basic
 properties of the tests are easier to illustrate under controlled conditions.
-README
 
 
 Reviewer #1
@@ -145,7 +143,7 @@ that the authors should discuss the relation between their approach and other
 existing methods.
 
 Response 1.3. We now describe factor analysis models employing moderation in the
-"Comparison to other methods" section of the discussion.  
+Discussion.  
 
 
 Comment 1.4. The authors chose to simulate data only under models that did not
@@ -162,7 +160,7 @@ where groups cannot be predefined.  Thus, we have not modified the model in the
 simulation but point out more clearly what the 19 parameters in the model are.
 In the real data example that we have added, however, the mean structure is
 utilized. 
-README
+
 
 Comment 1.5. Also, many "nuisance" variable that are hypothesized to affect
 indicators, say, in cognitive testing (e.g., see Wicherts et al.'s work on
@@ -280,9 +278,7 @@ specified is bonus when the second point above is incorporated. I think this
 would improve the manuscript.
 
 Response 3.3. Violations of distributional assumptions may still cause problems
-with the proposed tests, even if the "structure" of the model (e.g., parameter
-constraints, included variables, etc) is correct.  We have modified this section
-of text accordingly.  
+with the proposed tests, even if we need not worry about the "structure" of the model (e.g., parameter constraints, included variables, etc).  We have modified this section of text accordingly.  
 
 
 Reviewer #4
@@ -326,10 +322,7 @@ Response 4.4. Factor means can be estimated if one is constraining other model
 parameters to be equal across groups.  In our new data example, we do estimate
 factor means and use them in the proposed tests.  In our simulation we use a
 scenario where no grouping variables exist (i.e., there is only a continuous
-V).  In this scenario, it seems difficult to estimate factor means prior to
-model estimation because we cannot constrain parameters across groups.  We have
-added some extra detail to the simulation section on our use of a single-group
-model.  
+V).  In this scenario, it seems difficult to estimate factor means prior to model estimation because we cannot constrain parameters across groups.  We have added some extra detail to the simulation section on our use of a single-group model.  
 
 
 Comment 4.5.	The simulations later on focus on invariance of factor loadings.
@@ -339,8 +332,7 @@ I read the simulation results correctly).
 
 Response 4.5. Mean parameters are included in the casewise likelihood function,
 though they were unmodeled in the simulation and thus omitted from Figure 1. 
-The casewise likelihood function is needed to make the proposed tests possible. 
-Also see Comment/Response 1.5.  
+The proposed tests are most easily carried out using the casewise likelihood function.  Also see Comment/Response 1.5.  
 
 
 Comment 4.6. Page 25: 	Implications of the study of measurement invariance in
