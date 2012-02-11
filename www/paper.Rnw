@@ -3,8 +3,8 @@
 %% need no \usepackage{Sweave}
 \SweaveOpts{engine = R, eps = FALSE, echo = FALSE, results = hide}
 
-\title{Generalized measurement invariance tests with application to
-  factor analysis}
+\title{Tests of measurement invariance without subgroups:
+  A~generalization of classical methods}
 \twoauthors{Edgar C. Merkle}{Achim Zeileis}
 \twoaffiliations{University of Missouri}{Universit\"{a}t Innsbruck}
 
@@ -16,9 +16,10 @@
   parameters. In this paper, we construct tests of measurement invariance based on
   stochastic processes of casewise derivatives of the likelihood function. These
   tests can be viewed as generalizations of the Lagrange multiplier test, and they
-  are especially useful for: (1)~identifying specific parameters impacted by
-  measurement invariance violations, and (2)~identifying subgroups of individuals
-  that violated measurement invariance based on a continuous auxiliary variable. 
+  are especially useful for: (1)~identifying subgroups of individuals
+  that violate measurement invariance along a continuous auxiliary variable
+  without prespecified thresholds, and (2)~identifying specific parameters impacted by
+  measurement invariance violations.
   The tests are presented and illustrated in detail, including an application
   to a study of stereotype threat and simulations examining the tests'
   abilities in controlled conditions.
@@ -26,14 +27,17 @@
 
 \acknowledgements{This work was supported by National Science
   Foundation grant SES-1061334. The authors thank Jelte Wicherts, who
-  generously shared data for the stereotype threat application.
-  Correspondence to Edgar C.\ Merkle, 
-  Department of  
+  generously shared data for the stereotype threat application,
+  Yves Rosseel, who provided feedback and code for performing the
+  tests with the lavaan package, and the participants of the
+  Psychoco 2012 workshop on psychometric computing for
+  discussions.
+  Correspondence to Edgar C.\ Merkle, Department of  
   Psychological Sciences, University of Missouri, Columbia,
   MO 65211.
   Email: {\texttt{merklee@missouri.edu}}.}
-\shorttitle{Generalized measurement invariance tests}
-\rightheader{Generalized measurement invariance tests}
+\shorttitle{Tests of measurement invariance without subgroups}
+\rightheader{Tests of measurement invariance without subgroups}
 
 \newcommand{\argmax}{\operatorname{argmax}\displaylimits}
 
@@ -1123,15 +1127,15 @@ group that received stereotype primes, which is pictured in Figure~\ref{fig:wpat
 \includegraphics[height=3.5in]{wicherts_msp.pdf}
 \end{figure}
 
-To carry out
-the tests, we first fit the four-group model to the data,
-calculating casewise derivatives and 
-the observed information matrix.  We then
-calculated the cumulative score process with respect to student GPA via
-\eqref{eq:cumscore}, allowing us to
-obtain various test statistics and $p$-values from this 
-process.  Test statistics include the double-max statistic from \eqref{eq:dmax},
-the Cram\'{e}r-von Mises statistic from \eqref{eq:cvm}, and the $\max \mathit{LM}$
+To carry out the tests, we first fit the four-group model to the data,
+calculating casewise derivatives and  the observed information matrix.   Second,
+to assess measurement invariance within the ``minority, stereotype prime'' group
+only, the scores of the $n_{\text{MSP}}$ individuals from that group are ordered
+and aggregated along GPA (i.e.,  in this application the variable $V$). The
+cumulative score process \eqref{eq:cumscore} with respect to GPA then allows us
+to obtain various test statistics and $p$-values from this  process.  Test
+statistics include the double-max statistic from \eqref{eq:dmax}, the
+Cram\'{e}r-von Mises statistic from \eqref{eq:cvm}, and the $\max \mathit{LM}$
 statistic from \eqref{eq:maxlm}.
 
 As mentioned in the theory section, the 
@@ -1149,9 +1153,7 @@ $\lambda_{i, \text{num}}$ is the factor loading on the numerical scale,
 $\eta_{i}$ is student $i$'s factor mean,
 $\mu_{i, \text{num}}$ is student $i$'s intercept on the numerical scale, and
 $\psi_{i, \text{num}}$ is student $i$'s unique variance on the numerical scale.
-The students are ordered according to GPA (i.e.,  in this application the variable $V$),
-and the  hypothesis is taken only with respect to the $n_{\text{MSP}}$ individuals in the
-``minority, stereotype prime'' group.  Thus, \eqref{eq:exh0} states  that these four group-specific
+Thus, \eqref{eq:exh0} states  that these four group-specific
 model parameters are invariant with respect to GPA.
 
 
@@ -1513,6 +1515,7 @@ while {OpenMx} is available under the
 Apache License~2.0 from \url{http://OpenMx.psyc.virginia.edu/}.
 {R}~code for replication of our results is
 available at \url{http://semtools.R-Forge.R-project.org/}.
+
 
 \bibliography{refs}
 
