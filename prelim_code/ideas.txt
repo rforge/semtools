@@ -1,0 +1,56 @@
+############################################################################
+## Testing for Measurement Invariance along Ordered Categorical Variables ##
+############################################################################
+
+o Provide details for the idea briefly commented on at the end of the first
+measurement invariance paper.
+
+o Discuss specifically the (unordered) Chi-squared statistic and the
+(continuous) max LM statistic and present the ordered categorical version
+of the max LM statistic.
+
+o Employ simulation to explore the power properties of the new test:
+When the number of categories is low (3 or 4) it should be fairly close
+in terms of power to the Chi-squared statistic. When it is very large
+(>= 50) I would expect it to be close to the max LM statistic. In between
+it should have clear advantages.
+
+o Real application is needed to show the advantages in practice. A model
+with an additional covariate of around ten categories would be good.
+
+o efpFunctional objects with a linear model on artificial data are provided
+in efpFunctional-cat.R
+
+
+#####################################################
+## Goodness-of-Fit Visualizations in Factor Models ##
+#####################################################
+
+o Explore goodness of fit on two levels: (1) on the level of the observed and
+model-implied covariance matrix, (2) on the level of individual observations.
+
+o For (1) the residuals(...)$cov from lavaan can be employed, most likely for
+type = "normalized"/"standardized". These can then be simple plugged into
+image() with a diverging color palette. Result can probably be improved by
+re-ordering the variables by the tools in "seriation".
+
+o For (2) one needs an observation-wise measure of deviation. One idea would
+be to look at the log-likelihood contributions of each observation. If the
+contribution is low, this signals a lack of fit. Possibly, this can be
+suitably standardized by using an idea as in the deviance residuals in GLMs.
+
+o An alternative for (2) would be the decorrelated and scaled empirical score
+contributions. These provide a signed measure of deviation for each observation
+and parameter. Additionally, one could compute the Euclidian norm for each
+observation across parameters and graph this in a way similar to the plot
+of Cook's distance in linear models.
+
+o The question is whether this works well when there is a small group of
+observations from a different model. This needs to be explored in simulations.
+Possibly, the correlations are two large to get very clear-cut results.
+
+o If it does, then one could also consider a heatmap-type plot as provided
+in "seriation". Reorder both observations and parameters via hierarchical
+clustering and present the result in a heatmap, probably again with a
+diverging color palette.
+
