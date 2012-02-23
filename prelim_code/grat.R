@@ -67,10 +67,7 @@ summary(m1)
 ## losd_1 (= GRAT Item 2) excluded
 ## gq6_6 excluded (see bottom p. 313 to top p. 314)
 
-## one-group models for GQ-6, GAC, and GRAT
-m_gq6  <- cfa(
-  'f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5',
-  data = yg, meanstructure = TRUE)
+## one-group models for GAC, GRAT, and GQ-6
 m_gac  <- cfa(
   'f1 =~ gac_1 + gac_2 + gac_3',
   data = yg, meanstructure = TRUE)
@@ -81,72 +78,124 @@ m_grat <- cfa(
    f1 ~ 0*1
    f2 ~ 0*1
    f3 ~ 0*1',
- data = yg, meanstructure = TRUE)
+  data = yg, meanstructure = TRUE)
+m_gq6  <- cfa(
+  'f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5',
+  data = yg, meanstructure = TRUE)
 
 ## set up categorical and ordinal efpFunctional objects
+## for age groups 10-11, 12, 13, 14, 15, 16, 17-19
 if(!file.exists("efp-age.rda")) {
-cat_age      <- catL2BB(yg$age)
-cat_agegroup <- catL2BB(yg$agegroup)
-set.seed(1090)
-ord_age      <- ordL2BB(yg$age,      nproc = 1:4, nobs = 5000)
-ord_agegroup <- ordL2BB(yg$agegroup, nproc = 1:4, nobs = 5000)
-save(cat_age, cat_agegroup, ord_age, ord_agegroup, file = "efp-age.rda")
+  ## relative frequencies
+  freq_age <- prop.table(table(
+    cut(yg$age, breaks = c(-Inf, 11:16 + 0.5, Inf), labels = 11:17)))
+
+  ## supLM test
+  sup_age <- supLM(freq_age[1], 1 - freq_age[7])
+
+  ## Chi-squared test
+  cat_age <- catL2BB(freq_age)
+
+  ## supLM test for ordered categories
+  set.seed(1090)
+  ord_age <- ordL2BB(freq_age, nproc = 1:5, nobs = 5000)
+
+  save(freq_age, sup_age, cat_age, ord_age, file = "efp-age.rda")
 } else {
-load("efp-age.rda")
+  load("efp-age.rda")
 }
 
-if(FALSE) {
-gefp_2 <- gefp(m2, fit = NULL, scores=estfun.lavaan,
-               order.by = as.numeric(yg$agegroup), 
-               vcov = info_full, sandwich = FALSE, parm=1:4)
-sctest(gefp_2, functional=catL2BB(gefp_2))  # p = .01
-sctest(gefp_2, functional=ordL2BB(gefp_2))  # p = .1
+## measurement invariance fluctuation tests
+mitests <- function(object, parm = NULL, plot = TRUE) {
+  ## fluctuation process
+  gefp_age <- gefp(object, fit = NULL, order.by = yg$age, 
+    vcov = info_full, sandwich = FALSE, parm = parm)
 
-## Fit a one-group model for GAC and test for invariance
-## in loadings:
-m3 <- cfa('f1 =~ gac_1 + gac_2 + gac_3',
-          data=yg, meanstructure=TRUE)
-
-gefp_3 <- gefp(m3, fit = NULL, scores=estfun.lavaan,
-               order.by = as.numeric(yg$agegroup), 
-               vcov = info_full, sandwich = FALSE, parm=1:2)
-sctest(gefp_3, functional=catL2BB(gefp_3))  # p = .67
-sctest(gefp_3, functional=ordL2BB(gefp_3))  # p = .35
-
-
-## Fit a one-group model for GRAT and test for invariance
-## (GRAT Item 2 excluded, which is losd_1 in the data)
-m4 <- cfa('f1 =~ losd_2 + losd_3 + losd_4 + losd_5 + losd_6
-           f2 =~ sa_1 + sa_2 + sa_3 + sa_4 + sa_5 + sa_6
-           f3 =~ ao_1 + ao_2 + ao_3 + ao_4
-           f1 ~ 0*1
-           f2 ~ 0*1
-           f3 ~ 0*1', data=yg,
-           meanstructure=TRUE)
-
-gefp_m4 <- gefp(m4, fit = NULL, scores=estfun.lavaan,
-                order.by = as.numeric(yg$agegroup), 
-                vcov = info_full, sandwich = FALSE, parm=1:4)
-## The catL2BB p-value is sometimes non-significant, depending on
-## how one handles the errors in the data.  Also might get something
-## by changing the identification constraint (choose a different
-## factor loading to fix at one).
-sctest(gefp_m4, functional=catL2BB(gefp_m4))  # p = .047
-ordfun <- ordL2BB(gefp_m4)
-sctest(gefp_m4, functional=ordfun)  # p = .001
-## The plot has five categories, but there are actually six defined by
-## yg$agegroup.  I haven't looked at the code that defines the ordinal
-## test statistic, so maybe this is good behavior.
-plot(gefp_m4, functional=ordfun)
-abline(h=ordfun$computeCritval(alpha=.05, nproc=4), col=4)
-
-## Could also test other sets of parameters, define age groups differently
-## (could use each year on its own, but time to compute critical value
-## increases greatly), or test within
-## multiple group models where some parameters vary from group to
-## group and some parameters are fixed across groups.  However, I think
-## one of the cool things about the ordinal test is that it does not
-## immediately correspond to a LRT with multiple groups (or maybe it
-## corresponds to a LRT with multiple groups, where there are order
-## constraints in the parameters?).
+  ## p-values
+  rval <- c(
+    sctest(gefp_age,	  functional = supLM(0.1))$p.value,
+    sctest(gefp_age,	  functional = cat_age)$p.value,
+    sctest(gefp_age,	  functional = ord_age)$p.value)
+  names(rval) <- c("supLM", "catL2BB", "ordL2bb")
+  
+  ## visualizations
+  if(plot) {
+    par(mfrow = c(1, 2))
+    plot(gefp_age, functional = cat_age, xlab = "Parameter", main = "Chi-squared test")
+    stat  <- ord_age$computeStatistic(gefp_age$process)
+    cval  <- ord_age$computeCritval(alpha = 0.05, nproc = length(parm))
+    cval2 <- sup_age$computeCritval(alpha = 0.05, nproc = length(parm))
+    plot(gefp_age, functional = ord_age, ylim = c(0, max(cval, cval2, stat)),
+      xlab = "Age", main = "supLM test (discrete/continuous)")
+    abline(h = cval,  col = 2)
+    abline(h = cval2, col = 2, lty = 2)
+  }
+  
+  return(rval)
 }
+
+## GAC factor loadings
+mitests(m_gac,  parm = 1:2)
+## -> all non-significant
+## -> p-values in the expected order:
+## unordered categorical > ordered numeric > ordered categorial
+
+## GRAT factor loadings
+mitests(m_grat, parm = 1:4)
+mitests(m_grat, parm = 5:9)
+mitests(m_grat, parm = 10:12)
+## -> LOSD subscale seems to violate measurement invariance
+## -> SA and AO appear to be ok
+
+## GQ-6 factor loadings
+mitests(m_gq6,  parm = 1:4)
+## -> somewhat surprising results because ordered categorical
+## is non-significant while the other two are significant
+
+
+####################
+## GQ-6 in detail ##
+####################
+
+## Question 1: Why is supLM significant but ordL2BB not?
+## Answer: Coincidence due to ordering within the age groups.
+## Illustration: Break ties randomly and compute average p-value.
+set.seed(1)
+p_gq6 <- sapply(1:100, function(iii) sctest(gefp(m_gq6, fit = NULL,
+  order.by = yg$age + runif(nrow(yg), -0.1, 0),
+  vcov = info_full, sandwich = FALSE, parm = 1:4),
+  fun = sup_age)$p.value)
+summary(p_gq6)
+## -> the p-values vary a lot but are non-significant "on average"
+## if the exact birth-date were known one could have a closer look...
+
+
+## Question 2: Why is the unordered categorical test clearly significant?
+## Is this due to a specific item loading or specific age groups?
+## Answer: The effect does not seem to be monotonic in age. The model has
+## a relatively poor for f1=~gq6_3 at ages 12, 15, 17 and for
+## f1=~gq6_2 and f1=~gq6_4 at age 16. Hence, the ordered tests have trouble
+## picking this up.
+## Illustration: Look at the contributions to the chi-squared statistic.
+
+## empirical fluctuation process and categorical chi-squared statistic
+scus_gq6 <- gefp(m_gq6, fit = NULL, order.by = yg$age,
+  vcov = info_full, sandwich = FALSE, parm = 1:4)
+sctest(scus_gq6, functional = cat_age)
+
+## compute contributions to statistic "by hand"
+## disaggregate cumulative sums
+s_gq6 <- diff(coredata(scus_gq6$process))
+## compute sums within age groups (merging <= 11 and >= 17)
+s_gq6 <- aggregate(s_gq6,
+  list(pmax(11, pmin(17, time(scus_gq6$process)[-1]))), sum)
+rownames(s_gq6) <- s_gq6[, 1]
+s_gq6 <- s_gq6[, -1]
+## the contributions are weighted squares of the sums
+s_gq6 <- s_gq6^2 / as.vector(freq_age)
+## replicate test statistic and p-value of Chi-squared test
+sum(s_gq6)
+pchisq(sum(s_gq6), (7 - 1) * 4, lower.tail = FALSE)
+
+## the contributions > 3.84 = qchisq(0.95, 1) are the five cells mentioned above
+round(s_gq6, digits = 1)

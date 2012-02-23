@@ -75,5 +75,7 @@ estfun.lavaan <- function(x, group = NULL, ...)
   }
 
   ## return gradient of log-likelihood
-  -scores.H0
+  rval <- -scores.H0
+  colnames(rval) <- names(coef(x))
+  return(rval)
 }
