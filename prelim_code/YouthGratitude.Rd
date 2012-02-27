@@ -60,7 +60,7 @@ The gratitude scales employed are:\cr
 }
 
 \source{
-Provided by Jinyan Fan.
+Provided by Jeff Froh and Jinyan Fan.
 }
 
 \references{
