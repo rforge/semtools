@@ -252,9 +252,9 @@ mitests(m_gq62,  parm = 1:4)
 ## the other two are also significant.
 
 
-#########################
-## Focus on GRAT scale ##
-#########################
+###########################################
+## Try other restrictions, focus on GRAT ##
+###########################################
 m_grat3 <- cfa(
   'f1 =~ losd_4 + losd_2 + losd_3 + losd_5 + losd_6
    f2 =~ sa_2 + sa_1 + sa_3 + sa_4 + sa_5 + sa_6

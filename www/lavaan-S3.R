@@ -10,10 +10,10 @@ logLik.lavaan <- function(object, ...) getMethod("logLik", "lavaan")(object, ...
 formula.lavaan <- function(x, ...) x@Options$model.syntax
 df.residual.lavaan <- function(object, ...) NULL
 
-estfun.lavaan <- function(x, group = NULL, ...)
+estfun.lavaan <- function(x)
 {
   ## observed data
-  X <- x@Data
+  X <- x@Data@X
   ## number variables/sample size
   nvar <- x@Model@nvar
   nobs <- x@Sample@ntotal
@@ -21,15 +21,6 @@ estfun.lavaan <- function(x, group = NULL, ...)
 
   ## number of groups
   ngrp <- x@Model@ngroups
-
-  if(ngrp > 1 & is.null(group)) {
-    cl <- x@call[c(1, match(c("data", "group"), names(x@call)))]
-    cl[[1]] <- as.name("with")
-    names(cl)[names(cl) == "group"] <- "expr"
-    cl$expr <- parse(text = cl$expr)
-    group <- try(eval(cl, parent.frame()), silent = TRUE)
-    if(is.null(group) || inherits(group, "try-error")) warning("could not obtain original group variable")
-  }
 
   ## Define matrix that will hold all scores
   ## Assumes means are estimated ## FIXME: check and otherwise throw error
@@ -39,7 +30,6 @@ estfun.lavaan <- function(x, group = NULL, ...)
     ## fitted moments
     if(ngrp > 1){
       moments <- fitted(x)[[i]]
-      grp.name <- x@Sample@group.label[i]
     }else{
       moments <- fitted(x)
     }
@@ -70,7 +60,7 @@ estfun.lavaan <- function(x, group = NULL, ...)
     Delta <- lavaan:::computeDelta(x@Model)[[i]]
 
     ## assign to rows of overall score matrix
-    wi <- if(is.null(group)) (cumsum(c(0, ntab))[i] + 1L):(cumsum(c(0, ntab))[i + 1L]) else which(group == grp.name)
+    wi <- x@Data@case.idx[[i]]
     scores.H0[wi, ] <- scores.H1 %*% Delta
   }
 
