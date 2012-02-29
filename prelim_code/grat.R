@@ -42,6 +42,17 @@ yg <- yg[yg$ao_4 <= 9, ]
 sapply(yg[, 4:28], function(x) sum((x - round(x)) > 0))
 yg[, 4:28] <- round(yg[, 4:28])
 
+## non-integer scale values -> omit offending cases
+## NB: Critical values need to be re-simulated
+## (Could also make them NA, then use missing="listwise"
+##  cfa() commands to exclude cases with missing values.
+##  However, this gives us a different sample size for
+##  each model, meaning we have to re-simulate the critical
+##  value for each model.)
+##non.int <- (yg[,4:28] - round(yg[,4:28])) > 0
+##n.non.int <- apply(non.int, 1, sum)
+##yg <- yg[n.non.int==0,]
+
 
 #################
 ## Replication ##
@@ -199,3 +210,90 @@ pchisq(sum(s_gq6), (7 - 1) * 4, lower.tail = FALSE)
 
 ## the contributions > 3.84 = qchisq(0.95, 1) are the five cells mentioned above
 round(s_gq6, digits = 1)
+
+#############################################
+## Try a new set of parameter restrictions ##
+#############################################
+
+## one-group models for GAC, GRAT, and GQ-6
+## (same as before, but order of osberved variables
+##  is changed in the equations)
+m_gac2  <- cfa(
+  'f1 =~ gac_2 + gac_1 + gac_3',
+  data = yg, meanstructure = TRUE)
+m_grat2 <- cfa(
+  'f1 =~ losd_3 + losd_2 + losd_4 + losd_5 + losd_6
+   f2 =~ sa_2 + sa_1 + sa_3 + sa_4 + sa_5 + sa_6
+   f3 =~ ao_2 + ao_1 + ao_3 + ao_4
+   f1 ~ 0*1
+   f2 ~ 0*1
+   f3 ~ 0*1',
+  data = yg, meanstructure = TRUE)
+m_gq62  <- cfa(
+  'f1 =~ gq6_2 + gq6_1 + gq6_3 + gq6_4 + gq6_5',
+  data = yg, meanstructure = TRUE)
+
+## GAC factor loadings
+mitests(m_gac2,  parm = 1:2)
+## -> all non-significant
+## -> p-values are now:
+## unordered categorical > ordered categorical > ordered numeric
+
+## GRAT factor loadings
+mitests(m_grat2, parm = 1:4)
+mitests(m_grat2, parm = 5:9)
+mitests(m_grat2, parm = 10:12)
+## -> LOSD subscale more clearly violates measurement invariance
+## -> SA and AO still ok
+
+## GQ-6 factor loadings
+mitests(m_gq62,  parm = 1:4)
+## -> ordered categorical is now just significant, and
+## the other two are also significant.
+
+
+#########################
+## Focus on GRAT scale ##
+#########################
+m_grat3 <- cfa(
+  'f1 =~ losd_4 + losd_2 + losd_3 + losd_5 + losd_6
+   f2 =~ sa_2 + sa_1 + sa_3 + sa_4 + sa_5 + sa_6
+   f3 =~ ao_2 + ao_1 + ao_3 + ao_4
+   f1 ~ 0*1
+   f2 ~ 0*1
+   f3 ~ 0*1',
+  data = yg, meanstructure = TRUE)
+
+m_grat4 <- cfa(
+  'f1 =~ losd_5 + losd_2 + losd_4 + losd_3 + losd_6
+   f2 =~ sa_2 + sa_1 + sa_3 + sa_4 + sa_5 + sa_6
+   f3 =~ ao_2 + ao_1 + ao_3 + ao_4
+   f1 ~ 0*1
+   f2 ~ 0*1
+   f3 ~ 0*1',
+  data = yg, meanstructure = TRUE)
+
+m_grat5 <- cfa(
+  'f1 =~ losd_6 + losd_2 + losd_4 + losd_5 + losd_3
+   f2 =~ sa_2 + sa_1 + sa_3 + sa_4 + sa_5 + sa_6
+   f3 =~ ao_2 + ao_1 + ao_3 + ao_4
+   f1 ~ 0*1
+   f2 ~ 0*1
+   f3 ~ 0*1',
+  data = yg, meanstructure = TRUE)
+
+## Restrict latent variance to be 1
+m_grat6 <- cfa(
+  'f1 =~ losd_6 + losd_2 + losd_4 + losd_5 + losd_3
+   f2 =~ sa_2 + sa_1 + sa_3 + sa_4 + sa_5 + sa_6
+   f3 =~ ao_2 + ao_1 + ao_3 + ao_4
+   f1 ~ 0*1
+   f2 ~ 0*1
+   f3 ~ 0*1',
+  data = yg, std.lv=TRUE, meanstructure = TRUE)
+
+mitests(m_grat3, parm = 1:4)
+mitests(m_grat4, parm = 1:4)
+mitests(m_grat5, parm = 1:4)
+## An extra loading is estimated with this parameterization:
+mitests(m_grat6, parm = 1:5)
