@@ -297,3 +297,47 @@ mitests(m_grat4, parm = 1:4)
 mitests(m_grat5, parm = 1:4)
 ## An extra loading is estimated with this parameterization:
 mitests(m_grat6, parm = 1:5)
+
+###########################################
+## Testing within multiple group models ###
+###########################################
+## Define the grouping variable
+yg <- transform(yg, age2=cut(age, breaks = c(-Inf, 11:16 + 0.5, Inf), labels = 11:17))
+
+m_grat_grp <- cfa(
+  'f1 =~ losd_2 + losd_3 + losd_4 + losd_5 + losd_6
+   f2 =~ sa_1 + sa_2 + sa_3 + sa_4 + sa_5 + sa_6
+   f3 =~ ao_1 + ao_2 + ao_3 + ao_4
+   f1 ~ 0*1
+   f2 ~ 0*1
+   f3 ~ 0*1',
+  data = yg, meanstructure = TRUE, group="age2",
+  group.equal="loadings")
+
+## 1:4 for losd; 5:9 for sa; 10:12 for ao
+## losd loadings: ordinal test has smaller p-value,
+##      but none approach significance
+mitests(m_grat_grp, parm=1:4)
+## sa loadings: nothing
+mitests(m_grat_grp, parm=5:9)
+## ao loadings: nothing
+mitests(m_grat_grp, parm=10:12)
+
+## Now refit model with variances equal
+m_grat_grp2 <- cfa(
+  'f1 =~ losd_2 + losd_3 + losd_4 + losd_5 + losd_6
+   f2 =~ sa_1 + sa_2 + sa_3 + sa_4 + sa_5 + sa_6
+   f3 =~ ao_1 + ao_2 + ao_3 + ao_4
+   f1 ~ 0*1
+   f2 ~ 0*1
+   f3 ~ 0*1',
+  data = yg, meanstructure = TRUE, group="age2",
+  group.equal="residuals")
+
+## losd residuals: all significant
+mitests(m_grat_grp2, parm=13:17)
+## sa residuals: critical value hasn't been
+##    simulated (too many parameters to test).
+mitests(m_grat_grp2, parm=18:23)
+## ao loadings: nothing
+mitests(m_grat_grp2, parm=24:27)
