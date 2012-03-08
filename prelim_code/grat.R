@@ -109,7 +109,7 @@ if(!file.exists("efp-age.rda")) {
 
   ## supLM test for ordered categories
   set.seed(1090)
-  ord_age <- ordL2BB(freq_age, nproc = 1:5, nobs = 5000)
+  ord_age <- ordL2BB(freq_age, nproc = 1:6, nobs = 5000)
 
   save(freq_age, sup_age, cat_age, ord_age, file = "efp-age.rda")
 } else {
@@ -323,7 +323,7 @@ mitests(m_grat_grp, parm=5:9)
 ## ao loadings: nothing
 mitests(m_grat_grp, parm=10:12)
 
-## Now refit model with variances equal
+## Now refit model with residuals equal as well
 m_grat_grp2 <- cfa(
   'f1 =~ losd_2 + losd_3 + losd_4 + losd_5 + losd_6
    f2 =~ sa_1 + sa_2 + sa_3 + sa_4 + sa_5 + sa_6
@@ -332,12 +332,36 @@ m_grat_grp2 <- cfa(
    f2 ~ 0*1
    f3 ~ 0*1',
   data = yg, meanstructure = TRUE, group="age2",
-  group.equal="residuals")
+  group.equal=c("loadings","residuals"))
 
 ## losd residuals: all significant
 mitests(m_grat_grp2, parm=13:17)
 ## sa residuals: critical value hasn't been
-##    simulated (too many parameters to test).
+##    simulated (the code above has already been modified,
+##    need to re-simulate).
 mitests(m_grat_grp2, parm=18:23)
-## ao loadings: nothing
+## ao loadings: ordinal and supLM not significant, cat is
 mitests(m_grat_grp2, parm=24:27)
+
+####################################################
+## Now try a similar procedure on the other measures
+
+## gac:
+m_gac_grp  <- cfa(
+  'f1 =~ gac_1 + gac_2 + gac_3',
+  data = yg, meanstructure = TRUE, group="age2",
+  group.equal="loadings")
+
+## Loadings are significant with ordinal test,
+## not with others
+mitests(m_gac_grp, parm=1:2)
+
+
+## gq6:
+m_gq6_grp  <- cfa(
+  'f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5',
+  data = yg, meanstructure = TRUE, group="age2",
+  group.equal="loadings")
+
+## All are significant:
+mitests(m_gq6_grp, parm=1:4)
