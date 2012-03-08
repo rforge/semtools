@@ -340,7 +340,7 @@ mitests(m_grat_grp2, parm=13:17)
 ##    simulated (the code above has already been modified,
 ##    need to re-simulate).
 mitests(m_grat_grp2, parm=18:23)
-## ao loadings: ordinal and supLM not significant, cat is
+## ao residuals: ordinal and supLM not significant, cat is
 mitests(m_grat_grp2, parm=24:27)
 
 ####################################################
