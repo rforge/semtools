@@ -54,3 +54,14 @@ in "seriation". Reorder both observations and parameters via hierarchical
 clustering and present the result in a heatmap, probably again with a
 diverging color palette.
 
+o Mavridis and Moustaki (2008) describe a procedure for outlier detection in
+factor analysis, with good material that we could build upon.  Further, their
+application uses a dataset freely available in the bootstrap package ("scor" 
+data).
+
+o A potential problem with the use of score contributions is that, by definition,
+the outlier has a large influence on parameter estimates.  Thus, because parameter
+estimates are drawn towards the outlier, the scores associated with the outlier may 
+not be overly large.  Mavridis and Moustaki deal with this issue by using a "forward
+search", fitting models to subsets of data and examining changes in estimates as 
+outliers are added.
