@@ -3,6 +3,9 @@
 %% need no \usepackage{Sweave}
 \SweaveOpts{engine = R, eps = FALSE, echo = FALSE, results = hide}
 
+%% TODO 1. discussion of measurement vs structural parameters
+%%      2. discussion of longitudinal MI
+%%      3. re-run simulations
 \title{Tests of measurement invariance without subgroups:
   A~generalization of classical methods}
 \twoauthors{Edgar C. Merkle}{Achim Zeileis}
@@ -13,7 +16,7 @@
   contexts, with methods for assessment including likelihood ratio tests,
   Lagrange multiplier tests, and Wald tests. These tests all require advance
   definition of the number of groups, group membership, and offending model
-  parameters. In this paper, we construct tests of measurement invariance based on
+  parameters. In this paper, we study tests of measurement invariance based on
   stochastic processes of casewise derivatives of the likelihood function. These
   tests can be viewed as generalizations of the Lagrange multiplier test, and they
   are especially useful for: (1)~identifying subgroups of individuals
@@ -30,8 +33,8 @@
   generously shared data for the stereotype threat application,
   Yves Rosseel, who provided feedback and code for performing the
   tests with the lavaan package, and the participants of the
-  Psychoco 2012 workshop on psychometric computing for
-  discussions.
+  Psychoco 2012 workshop on psychometric computing for helpful 
+  discussion.
   Correspondence to Edgar C.\ Merkle, Department of  
   Psychological Sciences, University of Missouri, Columbia,
   MO 65211.
@@ -86,13 +89,13 @@ behavioral sciences'' (p.~141).  \citeA{Bor06a} further
 notes that researchers often fail to assess whether measurement
 invariance holds.
 
-In this paper, we consider a new family of tests for assessing
-measurement invariance that has important advantages over existing
-tests.  We begin by developing a general framework for the tests.
-This leads to a discussion of theoretical results relevant to the
-proposed tests, as well as a comparison of the proposed tests to the 
-existing tests.  Next,
-we study the 
+In this paper, we apply a family of statistical tests based on
+stochastic processes to the assessment of measurement invariance.
+The tests are shown to have useful advantages over existing
+tests.  We begin by developing a general framework for the tests,
+including discussion of theoretical results relevant to the
+proposed tests and comparison of the proposed tests to the 
+existing tests.  Next, we study the 
 proposed tests' abilities through example and simulation.  Finally,
 we discuss some interesting extensions of the tests.
 Throughout the manuscript, we use the term {\em{test}} to refer to a
@@ -236,7 +239,7 @@ in advance (i.e., unless there is observed heterogeneity).  In this situation, a
 we can apply standard theory: nested multiple group models (e.g.,
 \citeNP{Jor71,Bol89}) coupled with likelihood ratio (LR) tests are most common,
 although the asymptotically equivalent  Lagrange multiplier
-(LM) tests (also known as score tests) and Wald tests may also be constructed for this purpose (see
+(LM) tests (also known as score tests) and Wald tests may also be used for this purpose (see
 \citeNP{Sat89}). If $\nu$
 is unknown (as is often the case for continuous $V$), however, then
 there is unobserved heterogeneity and standard theory 
@@ -518,7 +521,7 @@ Finally, all tests can be easily modified to address the situation of
 so-called ``partial structural changes'' \cite{And93}. This refers to the case of some
 parameters being known to be stable, i.e., restricted to be constant across
 potential subgroups. Tests for potential changes/instabilities only in the
-$k^*$ remaining parameters (from overall $k$ parameters) are easily constructed
+$k^*$ remaining parameters (from overall $k$ parameters) are easily obtained
 by omitting those $k - k^*$ columns from ${\bm B}(\hat {\bm \theta})_{ij}$ that are
 restricted/stable, retaining only those $k^*$ columns that are potentially instable.
 This may be of special interest to those wishing to test specific types of measurement
@@ -916,7 +919,10 @@ tests involving only the $k^* = 3$ factor loadings lacking invariance
  with tests of all
 $k^* = k = 19$ model parameters.  It is likely that power
 is higher when testing only the affected model parameters, but
-the affected parameters are usually unknown in practice.
+the affected parameters are usually unknown in practice.  Thus, the
+$k^*=3$ and $k^*=19$ conditions reflect boundary cases, with the
+performance of tests involving other subsets of model parameters
+(e.g., all factor loadings) falling in between the boundaries.  
 Finally, we also examine the tests' power across
 various magnitudes of measurement invariance violations.
 
@@ -987,14 +993,17 @@ Figure~\ref{fig:simres} displays power curves as a function of violation
 magnitude, with panels for each combination of sample size ($n$) $\times$
 number of parameters being tested ($k^{\ast}$).  
 Separate curves are drawn for the double-max test (solid lines), 
-the Cram{\'e}r-von Mises test (dashed lines), and the $\max \mathit{LM}$ (dotted lines).
+the Cram{\'e}r-von Mises test (dashed lines), and the $\max
+\mathit{LM}$ test (dotted lines).
 One can generally observe that simultaneous tests of all 19~parameters
 result in decreased power, with the tests performing more similarly at
 the larger sample sizes.  The tests distinguish themselves from one
 another when only the three factor loadings are tested, with the
 Cram\'{e}r-von Mises test having the most power, followed by $\max \mathit{LM}$,
 followed by the double-max test.  
-This advantage decreases at larger sample sizes.  
+This advantage decreases at larger sample sizes, and we also surmise
+that it decreases as extra parameters satisfying measurement
+invariance are included in the tests.  
 At $n=50$, generally regarded as a
 small sample size for factor analysis, the power functions break down
 and are not monotonic with respect to violation magnitude.
@@ -1006,7 +1015,8 @@ The table shows that the
 power advantage of the Cram\'{e}r-von
 Mises test can be as large as 0.1, most notably when three parameters
 are being tested. It also shows that the Cram\'{e}r-von Mises test generally
-is very close to its nominal type~I error rate, with the double-max test being somewhat
+is very close to its nominal type~I error rate, with the double-max
+test being somewhat 
 conservative and the $\max \mathit{LM}$ test being slightly liberal.
 
 In summary, we found that the proposed tests have adequate power to detect
@@ -1136,7 +1146,8 @@ cumulative score process \eqref{eq:cumscore} with respect to GPA then allows us
 to obtain various test statistics and $p$-values from this  process.  Test
 statistics include the double-max statistic from \eqref{eq:dmax}, the
 Cram\'{e}r-von Mises statistic from \eqref{eq:cvm}, and the $\max \mathit{LM}$
-statistic from \eqref{eq:maxlm}.
+statistic from \eqref{eq:maxlm}.  We focus on the double-max statistic
+due to its ease of interpretation and intuitive visual display.
 
 As mentioned in the theory section, the 
 tests give us the flexibility to study hypotheses of partial change: we
@@ -1286,9 +1297,10 @@ interpretable from both a theoretical and applied standpoint.
 
 
 \section{General Discussion}
-In this paper, we have presented a new family of statistical tests for
-the study of measurement invariance in psychometrics.  The tests,
-based on stochastic processes, have reasonable power, can isolate
+In this paper, we have applied a family of stochastic process-based
+statistical tests to  
+the study of measurement invariance in psychometrics.  The tests
+have reasonable power, can isolate
 subgroups of individuals violating measurement invariance based on a
 continuous auxiliary variable, and can
 isolate specific model parameters affected by the violation.  In this
@@ -1441,7 +1453,8 @@ situations, which impacts the extent to which asymptotic results hold
 for the main test statistics described in this paper.
 
 \subsection{Extensions}
-The proposed family of tests can be extended in various ways.  First,
+The family of tests described in this paper can be extended in various
+ways.  First, 
 it is possible to construct an algorithm that recursively defines
 groups of individuals violating measurement invariance with respect to
 multiple auxiliary variables.  Such an algorithm is related to 
