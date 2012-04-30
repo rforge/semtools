@@ -3,9 +3,7 @@
 %% need no \usepackage{Sweave}
 \SweaveOpts{engine = R, eps = FALSE, echo = FALSE, results = hide}
 
-%% TODO 1. discussion of measurement vs structural parameters
-%%      2. discussion of longitudinal MI
-%%      3. re-run simulations
+%%      4. deal with color in figures
 \title{Tests of measurement invariance without subgroups:
   A~generalization of classical methods}
 \twoauthors{Edgar C. Merkle}{Achim Zeileis}
@@ -187,15 +185,18 @@ In general terms, a set of scales is defined to be measurement
 invariant with respect to an auxiliary variable $V$ if:
 \begin{equation}
     \label{eq:midef}
-      f({\bf X} | T, V, \dots) = f({\bf X} | T, \dots),
+      f(x_i | t_i, v_i, \dots) = f({\bf x}_i | t_i, \dots),
 \end{equation}
-where ${\bf X}$ is a data matrix, $T$ is the latent
-variable that the scales purport to measure, and $f$ is the model's
-distributional form \cite{Mel89}.  In the parametric,
-factor-analytic framework
-adopted here, this implies that the measurement parameters are equal
-across subgroups of individuals and, thus, do not vary with any
-variable $V$ \cite{Mer93}.
+where $x_i$ is the data vector for individual $i$, $t_i$ is the latent
+variable for individual $i$ that the scales purport to measure, and
+$f$ is the model's 
+distributional form \cite{Mel89}.  
+We adopt a parametric,
+factor-analytic framework here, so that the above equation being true
+for all $V$ implies that the measurement
+parameters are equal 
+across individuals and, thus, do not vary with any
+$V$ \cite{Mer93}.
 
 To frame this as a formal hypothesis, we assume that -- in principle --
 Model~(\ref{eq:loglik}) holds for all individuals but with a
@@ -586,8 +587,8 @@ Equation~\eqref{eq:score} do not have zero expectation but rather
   E[\bm{s}(\bm{\theta}_0; x_i)] = \bm{0} + n^{-1/2}
   \bm{C}(\bm{\theta}_0) \bm{g}(i/n).
 \end{equation}
-In this case, the covariance matrix $\bm{C}(\bm{\theta})$ from the expected
-outer product of gradients is
+The covariance matrix $\bm{C}(\bm{\theta})$ from the expected
+outer product of gradients is then 
 \begin{equation}
     \label{eq:localS}
   \bm{C}(\bm{\theta}_0) = E[\bm{s}(\bm{\theta}_0; x_i) \bm{s}(\bm{\theta}; x_i)']    
@@ -1295,6 +1296,19 @@ Further, through examination of both
 test statistics and cumulative score processes, the tests were
 interpretable from both a theoretical and applied standpoint.
 
+We included a factor mean in the application in order to
+demonstrate the tests' generality.  To deal with 
+measurement invariance specifically, however, we may elect to focus on
+only the 
+measurement parameters within the model (omitting the factor mean).
+That is, it would 
+not have been notable or surprising if we had observed that
+the factor mean lacked measurement invariance with respect to GPA:
+this result would have implied that individuals' latent
+intelligence fluctuates with GPA.  We speculate that such a result
+would often be obtained when $V$ is related to the latent variable of
+interest.
+
 
 \section{General Discussion}
 In this paper, we have applied a family of stochastic process-based
@@ -1471,28 +1485,29 @@ $V$ and choosing the subgroups with the largest likelihood ratio).
 Thus, unlike the tests described in this paper, this approach does not
 provide a formal significance test with a controlled level of type~I errors.
 
-
 The proposed tests also 
-readily extend to other popular psychometric models.  
+readily extend to other psychometric models.  
 For example, the tests can be used to generally 
 study the stability of structural equation model parameters across
-observations.  Under this framework, it is possible to assess whether
-paths between 
-latent variables are stronger for some individuals than for
-others.  Further, in applying the proposed tests to factor mean
-parameters (as was done in the example), implications of measurement
-invariance violations for structural equation modeling may be better
-understood.
+observations.  This includes the study of measurement invariance
+in second-order growth models and related models for longitudinal
+data (e.g., \citeNP{FerBal08,McA09}).
+The issue of measurement invariance is important in these models in
+order to establish that a ``true'' change has occurred in the 
+individuals to which the model has been fitted.  The tests described
+here can be used to help establish measurement invariance with respect
+to both continuous and categorical auxiliary variables, using only
+output from the estimated model of interest.  
 
-The proposed tests also naturally extend to the study of differential
+Finally, the tests can be used for the study of differential
 item functioning (DIF) 
 in item response models (e.g., \citeNP{KopZei10}, who focused on Rasch
 models).   
 Traditional DIF methods are similar to those for factor analysis in
 that subgroups must be specified in advance.
-%% The tests proposed here can detect subgroups automatically, however, offering a unified way of
-%% studying both  measurement invariance in factor analysis and differential item
-%% functioning in item response.
+The tests proposed here can detect subgroups automatically, however, offering a unified way of
+studying both  measurement invariance in factor analysis and differential item
+functioning in item response.
 While factor-analytic measurement invariance methods and DIF methods
 have developed 
 largely independently of one another, the methods can certainly be
