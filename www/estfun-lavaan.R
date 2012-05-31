@@ -1,23 +1,11 @@
-## provide S3 counterparts to S4 methods in lavaan
-## (this is really a bad hack and lmtest/strucchange probably need improvement)
-coef.lavaan <- function(object, ...) getMethod("coef", "lavaan")(object, ...)
-vcov.lavaan <- function(object, ...) getMethod("vcov", "lavaan")(object, ...)
-coef.lavaan <- function(object, ...) getMethod("coef", "lavaan")(object, ...)
-residuals.lavaan <- function(object, ...) getMethod("residuals", "lavaan")(object, ...)
-logLik.lavaan <- function(object, ...) getMethod("logLik", "lavaan")(object, ...)
-
-## new methods
-formula.lavaan <- function(x, ...) x@Options$model.syntax
-df.residual.lavaan <- function(object, ...) NULL
-
 estfun.lavaan <- function(x)
 {
   ## observed data
   X <- x@Data@X
   ## number variables/sample size
   nvar <- x@Model@nvar
-  nobs <- x@Sample@ntotal
-  ntab <- unlist(x@Sample@nobs)
+  nobs <- x@SampleStats@ntotal
+  ntab <- unlist(x@SampleStats@nobs)
 
   ## number of groups
   ngrp <- x@Model@ngroups

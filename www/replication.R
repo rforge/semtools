@@ -9,7 +9,7 @@ library("strucchange")
 library("mvtnorm")
 library("lattice")
 source("mz.R")
-source("lavaan-S3.R")
+source("estfun-lavaan.R")
 source("sim.R")
 
 
@@ -172,7 +172,7 @@ plot(gefp_4_info,  functional = maxBB, aggregate = FALSE,
 
 ## p-values from all three tests under both sets of constraints
 tests <- list(maxBB, meanL2BB, supLM(0.1))
-pvals <- matrix(NA, nrow = 2 * length(tests), ncol = 2)
+pvals <- matrix(NA, nrow = length(tests), ncol = 2)
 for (i in 1:length(tests)){
   pvals[i, 1] <- sctest(gefp_4_info,   functional = tests[[i]])$p.value
   pvals[i, 2] <- sctest(gefp_4_info_1, functional = tests[[i]])$p.value
