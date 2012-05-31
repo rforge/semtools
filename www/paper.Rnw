@@ -52,14 +52,26 @@
 \maketitle
 
 <<preliminaries>>=
+## packages
 library("OpenMx")
 library("lavaan")
 library("strucchange")
 library("mvtnorm")
 library("lattice")
+
+## auxiliary code
 source("mz.R")
-source("lavaan-S3.R")
+source("estfun-lavaan.R")
 source("sim.R")
+
+## convenience function for plotting boundaries without color
+get_boundary <- function(obj, fun, trim = 0) {
+  bound <- fun$boundary(0:obj$nobs/obj$nobs)
+  bound <- fun$computeCritval(0.05, ncol(obj$process)) * bound
+  bound <- zoo(bound, time(obj$process))
+  if(trim > 0) bound <- head(tail(bound, - floor(trim * obj$nobs)), - floor(trim * obj$nobs))
+  return(bound)
+}
 @
 
 The assumption that parameters are
@@ -807,16 +819,18 @@ sensitive to fluctuations among a small subset of parameters
 
 \begin{figure}
 \caption{A comparison of the $\max \mathit{LM}$ (solid line) and $\max \mathit{LR}$ (dashed line) test
-  statistics for~\eqref{eq:h0} (i.e., $k^* = 19$).  The solid horizontal line
+  statistics for~\eqref{eq:h0} (i.e., $k^* = 19$).  The gray horizontal line
   corresponds to the critical value at $\alpha= 0.05$ while the dotted vertical
   line highlights the threshold at which both test statistics assume their maximum.}
 \label{fig:lrlm}
 \setkeys{Gin}{width=\textwidth}
 <<lm-lr-19, fig=TRUE, height=5, width=6>>=
 plot(gefp_19_info, functional = supLM(0.1),
-  xlab = "Age", ylab = "LR and LM statistics (k* = 19)", main = "", ylim = c(0, 50))
+  xlab = "Age", ylab = "LR and LM statistics (k* = 19)",
+  main = "", ylim = c(0, 50), boundary = FALSE)
 legend("topleft", c("LR", "LM"), lty = c(2, 1), bty = "n")
 lines(mz.age, mz.lrstat, lty = 2)
+lines(get_boundary(gefp_19_info, supLM(0.1), 0.1), col = "slategray", lwd = 1.7)
 abline(v = mz.age[which.max(mz.lrstat)], lty = 3)
 @
 \end{figure}
@@ -852,13 +866,20 @@ with the true threshold of 16.0.
 \begin{figure}
 \centering
 \caption{Cumulative score processes for each verbal factor loading. 
-  The horizontal lines correspond to the critical value of the
+  The solid gray horizontal lines correspond to the critical value of the
   double-max test at $\alpha= 0.05$.}
 \label{fig:lambdas}
 \setkeys{Gin}{width=0.8\textwidth}
 <<gefp-3-visualization, fig=TRUE, height=8, width=5.5>>=
-plot(gefp_3_info,  functional = maxBB, aggregate = FALSE, ylim = c(-2, 2),
-  main = "DM, k* = 3", xlab = "Age", ylab = expression(lambda[11], lambda[21], lambda[31]))
+gefp_3_bound <- get_boundary(gefp_3_info, maxBB)
+plot(gefp_3_info$process,  ylim = c(-2, 2),
+  main = "DM, k* = 3", xlab = "Age", ylab = expression(lambda[11], lambda[21], lambda[31]),
+  panel = function(x, y, ...) {
+    abline(h = 0)
+    lines(gefp_3_bound, col = "slategray", lwd = 1.7)
+    lines(-gefp_3_bound, col = "slategray", lwd = 1.7)
+    lines(x, y, ...)
+  })
 @
 \end{figure}
 
@@ -887,19 +908,25 @@ generally address the issue of power in the simulations below.
 \caption{Three test statistics of~\eqref{eq:simh0} (with $k^* = 3$)
   and~\eqref{eq:h0} (with $k^* = 19$), 
   based on the example involving measurement invariance with respect
-  to student age.  Solid, horizontal lines represent critical values
+  to student age.  Solid gray horizontal lines represent critical values
   at $\alpha = 0.05$, and the dotted, horizontal lines (second row)
   represent values of the Cram\'{e}r-von Mises test statistic.}
 \label{fig:cusumex}
 \setkeys{Gin}{width=\textwidth}
 <<gefp-3-19-visualization, fig=TRUE, height=8, width=6>>=
 par(mfcol = c(3, 2))
-plot(gefp_3_info,  functional = maxBB, main = "DM, k* = 3", xlab = "Age")
-plot(gefp_3_info,  functional = meanL2BB, main = "CvM, k* = 3", xlab = "Age")
-plot(gefp_3_info,  functional = supLM(0.1), main = "max LM, k* = 3", xlab = "Age")
-plot(gefp_19_info, functional = maxBB, main = "DM, k* = 19", xlab = "Age")
-plot(gefp_19_info, functional = meanL2BB, main = "CvM, k* = 19", xlab = "Age")
-plot(gefp_19_info, functional = supLM(0.1), main = "max LM, k* = 19", xlab = "Age")
+plot(gefp_3_info,  functional = maxBB, main = "DM, k* = 3", xlab = "Age", boundary = FALSE)
+lines(get_boundary(gefp_3_info, maxBB), col = "slategray", lwd = 1.7)
+plot(gefp_3_info,  functional = meanL2BB, main = "CvM, k* = 3", xlab = "Age", boundary = FALSE)
+lines(get_boundary(gefp_3_info, meanL2BB), col = "slategray", lwd = 1.7)
+plot(gefp_3_info,  functional = supLM(0.1), main = "max LM, k* = 3", xlab = "Age", boundary = FALSE)
+lines(get_boundary(gefp_3_info, supLM(0.1), 0.1), col = "slategray", lwd = 1.7)
+plot(gefp_19_info, functional = maxBB, main = "DM, k* = 19", xlab = "Age", boundary = FALSE)
+lines(get_boundary(gefp_19_info, maxBB), col = "slategray", lwd = 1.7)
+plot(gefp_19_info, functional = meanL2BB, main = "CvM, k* = 19", xlab = "Age", boundary = FALSE)
+lines(get_boundary(gefp_19_info, meanL2BB), col = "slategray", lwd = 1.7)
+plot(gefp_19_info, functional = supLM(0.1), main = "max LM, k* = 19", xlab = "Age", boundary = FALSE)
+lines(get_boundary(gefp_19_info, supLM(0.1), 0.1), col = "slategray", lwd = 1.7)
 @
 \end{figure}
 
@@ -1253,14 +1280,22 @@ gefp_1_info_1 <- gefp(wdh5b_1, fit = NULL, scores = scores_min_t, order.by = gpa
 \caption{Cumulative score processes for the four group-specific parameters across GPA
   in the ``minority, stereotype prime'' group
   using data from Study 1 of Wicherts et al.\ (2005). %% \citeA{WicDol05} does not work in caption
-  The horizontal lines correspond to the critical value of
+  The solid gray horizontal lines correspond to the critical value of
   the doule-max test at $\alpha = 0.05$.}
 \label{fig:cusumgpa}
 \setkeys{Gin}{width=0.8\textwidth}
 <<gefp-4-plot, fig=TRUE, height=8, width=5.5>>=
-plot(gefp_4_info,  functional = maxBB, aggregate = FALSE,
+gefp_4_bound <- get_boundary(gefp_4_info, maxBB)
+plot(gefp_4_info$process,
   ylim = c(-2.15, 2.15), main = "DM, k* = 4", xlab = "GPA",
-  ylab = expression(lambda[num], eta, mu[num], psi[num]))
+  ylab = expression(lambda[num], eta, mu[num], psi[num]),
+  panel = function(x, y, ...) {
+    abline(h = 0)
+    lines(gefp_4_bound, col = "slategray", lwd = 1.7)
+    lines(-gefp_4_bound, col = "slategray", lwd = 1.7)
+    lines(x, y, ...)
+  })
+
 @
 \end{figure}
 
