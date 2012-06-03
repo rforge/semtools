@@ -52,6 +52,8 @@ echo $contents; } ?>
 <li> <a href="replication.R">Replication script</a> containing code to run and summarize the examples and simulations, using the above files.</li>
 </ul>
 
+<p> This material is based upon work supported by the U.S. National Science Foundation under Grant No. SES-1061334.  Any opinions, findings and conclusions or recommendations expressed in this material are those of the authors and do not necessarily reflect the views of the National Science Foundation (NSF). </p>
+
 <p> The <strong>project summary page</strong> resides <a href="http://<?php echo $domain; ?>/projects/<?php echo $group_name; ?>/"><strong>here</strong></a>. </p>
 
 </body>
