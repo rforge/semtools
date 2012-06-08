@@ -297,7 +297,7 @@ for the given threshold $\nu$ is then
     +    \ell(\hat {\bm \theta}^{(B)}; x_{m+1}, \dots, x_n)\}
     \right],
 \end{equation}
-which, when \eqref{eq:h1*} holds, has an asymptotic $\chi^2$ with degrees
+which, when the null hypothesis holds, has an asymptotic $\chi^2$ with degrees
 of freedom equal to the number of parameters in~${\bm \theta}$.
 
 Analogously to the LR~test, the Wald test and LM test
@@ -411,7 +411,7 @@ of factor analysis models. More detailed accounts of the underlying structural
 change methods include \citeA{HjoKon02} and \citeA{ZeiHor07}.
 
 For application to measurement invariance, the most important
-theoretical result involves the fact that, under the $H_0$ in \eqref{eq:h0}, the
+theoretical result involves the fact that, under $H_0$ in \eqref{eq:h0}, the
 \emph{cumulative score process} converges to a specific asymptotic
 process. The $k$-dimensional cumulative score process is defined as
 \begin{equation} \label{eq:cumscore}
@@ -464,7 +464,7 @@ as an $n \times k$ matrix with elements ${\bm B}(i/n; \hat {\bm \theta})_j$ that
 we also denote ${\bm B}(\hat {\bm \theta})_{ij}$ below for brevity.
 That is, assuming that individuals are ordered by $V$, the first row
 of ${\bm B}(\hat {\bm \theta})$ corresponds to the first individual's
-scores.  The second row of ${\bm B}(\hat {\bm \theta})$ corresponds to
+decorrelated scores.  The second row of ${\bm B}(\hat {\bm \theta})$ corresponds to
 the sum of the first two individuals' scores, etc., until the last row
 of ${\bm B}(\hat {\bm \theta})$ corresponds to the sum of all
 individuals' scores (which will be a row of zeroes).
@@ -484,8 +484,8 @@ Thus, various aggregation strategies should be employed depending on which
 pattern ${\bm \theta}(V)$ is most plausible (because the exact pattern
 is typically
 unknown). A particularly agnostic aggregation strategy is to reject $H_0$
-if any component of the the cumulative score process ${\bm B}(t; \hat {\bm \theta})$
-strays ``too far'' from zero at any time, i.e., if
+if any component of the cumulative score process ${\bm B}(t; \hat {\bm \theta})$
+strays ``too far'' from zero at any time, i.e., if the double maximum statistic
 \begin{equation}
     \label{eq:dmax}
     \mathit{DM} = \max_{i = 1,\dots, n} \max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} |,
@@ -497,7 +497,7 @@ and the parameter(s) affected by it (over $j = 1, \dots, k$). This test is
 especially useful for visualization, as the cumulative score process for
 each individual parameter can be displayed along with the appropriate
 critical value. For an example of this see Figure~\ref{fig:lambdas}
-(in the ``Example'' section) which shows the the cumulative score processes for three
+(in the ``Example'' section) which shows the cumulative score processes for three
 factor loadings along with the critical values at 5\% level.
 
 However, taking maximums ``wastes'' power if many of the $k$~parameters change
@@ -548,7 +548,7 @@ statistics from the previous section is straightforward: it is simply the aggreg
 of the asympotic process ${\bm B}^0(t)$ \cite{HjoKon02,ZeiHor07}. Thus, $\mathit{DM}$
 from (\ref{eq:dmax}) converges to $\sup_t || {\bm B}^0(t) ||_{\infty}$, where
 $||\cdot||_\infty$ denotes the maximum norm. Similarly, $\mathit{CvM}$
-from (\ref{eq:cvm}) converges to $\int_0^1 || {\bm B}^0(t) ||_2^2 d t$, where $||\cdot||^2$
+from (\ref{eq:cvm}) converges to $\int_0^1 || {\bm B}^0(t) ||_2^2 d t$, where $||\cdot||_2$
 denotes the Euclidean norm. Finally, $\max \mathit{LM}$ from (\ref{eq:maxlm}) -- and analogously
 the maximum Wald and LR~tests -- converges to $\sup_t (t (1-t))^{-1} || {\bm B}^0(t) ||_2^2$
 (which can also be interpreted as the maximum of a tied-down Bessel process, as pointed out
@@ -800,7 +800,7 @@ horizontal
 lines represent critical values for $\alpha= 0.05$, and
 the Cram\'{e}r-von Mises panels 
 also contain a dashed line depicting the value of the test
-statistic (test statistics for the others are simply 
+statistic $\mathit{CvM}$ (test statistics for the others are simply 
 the maxima of the processes).
 In other words, for panels in the first and third rows, \eqref{eq:simh0} is
 rejected if the process crosses the horizontal line.  For panels in
@@ -956,7 +956,7 @@ various magnitudes of measurement invariance violations.
 
 \subsection{Method}
 Data were generated from the same model and with the same type of
-measurement invariance as was described in the ``Artificial Example'' section.
+measurement invariance violation as was described in the ``Artificial Example'' section.
 Sample size and magnitude
 of measurement 
 invariance violation were manipulated to examine power:
@@ -965,9 +965,8 @@ invariance violations across four sample sizes ($n=50, 100,
 200, 500$) and 17~magnitudes of violations.  These violations
 involved the younger students' values of $\{\lambda_{11},
 \lambda_{21}, \lambda_{31}\}$ deviating from the older students'
-values by $d$ 
-times the parameters' asymptotic standard errors (scaled by $\sqrt{n}$),
-with $d = 0, 0.25, 0.5, \dots, 4$.  The 0-standard error condition was
+values by $d$~times the parameters' asymptotic standard errors (scaled by $\sqrt{n}$),
+with $d = 0, 0.25, 0.5, \dots, 4$.  The $d=0$ standard error condition was
 used to study type~I error rate.
 
 For each combination of sample size ($n$) $\times$
@@ -1013,7 +1012,7 @@ levels(mz_sim_sub$nobs) <- paste("n =", levels(mz_sim_sub$nobs))
 
 \subsection{Results}
 Full simulation results are presented in Figure~\ref{fig:simres}, and
-the underlying numeric values for a subset of the results is additionally displayed in
+the underlying numeric values for a subset of the results are additionally displayed in
 Table~\ref{tab:simres}.  In describing the results, we largely refer
 to the figure.
 
@@ -1142,7 +1141,7 @@ indicated that the intelligence tests lacked measurement invariance, with the
 minority group receiving stereotype primes being particularly different from the
 other three groups on the most difficult intelligence test.  In the
 example below, we employ one of the models used by WDH.
-Our $V$ is participants' aptitudes, as measured by their grade point averages (GPAs).  The GPAs were unused in the original analyses.
+Our $V$ is participants' aptitudes, as measured by their grade point averages (GPAs) which were unused in the original analyses.
 
 \subsection{Method}
 WDH tested a series of confirmatory factor models for
@@ -1157,10 +1156,10 @@ provided a reasonable fit to the data, as judged by examination of
 $\chi^2$, RMSEA (root-mean-square error of approximation), and CFI
 (comparative fit index) statistics.  While the model included four
 groups as described above, we focus only on the submodel for the minority
-group that received stereotype primes, which is pictured in Figure~\ref{fig:wpath}.  In the figure, paths with dashed lines and red parameters signify group-specific parameters.  These include the factor mean $\eta$, numerical factor loading $\lambda_{\text{num}}$, numerical intercept $\mu_{\text{num}}$, and numerical unique variance $\psi_{\text{num}}$.  Other parameters (not displayed) were restricted to be equal across all four groups, with the exception of the factor variance.  The factor variance was restricted to be equal within both minority groups, and separately within both majority groups.
+group that received stereotype primes, which is pictured in Figure~\ref{fig:wpath}.  In the figure, paths with dashed lines and \fixme{red} parameters signify group-specific parameters.  These include the factor mean $\eta$, numerical factor loading $\lambda_{\text{num}}$, numerical intercept $\mu_{\text{num}}$, and numerical unique variance $\psi_{\text{num}}$.  Other parameters (not displayed) were restricted to be equal across all four groups, with the exception of the factor variance.  The factor variance was restricted to be equal within both minority groups, and separately within both majority groups.
 
 \begin{figure}
-\caption{Path diagram representing the submodel for the ``minority, stereotype'' group in model 5b of WDH.  Dashed paths and red parameters are group specific.  Other parameters (not displayed) were restricted to be equal across all four groups, with the factor variance only being restricted across the two minority groups.}
+\caption{Path diagram representing the submodel for the ``minority, stereotype prime'' group in model 5b of WDH.  Dashed paths and red (FIXME) parameters are group specific.  Other parameters (not displayed) were restricted to be equal across all four groups, with the factor variance only being restricted across the two minority groups.}
 \label{fig:wpath}
 \includegraphics[height=3.5in]{wicherts_msp.pdf}
 \end{figure}
@@ -1279,7 +1278,7 @@ gefp_1_info_1 <- gefp(wdh5b_1, fit = NULL, scores = scores_min_t, order.by = gpa
 \centering
 \caption{Cumulative score processes for the four group-specific parameters across GPA
   in the ``minority, stereotype prime'' group
-  using data from Study 1 of Wicherts et al.\ (2005). %% \citeA{WicDol05} does not work in caption
+  using data from Study 1 of WDH. %% \citeA{WicDol05} does not work in caption
   The solid gray horizontal lines correspond to the critical value of
   the doule-max test at $\alpha = 0.05$.}
 \label{fig:cusumgpa}
@@ -1420,7 +1419,7 @@ deviations from parameter constancy, although other techniques may
 perform better in this particular case.  Examples include the 
 class of moderated factor models \cite{BauHus09,MolDol10,Pur02}, 
 whereby continuous moderators are allowed to linearly impact model
-parameters (Purcell also considers quadratic effects of the
+parameters (\citeNP{Pur02}, also considers quadratic effects of the
 moderators). Moreover, if the change in
 parameters is continuous but not exactly linear -- e.g., a sigmoidal
 shift from one set of parameters to another one -- then the simple
