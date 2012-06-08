@@ -33,7 +33,7 @@ ordL2BB <- function(freq, nobs = NULL, nproc = NULL, ...)
   freq <- freq / sum(freq)
   ncat <- length(freq)
   tcat <- cumsum(freq[-ncat])
-  if(is.null(nobs)) nobs <- 50 / min(freq)
+  if(is.null(nobs)) nobs <- ceiling(50 / min(freq))
 
   catwmax <- function(x) {
     n <- length(x)
