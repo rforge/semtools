@@ -13,7 +13,7 @@
    height="342.57724"
    id="svg3622"
    version="1.1"
-   inkscape:version="0.48.2 r9819"
+   inkscape:version="0.48.1 r9760"
    sodipodi:docname="wicherts_msp.svg">
   <defs
      id="defs3624">
@@ -304,7 +304,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
-     inkscape:cx="468.74575"
+     inkscape:cx="284.78174"
      inkscape:cy="180.79171"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -314,11 +314,11 @@
      fit-margin-right="0.5"
      fit-margin-bottom="0.5"
      units="in"
-     inkscape:window-width="1366"
-     inkscape:window-height="688"
-     inkscape:window-x="0"
-     inkscape:window-y="25"
-     inkscape:window-maximized="1" />
+     inkscape:window-width="1311"
+     inkscape:window-height="755"
+     inkscape:window-x="2369"
+     inkscape:window-y="119"
+     inkscape:window-maximized="0" />
   <metadata
      id="metadata3627">
     <rdf:RDF>
@@ -502,9 +502,11 @@
          id="tspan3777"
          x="432.00543"
          y="789.34344"
-         style="font-size:16px;fill:#ff0000"> μ<tspan
-   style="font-size:65.00091553000000033%;baseline-shift:sub;fill:#ff0000"
-   id="tspan3789">num</tspan></tspan></text>
+         style="font-size:16px;fill:#ff0000"><tspan
+           style="font-size:13.20007324px;font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;font-family:Sans;-inkscape-font-specification:Sans Bold Italic"
+           id="tspan3071"> μ</tspan><tspan
+           style="font-size:13.20007324000000004px;baseline-shift:sub;fill:#000000;-inkscape-font-specification:Sans Bold Italic;font-family:Sans;font-weight:bold;font-style:italic;font-stretch:normal;font-variant:normal;text-anchor:start;text-align:start;writing-mode:lr;line-height:125%"
+           id="tspan3789">num</tspan></tspan></text>
     <path
        sodipodi:type="arc"
        style="fill:none;stroke:#000000;stroke-width:0.99993718;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
@@ -561,14 +563,13 @@
        x="125.80738"
        y="888.21667"
        id="text4826"
-       sodipodi:linespacing="125%"><tspan
+       sodipodi:linespacing="125%"
+       inkscape:transform-center-x="11.428571"><tspan
          sodipodi:role="line"
          id="tspan4830"
          x="125.80738"
          y="888.21667"
-         style="font-size:16px;fill:#ff0000"> η<tspan
-   style="font-size:65.00091553000000033%;baseline-shift:sub;fill:#ff0000"
-   id="tspan4836" /></tspan></text>
+         style="font-size:16px;font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;font-family:Sans;-inkscape-font-specification:Sans Bold Italic"> η</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:16px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ff0000;fill-opacity:1;stroke:none;font-family:Sans"
@@ -579,9 +580,11 @@
          sodipodi:role="line"
          id="tspan4842"
          x="181.48761"
-         y="805.38409"> λ<tspan
-   style="font-size:65.00091553000000033%;baseline-shift:sub;fill:#ff0000"
-   id="tspan4844">num</tspan></tspan></text>
+         y="805.38409"><tspan
+           style="font-size:13.20007324px;font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;font-family:Sans;-inkscape-font-specification:Sans Bold Italic"
+           id="tspan3067"> λ</tspan><tspan
+           style="font-size:13.20007324000000004px;baseline-shift:sub;fill:#000000;-inkscape-font-specification:Sans Bold Italic;font-family:Sans;font-weight:bold;font-style:italic;font-stretch:normal;font-variant:normal;text-anchor:start;text-align:start;writing-mode:lr;line-height:125%"
+           id="tspan4844">num</tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-size:16px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ff0000;fill-opacity:1;stroke:none;font-family:Sans"
@@ -592,8 +595,10 @@
          sodipodi:role="line"
          id="tspan4858"
          x="536.05115"
-         y="754.87646"> ψ<tspan
-   style="font-size:65.00091553000000033%;baseline-shift:sub;fill:#ff0000"
-   id="tspan4860">num</tspan></tspan></text>
+         y="754.87646"><tspan
+           style="font-size:13.20007324px;font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;font-family:Sans;-inkscape-font-specification:Sans Bold Italic"
+           id="tspan3075"> ψ</tspan><tspan
+           style="font-size:13.20007324000000004px;baseline-shift:sub;fill:#000000;-inkscape-font-specification:Sans Bold Italic;font-family:Sans;font-weight:bold;font-style:italic;font-stretch:normal;font-variant:normal;text-anchor:start;text-align:start;writing-mode:lr;line-height:125%"
+           id="tspan4860">num</tspan></tspan></text>
   </g>
 </svg>

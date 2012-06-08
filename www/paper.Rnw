@@ -3,7 +3,6 @@
 %% need no \usepackage{Sweave}
 \SweaveOpts{engine = R, eps = FALSE, echo = FALSE, results = hide}
 
-%%      4. deal with color in figures
 \title{Tests of measurement invariance without subgroups:
   A~generalization of classical methods}
 \twoauthors{Edgar C. Merkle}{Achim Zeileis}
@@ -30,7 +29,9 @@
   Foundation grant SES-1061334. The authors thank Jelte Wicherts, who
   generously shared data for the stereotype threat application,
   Yves Rosseel, who provided feedback and code for performing the
-  tests with the lavaan package, and the participants of the
+  tests with the lavaan package, Kris Preacher, who provided helpful
+  comments 
+  on the manuscript, and the participants of the
   Psychoco 2012 workshop on psychometric computing for helpful 
   discussion.
   Correspondence to Edgar C.\ Merkle, Department of  
@@ -503,7 +504,7 @@ factor loadings along with the critical values at 5\% level.
 However, taking maximums ``wastes'' power if many of the $k$~parameters change
 at the same threshold, or if the score process takes large values for
 many of the $n$~individuals (and not just a single threshold). In such
-cases, sums insteads of maxima are more suitable for collapsing across
+cases, sums instead of maxima are more suitable for collapsing across
 parameters and/or individuals, because they combine the deviations instead of
 picking out only the single largest deviation. Thus, if the parameter instability
 ${\bm \theta}(V)$ affects many parameters and leads to many subgroups, sums
@@ -536,7 +537,7 @@ parameters being known to be stable, i.e., restricted to be constant across
 potential subgroups. Tests for potential changes/instabilities only in the
 $k^*$ remaining parameters (from overall $k$ parameters) are easily obtained
 by omitting those $k - k^*$ columns from ${\bm B}(\hat {\bm \theta})_{ij}$ that are
-restricted/stable, retaining only those $k^*$ columns that are potentially instable.
+restricted/stable, retaining only those $k^*$ columns that are potentially unstable.
 This may be of special interest to those wishing to test specific types of measurement
 invariance, where subsets of model parameters are assumed to be stable.
 
@@ -545,7 +546,7 @@ invariance, where subsets of model parameters are assumed to be stable.
 
 As pointed out above, specification of the asymptotic distribution under $H_0$ for the test
 statistics from the previous section is straightforward: it is simply the aggregation
-of the asympotic process ${\bm B}^0(t)$ \cite{HjoKon02,ZeiHor07}. Thus, $\mathit{DM}$
+of the asymptotic process ${\bm B}^0(t)$ \cite{HjoKon02,ZeiHor07}. Thus, $\mathit{DM}$
 from (\ref{eq:dmax}) converges to $\sup_t || {\bm B}^0(t) ||_{\infty}$, where
 $||\cdot||_\infty$ denotes the maximum norm. Similarly, $\mathit{CvM}$
 from (\ref{eq:cvm}) converges to $\int_0^1 || {\bm B}^0(t) ||_2^2 d t$, where $||\cdot||_2$
@@ -583,7 +584,7 @@ the minimal and maximal thresholds employed in the test.
 
 \subsection{Local Alternatives}
 Using results from \citeA{HjoKon02} and \citeA{ZeiHor07}, we can also
-capture the behaviour of the process $\bm{B}(t, \hat{\bm{\theta}})$
+capture the behavior of the process $\bm{B}(t, \hat{\bm{\theta}})$
 under specific alternatives 
 of parameter instability. In particular, we can assume that the pattern
 of deviation $\bm{\theta}(v_i)$ can be described as a constant
@@ -1156,10 +1157,10 @@ provided a reasonable fit to the data, as judged by examination of
 $\chi^2$, RMSEA (root-mean-square error of approximation), and CFI
 (comparative fit index) statistics.  While the model included four
 groups as described above, we focus only on the submodel for the minority
-group that received stereotype primes, which is pictured in Figure~\ref{fig:wpath}.  In the figure, paths with dashed lines and \fixme{red} parameters signify group-specific parameters.  These include the factor mean $\eta$, numerical factor loading $\lambda_{\text{num}}$, numerical intercept $\mu_{\text{num}}$, and numerical unique variance $\psi_{\text{num}}$.  Other parameters (not displayed) were restricted to be equal across all four groups, with the exception of the factor variance.  The factor variance was restricted to be equal within both minority groups, and separately within both majority groups.
+group that received stereotype primes, which is pictured in Figure~\ref{fig:wpath}.  In the figure, paths with dashed lines and parameters in bold/italics signify group-specific parameters.  These include the factor mean $\eta$, numerical factor loading $\lambda_{\text{num}}$, numerical intercept $\mu_{\text{num}}$, and numerical unique variance $\psi_{\text{num}}$.  Other parameters (not displayed) were restricted to be equal across all four groups, with the exception of the factor variance.  The factor variance was restricted to be equal within both minority groups, and separately within both majority groups.
 
 \begin{figure}
-\caption{Path diagram representing the submodel for the ``minority, stereotype prime'' group in model 5b of WDH.  Dashed paths and red (FIXME) parameters are group specific.  Other parameters (not displayed) were restricted to be equal across all four groups, with the factor variance only being restricted across the two minority groups.}
+\caption{Path diagram representing the submodel for the ``minority, stereotype prime'' group in model 5b of WDH.  Dashed paths and parameters in bold/italics are group specific.  Other parameters (not displayed) were restricted to be equal across all four groups, with the factor variance only being restricted across the two minority groups.}
 \label{fig:wpath}
 \includegraphics[height=3.5in]{wicherts_msp.pdf}
 \end{figure}
@@ -1217,28 +1218,28 @@ wdh <- subset(StereotypeThreat, !is.na(gpa))
 <<wdh_model>>=
 ## fit model 5b
 wdh5b <- lavaan(
-   'ability   =~ label(c(rep("load_n", 3), "load_n:min_t")) * numerical + label(rep("load_v", 4)) * verbal + 1 * abstract
-    ability   ~  label(c(NA, "lmean:min_c", "lmean:maj_t", "lmean:min_t")) * 1 + c(0, NA, NA, NA) * 1
-    ability   ~~ label(c("lvar:maj", "lvar:min", "lvar:maj", "lvar:min")) * ability
-    numerical ~  label(c(rep("mean_n", 3), "mean_n:min_t")) * 1
-    abstract  ~  label(c("mean_a:maj_c", "mean_a:min_c", rep("mean_a", 2))) * 1
-    verbal    ~  label(rep("mean_v", 4)) * 1
-    numerical ~~ label(c(rep("var_n", 3), "var_n:min_t")) * numerical
-    abstract  ~~ label(rep("var_a", 4)) * abstract
-    verbal    ~~ label(rep("var_v", 4)) * verbal',
+   'ability   =~ c(rep("load_n", 3), "load_n:min_t") * numerical + rep("load_v", 4) * verbal + 1 * abstract
+    ability   ~  c(NA, "lmean:min_c", "lmean:maj_t", "lmean:min_t") * 1 + c(0, NA, NA, NA) * 1
+    ability   ~~ c("lvar:maj", "lvar:min", "lvar:maj", "lvar:min") * ability
+    numerical ~  c(rep("mean_n", 3), "mean_n:min_t") * 1
+    abstract  ~  c("mean_a:maj_c", "mean_a:min_c", rep("mean_a", 2)) * 1
+    verbal    ~  rep("mean_v", 4) * 1
+    numerical ~~ c(rep("var_n", 3), "var_n:min_t") * numerical
+    abstract  ~~ rep("var_a", 4) * abstract
+    verbal    ~~ rep("var_v", 4) * verbal',
   data = wdh, meanstructure = TRUE, group = "group") ##, likelihood = "wishart")
 
 ## refit model with new identification constraints
 wdh5b_1 <- lavaan(
-   'ability   =~ 1 * verbal + label(c(rep("load_n", 3), "load_n:min_t")) * numerical  + label(rep("load_a", 4)) * abstract
-    ability   ~  label(c(NA, "lmean:min_c", "lmean:maj_t", "lmean:min_t")) * 1 + c(0, NA, NA, NA) * 1
-    ability   ~~ label(c("lvar:maj", "lvar:min", "lvar:maj", "lvar:min")) * ability
-    numerical ~  label(c(rep("mean_n", 3), "mean_n:min_t")) * 1
-    abstract  ~  label(c("mean_a:maj_c", "mean_a:min_c", rep("mean_a", 2))) * 1
-    verbal    ~  label(rep("mean_v", 4)) * 1
-    numerical ~~ label(c(rep("var_n", 3), "var_n:min_t")) * numerical
-    abstract  ~~ label(rep("var_a", 4)) * abstract
-    verbal    ~~ label(rep("var_v", 4)) * verbal',
+   'ability   =~ 1 * verbal + c(rep("load_n", 3), "load_n:min_t") * numerical  + rep("load_a", 4) * abstract
+    ability   ~  c(NA, "lmean:min_c", "lmean:maj_t", "lmean:min_t") * 1 + c(0, NA, NA, NA) * 1
+    ability   ~~ c("lvar:maj", "lvar:min", "lvar:maj", "lvar:min") * ability
+    numerical ~  c(rep("mean_n", 3), "mean_n:min_t") * 1
+    abstract  ~  c("mean_a:maj_c", "mean_a:min_c", rep("mean_a", 2)) * 1
+    verbal    ~  rep("mean_v", 4) * 1
+    numerical ~~ c(rep("var_n", 3), "var_n:min_t") * numerical
+    abstract  ~~ rep("var_a", 4) * abstract
+    verbal    ~~ rep("var_v", 4) * verbal',
   data = wdh, meanstructure = TRUE, group = "group") #, likelihood = "wishart")
 @ 
 
@@ -1280,7 +1281,7 @@ gefp_1_info_1 <- gefp(wdh5b_1, fit = NULL, scores = scores_min_t, order.by = gpa
   in the ``minority, stereotype prime'' group
   using data from Study 1 of WDH. %% \citeA{WicDol05} does not work in caption
   The solid gray horizontal lines correspond to the critical value of
-  the doule-max test at $\alpha = 0.05$.}
+  the double-max test at $\alpha = 0.05$.}
 \label{fig:cusumgpa}
 \setkeys{Gin}{width=0.8\textwidth}
 <<gefp-4-plot, fig=TRUE, height=8, width=5.5>>=
@@ -1417,7 +1418,7 @@ all (non-constant) deviation patterns $\theta(v_i)$ (considered in
 Equation~\eqref{eq:h1}). Thus, the tests will also have power for linear
 deviations from parameter constancy, although other techniques may 
 perform better in this particular case.  Examples include the 
-class of moderated factor models \cite{BauHus09,MolDol10,Pur02}, 
+class of moderated factor models \cite{BauHus09,MolDol10,Nea06,Pur02}, 
 whereby continuous moderators are allowed to linearly impact model
 parameters (\citeNP{Pur02}, also considers quadratic effects of the
 moderators). Moreover, if the change in
