@@ -16,7 +16,7 @@ dgp <- function(nobs = 200, diff = 3, nlevels=10)
   ## Deal with cases where nobs/nlevels is not an integer
   age <- rep(NA, sampsize)
   age[1:(nlevels*sampsize.per.nobs)] <- rep(1:nlevels, each=sampsize.per.nobs)
-  age[is.na(age)] <- sample((1:nlevels),sum(is.na(age)))
+  if (any(is.na(age))) age[is.na(age)] <- sample((1:nlevels),sum(is.na(age)))
   half.level <- ifelse(nlevels %% 2 == 1, (nlevels %/% 2)+1, nlevels/2)
   
   # Define parameter vectors/matrices:
@@ -49,8 +49,6 @@ dgp <- function(nobs = 200, diff = 3, nlevels=10)
     datmat[tmp.ind[i],] <- mu + lambda%*%z[,i] + u[,i]
   }
 
-  ## MODEL CODE FOR FINDING APPROPRIATE SES
-  ##lambda.o[,1] <- lambda.y[,1] - (ses * c(8.66, 5.52, 9.19, rep(0, 3))/sqrt(nobs/2))
   ## Now do the same for invariant-violating levels
   n.vary <- nlevels - (half.level + 1)
   each.vary <- ses/n.vary
@@ -74,10 +72,10 @@ dgp <- function(nobs = 200, diff = 3, nlevels=10)
 }
 
 ## Evaluate power simulation on a single dgp() scenario
-testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, verbose = TRUE, ...)
+testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, test = NULL, verbose = TRUE, ...)
 {
-  pval <- matrix(rep(NA, 3 * nrep), ncol = 3)
-  colnames(pval) <- c("ordmax","catdiff","lrt")
+  pval <- matrix(rep(NA, length(test) * nrep), ncol = length(test))
+  colnames(pval) <- test
   
   for(i in 1:nrep) {
     d <- dgp(...)
@@ -90,7 +88,8 @@ testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, verbose = TRUE, .
     if(!inherits(ord_gefp, "try-error")) {
       pval[i, 1] <- sctest(ord_gefp,  functional = ordfun)$p.value
       pval[i, 2] <- sctest(ord_gefp,  functional = catL2BB(ord_gefp))$p.value
-      pval[i, 3] <- mz$lrt.p
+      pval[i, 3] <- sctest(ord_gefp,  functional = supLM(0.1))$p.value
+      pval[i, 4] <- mz$lrt.p
     }
   }
   rval <- colMeans(pval < size, na.rm = TRUE)
@@ -100,31 +99,34 @@ testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, verbose = TRUE, .
 }
 
 ## Loop over scenarios
-simulation <- function(diff = seq(0, 5, by = 0.5),
-  nobs = c(100, 500, 1000), nlevels = c(5, 10, 15), verbose = TRUE, ...)
+simulation <- function(diff = seq(0, 3, by = 0.5),
+  nobs = c(120, 480, 960), nlevels = c(4, 8, 12, 20), verbose = TRUE, ...)
 {
   prs <- expand.grid(diff = diff, nlevels = nlevels, nobs = nobs)
   nprs <- nrow(prs)
   
-  test <- c("ordmax","catdiff","lrt")
+  test <- c("ordmax","catdiff","suplm","lrt")
   ntest <- length(test)
 
+  ## Only simulate critical values if we need it.
+  if (file.exists("critvals.rda")){
+    load("critvals.rda")
+    ## Check to make sure it has what we need; if not,
+    ## rerun critvals.
+    if (!all(nlevels %in% as.numeric(names(cval)))) critvals(nlevels)
+  } else {
+    critvals(nlevels)
+  }
+  cval.conds <- as.numeric(names(cval))
+  
   pow <- matrix(rep(NA, ntest * nprs), ncol = ntest)
-  tmp.level <- 0
   for(i in 1:nprs) {
     if(verbose) print(prs[i,])
 
-    ## Only simulate new critical values if you need it.
-    if (tmp.level != prs$nlevels[i]){
-      tmpdat <- dgp(prs$nobs[i], prs$diff[i], prs$nlevels[i])
-      tmpmod <- ordfit(tmpdat)
-      tmpgefp <- gefp(tmpmod, fit = NULL, vcov = info.mzfit, order.by = tmpdat$age, sandwich = FALSE, parm = 7:12)
+    ## Find critical values we need
+    ordfun <- cval[[which(cval.conds == prs$nlevels[i])]]
 
-      critvals <- ordL2BB(tmpgefp, nobs = 1000)
-    }
-    tmp.level <- prs$nlevels[i]
-
-    pow[i,] <- testpower(diff = prs$diff[i], nobs = prs$nobs[i], nlevels = prs$nlevels[i], ordfun = critvals, verbose = verbose, ...)
+    pow[i,] <- testpower(diff = prs$diff[i], nobs = prs$nobs[i], nlevels = prs$nlevels[i], ordfun = ordfun, test = test, verbose = verbose, ...)
   }
 
   rval <- data.frame()
@@ -135,13 +137,28 @@ simulation <- function(diff = seq(0, 5, by = 0.5),
   return(rval)
 }
 
+## Simulate critical values
+critvals <- function(nlevels = c(4, 8, 12, 20), verbose = TRUE, ...)
+{
+  do.parallel <- require("multicore")
+  if (do.parallel){
+    cval <- mclapply(nlevels, function(x) ordL2BB(rep(1, x)/x, nobs = 5000))
+  } else {
+    cval <- lapply(nlevels, function(x) ordL2BB(rep(1, x)/x, nobs = 5000))
+  }
+  names(cval) <- nlevels
+
+  save(cval, file="critvals.rda")
+}
+
+
 if(FALSE) {
 ## code and packages
 library("lavaan")
 library("strucchange")
 library("mvtnorm")
-source("mz.R")
-source("../www/estfun.lavaan.R")
+source("mzo.R")
+source("../www/estfun-lavaan.R")
 source("../prelim_code/efpFunctional-cat.R")
 
 ## seed for replication

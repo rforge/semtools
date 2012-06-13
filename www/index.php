@@ -45,7 +45,9 @@ echo $contents; } ?>
 
 <p> <a href="psychoco2012.pdf">Psychoco 2012 presentation</a> on generalizations of measurement invariance tests when subgroups are unknown.</p>
 
-<p> <a href="http://eeecon.uibk.ac.at/wopec2/repec/inn/wpaper/2011-09.pdf">Working paper</a> on generalizations of measurement invariance tests when subgroups are unknown.  Below are R files for carrying out the examples and simulation described in the paper: </p>
+<p> <a href="http://eeecon.uibk.ac.at/wopec2/repec/inn/wpaper/2011-09.pdf">Working paper</a> on generalizations of measurement invariance tests when subgroups are unknown.</p>  
+
+<p> R files for carrying out the examples and simulation described in Merkle & Zeileis (in press), Tests of measurement invariance without subgroups: A generalization of classical methods, <em>Psychometrika</em>:</p>
 <ul>
 <li> <a href="mz.R">Artificial example functions</a> for lavaan or OpenMx model estimation, along with score extraction.</li>
 <li> <a href="sim.R">Simulation functions</a> for data generation, power evaluation, and power summaries.</li>
