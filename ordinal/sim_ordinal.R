@@ -72,13 +72,13 @@ dgp <- function(nobs = 200, diff = 3, nlevels=10)
 }
 
 ## Evaluate power simulation on a single dgp() scenario
-testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, test = NULL, verbose = TRUE, ...)
+testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, test = NULL, verbose = TRUE, nobs, diff, nlevels)
 {
   pval <- matrix(rep(NA, length(test) * nrep), ncol = length(test))
   colnames(pval) <- test
   
   for(i in 1:nrep) {
-    d <- dgp(...)
+    d <- dgp(nobs, diff, nlevels)
 
     mz <- ordfit(d)
 
@@ -87,9 +87,10 @@ testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, test = NULL, verb
 
     if(!inherits(ord_gefp, "try-error")) {
       pval[i, 1] <- sctest(ord_gefp,  functional = ordfun)$p.value
-      pval[i, 2] <- sctest(ord_gefp,  functional = catL2BB(ord_gefp))$p.value
-      pval[i, 3] <- sctest(ord_gefp,  functional = supLM(0.1))$p.value
-      pval[i, 4] <- mz$lrt.p
+      pval[i, 2] <- sctest(ord_gefp,  functional = ordwmax(ord_gefp))$p.value
+      pval[i, 3] <- sctest(ord_gefp,  functional = catL2BB(ord_gefp))$p.value
+      pval[i, 4] <- sctest(ord_gefp,  functional = supLM(0.1))$p.value
+      pval[i, 5] <- mz$lrt.p
     }
   }
   rval <- colMeans(pval < size, na.rm = TRUE)
@@ -99,13 +100,13 @@ testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, test = NULL, verb
 }
 
 ## Loop over scenarios
-simulation <- function(diff = seq(0, 3, by = 0.5),
-  nobs = c(120, 480, 960), nlevels = c(4, 8, 12, 20), verbose = TRUE, ...)
+simulation <- function(diff = seq(0, 1.5, by = 0.25),
+  nobs = c(120, 480, 960), nlevels = c(4, 8, 12), verbose = TRUE, ...)
 {
   prs <- expand.grid(diff = diff, nlevels = nlevels, nobs = nobs)
   nprs <- nrow(prs)
   
-  test <- c("ordmax","catdiff","suplm","lrt")
+  test <- c("ordmax","ordwmax","catdiff","suplm","lrt")
   ntest <- length(test)
 
   ## Only simulate critical values if we need it.
@@ -118,15 +119,26 @@ simulation <- function(diff = seq(0, 3, by = 0.5),
     critvals(nlevels)
   }
   cval.conds <- as.numeric(names(cval))
-  
-  pow <- matrix(rep(NA, ntest * nprs), ncol = ntest)
-  for(i in 1:nprs) {
-    if(verbose) print(prs[i,])
 
-    ## Find critical values we need
-    ordfun <- cval[[which(cval.conds == prs$nlevels[i])]]
+  do.parallel <- require("parallel")
+  if (do.parallel){
+    pow <- mclapply(1:nprs, function(i){
+      testpower(nrep = 10, diff = prs$diff[i], nobs = prs$nobs[i],
+                nlevels = prs$nlevels[i], test = test,
+                ordfun = cval[[which(cval.conds == prs$nlevels[i])]],
+                verbose = verbose)},
+                    mc.cores = round(.75*detectCores())
+    pow <- unlist(pow)
+  } else {
+    pow <- matrix(rep(NA, ntest * nprs), ncol = ntest)
+    for(i in 1:nprs) {
+      if(verbose) print(prs[i,])
 
-    pow[i,] <- testpower(diff = prs$diff[i], nobs = prs$nobs[i], nlevels = prs$nlevels[i], ordfun = ordfun, test = test, verbose = verbose, ...)
+      ## Find critical values we need
+      ordfun <- cval[[which(cval.conds == prs$nlevels[i])]]
+
+      pow[i,] <- testpower(nrep = 10, diff = prs$diff[i], nobs = prs$nobs[i], nlevels = prs$nlevels[i], ordfun = ordfun, test = test, verbose = verbose, ...)
+    }
   }
 
   rval <- data.frame()
@@ -138,11 +150,12 @@ simulation <- function(diff = seq(0, 3, by = 0.5),
 }
 
 ## Simulate critical values
-critvals <- function(nlevels = c(4, 8, 12, 20), verbose = TRUE, ...)
+critvals <- function(nlevels = c(4, 8, 12), verbose = TRUE, ...)
 {
-  do.parallel <- require("multicore")
+  do.parallel <- require("parallel")
   if (do.parallel){
-    cval <- mclapply(nlevels, function(x) ordL2BB(rep(1, x)/x, nobs = 5000))
+    cval <- mclapply(nlevels, function(x) ordL2BB(rep(1, x)/x, nobs = 5000),
+                     mc.cores = length(nlevels))
   } else {
     cval <- lapply(nlevels, function(x) ordL2BB(rep(1, x)/x, nobs = 5000))
   }
