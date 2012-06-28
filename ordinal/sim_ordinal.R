@@ -72,13 +72,13 @@ dgp <- function(nobs = 200, diff = 3, nlevels=10)
 }
 
 ## Evaluate power simulation on a single dgp() scenario
-testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, test = NULL, verbose = TRUE, nobs, diff, nlevels)
+testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, test = NULL, verbose = TRUE, ...)
 {
   pval <- matrix(rep(NA, length(test) * nrep), ncol = length(test))
   colnames(pval) <- test
   
   for(i in 1:nrep) {
-    d <- dgp(nobs, diff, nlevels)
+    d <- dgp(...)
 
     mz <- ordfit(d)
 
@@ -123,12 +123,12 @@ simulation <- function(diff = seq(0, 1.5, by = 0.25),
   do.parallel <- require("parallel")
   if (do.parallel){
     pow <- mclapply(1:nprs, function(i){
-      testpower(nrep = 10, diff = prs$diff[i], nobs = prs$nobs[i],
+      testpower(diff = prs$diff[i], nobs = prs$nobs[i],
                 nlevels = prs$nlevels[i], test = test,
                 ordfun = cval[[which(cval.conds == prs$nlevels[i])]],
                 verbose = verbose)},
-                    mc.cores = round(.75*detectCores())
-    pow <- unlist(pow)
+                    mc.cores = round(.75*detectCores()))
+    pow <- t(matrix(unlist(pow), ntest, nprs))
   } else {
     pow <- matrix(rep(NA, ntest * nprs), ncol = ntest)
     for(i in 1:nprs) {
@@ -137,7 +137,7 @@ simulation <- function(diff = seq(0, 1.5, by = 0.25),
       ## Find critical values we need
       ordfun <- cval[[which(cval.conds == prs$nlevels[i])]]
 
-      pow[i,] <- testpower(nrep = 10, diff = prs$diff[i], nobs = prs$nobs[i], nlevels = prs$nlevels[i], ordfun = ordfun, test = test, verbose = verbose, ...)
+      pow[i,] <- testpower(diff = prs$diff[i], nobs = prs$nobs[i], nlevels = prs$nlevels[i], ordfun = ordfun, test = test, verbose = verbose, ...)
     }
   }
 
