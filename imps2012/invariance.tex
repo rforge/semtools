@@ -2,7 +2,7 @@
 
 \usepackage{beamerthemeHannover,graphics,amsmath,bm}
 
-\title[Measurement Invariance]{Tests for Measurement Invariance when Subgroups are Unknown}
+\title[Measurement Invariance]{Tests for Measurement Invariance When Subgroups Are Unknown}
 \author{Ed Merkle\inst{1} \and Achim Zeileis\inst{2}}
 \institute{\inst{1} University of Missouri \and \inst{2} Universit\"{a}t Innsbruck}
 \date{Supported by grant SES-1061334 from the National
@@ -84,7 +84,7 @@
   \end{center}
 }
 
-\section{Tests Along a Continuum}
+\section{Tests along a Continuum}
 % \frame{
 %   \frametitle{Proposed Tests}
 %   \begin{itemize}
@@ -104,7 +104,7 @@
   \begin{itemize}
     \item We propose a number of tests for measurement invariance
       along a continuous auxiliary variable.
-    \item Tests are based on individual terms ({\em scores}) of the gradient.  The scores tell us how well a particular parameter describes a particular individual.
+    \item Tests are based on individual terms of the gradient ({\em scores}).  The scores tell us how well a particular parameter describes a particular individual.
   % Equation of gradient vs scores for individuals
   \end{itemize}
 \begin{eqnarray*}
@@ -134,14 +134,18 @@
       can draw some general conclusions.
       \begin{itemize}
         \item Order individuals by the auxiliary variable.\\ \ \\
-        \item Define $t \in (1/n, n)$.
+        \item Define $t \in (0, 1)$.
           The {\em empirical cumulative score process} is defined by:\\
   \begin{equation*}
-    \bm{B}(\hat{\bm{\theta}}; t) = \frac{1}{\sqrt{n}}
+    \bm{B}(\hat{\bm{\theta}}; t) = 
+      {\bm{\widehat I}}^{-1/2} \frac{1}{\sqrt{n}}
     \displaystyle\sum_{i=1}^{\lfloor nt 
       \rfloor} s(\hat{\bm{\theta}} ; \bm{x}_i).
     \end{equation*}
-  where $\lfloor nt \rfloor$ is the integer part of $nt$.
+  where $\lfloor nt \rfloor$ is the integer part of $nt$
+  and $\bm{\widehat I}$ is some consistent covariance matrix estimate, e.g.,
+  the observed information matrix ${\bm{I}}(\widehat{{\bm{\theta}}})$.
+
       \end{itemize}
   \end{itemize}
 \end{frame}
@@ -155,12 +159,9 @@
       measurement invariance, a functional central limit
       theorem holds:
   \begin{equation*}
-  {\bm{I}}(\widehat{{\bm{\theta}}})^{-1/2}{\bm{B}}(\widehat{{\bm{\theta}}}; \cdot) 
-\overset{d}{\rightarrow} {\bm B}^{0}(\cdot),
+  {\bm{B}}(\widehat{{\bm{\theta}}}; \cdot) \overset{d}{\rightarrow} {\bm B}^{0}(\cdot),
   \end{equation*}
- where ${\bm{I}}(\widehat{{\bm{\theta}}})$ is the observed
- information matrix and ${\bm B}^{0}(\cdot)$ is a
- $p$-dimensional Brownian bridge.\\ \ \\
+ where ${\bm B}^{0}(\cdot)$ is a $p$-dimensional Brownian bridge.\\ \ \\
 
    \item Testing procedure: Compute an aggregated statistic of the empirical
      score process and compare with corresponding quantile of aggregated
@@ -191,13 +192,13 @@
   \end{center}
 }
 
-\section{Tests Along an Ordinal Variable}
+\section{Tests along an Ordinal Variable}
 \frame{
-  \frametitle{Tests Along Ordinal Variables}
+  \frametitle{Tests along Ordinal Variables}
   \begin{itemize}
     \item The statistics described above do not immediately translate
       to ordinal auxiliary variables, where there is no unique ordering of
-      individuals.
+      all individuals.
     \item To obtain a test statistic, we allow all individuals with the
       same value of the 
       auxiliary variable to simultaneously enter into the cumulative
