@@ -137,7 +137,7 @@
         \item Define $t \in (0, 1)$.
           The {\em empirical cumulative score process} is defined by:\\
   \begin{equation*}
-    \bm{B}(\hat{\bm{\theta}}; t) = 
+    \bm{B}(t; \hat{\bm{\theta}}) = 
       {\bm{\widehat I}}^{-1/2} \frac{1}{\sqrt{n}}
     \displaystyle\sum_{i=1}^{\lfloor nt 
       \rfloor} s(\hat{\bm{\theta}} ; \bm{x}_i).
@@ -159,7 +159,7 @@
       measurement invariance, a functional central limit
       theorem holds:
   \begin{equation*}
-  {\bm{B}}(\widehat{{\bm{\theta}}}; \cdot) \overset{d}{\rightarrow} {\bm B}^{0}(\cdot),
+  {\bm{B}}(\cdot; \widehat{{\bm{\theta}}}) \overset{d}{\rightarrow} {\bm B}^{0}(\cdot),
   \end{equation*}
  where ${\bm B}^{0}(\cdot)$ is a $p$-dimensional Brownian bridge.\\ \ \\
 
