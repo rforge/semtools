@@ -172,6 +172,27 @@
   \end{itemize}
 \end{frame}
 
+
+\begin{frame}[fragile]
+  \frametitle{Tests}
+
+\begin{itemize}
+  \item Test statistics aggregate over parameters $j = 1, \dots, k$ and observations $i = 1, \dots, n$,
+    employing different norms.
+  \item Special cases:
+    \begin{eqnarray*}
+      \mathit{DM}      & = & \max_{i = 1,\dots, n} \max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} |,\\
+      \mathit{CvM}     & = & n^{-1} \sum_{i = 1,\dots, n} \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2, \\
+      \max \mathit{LM} & = & \max_{i = \underline{i}, \dots, \overline{\imath}} ~
+                             \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1}
+                             \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2.
+    \end{eqnarray*}
+  \item ${\bm B}(\hat {\bm \theta})_{ij}$ is short for $\bm{B}(i/n; \hat{\bm{\theta}})_j$.
+\end{itemize}
+
+
+\end{frame}
+
 \frame{
   \frametitle{Simulation}
   \begin{itemize}
