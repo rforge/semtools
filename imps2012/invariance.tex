@@ -249,9 +249,25 @@
   \frametitle{Simulation}
   % Graph of results
   \begin{center}
-      \includegraphics[height=3in]{ordsim-xyplot.pdf}
+      \includegraphics[height=3in]{../ordinal/ordsim-xyplot.pdf}
   \end{center}
 }
+
+% library("lattice")
+% load("simres2.rda")
+% res$nlevels <- factor(paste("nlev=",res$nlevels,sep=""),
+%   levels=c("nlev=4","nlev=8","nlev=12"))
+% res$nobs <- paste("n=",res$nobs,sep="")
+
+% pdf("ordsim-xyplot.pdf")
+% trellis.par.set(theme = canonical.theme(color = FALSE))
+% mykey <- simpleKey(c("LRT", "ordmaxLM", "orddwmax"), points = FALSE, lines = TRUE)
+% mykey$lines$lty <- c(2, 1, 3)
+% mykey$lines$lwd <- c(1.2, 1.2, 2)
+% print(xyplot(power ~ diff | nlevels + nobs, group = ~ test, data=
+% res[res$test %in% c("lrt","ordmax","ordwmax"),], type="l", xlab="Violation Magnitude", ylab="Power",key=mykey, ylim=c(0,1), lty=c(3,2,1), lwd=c(1.5,1.3,1)))
+
+% dev.off()
 
 \section{Conclusions}
 \frame{
@@ -288,7 +304,7 @@
   \begin{itemize}
     \item Detailed examination of test properties.\\ \ \\
     \item Extension to related psychometric issues.\\ \ \\
-    \item Continued test implementation via \texttt{strucchange} and \texttt{lavaan} (and possibly \texttt{OpenMx}).\\ \ \\
+    %\item Continued test implementation via \texttt{strucchange} and \texttt{lavaan} (and possibly \texttt{OpenMx}).\\ \ \\
     \item Paper: Merkle, E.\ C.\ \& Zeileis, A.\ (accepted).  Tests of measurement invariance without subgroups:\ {A} generalization of classical methods.  {\em Psychometrika}.
   \end{itemize}}
 
