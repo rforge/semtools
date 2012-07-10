@@ -223,7 +223,8 @@
     \item To obtain a test statistic, we allow all individuals with the
       same value of the 
       auxiliary variable to simultaneously enter into the cumulative
-      sum.  We then take the maximum of the cumulative sum.
+      sum.  We then apply the same functionals that were used in the
+      continuous case.
     \item Critical values are obtained by summing bins of a Brownian
       bridge, where bin sizes match the observed bin sizes of the 
       ordinal variable.
@@ -236,15 +237,15 @@
       only over $i_\ell = \lfloor n \cdot t_\ell\rfloor$ for the cumulative proportions
       $t_\ell$ ($\ell = 1, \dots, m$).
     \item Tests: Obtain ordinal versions of the max LM test and (weighted) double maximum test.
-      Additionally use LM-type test that does not exploit ordering.
+      % Additionally use LM-type test that does not exploit ordering.
     \begin{eqnarray*}
       \mathit{WDM}_o & = & \max_{i \in \{i_1, \dots, i_m \}} ~ \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1}      
                              \max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} |,\\
       \max \mathit{LM}_o & = & \max_{i \in \{i_1, \dots, i_m \}} ~
                              \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1}
-                             \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2,\\
-      \mathit{LM}_\mathit{uo} & = & \sum_{\ell = 1, \dots, m+1} \sum_{j = 1, \dots, k}
-        \left( {\bm B}(\hat {\bm \theta})_{i_\ell j} - {\bm B}(\hat {\bm \theta})_{i_{\ell - 1}j} \right)^2.
+                             \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2.\\
+%      \mathit{LM}_\mathit{uo} & = & \sum_{\ell = 1, \dots, m+1} \sum_{j = 1, \dots, k}
+%        \left( {\bm B}(\hat {\bm \theta})_{i_\ell j} - {\bm B}(\hat {\bm \theta})_{i_{\ell - 1}j} \right)^2.
     \end{eqnarray*}
   \end{itemize}}
 
