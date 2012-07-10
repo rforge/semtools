@@ -11,16 +11,16 @@
   measurement invariance with respect to an ordinal auxiliary variable such as
   age group, income class, or school grade.  In a factor-analytic
   context, these tests are traditionally carried out via a likelihood
-  ratio statistic that compares a model where parameters differ across groups
+  ratio test statistic comparing a model where parameters differ across groups
   to a model where parameters are equal across groups.  This test
   neglects the fact that the auxiliary variable is ordinal, and it
   is also known to be overly sensitive at large sample sizes.  In this
-  paper, we propose a new measurement invariance test statistic that
-  explicitly accounts for the ordinality of the auxiliary variable.
-  The statistic is derived from a family of tests based on stochastic
+  paper, we propose test statistics that
+  explicitly account for the ordinality of the auxiliary variable.
+  The statistics are derived from a family of tests based on stochastic
   processes that have recently received attention in the psychometric
-  literature.  The statistic is illustrated via an application
-  involving real data, and its performance is studied via simulation.
+  literature.  The statistics are illustrated via an application
+  involving real data, and their performance is studied via simulation.
 }
 
 \acknowledgements{This work was supported by National Science
@@ -69,42 +69,89 @@ get_boundary <- function(obj, fun, trim = 0) {
 
 The test statistic proposed here is derived from a family of tests
 that were recently applied to the study of measurement invariance in
-psychometric models \cite{MerZei12}.  % TODO Add kopf
+psychometric models \cite{KopZei10,MerZei12}.
 In the following section, we provide an overview of the family and
-describe the proposed statistic in detail.  Next, we report on the
+describe the proposed statistics in detail.  Next, we report on the
 results of two simulation studies designed to compare the proposed
-test statistic to existing statistics for testing measurement
-invariance.  Next, we illustrate the proposed statistic using
+test statistics to existing tests of measurement
+invariance.  Next, we illustrate the proposed statistics using
 psychometric data on scales purported to measure youth gratitude.  
-Finally, we provide some detail on the test's use in practice.
+Finally, we provide some detail on the tests' use in practice.
 
 \section{Theoretical Detail}
 
-It is of interest to test a hypothesis of 
-measurement invariance with respect to subsets of model parameters.
-The hypothesis can be written as
-%% TODO equation
-which reflects invariance in the full set of model parameters
-$\theta$.  It is straightforward to test a subset of model parameters,
-and we do so later in the paper.  In this section, we first provide
-background on the family of tests from which the proposed test
-statistic is obtained.  We then describe the proposed statistic for
-testing measurement invariance with respect to an ordinal variable.
+We will consider situations in which a $p$-dimensional variable $X$
+with observations $\bm{x}_i, i=1,\dots,n$ is described by a 
+model with density $f(\bm{x}_i; \bm{\theta})$ and
+associated joint log-likelihood
+\begin{equation} \label{eq:loglik}
+  \ell(\bm{\theta}; \bm{x}_1, \dots, \bm{x}_n) ~=~
+    \sum_{i = 1}^n \ell(\bm{\theta}; \bm{x}_i) ~=~
+    \sum_{i = 1}^n  \log f(\bm{x}_i; \bm{\theta}),
+\end{equation}
+where ${\bm \theta}$ is some $k$-dimensional parameter vector that characterizes
+the distribution.  
 
-\subsection{Background}
+We focus on applications where the density $f(\bm{x}_i; \bm{\theta})$ arises
+from a structural equation model with assumed multivariate normality,
+though the proposed tests extend beyond this family of models.  Under
+the usual regularity conditions (e.g., \citeNP{Fer96}), the model parameters
+$\bm{\theta}$ can 
+be estimated by maximum likelihood (ML), i.e.,
+\begin{equation} \label{eq:ml}
+  \hat{\bm{\theta}} ~=~ \argmax_{\bm{\theta}} \ell(\bm{\theta}; x_1, \dots, x_n),
+\end{equation}
+or equivalently by solving the first order conditions
+\begin{equation}
+    \label{eq:ml1}
+  \sum_{i=1}^{n} {\bm s}(\hat{\bm{\theta}}; \bm{x}_i) ~=~ 0,    
+\end{equation}
+where 
+\begin{equation}
+  \label{eq:score}
+  {\bm s}({\bm \theta}; x_i) ~=~ \left(
+    \frac{\partial \ell({\bm \theta}; x_i)}{\partial \theta_1},
+    \dots,
+    \frac{\partial \ell({\bm \theta}; x_i)}{\partial \theta_k}
+  \right)^\top,
+\end{equation}
+is the score function of the model (the partial derivative of the casewise
+likelihood contributions w.r.t.\ the parameters $\bm{\theta}$).
+Evaluation of the score function at $\hat{\bm{\theta}}$ for $i=1,
+\dots, n$ essentially measures the extent to which the model maximizes
+each individual's likelihood: as an individual's scores go further
+from zero, the model provides a poorer description of that individual.
 
-The ordinal test statistic proposed here, along with
-related ``non-ordinal'' statistics reported elsewhere, rely on the
-casewise contributions to the model likelihood function (i.e., the
-{\em scores}).  These contributions are defined as
-%% TODO equation
-the sum of which equals $\bm{0}$ when maximum likelihood estimates
-$\hat{\bm{\theta}}$ are substituted for $\bm{\theta}$.  
-Under the hypothesis of measurement invariance, the
-individual scores are expected to fluctuate around zero.  Conversely,
-when measurement invariance is violated, the scores should
-systematically stray from zero for some individuals.
-%% TODO add citations:
+Measurement invariance tests essentially test the assumption that all
+individuals arise from the same 
+parameter vector ${\bm \theta}$.
+Thus, a hypothesis of invariance can be written as
+\begin{equation}
+    \label{eq:h0}
+    H_0:~ {\bm \theta}_i = {\bm \theta}_0,\quad (i=1,\ldots,n),
+\end{equation}
+where ${\bm \theta}_i$ reflects the parameter vector for individual
+$i$ (and modifications for subsets of ${\bm \theta}$ are immediate).  This
+hypothesis is typically tested against an alternative
+\begin{equation}
+  \label{eq:h1*}
+  H_1^*:~ {\bm \theta}_i = \left\{ \begin{array}{ll}
+    {\bm \theta}^{(A)} & \mbox{if } v_i \le \nu, \\
+    {\bm \theta}^{(B)} & \mbox{if } v_i >   \nu,
+  \end{array} \right.
+\end{equation}
+where $v_i$ reflects individual $i$'s value on an auxiliary variable
+$V$ and $\nu$ is a threshold dividing individuals into groups based on
+$V$.  In this paper, we generally focus on situations where $V$ is
+ordinal and 
+where $\nu$ is unknown.  In the section below, we review tests where
+$V$ is continuous (and $\nu$ is unknown) as background for our
+proposed tests for ordinal $V$.
+
+\subsection{Tests for Continuous $V$}
+% stopped here
+
+
 As described in Merkle and Zeileis (\citeyearNP{MerZei12}; see XX for
 further detail), we can create formal test statistics based on these
 ideas.  These statistics rely on ordering of individuals with
@@ -121,7 +168,7 @@ bridge.
 Specific test statistics that can be obtained under this framework
 include 
 
-\subsection{An Ordinal Test Statistic}
+\subsection{Proposed Tests for Ordinal $V$}
 
 The above framework was originally designed for situations where
 the auxiliary variable is continuous, so that there is a unique
@@ -138,15 +185,22 @@ variable, but the ordinality of the auxiliary variable is then lost.
 In contrast, the proposed statistic explicitly accounts for the fact
 that the auxiliary variable is ordinal.
 
-The statistic that we proposed here is defined as
+In contrast to the likelihood ratio test, the statistics that we
+propose here explicitly take into 
+account the fact that the auxiliary variable is ordinal.  They are
+similar to the statistics from % eqref
+above, except that we focus on ``bins'' of individuals at each level of the
+ordinal variable:
 %% TODO insert equation
-so that all individuals with the same value of the ordinal variable
-simultaneously enter into the cumulative sum.  The test statistic is
-then the maximum of this cumulative sum.  Closed-form solutions for
+Critical values associated with these test statistics can be obtained
+by applying these functionals to bins of a Brownian bridge, where the
+bin sizes equal the empirical proportion of individuals at each level
+of the ordinal variable.
+Closed-form solutions for
 this particular functional of a Brownian bridge are unavailable, but
 critical values and $p$-values can be obtained through repeated
 simulation of a Brownian bridge.  This functionality is built in to
-R's strucchange package \cite{strucchange}, which we use to carry out
+R's strucchange package \cite{strucchange}, which can be used to carry out
 the tests for general SEMs.
 
 As we demonstrate in the simulations below, the proposed test
@@ -164,9 +218,41 @@ instabilities.
 
 \section{Simulation 1: Detecting Ordinal Invariance Violations}
 
-In this simulation, we demonstrate that the proposed test statistic is
+In this simulation, we demonstrate that the proposed test statistics are
 sensitive to ordinal measurement invariance violations, moreso than
-other competing statistics.
+other competing statistics.  We generate data from a two-factor,
+six-indicator model, with a measurement invariance violation occurring
+in the three unique variances associated with the first factor.  We
+use the proposed test statistics to test for measurement invariance
+simultaneously across all six unique variances, mimicking the first
+step of the ``prescribed'' course of measurement invariance tests. % cite
+
+For comparison, we also compute two statistics that treat the ordinal
+auxiliary variable as categorical.  These include the likelihood ratio
+test of measurement 
+invariance in the six unique variance parameters, along with .
+
+\subsection{Method}
+As described above, data were generated from a two-factor model
+lacking measurement invariance in three of six unique variance
+parameters.  Magnitude of measurement invariance violation, sample
+size, and number of categories of the ordinal variable were manipulated.
+We examined three sample sizes ($n=120, 480, 960$), three numbers of
+categories ($l=4, 8, 12$), and seven magnitudes of invariance
+violations.  These violations started at level $1+l/2$ and continued
+for higher levels of the ordinal variable.  The unique variances for
+the ``violating'' levels deviated from the lower levels' unique
+variances by $d$~times the parameters' asymptotic standard
+errors (scaled by $\sqrt{n}$), with $d=0, 0.25, 0.5, \dots, 1.5$.  
+
+For each combination of $n \times l \times d$, 5,000 datasets were
+generated and tested via the XX statistics described above.  In all
+conditions, we maintained equal sample sizes at each level of the
+ordinal variable.
+
+%% sweave code here
+
+\subsection{Results}
 
 \section{Simulation 2: Minor Anomolies and Large $n$}
 
@@ -179,11 +265,25 @@ fit measures in this case, because the traditional LRT is nearly
 guaranteed to result in significance.  This simulation is intended to
 show that the proposed ordinal test remains viable for very large $n$.
 
+\subsection{Method}
+
+\subsection{Results}
+
 \section{Application: Youth Gratitude}
+
+\subsection{Background}
+
+\subsection{Method}
+
+\subsection{Results}
+
+\subsection{Summary}
 
 \section{General Discussion}
 
 %% application to other psychometric models
+
+%% should we care about non-ordinal violations when using an ordinal variable?
 
 \subsection{Summary}
 
