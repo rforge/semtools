@@ -1,0 +1,205 @@
+\documentclass[man]{apa}
+\usepackage{graphicx,epsfig,amsmath,alltt,setspace,bm}
+%% need no \usepackage{Sweave}
+\SweaveOpts{engine = R, eps = FALSE, echo = FALSE, results = hide}
+
+\title{Testing for measurement invariance with respect to an ordinal variable}
+\threeauthors{Edgar C. Merkle}{Achim Zeileis}{Jinyan Fan}
+\twoaffiliations{University of Missouri}{Universit\"{a}t Innsbruck}{Auburn University}
+
+\abstract{Researchers are often interested in testing for 
+  measurement invariance with respect to an ordinal auxiliary variable such as
+  age group, income class, or school grade.  In a factor-analytic
+  context, these tests are traditionally carried out via a likelihood
+  ratio statistic that compares a model where parameters differ across groups
+  to a model where parameters are equal across groups.  This test
+  neglects the fact that the auxiliary variable is ordinal, and it
+  is also known to be overly sensitive at large sample sizes.  In this
+  paper, we propose a new measurement invariance test statistic that
+  explicitly accounts for the ordinality of the auxiliary variable.
+  The statistic is derived from a family of tests based on stochastic
+  processes that have recently received attention in the psychometric
+  literature.  The statistic is illustrated via an application
+  involving real data, and its performance is studied via simulation.
+}
+
+\acknowledgements{This work was supported by National Science
+  Foundation grant SES-1061334. 
+  Correspondence to Edgar C.\ Merkle, Department of  
+  Psychological Sciences, University of Missouri, Columbia,
+  MO 65211.
+  Email: {\texttt{merklee@missouri.edu}}.}
+\shorttitle{Ordinal measurement invariance}
+\rightheader{Ordinal measurement invariance}
+
+\newcommand{\argmax}{\operatorname{argmax}\displaylimits}
+
+%% for internal use
+\newcommand{\fixme}[1]{\emph{\marginpar{FIXME} (#1)}}
+\newcommand{\readme}[1]{\emph{\marginpar{README} (#1)}}
+
+\spacing{1}
+
+\begin{document}
+\maketitle
+
+<<preliminaries>>=
+## packages
+library("OpenMx")
+library("lavaan")
+library("strucchange")
+library("mvtnorm")
+library("lattice")
+
+## auxiliary code
+source("mz.R")
+source("estfun-lavaan.R")
+source("sim.R")
+
+## convenience function for plotting boundaries without color
+get_boundary <- function(obj, fun, trim = 0) {
+  bound <- fun$boundary(0:obj$nobs/obj$nobs)
+  bound <- fun$computeCritval(0.05, ncol(obj$process)) * bound
+  bound <- zoo(bound, time(obj$process))
+  if(trim > 0) bound <- head(tail(bound, - floor(trim * obj$nobs)), - floor(trim * obj$nobs))
+  return(bound)
+}
+@
+
+
+The test statistic proposed here is derived from a family of tests
+that were recently applied to the study of measurement invariance in
+psychometric models \cite{MerZei12}.  % TODO Add kopf
+In the following section, we provide an overview of the family and
+describe the proposed statistic in detail.  Next, we report on the
+results of two simulation studies designed to compare the proposed
+test statistic to existing statistics for testing measurement
+invariance.  Next, we illustrate the proposed statistic using
+psychometric data on scales purported to measure youth gratitude.  
+Finally, we provide some detail on the test's use in practice.
+
+\section{Theoretical Detail}
+
+It is of interest to test a hypothesis of 
+measurement invariance with respect to subsets of model parameters.
+The hypothesis can be written as
+%% TODO equation
+which reflects invariance in the full set of model parameters
+$\theta$.  It is straightforward to test a subset of model parameters,
+and we do so later in the paper.  In this section, we first provide
+background on the family of tests from which the proposed test
+statistic is obtained.  We then describe the proposed statistic for
+testing measurement invariance with respect to an ordinal variable.
+
+\subsection{Background}
+
+The ordinal test statistic proposed here, along with
+related ``non-ordinal'' statistics reported elsewhere, rely on the
+casewise contributions to the model likelihood function (i.e., the
+{\em scores}).  These contributions are defined as
+%% TODO equation
+the sum of which equals $\bm{0}$ when maximum likelihood estimates
+$\hat{\bm{\theta}}$ are substituted for $\bm{\theta}$.  
+Under the hypothesis of measurement invariance, the
+individual scores are expected to fluctuate around zero.  Conversely,
+when measurement invariance is violated, the scores should
+systematically stray from zero for some individuals.
+%% TODO add citations:
+As described in Merkle and Zeileis (\citeyearNP{MerZei12}; see XX for
+further detail), we can create formal test statistics based on these
+ideas.  These statistics rely on ordering of individuals with
+respect to an auxiliary variable, then taking a cumulative sum of the
+scores:
+%% TODO insert cumsum
+Under %eqref
+terms in this cumulative sum combine to follow a Brownian bridge.
+Thus, we can summarize the empirical cumulative scores in various
+manners, obtaining critical values and $p$-values from the Brownian
+bridge.  
+
+%% Paragraph on test statistics
+Specific test statistics that can be obtained under this framework
+include 
+
+\subsection{An Ordinal Test Statistic}
+
+The above framework was originally designed for situations where
+the auxiliary variable is continuous, so that there is a unique
+ordering of individuals with respect to the auxiliary variable.  In
+situations where the auxiliary variable is categorical, it is possible
+to obtain a test statistic by first summing scores within each level of the
+auxiliary variable, then summing the sums to obtain a test statistic.
+%% TODO make sure the above is true.
+However, these sums discard the ordinal nature of the auxiliary
+variable.  A similar issue is observed in testing for measurement
+invariance via multiple groups models and Likelihood Ratio tests: we
+can allow $\bm{\theta}$ to be unique to each level of the ordinal
+variable, but the ordinality of the auxiliary variable is then lost.
+In contrast, the proposed statistic explicitly accounts for the fact
+that the auxiliary variable is ordinal.
+
+The statistic that we proposed here is defined as
+%% TODO insert equation
+so that all individuals with the same value of the ordinal variable
+simultaneously enter into the cumulative sum.  The test statistic is
+then the maximum of this cumulative sum.  Closed-form solutions for
+this particular functional of a Brownian bridge are unavailable, but
+critical values and $p$-values can be obtained through repeated
+simulation of a Brownian bridge.  This functionality is built in to
+R's strucchange package \cite{strucchange}, which we use to carry out
+the tests for general SEMs.
+
+As we demonstrate in the simulations below, the proposed test
+statistic is sensitive to the measurement invariance violations that
+an analyst would typically expect from an ordinal auxiliary variable.
+These include violations that increase or decrease as we move up
+levels of the auxiliary variable, as well as violations that abruptly
+begin at a single point on the auxiliary variable and continue after
+that.  The test statistic is insensitive to anomolies in a small
+number of categories of the auxiliary variable that are
+unrelated to its ordering.  This is especially relevant to situations
+where the analyst has a large sample size.  In these cases, the usual
+Likelihood Ratio test is notoriously sensitive to minute parameter
+instabilities.
+
+\section{Simulation 1: Detecting Ordinal Invariance Violations}
+
+In this simulation, we demonstrate that the proposed test statistic is
+sensitive to ordinal measurement invariance violations, moreso than
+other competing statistics.
+
+\section{Simulation 2: Minor Anomolies and Large $n$}
+
+In this simulation, we demonstrate that the proposed statistic is
+relatively insensitive to minor parameter violations that are
+unrelated to the ordering of the auxiliary variable.  As noted
+earlier, this feature is especially applicable to situations where
+one's sample size is very large.  Analysts often resort to informal
+fit measures in this case, because the traditional LRT is nearly
+guaranteed to result in significance.  This simulation is intended to
+show that the proposed ordinal test remains viable for very large $n$.
+
+\section{Application: Youth Gratitude}
+
+\section{General Discussion}
+
+%% application to other psychometric models
+
+\subsection{Summary}
+
+\section*{Computational Details}
+
+All results were obtained using the {R}~system for statistical computing \cite{R11},
+version~\Sexpr{paste(R.Version()[6:7], collapse = ".")}, employing the add-on package
+{lavaan}~\Sexpr{packageDescription("lavaan")["Version"]} \cite{lavaan11} for fitting of the factor analysis models and
+{strucchange}~\Sexpr{packageDescription("strucchange")["Version"]} \cite{ZeiLei02,Zei06}
+for evaluating the parameter instability tests. {R}~and the packages {lavaan} and {strucchange} are
+freely available under the General Public License~2 from the
+Comprehensive {R} Archive Network at \url{http://CRAN.R-project.org/}.
+{R}~code for replication of our results is
+available at \url{http://semtools.R-Forge.R-project.org/}.
+
+
+\bibliography{refs}
+
+\end{document}
