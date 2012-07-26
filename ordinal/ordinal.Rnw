@@ -4,8 +4,8 @@
 \SweaveOpts{engine = R, eps = FALSE, echo = FALSE, results = hide}
 
 \title{Testing for measurement invariance with respect to an ordinal variable}
-\threeauthors{Edgar C. Merkle}{Achim Zeileis}{Jinyan Fan}
-\twoaffiliations{University of Missouri}{Universit\"{a}t Innsbruck}{Auburn University}
+\threeauthors{Edgar C. Merkle}{Jinyan Fan}{Achim Zeileis}
+\threeaffiliations{University of Missouri}{Auburn University}{Universit\"{a}t Innsbruck}
 
 \abstract{Researchers are often interested in testing for 
   measurement invariance with respect to an ordinal auxiliary variable such as
@@ -45,16 +45,16 @@
 
 <<preliminaries>>=
 ## packages
-library("OpenMx")
 library("lavaan")
 library("strucchange")
 library("mvtnorm")
 library("lattice")
 
 ## auxiliary code
-source("mz.R")
-source("estfun-lavaan.R")
-source("sim.R")
+source("mzo.R")
+source("../www/estfun-lavaan.R")
+source("../prelim_code/efpFunctional-cat.R")
+source("sim_ordinal.R")
 
 ## convenience function for plotting boundaries without color
 get_boundary <- function(obj, fun, trim = 0) {
@@ -66,8 +66,56 @@ get_boundary <- function(obj, fun, trim = 0) {
 }
 @
 
+%% TODO add some more citations to these initial paragraphs
+The study of measurement invariance and differential item functioning
+(DIF) 
+has received considerable attention in the psychometric literature
+(see, e.g., \citeNP{Mill11} for a thorough review).  A set of
+psychometric scales ${\bm X}$ are defined to be measurement invariant
+with respect to an auxiliary variable $V$ if \cite{Mel89}
+\begin{equation}
+    \label{eq:midef}
+      f(x_i | t_i, v_i, \dots) = f({\bf x}_i | t_i, \dots),
+\end{equation}
+where $T$ is the latent variable that the scales measure, $f$ is the
+model's distributional form, and the $i$ subscript refers to
+individual cases.  If the above equation does not hold, then there
+exists a measurement invariance violation.  We focus here on
+situations where $f()$ is parametric, and the measurement invariance
+violation occurs because the model parameters are
+unequal across individuals (and related to $V$).
 
-The test statistic proposed here is derived from a family of tests
+As a concrete example of the study of measurement invariance, consider
+a situation where ${\bm X}$ contains some ``high stakes'' tests of
+ability and $V$ is ethnicity.
+One's ethnicity should be unrelated to the measurement parameters
+within $f()$, and this expectation can be studied within a
+psychometric model by fitting the model examining whether or not
+measurement parameters 
+vary across different ethnicities.  Statistical tools that can be used
+to carry out this study include Likelihood Ratio Tests, Lagrange
+Multiplier tests, and Wald tests \cite{Sat89}.
+These tools have greatly aided in
+the development of improved, ``fairer'' psychometric tests and
+scales.
+
+Along with ethnicity, researchers are often interested in studying
+measurement invariance with respect to ordinal $V$.
+Such variables can arise from multiple choice surveys, where
+continuous variables such as age or income are binned into a small number
+of categories.  Alternatively, the variables may arise from gross,
+qualitative assessments of a particular measure of interest, where
+individuals may be categorized as having a
+``low,'' ``medium,'' or ``high'' level of the variable of interest.
+While these variables are relatively easy to find in the literature,
+there exist very few measurement invariance methods that specifically
+account for the fact that $V$ is ordinal.  More often, $V$ is simply
+treated as categorical so that the traditional tests can be applied.
+It is the intent of this paper to propose
+two test statistics that fill this gap and to show that the statistics
+possess good properties to be used in practice.
+
+The test statistics proposed here are derived from a family of tests
 that were recently applied to the study of measurement invariance in
 psychometric models \cite{KopZei10,MerZei12}.
 In the following section, we provide an overview of the family and
@@ -119,10 +167,11 @@ is the score function of the model (the partial derivative of the casewise
 likelihood contributions w.r.t.\ the parameters $\bm{\theta}$).
 Evaluation of the score function at $\hat{\bm{\theta}}$ for $i=1,
 \dots, n$ essentially measures the extent to which the model maximizes
-each individual's likelihood: as an individual's scores go further
+each individual's likelihood: as an individual's scores stray further
 from zero, the model provides a poorer description of that individual.
 
-Measurement invariance tests essentially test the assumption that all
+In studying measurement invariance, we are essentially testing the
+assumption that all  
 individuals arise from the same 
 parameter vector ${\bm \theta}$.
 Thus, a hypothesis of invariance can be written as
@@ -145,82 +194,187 @@ $V$ and $\nu$ is a threshold dividing individuals into groups based on
 $V$.  In this paper, we generally focus on situations where $V$ is
 ordinal and 
 where $\nu$ is unknown.  In the section below, we review tests where
-$V$ is continuous (and $\nu$ is unknown) as background for our
+$V$ is continuous (and $\nu$ is unknown) before proceeding to the 
 proposed tests for ordinal $V$.
 
 \subsection{Tests for Continuous $V$}
-% stopped here
 
+When $V$ is categorical with a relatively-small number of categories,
+tests of measurement invariance typically proceed via multiple-group
+models.  In this situation, we use likelihood ratio tests to compare a
+model whose parameters differ across groups to a model whose
+parameters are constrained to be equal across groups.  When $V$ is
+continuous, however, multiple-group models obviously cannot be used 
+because there are no existing groups.  Instead, we can fit a model
+whose parameters are restricted to be equal across all individuals, then
+examine individuals' scores ${\bm s}(\hat{{\bm \theta}}; x_i)$
+fluctuate with their values of $V$.  If measurement invariance holds
+with respect to $V$, then the scores should randomly fluctuate around
+zero.  Conversely, if measurement invariance does not hold, then the
+scores should systematically depart from zero.  These ideas are
+related to those underlying the Lagrange multiplier test; see
+\citeNP{MerZei12} for more details.
 
-As described in Merkle and Zeileis (\citeyearNP{MerZei12}; see XX for
-further detail), we can create formal test statistics based on these
-ideas.  These statistics rely on ordering of individuals with
-respect to an auxiliary variable, then taking a cumulative sum of the
-scores:
-%% TODO insert cumsum
-Under %eqref
-terms in this cumulative sum combine to follow a Brownian bridge.
-Thus, we can summarize the empirical cumulative scores in various
-manners, obtaining critical values and $p$-values from the Brownian
-bridge.  
+To formalize these ideas, we define the $k$-dimensional {\em
+  cumulative score process} as 
+\begin{equation} \label{eq:cumscore}
+  {\bm B}(t; \hat {\bm \theta}) ~=~ \hat {\bm I}^{-1/2} n^{-1/2}
+    \sum_{i = 1}^{\lfloor n t \rfloor} {\bm s}(\hat {\bm \theta}; x_i)
+  \qquad (0 \le t \le 1)
+\end{equation}
+where $\lfloor nt \rfloor$ is the integer part of $nt$ and
+$\hat I$ is some consistent estimate of the covariance matrix of the
+scores.  Equation~\eqref{eq:cumscore} simultaneously accounts for the
+ordering of individuals w.r.t.\ $V$ and decorrelates the scores
+associated with each of the $k$ model parameters (which allows us to
+potentially make inferences separately for each individual model
+parameter).  Using ideas similar to those that were outlined in the previous
+paragraph, the cumulative score process associated with each
+model parameter should randomly fluctuate around zero under
+measurement invariance.  Further, there exists a functional central
+limit theorem that allows us to make formal inference with this
+cumulative score process.  Assuming that individuals are independent
+and the usual ML regularity conditions hold, it is possible to show
+that \citeA{HjoKon02}
+\begin{equation} \label{eq:fclt}
+  {\bm B}(\cdot; \hat {\bm \theta}) ~\overset{d}{\rightarrow}~ {\bm B}^{0}(\cdot),
+\end{equation}
+where $\overset{d}{\rightarrow}$ denotes convergence in distribution
+and ${\bm B}^{0}(\cdot)$ is a $k$-dimensional Brownian bridge.
+Thus, we can construct tests of measurement invariance by comparing
+the cumulative score process's behavior to that of a Brownian bridge.
+This is accomplished by comparing a scalar statistic associated with
+the cumulative score process to the analogous statistic of a Brownian
+bridge.
+
+In practice, we have a finite sample size $n$ and so the
+{\em empirical} cumulative score can be represented within an $n
+\times k$ matrix with elements ${\bm B}(i/n; \hat {\bm \theta})_j$ that
+we also denote ${\bm B}(\hat {\bm \theta})_{ij}$ below for brevity.
+Each row of the matrix contains cumulative sums of the scores of
+individuals who were at the $i/n$ percentile of $V$ or below.  Scalar
+test statistics are then obtained by collapsing over rows
+(individuals) and columns (parameters) of the matrix, with asymptotic
+distributions of the test statistics under~\eqref{eq:h0}  being
+obtained by applying the 
+same functional to the Brownian bridge \cite{HjoKon02,ZeiHor07}.
 
 %% Paragraph on test statistics
-Specific test statistics that can be obtained under this framework
-include 
+Specific test statistics commonly obtained under this framework
+include the double maximum statistic
+\begin{equation}
+    \label{eq:dmax}
+    \mathit{DM} = \max_{i = 1,\dots, n} \max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} |,
+\end{equation}
+which essentially tests whether any component of the cumulative score
+process strays too far from zero.  This test discards information
+related to multiple parameters fluctuating simultaneously, and Merkle
+and Zeileis \citeyear{MerZei12} found it to have relatively-low power
+for simultaneously testing multiple factor analysis parameters for
+measurement invariance.  
+
+Test statistics with higher power
+aggregate information across parameters and possibly also across
+individuals.  These test statistics include
+\begin{eqnarray}
+    \label{eq:cvm}
+    \mathit{CvM}     & = & n^{-1} \sum_{i = 1,\dots, n} \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2, \\
+    \label{eq:maxlm}
+    \max \mathit{LM} & = & \max_{i = \underline{i}, \dots, \overline{\imath}} ~
+      \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1}
+      \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2,
+\end{eqnarray}
+with the former being a Cram{\'e}r-von Mises statistic and the latter
+corresponding to a ``maximum'' Lagrange multiplier test, where the
+maximum is taken across all possible divisions of individuals into two
+groups w.r.t.\ $V$.  Additionally, the $\max \mathit{LM}$ statistic is
+scaled by the asymptotic variance $t (1 - t)$ of the process ${\bm
+  B}(t, \hat {\bm \theta})$.  In simulations, Merkle and Zeileis found that the
+$\mathit{CvM}$ test exhibited the highest power for testing multiple
+factor analysis parameters for measurement invariance w.r.t.\
+continuous $V$.  These simulations included situations in which
+subsets of model parameters were tested; such situations are handled
+by focusing only on those columns of ${\bm B}(\hat {\bm \theta})_{ij}$
+that correspond to the parameters of interest.
 
 \subsection{Proposed Tests for Ordinal $V$}
 
-The above framework was originally designed for situations where
-the auxiliary variable is continuous, so that there is a unique
-ordering of individuals with respect to the auxiliary variable.  In
-situations where the auxiliary variable is categorical, it is possible
-to obtain a test statistic by first summing scores within each level of the
-auxiliary variable, then summing the sums to obtain a test statistic.
-%% TODO make sure the above is true.
-However, these sums discard the ordinal nature of the auxiliary
+The theory described above was designed for situations where
+$V$ is continuous, so that there is a unique
+ordering of individuals with respect to $V$.  In
+situations where $V$ is categorical, it is possible
+to obtain a test statistic by first summing scores within each of the
+$m$ levels of the
+auxiliary variable, then ``summing the sums'' to obtain a test
+statistic \cite{HjoKon02}.  This test statistic can be formally
+written as
+\begin{equation}
+    \label{eq:lmuo}
+     \mathit{LM}_\mathit{uo} = \sum_{\ell = 1, \dots, m} \sum_{j = 1, \dots, k}
+       \left( {\bm B}(\hat {\bm \theta})_{i_\ell j} - {\bm B}(\hat {\bm \theta})_{i_{\ell - 1}j} \right)^2,
+\end{equation}
+where, again, tests of subsets of model parameters can be obtained by
+taking the inner sum over only the $k^* < k$ parameters of interest.
+This test statistic discards the ordinal nature of the auxiliary
 variable.  A similar issue is observed in testing for measurement
-invariance via multiple groups models and Likelihood Ratio tests: we
-can allow $\bm{\theta}$ to be unique to each level of the ordinal
-variable, but the ordinality of the auxiliary variable is then lost.
-In contrast, the proposed statistic explicitly accounts for the fact
-that the auxiliary variable is ordinal.
+invariance via multiple groups models and Likelihood Ratio tests (or,
+equivalently, via Wald tests or Lagrange multiplier tests): we
+can allow $\bm{\theta}$ to be unique at each level of the ordinal
+variable, but the ordinality of the auxiliary variable is lost.
+In contrast, the statistics proposed below explicitly account for the fact
+that $V$ is ordinal.
 
-In contrast to the likelihood ratio test, the statistics that we
-propose here explicitly take into 
-account the fact that the auxiliary variable is ordinal.  They are
-similar to the statistics from % eqref
+The statistics proposed here are
+similar to those described in
+Equations~\eqref{eq:dmax},~\eqref{eq:cvm}, and~\eqref{eq:maxlm}
 above, except that we focus on ``bins'' of individuals at each level of the
-ordinal variable:
+ordinal variable.  That is, instead of aggregating over all $i = 1,
+\dots, n$ individuals, we first compute cumulative proportions
+$t_\ell$ ($\ell = 1, \dots, m-1$) associated with the first $m-1$
+levels of $V$.  We then aggregate the 
+cumulative scores only over $i_\ell = \lfloor n
+\cdot t_\ell\rfloor$.  Test statistics related to~\eqref{eq:dmax}
+and~\eqref{eq:maxlm} above can then be written as
 %% TODO insert equation
+\begin{eqnarray}
+    \label{eq:wdm}
+      \mathit{WDM}_o & = & \max_{i \in \{i_1, \dots, i_m \}} ~ \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1}      
+                             \max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} |,\\
+    \label{eq:maxlmo}
+      \max \mathit{LM}_o & = & \max_{i \in \{i_1, \dots, i_m \}} ~
+                             \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1}
+                             \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2.\\
+\end{eqnarray}
 Critical values associated with these test statistics can be obtained
-by applying these functionals to bins of a Brownian bridge, where the
-bin sizes equal the empirical proportion of individuals at each level
-of the ordinal variable.
+by applying the same functionals to bins of a Brownian bridge, where the
+bin sizes result in the cumulative proportions $t_\ell$ ($\ell=1, \dots,
+m-1$) associated with the observed $V$.
 Closed-form solutions for
-this particular functional of a Brownian bridge are unavailable, but
+these particular functionals of a Brownian bridge are unavailable, but
 critical values and $p$-values can be obtained through repeated
 simulation of a Brownian bridge.  This functionality is built in to
-R's strucchange package \cite{strucchange}, which can be used to carry out
-the tests for general SEMs.
+R's strucchange package \cite{strucchange}, which can be used to
+generally carry out the tests.
 
-As we demonstrate in the simulations below, the proposed test
-statistic is sensitive to the measurement invariance violations that
-an analyst would typically expect from an ordinal auxiliary variable.
+As we demonstrate in the simulations below, the test
+statistics proposed above are sensitive to the measurement invariance
+violations that 
+an analyst would typically expect from an ordinal $V$.
 These include violations that increase or decrease as we move up
-levels of the auxiliary variable, as well as violations that abruptly
-begin at a single point on the auxiliary variable and continue after
-that.  The test statistic is insensitive to anomolies in a small
-number of categories of the auxiliary variable that are
-unrelated to its ordering.  This is especially relevant to situations
-where the analyst has a large sample size.  In these cases, the usual
-Likelihood Ratio test is notoriously sensitive to minute parameter
-instabilities.
+levels of $V$, as well as violations that abruptly
+begin at a single point on $V$ and continue after
+that.  The test statistics are insensitive to anomolies in a small
+number of categories of $V$ that are
+unrelated to the ordering of $V$.  This is especially relevant to situations
+where the analyst has a large sample size, where the usual
+Likelihood Ratio Test is notoriously sensitive to minute parameter
+instabilities (e.g., \citeNP{Ben80}).
 
 \section{Simulation 1: Detecting Ordinal Invariance Violations}
 
 In this simulation, we demonstrate that the proposed test statistics are
 sensitive to ordinal measurement invariance violations, moreso than
-other competing statistics.  We generate data from a two-factor,
+traditional statistics.  We generate data from a two-factor,
 six-indicator model, with a measurement invariance violation occurring
 in the three unique variances associated with the first factor.  We
 use the proposed test statistics to test for measurement invariance
@@ -230,22 +384,26 @@ step of the ``prescribed'' course of measurement invariance tests. % cite
 For comparison, we also compute two statistics that treat the ordinal
 auxiliary variable as categorical.  These include the likelihood ratio
 test of measurement 
-invariance in the six unique variance parameters, along with .
+invariance in the six unique variance parameters, along with the
+unordered LM test from~\eqref{eq:lmuo}.
 
 \subsection{Method}
 As described above, data were generated from a two-factor model
 lacking measurement invariance in three of six unique variance
-parameters.  Magnitude of measurement invariance violation, sample
+parameters.  Magnitude of measurement invariance violation, type of
+measurement invariance violation, sample
 size, and number of categories of the ordinal variable were manipulated.
 We examined three sample sizes ($n=120, 480, 960$), three numbers of
-categories ($l=4, 8, 12$), and seven magnitudes of invariance
-violations.  These violations started at level $1+l/2$ and continued
-for higher levels of the ordinal variable.  The unique variances for
+categories ($m=4, 8, 12$), and
+seven magnitudes of invariance 
+violations.  The measurement invariance violations began
+at level $1+l/2$ of $V$ and were constant thereafter
+  The unique variances for
 the ``violating'' levels deviated from the lower levels' unique
 variances by $d$~times the parameters' asymptotic standard
 errors (scaled by $\sqrt{n}$), with $d=0, 0.25, 0.5, \dots, 1.5$.  
 
-For each combination of $n \times l \times d$, 5,000 datasets were
+For each combination of $n \times m \times d$, 5,000 datasets were
 generated and tested via the XX statistics described above.  In all
 conditions, we maintained equal sample sizes at each level of the
 ordinal variable.
