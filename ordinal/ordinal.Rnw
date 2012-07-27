@@ -397,18 +397,29 @@ We examined three sample sizes ($n=120, 480, 960$), three numbers of
 categories ($m=4, 8, 12$), and
 seven magnitudes of invariance 
 violations.  The measurement invariance violations began
-at level $1+l/2$ of $V$ and were constant thereafter
+at level $1+l/2$ of $V$ and were constant thereafter.
   The unique variances for
 the ``violating'' levels deviated from the lower levels' unique
 variances by $d$~times the parameters' asymptotic standard
 errors (scaled by $\sqrt{n}$), with $d=0, 0.25, 0.5, \dots, 1.5$.  
 
 For each combination of $n \times m \times d$, 5,000 datasets were
-generated and tested via the XX statistics described above.  In all
+generated and tested via the 4 statistics described above.  In all
 conditions, we maintained equal sample sizes at each level of the
 ordinal variable.
 
-%% sweave code here
+<<sim1>>=
+## seed for replication
+RNGkind(kind = "default", normal.kind = "default")
+set.seed(1163)
+
+if(file.exists("sim1.rda")) {
+  load("sim1.rda")
+} else {
+  sim1 <- simulation()
+  save(sim1, file="sim1.rda")
+}
+@ 
 
 \subsection{Results}
 
@@ -431,9 +442,106 @@ show that the proposed ordinal test remains viable for very large $n$.
 
 \subsection{Background}
 
+
+
 \subsection{Method}
 
+Froh et al.\ \citeyear{FroFan11} used confirmatory factor analysis
+models to study the invariance of three youth gratitude scales across
+students aged 10 to 19 years.  Each of the scales were individually
+factor-analyzed using the items comprising the scale.
+For each model, the authors 
+first fit a congeneric model (all parameters free for each age group),
+followed by a tau-equivalent model (factor loadings restricted to be
+equal across groups) and a parallel model (all parameters restricted
+to be equal across groups).  Because their sample size was large ($n
+\approx 1400$), they could not rely solely on likelihood ratio tests
+(i.e., chi-square difference tests) for model comparison because the
+tests were overly sensitive at their sample size.  To supplement these
+tests, Froh et al examined a set of alternative fit indices, including
+the non-normed fit index, the comparative fit index, and the
+incremental fit index. %% TODO cite
+The authors generally found support for the tau-equivalent models
+through these alternative fit indices; the likelihood ratio test often
+resulted in significance event when the alternative indices indicated
+good fit.
+
+In the analyses described below, we re-analyze the Froh et al.\ data using
+the ordinal test statistics proposed in this paper.  This results in a
+series of tests that are less sensitive to sample size than the
+likelihood ratio test, while being
+more sensitive to ``ordinal'' violations of measurement invariance.
+We focus on two analyses from Froh et al.\ where the likelihood
+ratio test resulted in significance (indicating that the restricted
+model did not fit as well as the less-restricted model), but the
+alternative fit measures indicated the opposite (using the rules of
+thumb employed by Froh et al).  These include
+comparison of a one-factor congeneric model to a one-factor
+tau-equivalent model using the 
+GQ6 and comparison of a one-factor tau-equivalent model to a one-factor
+parallel model 
+using the GAC.  To conduct equivalent analyses via the proposed tests, we
+fit the restricted model and test for instability in the focal
+model parameters.
+
+Of the 1401 cases originally collected by Froh et al., we use here all
+subjects with complete data (resulting in $n=1327$).
+
+<<frohdata>>=
+yg <- read.spss("grat data combined_9.29.09.sav", to.data.frame=TRUE)
+names(yg) <- tolower(names(yg))
+
+## Remove cases with 'imputed' values
+yg <- yg[yg$ao_4 <= 9,]
+decimals <- apply(yg[,4:28]%%1 > 0, 1, sum)
+yg <- yg[decimals==0,]
+
+## TODO Simulate critical values for ordL2BB
+@ 
+
 \subsection{Results}
+
+The results section is divided into two subsections, one for each of
+the analyses described previously.
+
+<<gq6>>=
+m1 <- cfa('f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5',
+          data=yg, group="agegroup", group.equal="loadings",
+          meanstructure=TRUE)
+gefp1 <- gefp(m1, fit = NULL, scores=estfun.lavaan, order.by = yg$agegroup, 
+              vcov = info_full, sandwich = FALSE, parm=1:4)
+omax1 <- sctest(gefp1, functional=ordwmax(gefp1))
+ol2bb1 <- sctest(gefp1, functional=ordL2BB(gefp1))
+
+## Full model
+m1.f <- cfa('f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5',
+            data=yg, group="agegroup", meanstructure=TRUE)
+lrt1 <- anova(m1.f, m1)
+@ 
+
+\paragraph{GQ6.} Ordinal tests do not support LRT.
+
+
+<<gac>>=
+m2 <- cfa('f1 =~ gac_1 + gac_2 + gac_3
+           f1 ~ 0*1', data=yg, group="agegroup",
+           group.equal=c("loadings","residuals","lv.variances"), 
+           meanstructure=TRUE)
+gefp2 <- gefp(m2, fit = NULL, scores=estfun.lavaan, order.by = yg$agegroup, 
+              vcov = info_full, sandwich = FALSE, parm=3:6)
+omax2 <- sctest(gefp2, functional=ordwmax(gefp2))
+ol2bb2 <- sctest(gefp2, functional=ordL2BB(gefp2))
+
+## Full model
+m2.f <- cfa('f1 =~ gac_1 + gac_2 + gac_3
+           f1 ~ 0*1', data=yg, group="agegroup",
+           group.equal="loadings", meanstructure=TRUE)
+lrt2 <- anova(m2.f, m2)
+@ 
+
+\paragraph{GAC.} Ordinal tests do support LRT.
+
+
 
 \subsection{Summary}
 

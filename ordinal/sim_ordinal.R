@@ -1,10 +1,13 @@
 
 ## Data-generating process
-dgp <- function(nobs = 200, diff = 3, nlevels=10)
+dgp <- function(nobs = 200, diff = 3, nlevels=10, gradual=FALSE)
 {
   # Generates data from a factor analysis model that violates
   # measurement invariance.  Also generates an ordinal auxiliary
   # variable related to the invariance (loosely called "age").
+  # If gradual==TRUE, mild instability starts halfway up age
+  # and gets larger.  If gradual==FALSE, the instability starts
+  # halfway up age and stays constant.
   stopifnot(require("mvtnorm"))
   
   # ses is SE increase in parameters for each increasing value
@@ -61,8 +64,14 @@ dgp <- function(nobs = 200, diff = 3, nlevels=10)
     ## observed SES by sqrt(n)
     ## FIXME: Should ses refer to maximum difference in 'end' category, or to se increase
     ##        with each category (currently coded as difference in end category)?
-    diag(psi) <- diag(psi) + (each.vary*c(62.1,26.6,82.1,9.05,19.35,51.59))/sqrt(tmp.n)
-    u <- t(rmvnorm(tmp.n,rep(0,6),psi))
+    if (gradual){
+      diag(psi) <- diag(psi) + (each.vary*c(62.1,26.6,82.1,9.05,19.35,51.59))/sqrt(tmp.n)
+      tmp.psi <- psi
+    } else {
+      tmp.psi <- psi
+      diag(tmp.psi) <- diag(tmp.psi) + (ses*c(62.1,26.6,82.1,9.05,19.35,51.59))/sqrt(tmp.n)
+    }
+    u <- t(rmvnorm(tmp.n,rep(0,6),tmp.psi))
     for (j in 1:tmp.n){
       datmat[tmp.ind[j],] <- mu + lambda%*%z[,j] + u[,j]
     }
@@ -89,8 +98,8 @@ testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, test = NULL, verb
       pval[i, 1] <- sctest(ord_gefp,  functional = ordfun)$p.value
       pval[i, 2] <- sctest(ord_gefp,  functional = ordwmax(ord_gefp))$p.value
       pval[i, 3] <- sctest(ord_gefp,  functional = catL2BB(ord_gefp))$p.value
-      pval[i, 4] <- sctest(ord_gefp,  functional = supLM(0.1))$p.value
-      pval[i, 5] <- mz$lrt.p
+      #pval[i, 4] <- sctest(ord_gefp,  functional = supLM(0.1))$p.value
+      pval[i, 4] <- mz$lrt.p
     }
   }
   rval <- colMeans(pval < size, na.rm = TRUE)
@@ -101,12 +110,12 @@ testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, test = NULL, verb
 
 ## Loop over scenarios
 simulation <- function(diff = seq(0, 1.5, by = 0.25),
-  nobs = c(120, 480, 960), nlevels = c(4, 8, 12), verbose = TRUE, ...)
+  nobs = c(120, 480, 960), nlevels = c(4, 8, 12), gradual = FALSE, verbose = TRUE, ...)
 {
   prs <- expand.grid(diff = diff, nlevels = nlevels, nobs = nobs)
   nprs <- nrow(prs)
   
-  test <- c("ordmax","ordwmax","catdiff","suplm","lrt")
+  test <- c("ordmax","ordwmax","catdiff","lrt") # had suplm here
   ntest <- length(test)
 
   ## Only simulate critical values if we need it.
@@ -124,7 +133,7 @@ simulation <- function(diff = seq(0, 1.5, by = 0.25),
   if (do.parallel){
     pow <- mclapply(1:nprs, function(i){
       testpower(diff = prs$diff[i], nobs = prs$nobs[i],
-                nlevels = prs$nlevels[i], test = test,
+                nlevels = prs$nlevels[i], gradual = gradual, test = test,
                 ordfun = cval[[which(cval.conds == prs$nlevels[i])]],
                 verbose = verbose)},
                     mc.cores = round(.75*detectCores()))
