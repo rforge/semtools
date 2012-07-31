@@ -389,15 +389,15 @@ unordered LM test from~\eqref{eq:lmuo}.
 
 \subsection{Method}
 As described above, data were generated from a two-factor model
-lacking measurement invariance in three of six unique variance
-parameters.  Magnitude of measurement invariance violation, type of
-measurement invariance violation, sample
+lacking measurement invariance in the six unique variance
+parameters.  Magnitude of measurement invariance violation, 
+sample
 size, and number of categories of the ordinal variable were manipulated.
 We examined three sample sizes ($n=120, 480, 960$), three numbers of
 categories ($m=4, 8, 12$), and
 seven magnitudes of invariance 
 violations.  The measurement invariance violations began
-at level $1+l/2$ of $V$ and were constant thereafter.
+at level $1+m/2$ of $V$ and were constant thereafter.
   The unique variances for
 the ``violating'' levels deviated from the lower levels' unique
 variances by $d$~times the parameters' asymptotic standard
@@ -423,6 +423,55 @@ if(file.exists("sim1.rda")) {
 
 \subsection{Results}
 
+Simulation results are presented in Figure XX.  Rows of the figure
+correspond to $n$, columns of the figure correspond to $m$, the x-axis
+of each panel corresponds to $d$, and the y-axis of each panel
+corresponds to power.  It is seen that one of the proposed test
+statistics, the $\max \mathit{LM}_O$ statistic from~\eqref{eq:maxlmo},
+generally has the largest power to detect the ordinal measurement
+invariance violations.  The other three tests are considerably closer
+in power, with the second proposed ordinal statistic
+(the double-max test from~\eqref{eq:wdm}) exhibiting the lowest power
+at large violation magnitudes.  This is because the double-max
+test discards information about multiple parameters changing together
+at specific levels of the ordinal variable
+(see Merkle and Zeileis, 2012, for related discussion), while the
+three other tests under consideration make use of this information.
+Finally, it is seen that, in the small $n$ and large $m$ conditions,
+the likelihood ratio test exhibits large Type-I error rates (i.e.,
+power greater than .05 at $d=0$).  This is because the likelihood
+ratio test requires 
+estimation of a multiple groups model, which is very unstable with
+large numbers of groups and small sample sizes.  The proposed
+statistics, which require estimation of only the single-group model,
+exhibit a clear advantage in these conditions.
+
+\begin{figure}
+\caption{Simulated power curves for the ordered and unordered
+      $\max \mathit{LM}$ tests, the ordered double-max test, and the
+      likelihood ratio test across three sample sizes $n$, three
+      levels of the ordinal variable $m$, and measurement invariance
+      violations of 0--1.5 standard errors (scaled by $\sqrt{n}$).}
+\label{fig:sim1res}
+\setkeys{Gin}{width=\textwidth}
+<<sim1res, fig=TRUE, height=7, width=7>>=
+mykey <- simpleKey(levels(sim1$test), points = FALSE, lines = TRUE)
+print(xyplot(power ~ diff | nlevels + nobs, group = ~ test, data = sim1, 
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey))
+@
+\end{figure}
+
+To summarize, we found the $\max \mathit{LM}_O$ statistic to be
+advantageous for detecting measurement invariance violations that are
+related to an ordinal auxiliary variable.  In particular, power is
+generally higher, and the test does not require estimation of a
+multiple group model.  Thus, the statistic allows reasonable
+measurement invariance tests to be carried out at small $n$/large $m$
+combinations.  To further illustrate that the proposed statistics are
+useful for testing violations related to an ordinal variable, we
+now compare their performance to the likelihood ratio test at large
+$n$ and small $d$.
+
 \section{Simulation 2: Minor Anomolies and Large $n$}
 
 In this simulation, we demonstrate that the proposed statistic is
@@ -435,6 +484,17 @@ guaranteed to result in significance.  This simulation is intended to
 show that the proposed ordinal test remains viable for very large $n$.
 
 \subsection{Method}
+
+
+<<sim2>>=
+if(file.exists("sim2.rda")) {
+  load("sim2.rda")
+} else {
+  sim2 <- simulation(diff = seq(0, 0.5, by = 0.1), nobs = c(1200, 4800, 9600),
+                     anomaly=TRUE)
+  save(sim2, file="sim2.rda")
+}
+@ 
 
 \subsection{Results}
 

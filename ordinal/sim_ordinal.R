@@ -1,19 +1,22 @@
 
 ## Data-generating process
-dgp <- function(nobs = 200, diff = 3, nlevels=10, gradual=FALSE)
+dgp <- function(nobs = 200, diff = 3, nlevels=10, gradual=FALSE, anomaly=FALSE)
 {
-  # Generates data from a factor analysis model that violates
-  # measurement invariance.  Also generates an ordinal auxiliary
-  # variable related to the invariance (loosely called "age").
-  # If gradual==TRUE, mild instability starts halfway up age
-  # and gets larger.  If gradual==FALSE, the instability starts
-  # halfway up age and stays constant.
+  ## Generates data from a factor analysis model that violates
+  ## measurement invariance.  Also generates an ordinal auxiliary
+  ## variable related to the invariance (loosely called "age").
+
+  ## If gradual==TRUE, mild instability starts halfway up age
+  ## and gets larger.  If gradual==FALSE, the instability starts
+  ## halfway up age and stays constant.
+  ## If anomaly==TRUE, instability only occurs at level (1+nlevels/2).
+  ## Otherwise, anomaly continues up the ordinal variable.
   stopifnot(require("mvtnorm"))
   
-  # ses is SE increase in parameters for each increasing value
-  # of "age" past the halfway point.
-  sampsize <- nobs
+  # ses is SE increase in parameters at last ordinal category.
+  # (This is constant if gradual==FALSE but not if gradual==TRUE.)
   ses <- diff
+  sampsize <- nobs
   sampsize.per.nobs <- nobs %/% nlevels
 
   ## Deal with cases where nobs/nlevels is not an integer
@@ -60,10 +63,10 @@ dgp <- function(nobs = 200, diff = 3, nlevels=10, gradual=FALSE)
     tmp.ind <- which(age==i)
     z <- t(rmvnorm(tmp.n,rep(0,2),phi))
 
+    if (anomaly) ifelse(i==(half.level+1), ses, 1)
+    
     ## SES found by fitting model to population S, multiplying
     ## observed SES by sqrt(n)
-    ## FIXME: Should ses refer to maximum difference in 'end' category, or to se increase
-    ##        with each category (currently coded as difference in end category)?
     if (gradual){
       diag(psi) <- diag(psi) + (each.vary*c(62.1,26.6,82.1,9.05,19.35,51.59))/sqrt(tmp.n)
       tmp.psi <- psi
@@ -71,6 +74,8 @@ dgp <- function(nobs = 200, diff = 3, nlevels=10, gradual=FALSE)
       tmp.psi <- psi
       diag(tmp.psi) <- diag(tmp.psi) + (ses*c(62.1,26.6,82.1,9.05,19.35,51.59))/sqrt(tmp.n)
     }
+
+
     u <- t(rmvnorm(tmp.n,rep(0,6),tmp.psi))
     for (j in 1:tmp.n){
       datmat[tmp.ind[j],] <- mu + lambda%*%z[,j] + u[,j]
@@ -110,7 +115,8 @@ testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, test = NULL, verb
 
 ## Loop over scenarios
 simulation <- function(diff = seq(0, 1.5, by = 0.25),
-  nobs = c(120, 480, 960), nlevels = c(4, 8, 12), gradual = FALSE, verbose = TRUE, ...)
+  nobs = c(120, 480, 960), nlevels = c(4, 8, 12), gradual = FALSE,
+  anomaly = FALSE, verbose = TRUE, ...)
 {
   prs <- expand.grid(diff = diff, nlevels = nlevels, nobs = nobs)
   nprs <- nrow(prs)
@@ -135,7 +141,7 @@ simulation <- function(diff = seq(0, 1.5, by = 0.25),
       testpower(diff = prs$diff[i], nobs = prs$nobs[i],
                 nlevels = prs$nlevels[i], gradual = gradual, test = test,
                 ordfun = cval[[which(cval.conds == prs$nlevels[i])]],
-                verbose = verbose)},
+                anomaly = anomaly, verbose = verbose)},
                     mc.cores = round(.75*detectCores()))
     pow <- t(matrix(unlist(pow), ntest, nprs))
   } else {
@@ -188,13 +194,18 @@ RNGkind(kind = "default", normal.kind = "default")
 set.seed(1090)
 
 ## run simulation
-mz_sim <- simulation()
-save(mz_sim, file = "mz_sim.rda")
+sim1 <- simulation()
+save(sim1, file = "sim1.rda")
 }
 
 if(FALSE) {
 ## load simulation results
-load("mz_sim.rda")
+load("sim1.rda")
+
+sim1$nlevels <- paste("m=",sim1$nlevels,sep="")
+sim1$nlevels <- factor(sim1$nlevels, levels=c("m=4","m=8","m=12"))
+levels(sim1$nobs) <- paste("n=",levels(sim1$nobs),sep="")
+levels(sim1$test) <- c("LM_uo","LRT","LM_o","WDM_o")
 
 ## display result in table
 ## all without rounding
@@ -207,7 +218,11 @@ round(ftable(100 * xtabs(power ~ nobs + pars + test + diff,
 ## display result in graphic
 library("lattice")
 trellis.par.set(theme = canonical.theme(color = FALSE))
+
+mykey <- simpleKey(levels(sim1$test), points = FALSE, lines = TRUE)
+#mykey$lines$lty <- c(2, 3, 1)
+#mykey$lines$lwd <- c(1.2, 2, 1.2)
 ## all
-xyplot(power ~ diff | pars + nobs, group = ~ test, data = mz_sim, type = "b",
-       xlab="Violation Magnitude", ylab="Power")
+xyplot(power ~ diff | nlevels + nobs, group = ~ test, data = sim1, type = "b",
+       xlab="Violation Magnitude", ylab="Power", key=mykey)
 }
