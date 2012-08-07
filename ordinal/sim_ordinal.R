@@ -56,25 +56,26 @@ dgp <- function(nobs = 200, diff = 3, nlevels=10, gradual=FALSE, anomaly=FALSE)
   }
 
   ## Now do the same for invariant-violating levels
-  n.vary <- nlevels - (half.level + 1)
+  n.vary <- nlevels - half.level
   each.vary <- ses/n.vary
   for (i in (half.level+1):nlevels){
     tmp.n <- sum(age==i)
     tmp.ind <- which(age==i)
     z <- t(rmvnorm(tmp.n,rep(0,2),phi))
 
-    if (anomaly) ifelse(i==(half.level+1), ses, 1)
+    mult <- ses
+    if (anomaly) mult <- ifelse(i==(half.level+1), ses, 0)
     
     ## SES found by fitting model to population S, multiplying
     ## observed SES by sqrt(n)
     if (gradual){
+      if (anomaly) stop("gradual=TRUE and anomaly=TRUE do not work together.")
       diag(psi) <- diag(psi) + (each.vary*c(62.1,26.6,82.1,9.05,19.35,51.59))/sqrt(tmp.n)
       tmp.psi <- psi
     } else {
       tmp.psi <- psi
-      diag(tmp.psi) <- diag(tmp.psi) + (ses*c(62.1,26.6,82.1,9.05,19.35,51.59))/sqrt(tmp.n)
+      diag(tmp.psi) <- diag(tmp.psi) + (mult*c(62.1,26.6,82.1,9.05,19.35,51.59))/sqrt(tmp.n)
     }
-
 
     u <- t(rmvnorm(tmp.n,rep(0,6),tmp.psi))
     for (j in 1:tmp.n){
