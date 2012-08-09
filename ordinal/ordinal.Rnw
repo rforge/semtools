@@ -49,6 +49,7 @@ library("lavaan")
 library("strucchange")
 library("mvtnorm")
 library("lattice")
+library("foreign")
 
 ## auxiliary code
 source("mzo.R")
@@ -64,6 +65,9 @@ get_boundary <- function(obj, fun, trim = 0) {
   if(trim > 0) bound <- head(tail(bound, - floor(trim * obj$nobs)), - floor(trim * obj$nobs))
   return(bound)
 }
+
+## convenience function for applying tests to real data
+info_full <- function(x, ...) solve(vcov(x) * nobs(x))
 @
 
 %% TODO add some more citations to these initial paragraphs
@@ -417,13 +421,19 @@ if(file.exists("sim1.rda")) {
   load("sim1.rda")
 } else {
   sim1 <- simulation()
+  sim1$nlevels <- factor(sim1$nlevels)
+  levels(sim1$nlevels) <- paste("m=",levels(sim1$nlevels),sep="")
+  sim1$nobs <- factor(sim1$nobs)
+  levels(sim1$nobs) <- paste("n=",levels(sim1$nobs),sep="")
+  levels(sim1$test) <- c("LM_uo", "LRT", "LM_o", "WDM_o")
   save(sim1, file="sim1.rda")
 }
 @ 
 
 \subsection{Results}
 
-Simulation results are presented in Figure XX.  Rows of the figure
+Simulation results are presented in Figure~\ref{fig:sim1res}.  Rows of
+the figure 
 correspond to $n$, columns of the figure correspond to $m$, the x-axis
 of each panel corresponds to $d$, and the y-axis of each panel
 corresponds to power.  It is seen that one of the proposed test
@@ -481,22 +491,101 @@ earlier, this feature is especially applicable to situations where
 one's sample size is very large.  Analysts often resort to informal
 fit measures in this case, because the traditional LRT is nearly
 guaranteed to result in significance.  This simulation is intended to
-show that the proposed ordinal test remains viable for very large $n$.
+show that the proposed ordinal test remains viable for large $n$.
 
 \subsection{Method}
-
+Data were generated from the same factor analysis model that was used
+in Simulation 1, with measurement invariance violations in the unique
+variance parameters.  To implement a minor measurement invariance
+violation, the unique variances were equal across all levels of the
+ordinal variable except one (level $1+m/2$).  At this particular
+level, the unique variances were greater by a factor of $d$~times the
+parameters' asymptotic standard errors (scaled by $\sqrt{n}$), with
+$d=0, 0.5, 1.0, \dots, 3.0$.  The number of levels of the ordinal
+variable were the same as those in Simulation 1 ($m=4,8,12$), and
+sample sizes were set at $n=1200,4800,9600$.  All other simulation
+features matches those from Simulation 1.
 
 <<sim2>>=
 if(file.exists("sim2.rda")) {
   load("sim2.rda")
 } else {
-  sim2 <- simulation(diff = seq(0, 0.5, by = 0.1), nobs = c(1200, 4800, 9600),
+  sim2 <- simulation(diff = seq(0, 3, by = 0.5), nobs = c(1200, 4800, 9600),
                      anomaly=TRUE)
+  sim2$nlevels <- factor(sim2$nlevels)
+  levels(sim2$nlevels) <- paste("m=",levels(sim2$nlevels),sep="")
+  sim2$nobs <- factor(sim2$nobs)
+  levels(sim2$nobs) <- paste("n=",levels(sim2$nobs),sep="")
+  levels(sim2$test) <- c("LM_uo", "LRT", "LM_o", "WDM_o")
   save(sim2, file="sim2.rda")
 }
 @ 
 
 \subsection{Results}
+Simulation results are presented in Figure~\ref{fig:sim2res}.  It is
+observed that results are very consistent across the sample sizes
+tested, implying that "practical infinity" is reached for this model
+by $n=1200$. \readme{Also implying that we don't need all three sample
+  sizes or could try values smaller than 1200.}  We also observe
+a negative 
+relationship between power and $m$; this is because the measurement
+invariance violation occurred at only one level of the auxiliary
+variable.  As $m$ increases (and $n$ is held
+constant), the number of individuals violating measurement invariance
+therefore decreases.  As a result, power to detect the violation decreases with
+increasing $m$.
+
+The more interesting result of this simulation lies in the comparison
+of the four test statistics within each panel of the figure.  The
+two ``unordered'' test statistics both have relatively-high power to
+detect the measurement invariance violation, illustrating the finding
+of Bentler and Bonett \citeyear{BenBon80} and others that the
+likelihood ratio test statistic picks out minor 
+parameter discrepancies at large $n$.  In contrast, the two ordinal
+test statistics that we proposed have considerably lower power, with
+the $\text{WDM}_O$ statistic being the lowest and the $\text{LM}_O$
+statistic being higher at larger values of $d$.  
+This demonstrates that the proposed ordinal test
+statistics can be especially useful at large sample sizes, where
+traditional test statistics result in frequent significance.
+Both statistics exhibited much lower power to detect a measurement
+invariance violation occurring at a single level of the auxiliary
+variable.  
+
+\begin{figure}
+\caption{Simulated power curves for the ordered and unordered
+      $\max \mathit{LM}$ tests, the ordered double-max test, and the
+      likelihood ratio test across three sample sizes $n$, three
+      levels of the ordinal variable $m$, and measurement invariance
+      violations of 0--3 standard errors (scaled by $\sqrt{n}$)
+      occurring at a single level (the $(1 +
+      m/2)^{\text{th}}$ level) of the ordinal auxiliary variable.}
+\label{fig:sim2res}
+\setkeys{Gin}{width=\textwidth}
+<<sim2res, fig=TRUE, height=7, width=7>>=
+mykey <- simpleKey(levels(sim2$test), points = FALSE, lines = TRUE)
+print(xyplot(power ~ diff | nlevels + nobs, group = ~ test, data = sim2, 
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey))
+@
+\end{figure}
+
+Taken together, the results from Simulation 1 and Simulation
+2 provide evidence that the $\text{LM}_O$ statistic should be
+preferred to the $\text{WDM}_O$ statistic for testing measurement
+invariance.  The $\text{LM}_O$ statistic has higher power to detect
+ordinal violations, and its power to detect non-ordinal violations was
+similar to that of $\text{WDM}_O$ when the violation magnitude was
+small (e.g., for $d \leq 1.5$).  The $\text{LM}_O$ statistic is
+advantageous because it can make use of invariance violations that
+simultaneously 
+occur in multiple parameters, whereas the $\text{WDM}_O$ focuses only
+on the parameter with the largest invariance violation.  
+Thus, the statistics are likely to exhibit
+similar performance if only a single model parameter violated
+measurement invariance.
+
+In the next section, we compare the proposed statistics to the
+likelihood ratio test with real data.
 
 \section{Application: Youth Gratitude}
 
@@ -570,8 +659,14 @@ m1 <- cfa('f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5',
           meanstructure=TRUE)
 gefp1 <- gefp(m1, fit = NULL, scores=estfun.lavaan, order.by = yg$agegroup, 
               vcov = info_full, sandwich = FALSE, parm=1:4)
+if(file.exists("ol2bb1.rda")){
+  load("ol2bb1.rda")
+} else {
+  ol2bb1.fun <- ordL2BB(gefp1)
+  save(ol2bb1.fun, file="ol2bb1.rda")
+}
 omax1 <- sctest(gefp1, functional=ordwmax(gefp1))
-ol2bb1 <- sctest(gefp1, functional=ordL2BB(gefp1))
+ol2bb1 <- sctest(gefp1, functional=ol2bb1.fun)
 
 ## Full model
 m1.f <- cfa('f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5',
@@ -589,8 +684,14 @@ m2 <- cfa('f1 =~ gac_1 + gac_2 + gac_3
            meanstructure=TRUE)
 gefp2 <- gefp(m2, fit = NULL, scores=estfun.lavaan, order.by = yg$agegroup, 
               vcov = info_full, sandwich = FALSE, parm=3:6)
+if(file.exists("ol2bb2.rda")){
+  load("ol2bb2.rda")
+} else {
+  ol2bb2.fun <- ordL2BB(gefp2)
+  save(ol2bb2.fun, file="ol2bb2.rda")
+}
 omax2 <- sctest(gefp2, functional=ordwmax(gefp2))
-ol2bb2 <- sctest(gefp2, functional=ordL2BB(gefp2))
+ol2bb2 <- sctest(gefp2, functional=ol2bb2.fun)
 
 ## Full model
 m2.f <- cfa('f1 =~ gac_1 + gac_2 + gac_3
@@ -607,9 +708,18 @@ lrt2 <- anova(m2.f, m2)
 
 \section{General Discussion}
 
-%% application to other psychometric models
-
-%% should we care about non-ordinal violations when using an ordinal variable?
+\begin{enumerate}
+  \item The only proposed statistics that treat ordinal auxiliary
+    variables as truly ordinal?  LRT treats them as categorical,
+    inclusion in the model typically treats tham as continuous.
+  \item The first point is important because, if we test wrt an
+    ordinal auxiliary variable, we are generally looking for ordinal
+    violations.  We don't care if a middle level differs from
+    all others because we would not usually have an intuitive
+    explanation for it.
+  \item The proposed statistics should generally transfer to IRT and
+    other psychometric models.
+\end{enumerate}
 
 \subsection{Summary}
 
