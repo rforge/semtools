@@ -74,7 +74,7 @@ info_full <- function(x, ...) solve(vcov(x) * nobs(x))
 The study of measurement invariance and differential item functioning
 (DIF) 
 has received considerable attention in the psychometric literature
-(see, e.g., \citeNP{Mill11} for a thorough review).  A set of
+(see, e.g., \citeNP{Mil11} for a thorough review).  A set of
 psychometric scales ${\bm X}$ are defined to be measurement invariant
 with respect to an auxiliary variable $V$ if \cite{Mel89}
 \begin{equation}
@@ -94,11 +94,11 @@ a situation where ${\bm X}$ contains some ``high stakes'' tests of
 ability and $V$ is ethnicity.
 One's ethnicity should be unrelated to the measurement parameters
 within $f()$, and this expectation can be studied within a
-psychometric model by fitting the model examining whether or not
+psychometric model by fitting the model and examining whether or not
 measurement parameters 
 vary across different ethnicities.  Statistical tools that can be used
 to carry out this study include Likelihood Ratio Tests, Lagrange
-Multiplier tests, and Wald tests \cite{Sat89}.
+Multiplier tests, and Wald tests (e.g., \citeNP{Sat89}).
 These tools have greatly aided in
 the development of improved, ``fairer'' psychometric tests and
 scales.
@@ -131,6 +131,10 @@ psychometric data on scales purported to measure youth gratitude.
 Finally, we provide some detail on the tests' use in practice.
 
 \section{Theoretical Detail}
+
+This section contains background on the theory underlying the
+proposed statistics; for a more detailed
+account, see Merkle and Zeileis \citeyear{MerZei12}.
 
 We will consider situations in which a $p$-dimensional variable $X$
 with observations $\bm{x}_i, i=1,\dots,n$ is described by a 
@@ -185,7 +189,7 @@ Thus, a hypothesis of invariance can be written as
 \end{equation}
 where ${\bm \theta}_i$ reflects the parameter vector for individual
 $i$ (and modifications for subsets of ${\bm \theta}$ are immediate).  This
-hypothesis is typically tested against an alternative
+hypothesis is often tested against an alternative
 \begin{equation}
   \label{eq:h1*}
   H_1^*:~ {\bm \theta}_i = \left\{ \begin{array}{ll}
@@ -195,9 +199,25 @@ hypothesis is typically tested against an alternative
 \end{equation}
 where $v_i$ reflects individual $i$'s value on an auxiliary variable
 $V$ and $\nu$ is a threshold dividing individuals into groups based on
-$V$.  In this paper, we generally focus on situations where $V$ is
-ordinal and 
-where $\nu$ is unknown.  In the section below, we review tests where
+$V$.  Note that this alternative hypothesis can also be used when $V$
+is ordinal, testing whether the model parameters shift at some point
+on $V$.  
+Alternatively, if $V$ is categorical with a relatively-small number of
+groups, a frequent alternative of interest is
+\begin{equation}
+  \label{eq:h2*}
+  H_2^*:~ {\bm \theta}_i = {\bm \theta}_{v_i}.
+\end{equation}
+In this paper, we generally focus on situations where $V$ is
+ordinal and where the measurement invariance violation is related to the ordinal
+variable (e.g., the violation is of the type from~\eqref{eq:h1*} or
+the violation grows/shrinks with $V$).  Researchers typically test for
+measurement invariance w.r.t.\ ordinal $V$ by employing the alternative
+from~\eqref{eq:h2*}, which implicitly treats $V$ as categorical.
+Thus, test statistics that explicitly treat $V$ as ordinal should have
+higher power to detect the ``ordinal'' types of violations described above.
+
+In the section below, we review tests where
 $V$ is continuous (and $\nu$ is unknown) before proceeding to the 
 proposed tests for ordinal $V$.
 
@@ -211,7 +231,7 @@ parameters are constrained to be equal across groups.  When $V$ is
 continuous, however, multiple-group models obviously cannot be used 
 because there are no existing groups.  Instead, we can fit a model
 whose parameters are restricted to be equal across all individuals, then
-examine individuals' scores ${\bm s}(\hat{{\bm \theta}}; x_i)$
+examine how individuals' scores ${\bm s}(\hat{{\bm \theta}}; x_i)$
 fluctuate with their values of $V$.  If measurement invariance holds
 with respect to $V$, then the scores should randomly fluctuate around
 zero.  Conversely, if measurement invariance does not hold, then the
@@ -239,7 +259,7 @@ measurement invariance.  Further, there exists a functional central
 limit theorem that allows us to make formal inference with this
 cumulative score process.  Assuming that individuals are independent
 and the usual ML regularity conditions hold, it is possible to show
-that \citeA{HjoKon02}
+that \cite{HjoKon02}
 \begin{equation} \label{eq:fclt}
   {\bm B}(\cdot; \hat {\bm \theta}) ~\overset{d}{\rightarrow}~ {\bm B}^{0}(\cdot),
 \end{equation}
@@ -277,7 +297,7 @@ and Zeileis \citeyear{MerZei12} found it to have relatively-low power
 for simultaneously testing multiple factor analysis parameters for
 measurement invariance.  
 
-Test statistics with higher power
+Test statistics that exhibit better performance in such situations 
 aggregate information across parameters and possibly also across
 individuals.  These test statistics include
 \begin{eqnarray}
@@ -320,7 +340,9 @@ written as
 where, again, tests of subsets of model parameters can be obtained by
 taking the inner sum over only the $k^* < k$ parameters of interest.
 This test statistic discards the ordinal nature of the auxiliary
-variable.  A similar issue is observed in testing for measurement
+variable, essentially employing the alternative hypothesis
+from~\eqref{eq:h2*}.  A similar issue is observed in testing for
+measurement 
 invariance via multiple groups models and Likelihood Ratio tests (or,
 equivalently, via Wald tests or Lagrange multiplier tests): we
 can allow $\bm{\theta}$ to be unique at each level of the ordinal
@@ -330,7 +352,7 @@ that $V$ is ordinal.
 
 The statistics proposed here are
 similar to those described in
-Equations~\eqref{eq:dmax},~\eqref{eq:cvm}, and~\eqref{eq:maxlm}
+Equations~\eqref{eq:dmax} and~\eqref{eq:maxlm}
 above, except that we focus on ``bins'' of individuals at each level of the
 ordinal variable.  That is, instead of aggregating over all $i = 1,
 \dots, n$ individuals, we first compute cumulative proportions
@@ -347,7 +369,7 @@ and~\eqref{eq:maxlm} above can then be written as
     \label{eq:maxlmo}
       \max \mathit{LM}_o & = & \max_{i \in \{i_1, \dots, i_m \}} ~
                              \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1}
-                             \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2.\\
+                             \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2.
 \end{eqnarray}
 Critical values associated with these test statistics can be obtained
 by applying the same functionals to bins of a Brownian bridge, where the
@@ -357,10 +379,10 @@ Closed-form solutions for
 these particular functionals of a Brownian bridge are unavailable, but
 critical values and $p$-values can be obtained through repeated
 simulation of a Brownian bridge.  This functionality is built in to
-R's strucchange package \cite{strucchange}, which can be used to
+R's strucchange package \cite{ZeiLei02}, which can be used to
 generally carry out the tests.
 
-As we demonstrate in the simulations below, the test
+As demonstrated in the simulations below, the test
 statistics proposed above are sensitive to the measurement invariance
 violations that 
 an analyst would typically expect from an ordinal $V$.
@@ -539,7 +561,7 @@ The more interesting result of this simulation lies in the comparison
 of the four test statistics within each panel of the figure.  The
 two ``unordered'' test statistics both have relatively-high power to
 detect the measurement invariance violation, illustrating the finding
-of Bentler and Bonett \citeyear{BenBon80} and others that the
+of Bentler and Bonett \citeyear{Ben80} and others that the
 likelihood ratio test statistic picks out minor 
 parameter discrepancies at large $n$.  In contrast, the two ordinal
 test statistics that we proposed have considerably lower power, with
@@ -591,19 +613,27 @@ likelihood ratio test with real data.
 
 \subsection{Background}
 
-
+\readme{Fan: Can you provide a short
+  background on the study of youth gratitude and the specific intent
+  of Froh et al?}
 
 \subsection{Method}
 
 Froh et al.\ \citeyear{FroFan11} used confirmatory factor analysis
 models to study the invariance of three youth gratitude scales across
-students aged 10 to 19 years.  Each of the scales were individually
-factor-analyzed using the items comprising the scale.
+students aged 10 to 19 years.  Due to sample size constraints, the age
+variable included six categories: 10-11 years, 12-13 years, 14 years,
+15 years, 16 years, and 17-19 years.  Thus, age is an ordinal variable
+with which the proposed tests can be applied.
+
+To test for measurement invariance w.r.t.\ age, each of the three scales
+was individually 
+factor-analyzed using the items that comprised the scale.
 For each model, the authors 
-first fit a congeneric model (all parameters free for each age group),
+first fit a congeneric model (all parameters free for each level of age),
 followed by a tau-equivalent model (factor loadings restricted to be
-equal across groups) and a parallel model (all parameters restricted
-to be equal across groups).  Because their sample size was large ($n
+equal across each level of age) and a parallel model (all parameters restricted
+to be equal across levels of age).  Because their sample size was large ($n
 \approx 1400$), they could not rely solely on likelihood ratio tests
 (i.e., chi-square difference tests) for model comparison because the
 tests were overly sensitive at their sample size.  To supplement these
@@ -617,21 +647,21 @@ good fit.
 
 In the analyses described below, we re-analyze the Froh et al.\ data using
 the ordinal test statistics proposed in this paper.  This results in a
-series of tests that are less sensitive to sample size than the
-likelihood ratio test, while being
-more sensitive to ``ordinal'' violations of measurement invariance.
+series of tests that are less sensitive than the likelihood ratio test
+to minor parameter discrepancies,
+while being more sensitive to ordinal violations of measurement invariance.
 We focus on two analyses from Froh et al.\ where the likelihood
 ratio test resulted in significance (indicating that the restricted
 model did not fit as well as the less-restricted model), but the
-alternative fit measures indicated the opposite (using the rules of
-thumb employed by Froh et al).  These include
+alternative fit measures employed by Froh et al.\ indicated the opposite.
+These include
 comparison of a one-factor congeneric model to a one-factor
 tau-equivalent model using the 
 GQ6 and comparison of a one-factor tau-equivalent model to a one-factor
 parallel model 
 using the GAC.  To conduct equivalent analyses via the proposed tests, we
-fit the restricted model and test for instability in the focal
-model parameters.
+fit the more-restricted model in each case and test for instability in
+the focal model parameters.
 
 Of the 1401 cases originally collected by Froh et al., we use here all
 subjects with complete data (resulting in $n=1327$).
@@ -651,7 +681,9 @@ yg <- yg[decimals==0,]
 \subsection{Results}
 
 The results section is divided into two subsections, one for each of
-the analyses described previously.
+the analyses described previously.  The first section contains an
+example of the ordinal statistics disagreeing with the likelihood
+ratio tests, while the second section contains the opposite.
 
 <<gq6>>=
 m1 <- cfa('f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5',
@@ -674,8 +706,24 @@ m1.f <- cfa('f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5',
 lrt1 <- anova(m1.f, m1)
 @ 
 
-\paragraph{GQ6.} Ordinal tests do not support LRT.
+\subsubsection{GQ-6} In fitting a tau-equivalent model and a congeneric
+model to the GQ-6 data, Froh et al.\ used alternative fit indices to
+conclude that the tau-equivalent model was as good as the congeneric
+model.  However, the likelihood ratio test comparing these two models
+was significant ($\chi^2_{20} = \Sexpr{round(lrt1[[5]][2],1)}, p=\Sexpr{round(lrt1[[7]][2],2)}$ for the data considered
+here).  
 
+We can use the proposed ordinal statistics to compare the
+tau-equivalent and congeneric models,
+fitting the tau-equivalent model and testing whether or
+not the factor loadings fluctuate with respect to age group.  In doing
+so, we obtain~$\text{WDM}_O=\Sexpr{round(omax1$statistic,1)}, p=\Sexpr{round(omax1$p.value,2)}$
+ and~$\text{LM}_O=\Sexpr{round(ol2bb1$statistic,1)}, p=\Sexpr{round(ol2bb1$p.value,2)}$.
+Neither statistic is significant at an $\alpha$ of .05,
+which supports the conclusions that Froh et al.\ obtained from
+alternative fit statistics.  This provides further evidence that the
+likelihood ratio statistic is overly sensitive for this particular
+analysis.
 
 <<gac>>=
 m2 <- cfa('f1 =~ gac_1 + gac_2 + gac_3
@@ -700,23 +748,59 @@ m2.f <- cfa('f1 =~ gac_1 + gac_2 + gac_3
 lrt2 <- anova(m2.f, m2)
 @ 
 
-\paragraph{GAC.} Ordinal tests do support LRT.
+\subsubsection{GAC} In fitting tau-equivalent and parallel models to the
+GAC data, Froh et al.\ obtained mixed results.  The alternative fit
+indices did not all agree with one another, and the likelihood ratio test
+indicated that the parallel model fit worse than the tau-equivalent
+model ($\chi^2_{20} = \Sexpr{round(lrt2[[5]][2],1)}, p<.01$
+for the data considered here).  Froh et al.\ ultimately 
+concluded that the tau-equivalent model provided a better fit than did
+the parallel model.
 
-
+To apply the ordinal statistics proposed in this paper, we fit the
+parallel model and test for instability in the variance parameters
+(unique variance and factor variance) w.r.t.\ age.
+This results in~$\text{WDM}_O=\Sexpr{round(omax2$statistic,1)}, p<.01$
+and~$\text{LM}_O=\Sexpr{round(ol2bb2$statistic,1)}, p<.01$.
+Both of these statistics agree with the likelihood ratio test and with
+the general conclusion that the tau-equivalent model is better than
+the parallel model.  This provides further evidence that the
+significant likelihood ratio test is not simply an artifact of the
+large sample size.
 
 \subsection{Summary}
+The application considered above shows that the ordinal test
+statistics can provide useful information in situations where one
+might question significant likelihood ratio test statistics.  While
+researchers use rules of thumb to obtain decisions from other
+alternative fit measures, the proposed statistics are proper tests of
+the hypothesis of interest.  They can be used to either supplement or
+replace the likelihood ratio test, depending upon the measurement
+invariance violations in which the researcher is interested a priori.
+We further describe the issue of supplementing vs.\ replacing the
+likelihood ratio test in the general discussion.
 
 \section{General Discussion}
 
 \begin{enumerate}
-  \item The only proposed statistics that treat ordinal auxiliary
-    variables as truly ordinal?  LRT treats them as categorical,
+  \item To my knowledge, these are the only proposed statistics that
+    treat ordinal auxiliary 
+    variables as truly ordinal.  LRT treats them as categorical,
     inclusion in the model typically treats tham as continuous.
-  \item The first point is important because, if we test wrt an
+  \item The first point is important because, if we test w.r.t.\ an
     ordinal auxiliary variable, we are generally looking for ordinal
     violations.  We don't care if a middle level differs from
     all others because we would not usually have an intuitive
     explanation for it.
+  \item If we know our sample size is large and have an ordinal
+    auxiliary variable, should we even use the LRT in
+    the first place?  If the measurement invariance violation is truly
+    ordinal, the proposed statistics should be better.  If it is not
+    ordinal, the violation will be difficult to explain as anything
+    but an anomaly.  The stakes might also play a role here.  In
+    high-stakes testing, you might be more interested in treating the
+    ordinal variable as categorical to detect any possible
+    instability, even those that don't make sense.
   \item The proposed statistics should generally transfer to IRT and
     other psychometric models.
 \end{enumerate}
