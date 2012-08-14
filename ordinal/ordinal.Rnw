@@ -613,9 +613,31 @@ likelihood ratio test with real data.
 
 \subsection{Background}
 
-\readme{Fan: Can you provide a short
-  background on the study of youth gratitude and the specific intent
-  of Froh et al?}
+With the positive psychology movement, the construct of gratitude has
+received much research attention (for a review, see \citeNP{EmmMcc04}).
+Recently, scholars have begun to explore gratitude
+in youth. However, one potential problem with this research is that
+scholars, with no exception, have used adult gratitude inventories to
+measure youth gratitude, thus raising the question of whether the
+existing gratitude scales used with adults are valid in research with
+youth. Addressing this issue, Froh et al.\ \citeyear{FroFan11} had a
+large sample of 
+youth ($n$ = 1401, ranging from late childhood (10 years old) to
+late adolescent (19 years old)) complete the three most widely used
+adult gratitude inventories, including Gratitude Questionnaire – 6
+(GQ-6; \citeNP{MccEmm02}), Gratitude Adjective
+Checklist (GAC; \citeNP{MccEmm02}), and Gratitude, Resentment,
+Appreciation Test-Short Form (GRAT-Short Form;
+\citeNP{ThoWat03}). The authors were interested in whether the
+youth factor structure 
+for the gratitude scales resembles that of 
+adults, and whether the gratitude scales are invariant across the
+youth age groups. 
+
+% references
+% Emmons, R. A., & McCullough, M. E. (Eds.). (2004). The psychology of gratitude. New York, NY: Oxford University Press. 
+% McCullough, M. E., Emmons, R. A., & Tsang, J.-A. (2002). The grateful disposition: A conceptual and empirical topography. Journal of Personality and Social Psychology, 82, 112-127. doi: 10.1037/0022-3514.82.1.112 
+% Thomas, M., & Watkins, P. (2003, April). Measuring the grateful trait: Development of the revised GRAT. Poster session presented at the Annual Convention of the Western Psychological Association, Vancouver, British Columbia, Canada. 
 
 \subsection{Method}
 
