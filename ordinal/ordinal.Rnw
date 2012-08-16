@@ -88,6 +88,9 @@ exists a measurement invariance violation.  We focus here on
 situations where $f()$ is parametric, and the measurement invariance
 violation occurs because the model parameters are
 unequal across individuals (and related to $V$).
+\readme{Maybe we should explicitly mention that in parametric settings, f is
+the probability density function of x? Also, do we need to point out
+the relation between X and x, V and v, T and t?}
 
 As a concrete example of the study of measurement invariance, consider
 a situation where ${\bm X}$ contains some ``high stakes'' tests of
@@ -97,7 +100,7 @@ within $f()$, and this expectation can be studied within a
 psychometric model by fitting the model and examining whether or not
 measurement parameters 
 vary across different ethnicities.  Statistical tools that can be used
-to carry out this study include Likelihood Ratio Tests, Lagrange
+to carry out this study include Likelihood Ratio tests, Lagrange
 Multiplier tests, and Wald tests (e.g., \citeNP{Sat89}).
 These tools have greatly aided in
 the development of improved, ``fairer'' psychometric tests and
@@ -123,10 +126,10 @@ The test statistics proposed here are derived from a family of tests
 that were recently applied to the study of measurement invariance in
 psychometric models \cite{KopZei10,MerZei12}.
 In the following section, we provide an overview of the family and
-describe the proposed statistics in detail.  Next, we report on the
+describe the proposed statistics in detail.  Subsequently, we report on the
 results of two simulation studies designed to compare the proposed
 test statistics to existing tests of measurement
-invariance.  Next, we illustrate the proposed statistics using
+invariance.  Moreover, we illustrate the proposed statistics using
 psychometric data on scales purported to measure youth gratitude.  
 Finally, we provide some detail on the tests' use in practice.
 
@@ -217,6 +220,19 @@ from~\eqref{eq:h2*}, which implicitly treats $V$ as categorical.
 Thus, test statistics that explicitly treat $V$ as ordinal should have
 higher power to detect the ``ordinal'' types of violations described above.
 
+\readme{My feeling is that we still need to explain better what type
+of patterns are covered by which alternative. Maybe we should do it
+the other way round and start with $H_2^*$ as the most general type
+of deviation from $H_0$. Then, we could explain that these also
+covers changes that are not `monotonic' in V, i.e., where parameter
+values change in one direction as V increases and then change into
+another direction again. After that we could continue and argue that
+such monotonic changes are of particular interest for categorical V
+and that the simplest form of such a change is $H_1^*$. And as a final
+note one could add that this one-shift alternative is also often
+employed in practice where practitioners often use the median V
+as the cutoff whereas we want to assess all possible cutoffs.}
+
 In the section below, we review tests where
 $V$ is continuous (and $\nu$ is unknown) before proceeding to the 
 proposed tests for ordinal $V$.
@@ -230,17 +246,20 @@ model whose parameters differ across groups to a model whose
 parameters are constrained to be equal across groups.  When $V$ is
 continuous, however, multiple-group models obviously cannot be used 
 because there are no existing groups.  Instead, we can fit a model
-whose parameters are restricted to be equal across all individuals, then
+whose parameters are restricted to be equal across all individuals and then
 examine how individuals' scores ${\bm s}(\hat{{\bm \theta}}; x_i)$
 fluctuate with their values of $V$.  If measurement invariance holds
 with respect to $V$, then the scores should randomly fluctuate around
 zero.  Conversely, if measurement invariance does not hold, then the
 scores should systematically depart from zero.  These ideas are
-related to those underlying the Lagrange multiplier test; see
-\citeNP{MerZei12} for more details.
+related to those underlying the Lagrange multiplier test and are
+discussed by \citeNP{MerZei12} in detail. Here, we review the tests'
+most important properties that are relevant for extending the tests
+to the ordinal case.
 
-To formalize these ideas, we define the $k$-dimensional {\em
-  cumulative score process} as 
+To formalize these ideas, we assume that the observations are ordered
+w.r.t.\ $V$ (so that $v_i \le v_{i + 1}$) and define the $k$-dimensional
+{\em cumulative score process} as 
 \begin{equation} \label{eq:cumscore}
   {\bm B}(t; \hat {\bm \theta}) ~=~ \hat {\bm I}^{-1/2} n^{-1/2}
     \sum_{i = 1}^{\lfloor n t \rfloor} {\bm s}(\hat {\bm \theta}; x_i)
@@ -248,7 +267,8 @@ To formalize these ideas, we define the $k$-dimensional {\em
 \end{equation}
 where $\lfloor nt \rfloor$ is the integer part of $nt$ and
 $\hat I$ is some consistent estimate of the covariance matrix of the
-scores.  Equation~\eqref{eq:cumscore} simultaneously accounts for the
+scores, e.g., based on the information matrix or an outer product of the scores.
+Equation~\eqref{eq:cumscore} simultaneously accounts for the
 ordering of individuals w.r.t.\ $V$ and decorrelates the scores
 associated with each of the $k$ model parameters (which allows us to
 potentially make inferences separately for each individual model
@@ -283,6 +303,9 @@ distributions of the test statistics under~\eqref{eq:h0}  being
 obtained by applying the 
 same functional to the Brownian bridge \cite{HjoKon02,ZeiHor07}.
 
+\readme{I changed/extended the comments about the power of the tests
+and their relative advantages somewhat.}
+
 %% Paragraph on test statistics
 Specific test statistics commonly obtained under this framework
 include the double maximum statistic
@@ -292,10 +315,11 @@ include the double maximum statistic
 \end{equation}
 which essentially tests whether any component of the cumulative score
 process strays too far from zero.  This test discards information
-related to multiple parameters fluctuating simultaneously, and Merkle
-and Zeileis \citeyear{MerZei12} found it to have relatively-low power
-for simultaneously testing multiple factor analysis parameters for
-measurement invariance.  
+related to multiple parameters fluctuating simultaneously, and
+\citeNP{MerZei12} found it to be easy to visualize and
+interpret but to have relatively-low power for assessing measurement
+invariance when multiple factor analysis parameters change
+simultaneously.
 
 Test statistics that exhibit better performance in such situations 
 aggregate information across parameters and possibly also across
@@ -312,12 +336,12 @@ with the former being a Cram{\'e}r-von Mises statistic and the latter
 corresponding to a ``maximum'' Lagrange multiplier test, where the
 maximum is taken across all possible divisions of individuals into two
 groups w.r.t.\ $V$.  Additionally, the $\max \mathit{LM}$ statistic is
-scaled by the asymptotic variance $t (1 - t)$ of the process ${\bm
-  B}(t, \hat {\bm \theta})$.  In simulations, Merkle and Zeileis found that the
-$\mathit{CvM}$ test exhibited the highest power for testing multiple
-factor analysis parameters for measurement invariance w.r.t.\
-continuous $V$.  These simulations included situations in which
-subsets of model parameters were tested; such situations are handled
+scaled by the asymptotic variance $t (1 - t)$ of the process
+${\bm B}(t, \hat {\bm \theta})$.  In simulations, \citeNP{MerZei12} found
+that both tests perform well when assessing simultaneous changes
+in multiple factor analysis parameters with some advantages for the
+$\mathit{CvM}$ test in their simulation setup. These simulations included
+situations in which subsets of model parameters were tested; such situations are handled
 by focusing only on those columns of ${\bm B}(\hat {\bm \theta})_{ij}$
 that correspond to the parameters of interest.
 
@@ -459,7 +483,7 @@ the figure
 correspond to $n$, columns of the figure correspond to $m$, the x-axis
 of each panel corresponds to $d$, and the y-axis of each panel
 corresponds to power.  It is seen that one of the proposed test
-statistics, the $\max \mathit{LM}_O$ statistic from~\eqref{eq:maxlmo},
+statistics, the $\max \mathit{LM}_o$ statistic from~\eqref{eq:maxlmo},
 generally has the largest power to detect the ordinal measurement
 invariance violations.  The other three tests are considerably closer
 in power, with the second proposed ordinal statistic
@@ -493,7 +517,7 @@ print(xyplot(power ~ diff | nlevels + nobs, group = ~ test, data = sim1,
 @
 \end{figure}
 
-To summarize, we found the $\max \mathit{LM}_O$ statistic to be
+To summarize, we found the $\max \mathit{LM}_o$ statistic to be
 advantageous for detecting measurement invariance violations that are
 related to an ordinal auxiliary variable.  In particular, power is
 generally higher, and the test does not require estimation of a
@@ -565,7 +589,7 @@ of Bentler and Bonett \citeyear{Ben80} and others that the
 likelihood ratio test statistic picks out minor 
 parameter discrepancies at large $n$.  In contrast, the two ordinal
 test statistics that we proposed have considerably lower power, with
-the $\text{WDM}_O$ statistic being the lowest and the $\text{LM}_O$
+the $\text{WDM}_o$ statistic being the lowest and the $\text{LM}_o$
 statistic being higher at larger values of $d$.  
 This demonstrates that the proposed ordinal test
 statistics can be especially useful at large sample sizes, where
@@ -592,15 +616,15 @@ print(xyplot(power ~ diff | nlevels + nobs, group = ~ test, data = sim2,
 \end{figure}
 
 Taken together, the results from Simulation 1 and Simulation
-2 provide evidence that the $\text{LM}_O$ statistic should be
-preferred to the $\text{WDM}_O$ statistic for testing measurement
-invariance.  The $\text{LM}_O$ statistic has higher power to detect
+2 provide evidence that the $\text{LM}_o$ statistic should be
+preferred to the $\text{WDM}_o$ statistic for testing measurement
+invariance.  The $\text{LM}_o$ statistic has higher power to detect
 ordinal violations, and its power to detect non-ordinal violations was
-similar to that of $\text{WDM}_O$ when the violation magnitude was
-small (e.g., for $d \leq 1.5$).  The $\text{LM}_O$ statistic is
+similar to that of $\text{WDM}_o$ when the violation magnitude was
+small (e.g., for $d \leq 1.5$).  The $\text{LM}_o$ statistic is
 advantageous because it can make use of invariance violations that
 simultaneously 
-occur in multiple parameters, whereas the $\text{WDM}_O$ focuses only
+occur in multiple parameters, whereas the $\text{WDM}_o$ focuses only
 on the parameter with the largest invariance violation.  
 Thus, the statistics are likely to exhibit
 similar performance if only a single model parameter violated
@@ -739,8 +763,8 @@ We can use the proposed ordinal statistics to compare the
 tau-equivalent and congeneric models,
 fitting the tau-equivalent model and testing whether or
 not the factor loadings fluctuate with respect to age group.  In doing
-so, we obtain~$\text{WDM}_O=\Sexpr{round(omax1$statistic,1)}, p=\Sexpr{round(omax1$p.value,2)}$
- and~$\text{LM}_O=\Sexpr{round(ol2bb1$statistic,1)}, p=\Sexpr{round(ol2bb1$p.value,2)}$.
+so, we obtain~$\text{WDM}_o=\Sexpr{round(omax1$statistic,1)}, p=\Sexpr{round(omax1$p.value,2)}$
+ and~$\text{LM}_o=\Sexpr{round(ol2bb1$statistic,1)}, p=\Sexpr{round(ol2bb1$p.value,2)}$.
 Neither statistic is significant at an $\alpha$ of .05,
 which supports the conclusions that Froh et al.\ obtained from
 alternative fit statistics.  This provides further evidence that the
@@ -782,8 +806,8 @@ the parallel model.
 To apply the ordinal statistics proposed in this paper, we fit the
 parallel model and test for instability in the variance parameters
 (unique variance and factor variance) w.r.t.\ age.
-This results in~$\text{WDM}_O=\Sexpr{round(omax2$statistic,1)}, p<.01$
-and~$\text{LM}_O=\Sexpr{round(ol2bb2$statistic,1)}, p<.01$.
+This results in~$\text{WDM}_o=\Sexpr{round(omax2$statistic,1)}, p<.01$
+and~$\text{LM}_o=\Sexpr{round(ol2bb2$statistic,1)}, p<.01$.
 Both of these statistics agree with the likelihood ratio test and with
 the general conclusion that the tau-equivalent model is better than
 the parallel model.  This provides further evidence that the
