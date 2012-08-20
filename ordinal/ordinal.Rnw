@@ -348,14 +348,22 @@ that correspond to the parameters of interest.
 \subsection{Proposed Tests for Ordinal $V$}
 
 The theory described above was designed for situations where
-$V$ is continuous, so that there is a unique
-ordering of individuals with respect to $V$.  In
-situations where $V$ is categorical, it is possible
-to obtain a test statistic by first summing scores within each of the
-$m$ levels of the
-auxiliary variable, then ``summing the sums'' to obtain a test
-statistic \cite{HjoKon02}.  This test statistic can be formally
-written as
+$V$ is continuous, so that there is a unique ordering of individuals with respect to $V$.
+However, in situations where $V$ is ordinal, there is only a partial ordering
+of all individuals, i.e., observations with the same level of $V$ have no unique
+ordering. (Note that the same also applies if $V$ is metric in nature but is only
+discretely measured leading to many ties.) \readme{Extended the previous sentence somewhat.
+My feeling is that we now should first comment on the ordinal test statistics because these
+directly build on the previous `continuous V' section. Then we can comment later on
+on the categorical case.}
+
+\readme{I have also extended the comments about the nominal/categorical case.}
+Furthermore, if $V$ is only nominal/categorical,
+there is not even a partial ordering, i.e., measurement invariance tests should neither
+exploit the ordering of $V$'s levels nor of the observations within the level.
+In this situation, it is possible to obtain a test statistic by first summing scores within
+each of the $m$ levels of the auxiliary variable, then ``summing the sums'' to obtain a test
+statistic \cite{HjoKon02}.  This test statistic can be formally written as
 \begin{equation}
     \label{eq:lmuo}
      \mathit{LM}_\mathit{uo} = \sum_{\ell = 1, \dots, m} \sum_{j = 1, \dots, k}
@@ -363,11 +371,13 @@ written as
 \end{equation}
 where, again, tests of subsets of model parameters can be obtained by
 taking the inner sum over only the $k^* < k$ parameters of interest.
+\fixme{The $i_\ell$ still need to be introduced. This would happen automatically
+if we move the nominal statistics behind the ordinal statistics.}
 This test statistic discards the ordinal nature of the auxiliary
 variable, essentially employing the alternative hypothesis
 from~\eqref{eq:h2*}.  A similar issue is observed in testing for
 measurement 
-invariance via multiple groups models and Likelihood Ratio tests (or,
+invariance via multiple groups models and likelihood ratio tests (or,
 equivalently, via Wald tests or Lagrange multiplier tests): we
 can allow $\bm{\theta}$ to be unique at each level of the ordinal
 variable, but the ordinality of the auxiliary variable is lost.
@@ -385,7 +395,6 @@ levels of $V$.  We then aggregate the
 cumulative scores only over $i_\ell = \lfloor n
 \cdot t_\ell\rfloor$.  Test statistics related to~\eqref{eq:dmax}
 and~\eqref{eq:maxlm} above can then be written as
-%% TODO insert equation
 \begin{eqnarray}
     \label{eq:wdm}
       \mathit{WDM}_o & = & \max_{i \in \{i_1, \dots, i_m \}} ~ \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1}      
@@ -398,13 +407,18 @@ and~\eqref{eq:maxlm} above can then be written as
 Critical values associated with these test statistics can be obtained
 by applying the same functionals to bins of a Brownian bridge, where the
 bin sizes result in the cumulative proportions $t_\ell$ ($\ell=1, \dots,
-m-1$) associated with the observed $V$.
-Closed-form solutions for
-these particular functionals of a Brownian bridge are unavailable, but
+m-1$) associated with the observed $V$. For $\mathit{WDM}_o$ this
+just requires computations of quantiles from a multivariate normal
+distribution with standard normal marginals and a certain correlation
+structure \cite{hotzei08} which can be easily obtained using R's
+mvtnorm package \cite{mvtnorm}. For $\max \mathit{LM}_o$, no
+closed-form solution for this particular functional of a Brownian bridge is unavailable, but
 critical values and $p$-values can be obtained through repeated
-simulation of a Brownian bridge.  This functionality is built in to
-R's strucchange package \cite{ZeiLei02}, which can be used to
+simulation of Brownian bridges.  This functionality is built in to
+R's strucchange package \cite{Zei06}, which can be used to
 generally carry out the tests.
+
+
 
 As demonstrated in the simulations below, the test
 statistics proposed above are sensitive to the measurement invariance
