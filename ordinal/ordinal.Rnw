@@ -75,29 +75,29 @@ The study of measurement invariance and differential item functioning
 (DIF) 
 has received considerable attention in the psychometric literature
 (see, e.g., \citeNP{Mil11} for a thorough review).  A set of
-psychometric scales ${\bm X}$ are defined to be measurement invariant
+psychometric scales $X$ are defined to be measurement invariant
 with respect to an auxiliary variable $V$ if \cite{Mel89}
 \begin{equation}
     \label{eq:midef}
-      f(x_i | t_i, v_i, \dots) = f({\bf x}_i | t_i, \dots),
+      f(x_i | t_i, v_i, \dots) = f(x_i | t_i, \dots),
 \end{equation}
 where $T$ is the latent variable that the scales measure, $f$ is the
-model's distributional form, and the $i$ subscript refers to
-individual cases.  If the above equation does not hold, then there
+model's distributional form, the $i$ subscript refers to
+individual cases, capital letters signify random variables, and lowercase
+letters signify realizations of the variables.  If the above equation
+does not hold, then there 
 exists a measurement invariance violation.  We focus here on
-situations where $f()$ is parametric, and the measurement invariance
+situations where $f()$ is the probability density function of $X$,
+and the measurement invariance
 violation occurs because the model parameters are
 unequal across individuals (and related to $V$).
-\fixme{Maybe we should explicitly mention that in parametric settings, f is
-the probability density function of x? Also, do we need to point out
-the relation between X and x, V and v, T and t?}
 
 As a concrete example of the study of measurement invariance, consider
-a situation where ${\bm X}$ contains some ``high stakes'' tests of
+a situation where $X$ includes ``high stakes'' tests of
 ability and $V$ is ethnicity.
 One's ethnicity should be unrelated to the measurement parameters
-within $f()$, and this expectation can be studied within a
-psychometric model by fitting the model and examining whether or not
+within $f()$, and this expectation can be studied by fitting the model
+and examining whether or not 
 measurement parameters 
 vary across different ethnicities.  Statistical tools that can be used
 to carry out this study include Likelihood Ratio tests, Lagrange
@@ -106,7 +106,8 @@ These tools have greatly aided in
 the development of improved, ``fairer'' psychometric tests and
 scales.
 
-Along with ethnicity, researchers are often interested in studying
+Along with categorical variables such as ethnicity, researchers are
+often interested in studying 
 measurement invariance with respect to ordinal $V$.
 Such variables can arise from multiple choice surveys, where
 continuous variables such as age or income are binned into a small number
@@ -120,7 +121,7 @@ account for the fact that $V$ is ordinal.  More often, $V$ is simply
 treated as categorical so that the traditional tests can be applied.
 It is the intent of this paper to propose
 two test statistics that fill this gap and to show that the statistics
-possess good properties to be used in practice.
+possess good properties for use in practice.
 
 The test statistics proposed here are derived from a family of tests
 that were recently applied to the study of measurement invariance in
@@ -191,26 +192,46 @@ Thus, a hypothesis of invariance can be written as
     H_0:~ {\bm \theta}_i = {\bm \theta}_0,\quad (i=1,\ldots,n),
 \end{equation}
 where ${\bm \theta}_i$ reflects the parameter vector for individual
-$i$ (and modifications for subsets of ${\bm \theta}$ are immediate).  This
-hypothesis is often tested against an alternative
+$i$ (and modifications for subsets of ${\bm \theta}$ are immediate).  
+The most general alternative hypothesis related to $V$ may then be
+written as
+\begin{equation}
+  \label{eq:h2*}
+  H_1^*:~ {\bm \theta}_i = {\bm \theta}_{v_i},
+\end{equation}
+stating that the parameter vector differs for every unique realization
+of $V$.  This alternative is commonly employed when $V$ is
+categorical.  In these situations, the likelihood ratio test compares
+a model where 
+parameters are restricted across groups (i.e., across values of $V$)
+to a model where parameters are free across groups; the exact
+parameter values within each group are completely unrestricted.
+However, in situations where $V$ is categorical or
+continuous,~\eqref{eq:h2*} includes non-monotonic violations of
+measurement invariance.   This allows for instances where, e.g., the
+parameter values initially increase with $V$ and then decrease.
+Researchers typically do not expect such a result when testing
+measurement invariance wrt continuous or ordinal $V$, and 
+researchers often cannot interpret such violations.  Monotonic
+parameter changes wrt $V$ are of much more interest in these
+situations, with the simplest type of change given by the alternative
+hypothesis
 \begin{equation}
   \label{eq:h1*}
-  H_1^*:~ {\bm \theta}_i = \left\{ \begin{array}{ll}
+  H_2^*:~ {\bm \theta}_i = \left\{ \begin{array}{ll}
     {\bm \theta}^{(A)} & \mbox{if } v_i \le \nu, \\
     {\bm \theta}^{(B)} & \mbox{if } v_i >   \nu,
   \end{array} \right.
 \end{equation}
 where $v_i$ reflects individual $i$'s value on an auxiliary variable
 $V$ and $\nu$ is a threshold dividing individuals into groups based on
-$V$.  Note that this alternative hypothesis can also be used when $V$
-is ordinal, testing whether the model parameters shift at some point
-on $V$.  
-Alternatively, if $V$ is categorical with a relatively-small number of
-groups, a frequent alternative of interest is
-\begin{equation}
-  \label{eq:h2*}
-  H_2^*:~ {\bm \theta}_i = {\bm \theta}_{v_i}.
-\end{equation}
+$V$.  This alternative is implicitly employed in ``median split''
+analyses, % TODO cite preacher
+where $\nu$ is given as the sample median of $V$.  The threshold $\nu$
+is usually unknown, however, so it is generally of interest to
+test~\eqref{eq:h1*} across all possible values of $\nu$.  The tests
+proposed below generally allow for this.
+
 In this paper, we generally focus on situations where $V$ is
 ordinal and where the measurement invariance violation is related to the ordinal
 variable (e.g., the violation is of the type from~\eqref{eq:h1*} or
@@ -218,20 +239,8 @@ the violation grows/shrinks with $V$).  Researchers typically test for
 measurement invariance w.r.t.\ ordinal $V$ by employing the alternative
 from~\eqref{eq:h2*}, which implicitly treats $V$ as categorical.
 Thus, test statistics that explicitly treat $V$ as ordinal should have
-higher power to detect the ``ordinal'' types of violations described above.
-
-\fixme{My feeling is that we still need to explain better what type
-of patterns are covered by which alternative. Maybe we should do it
-the other way round and start with $H_2^*$ as the most general type
-of deviation from $H_0$. Then, we could explain that these also
-covers changes that are not `monotonic' in V, i.e., where parameter
-values change in one direction as V increases and then change into
-another direction again. After that we could continue and argue that
-such monotonic changes are of particular interest for categorical V
-and that the simplest form of such a change is $H_1^*$. And as a final
-note one could add that this one-shift alternative is also often
-employed in practice where practitioners often use the median V
-as the cutoff whereas we want to assess all possible cutoffs.}
+higher power to detect measurement invariance violations that are
+monotonic with $V$.
 
 In the section below, we review tests where
 $V$ is continuous (and $\nu$ is unknown) before proceeding to the 
@@ -239,7 +248,8 @@ proposed tests for ordinal $V$.
 
 \subsection{Tests for Continuous $V$}
 
-When $V$ is categorical with a relatively-small number of categories,
+As mentioned previously, when $V$ is categorical with a
+relatively-small number of categories, 
 tests of measurement invariance typically proceed via multiple-group
 models.  In this situation, we use likelihood ratio tests to compare a
 model whose parameters differ across groups to a model whose
@@ -253,11 +263,12 @@ with respect to $V$, then the scores should randomly fluctuate around
 zero.  Conversely, if measurement invariance does not hold, then the
 scores should systematically depart from zero.  These ideas are
 related to those underlying the Lagrange multiplier test and are
-discussed by \citeNP{MerZei12} in detail. Here, we review the tests'
-most important properties that are relevant for extending the tests
+discussed by Merkle and Zeileis \citeyear{MerZei12} in detail. Here,
+we review the tests' properties that are relevant for extending them
 to the ordinal case.
 
-To formalize these ideas, we assume that the observations are ordered
+To formalize the ideas discussed in the previous paragraph, we assume
+that the observations are ordered 
 w.r.t.\ $V$ (so that $v_i \le v_{i + 1}$) and define the $k$-dimensional
 {\em cumulative score process} as 
 \begin{equation} \label{eq:cumscore}
@@ -286,7 +297,7 @@ that \cite{HjoKon02}
 where $\overset{d}{\rightarrow}$ denotes convergence in distribution
 and ${\bm B}^{0}(\cdot)$ is a $k$-dimensional Brownian bridge.
 Thus, we can construct tests of measurement invariance by comparing
-the cumulative score process's behavior to that of a Brownian bridge.
+the behavior of the cumulative score process to that of a Brownian bridge.
 This is accomplished by comparing a scalar statistic associated with
 the cumulative score process to the analogous statistic of a Brownian
 bridge.
@@ -303,8 +314,6 @@ distributions of the test statistics under~\eqref{eq:h0}  being
 obtained by applying the 
 same functional to the Brownian bridge \cite{HjoKon02,ZeiHor07}.
 
-\readme{I changed/extended the comments about the power of the tests
-and their relative advantages somewhat.}
 
 %% Paragraph on test statistics
 Specific test statistics commonly obtained under this framework
@@ -314,12 +323,12 @@ include the double maximum statistic
     \mathit{DM} = \max_{i = 1,\dots, n} \max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} |,
 \end{equation}
 which essentially tests whether any component of the cumulative score
-process strays too far from zero.  This test discards information
-related to multiple parameters fluctuating simultaneously, and
-\citeNP{MerZei12} found it to be easy to visualize and
-interpret but to have relatively-low power for assessing measurement
+process strays too far from zero and is easily visualized.  This test
+discards information 
+related to multiple parameters fluctuating simultaneously, resulting
+in it having relatively-low power for assessing measurement
 invariance when multiple factor analysis parameters change
-simultaneously.
+simultaneously \cite{MerZei12}.
 
 Test statistics that exhibit better performance in such situations 
 aggregate information across parameters and possibly also across
@@ -337,11 +346,14 @@ corresponding to a ``maximum'' Lagrange multiplier test, where the
 maximum is taken across all possible divisions of individuals into two
 groups w.r.t.\ $V$.  Additionally, the $\max \mathit{LM}$ statistic is
 scaled by the asymptotic variance $t (1 - t)$ of the process
-${\bm B}(t, \hat {\bm \theta})$.  In simulations, \citeNP{MerZei12} found
+${\bm B}(t, \hat {\bm \theta})$.  In simulations, Merkle and Zeileis
+\citeyear{MerZei12} found 
 that both tests perform well when assessing simultaneous changes
-in multiple factor analysis parameters with some advantages for the
-$\mathit{CvM}$ test in their simulation setup. These simulations included
-situations in which subsets of model parameters were tested; such situations are handled
+in multiple factor analysis parameters, with the
+$\mathit{CvM}$ test being somewhat advantageous in their particular
+simulation setup. These simulations included 
+situations in which subsets of model parameters were tested; such
+situations are handled 
 by focusing only on those columns of ${\bm B}(\hat {\bm \theta})_{ij}$
 that correspond to the parameters of interest.
 
@@ -352,39 +364,9 @@ $V$ is continuous, so that there is a unique ordering of individuals with respec
 However, in situations where $V$ is ordinal, there is only a partial ordering
 of all individuals, i.e., observations with the same level of $V$ have no unique
 ordering. (Note that the same also applies if $V$ is metric in nature but is only
-discretely measured leading to many ties.) \readme{Extended the previous sentence somewhat.
-My feeling is that we now should first comment on the ordinal test statistics because these
-directly build on the previous `continuous V' section. Then we can comment later on
-on the categorical case.}
+discretely measured leading to many ties.) 
 
-\readme{I have also extended the comments about the nominal/categorical case.}
-Furthermore, if $V$ is only nominal/categorical,
-there is not even a partial ordering, i.e., measurement invariance tests should neither
-exploit the ordering of $V$'s levels nor of the observations within the level.
-In this situation, it is possible to obtain a test statistic by first summing scores within
-each of the $m$ levels of the auxiliary variable, then ``summing the sums'' to obtain a test
-statistic \cite{HjoKon02}.  This test statistic can be formally written as
-\begin{equation}
-    \label{eq:lmuo}
-     \mathit{LM}_\mathit{uo} = \sum_{\ell = 1, \dots, m} \sum_{j = 1, \dots, k}
-       \left( {\bm B}(\hat {\bm \theta})_{i_\ell j} - {\bm B}(\hat {\bm \theta})_{i_{\ell - 1}j} \right)^2,
-\end{equation}
-where, again, tests of subsets of model parameters can be obtained by
-taking the inner sum over only the $k^* < k$ parameters of interest.
-\fixme{The $i_\ell$ still need to be introduced. This would happen automatically
-if we move the nominal statistics behind the ordinal statistics.}
-This test statistic discards the ordinal nature of the auxiliary
-variable, essentially employing the alternative hypothesis
-from~\eqref{eq:h2*}.  A similar issue is observed in testing for
-measurement 
-invariance via multiple groups models and likelihood ratio tests (or,
-equivalently, via Wald tests or Lagrange multiplier tests): we
-can allow $\bm{\theta}$ to be unique at each level of the ordinal
-variable, but the ordinality of the auxiliary variable is lost.
-In contrast, the statistics proposed below explicitly account for the fact
-that $V$ is ordinal.
-
-The statistics proposed here are
+The ordinal statistics proposed here are
 similar to those described in
 Equations~\eqref{eq:dmax} and~\eqref{eq:maxlm}
 above, except that we focus on ``bins'' of individuals at each level of the
@@ -409,11 +391,10 @@ by applying the same functionals to bins of a Brownian bridge, where the
 bin sizes result in the cumulative proportions $t_\ell$ ($\ell=1, \dots,
 m-1$) associated with the observed $V$.
 
-\readme{Several details/extensions added to the following three paragraphs.}
 
 For $\mathit{WDM}_o$ the resulting asymptotic distribution is
 $\max_{j = 1, \dots, k} \max_{\ell = 1, \dots, m-1} {\bm B}^{0}(t_\ell) / \sqrt{t_\ell (1 - t_\ell)}$.
-Note that the effect outer maximum can be easily captured by a Bonferroni
+Note that the effect of the outer maximum can be easily captured by a Bonferroni
 correction as the $k$~components of the Brownian bridge are asymptotically independent.
 Moreover, the inner maximum is taken over $m-1$ variables
 ${\bm B}^{0}(t_\ell) / \sqrt{t_\ell (1 - t_\ell)}$ which are standard normal
@@ -422,8 +403,8 @@ a simple correlation structure: $\sqrt{s (1 - t)}/\sqrt{t (1 - s)}$ for
 $s \le t$ and both $\in \{t_1, \dots, t_{m-1}\}$. Therefore, critical
 values and $p$-values can be easily computed from a multivariate normal
 distribution with standard normal marginals and this particular correlation
-matrix; see also \citeNP{hotzei08} for more details. In R, this can be accomplished
-using the mvtnorm package \cite{mvtnorm}.
+matrix; see also \citeNP{hotzei08} for more details. In R, this can be
+accomplished using the mvtnorm package \cite{mvtnorm}.
 
 For $\max \mathit{LM}_o$ the resulting asymptotic distribution is
 $\max{\ell = 1, \dots, m-1} || {\bm B}^{0}(t_\ell) ||_2^2 / (t_\ell (1 - t_\ell))$
@@ -436,15 +417,41 @@ parameter to be tested (i.e., $k = 1$) both test statistics are
 equivalent because then $\max \mathit{LM}_o = \mathit{WDM}_o^2$.
 
 
-As demonstrated in the simulations below, the test
+If $V$ is only nominal/categorical,
+there is not even a partial ordering, i.e., measurement invariance tests should neither
+exploit the ordering of $V$'s levels nor of the observations within the level.
+In this situation, it is possible to obtain a test statistic by first summing scores within
+each of the $m$ levels of the auxiliary variable, then ``summing the sums'' to obtain a test
+statistic \cite{HjoKon02}.  This test statistic can be formally written as
+\begin{equation}
+    \label{eq:lmuo}
+     \mathit{LM}_\mathit{uo} = \sum_{\ell = 1, \dots, m} \sum_{j = 1, \dots, k}
+       \left( {\bm B}(\hat {\bm \theta})_{i_\ell j} - {\bm B}(\hat {\bm \theta})_{i_{\ell - 1}j} \right)^2,
+\end{equation}
+where, again, tests of subsets of model parameters can be obtained by
+taking the inner sum over only the $k^* < k$ parameters of interest.
+This test statistic discards the ordinal nature of the auxiliary
+variable, essentially employing the alternative hypothesis
+from~\eqref{eq:h2*}.  A similar issue is observed in testing for
+measurement 
+invariance via multiple groups models and likelihood ratio tests (or,
+equivalently, via Wald tests or Lagrange multiplier tests): we
+can allow $\bm{\theta}$ to be unique at each level of the ordinal
+variable, but the ordinality of the auxiliary variable is lost.
+In contrast, the statistics proposed below explicitly account for the fact
+that $V$ is ordinal.
+
+
+As demonstrated in the simulations below, the ordinal test
 statistics proposed above are sensitive to the measurement invariance
 violations that an analyst would typically expect from an ordinal $V$.
 In particular, due to computing cumulative sums in ${\bm B}(\hat {\bm \theta})$,
 violations that occur as we move along the levels of $V$ can be captured
 wll. This includes abrupt shifts in the parameters $\bm \theta$ at a
-certain level of $V$ as well as smooth increases decreases in the parameters.
+certain level of $V$ as well as smooth increases/decreases in the parameters.
 Taking a maximum over the $k$~parameters as in $\mathit{WDM}_o$ will be
-more sensitive to changes that occur only in one out of many parameters
+more sensitive to changes that occur only in one out of many
+parameters, 
 while $\max \mathit{LM}_o$ will be more sensitive to changes occuring
 in several (or even all of the) parameters simultaneously.
 Moreover, the test statistics are rather insensitive to anomolies in a small
@@ -462,8 +469,9 @@ traditional statistics.  We generate data from a two-factor,
 six-indicator model, with a measurement invariance violation occurring
 in the three unique variances associated with the first factor.  We
 use the proposed test statistics to test for measurement invariance
-simultaneously across all six unique variances, mimicking the first
-step of the ``prescribed'' course of measurement invariance tests. % cite
+simultaneously across all six unique variances, which mimics the
+comparison of a tau-equivalent model to a congeneric model (e.g.,
+\citeNP{VanLan00}).
 
 For comparison, we also compute two statistics that treat the ordinal
 auxiliary variable as categorical.  These include the likelihood ratio
