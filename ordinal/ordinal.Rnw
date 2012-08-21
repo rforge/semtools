@@ -397,7 +397,7 @@ cumulative scores only over $i_\ell = \lfloor n
 and~\eqref{eq:maxlm} above can then be written as
 \begin{eqnarray}
     \label{eq:wdm}
-      \mathit{WDM}_o & = & \max_{i \in \{i_1, \dots, i_m \}} ~ \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1}      
+      \mathit{WDM}_o & = & \max_{i \in \{i_1, \dots, i_m \}} ~ \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1/2}      
                              \max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} |,\\
     \label{eq:maxlmo}
       \max \mathit{LM}_o & = & \max_{i \in \{i_1, \dots, i_m \}} ~
@@ -407,31 +407,51 @@ and~\eqref{eq:maxlm} above can then be written as
 Critical values associated with these test statistics can be obtained
 by applying the same functionals to bins of a Brownian bridge, where the
 bin sizes result in the cumulative proportions $t_\ell$ ($\ell=1, \dots,
-m-1$) associated with the observed $V$. For $\mathit{WDM}_o$ this
-just requires computations of quantiles from a multivariate normal
-distribution with standard normal marginals and a certain correlation
-structure \cite{hotzei08} which can be easily obtained using R's
-mvtnorm package \cite{mvtnorm}. For $\max \mathit{LM}_o$, no
-closed-form solution for this particular functional of a Brownian bridge is unavailable, but
+m-1$) associated with the observed $V$.
+
+\readme{Several details/extensions added to the following three paragraphs.}
+
+For $\mathit{WDM}_o$ the resulting asymptotic distribution is
+$\max_{j = 1, \dots, k} \max_{\ell = 1, \dots, m-1} {\bm B}^{0}(t_\ell) / \sqrt{t_\ell (1 - t_\ell)}$.
+Note that the effect outer maximum can be easily captured by a Bonferroni
+correction as the $k$~components of the Brownian bridge are asymptotically independent.
+Moreover, the inner maximum is taken over $m-1$ variables
+${\bm B}^{0}(t_\ell) / \sqrt{t_\ell (1 - t_\ell)}$ which are standard normal
+(due to the scaling with the standard deviation of a Brownian bridge) and have
+a simple correlation structure: $\sqrt{s (1 - t)}/\sqrt{t (1 - s)}$ for
+$s \le t$ and both $\in \{t_1, \dots, t_{m-1}\}$. Therefore, critical
+values and $p$-values can be easily computed from a multivariate normal
+distribution with standard normal marginals and this particular correlation
+matrix; see also \citeNP{hotzei08} for more details. In R, this can be accomplished
+using the mvtnorm package \cite{mvtnorm}.
+
+For $\max \mathit{LM}_o$ the resulting asymptotic distribution is
+$\max{\ell = 1, \dots, m-1} || {\bm B}^{0}(t_\ell) ||_2^2 / (t_\ell (1 - t_\ell))$
+for which no simple closed-form solution is available. However,
 critical values and $p$-values can be obtained through repeated
 simulation of Brownian bridges.  This functionality is built in to
 R's strucchange package \cite{Zei06}, which can be used to
-generally carry out the tests.
-
+generally carry out the tests. Note that for models with only a single
+parameter to be tested (i.e., $k = 1$) both test statistics are
+equivalent because then $\max \mathit{LM}_o = \mathit{WDM}_o^2$.
 
 
 As demonstrated in the simulations below, the test
 statistics proposed above are sensitive to the measurement invariance
-violations that 
-an analyst would typically expect from an ordinal $V$.
-These include violations that increase or decrease as we move up
-levels of $V$, as well as violations that abruptly
-begin at a single point on $V$ and continue after
-that.  The test statistics are insensitive to anomolies in a small
+violations that an analyst would typically expect from an ordinal $V$.
+In particular, due to computing cumulative sums in ${\bm B}(\hat {\bm \theta})$,
+violations that occur as we move along the levels of $V$ can be captured
+wll. This includes abrupt shifts in the parameters $\bm \theta$ at a
+certain level of $V$ as well as smooth increases decreases in the parameters.
+Taking a maximum over the $k$~parameters as in $\mathit{WDM}_o$ will be
+more sensitive to changes that occur only in one out of many parameters
+while $\max \mathit{LM}_o$ will be more sensitive to changes occuring
+in several (or even all of the) parameters simultaneously.
+Moreover, the test statistics are rather insensitive to anomolies in a small
 number of categories of $V$ that are
 unrelated to the ordering of $V$.  This is especially relevant to situations
 where the analyst has a large sample size, where the usual
-Likelihood Ratio Test is notoriously sensitive to minute parameter
+likelihood ratio test is notoriously sensitive to minor parameter
 instabilities (e.g., \citeNP{Ben80}).
 
 \section{Simulation 1: Detecting Ordinal Invariance Violations}
@@ -470,7 +490,7 @@ errors (scaled by $\sqrt{n}$), with $d=0, 0.25, 0.5, \dots, 1.5$.
 For each combination of $n \times m \times d$, 5,000 datasets were
 generated and tested via the 4 statistics described above.  In all
 conditions, we maintained equal sample sizes at each level of the
-ordinal variable.
+ordinal variable (i.e., $t_\ell = \ell/m$).
 
 <<sim1>>=
 ## seed for replication
@@ -509,12 +529,12 @@ at specific levels of the ordinal variable
 three other tests under consideration make use of this information.
 Finally, it is seen that, in the small $n$ and large $m$ conditions,
 the likelihood ratio test exhibits large Type-I error rates (i.e.,
-power greater than .05 at $d=0$).  This is because the likelihood
-ratio test requires 
-estimation of a multiple groups model, which is very unstable with
-large numbers of groups and small sample sizes.  The proposed
-statistics, which require estimation of only the single-group model,
-exhibit a clear advantage in these conditions.
+power greater than 0.05 at $d=0$).  This is because the likelihood
+ratio test requires estimation of a multiple-groups model, which is very
+unstable with large numbers of groups and small sample sizes as only
+$n/m$ observations are available in each subsample.  The proposed
+statistics are all of the LM-type and just require estimation of the single-group model,
+leading to a clear advantage in these conditions.
 
 \begin{figure}
 \caption{Simulated power curves for the ordered and unordered
@@ -584,7 +604,7 @@ if(file.exists("sim2.rda")) {
 \subsection{Results}
 Simulation results are presented in Figure~\ref{fig:sim2res}.  It is
 observed that results are very consistent across the sample sizes
-tested, implying that "practical infinity" is reached for this model
+tested, implying that ``practical infinity'' is reached for this model
 by $n=1200$. \readme{Also implying that we don't need all three sample
   sizes or could try values smaller than 1200.}  We also observe
 a negative 
@@ -632,7 +652,13 @@ print(xyplot(power ~ diff | nlevels + nobs, group = ~ test, data = sim2,
 Taken together, the results from Simulation 1 and Simulation
 2 provide evidence that the $\text{LM}_o$ statistic should be
 preferred to the $\text{WDM}_o$ statistic for testing measurement
-invariance.  The $\text{LM}_o$ statistic has higher power to detect
+invariance. \readme{This is not surprising given that the models
+have quite a few parameters and we change many of them. We could 
+try to set up a simulation where only a single out of many parameters
+changes where the WDM should perform better. Also,
+in models that are simpler than most CFA models, the WDM may be more useful.
+I'm not sure how much we want to comment on this or illustrate this.}
+The $\text{LM}_o$ statistic has higher power to detect
 ordinal violations, and its power to detect non-ordinal violations was
 similar to that of $\text{WDM}_o$ when the violation magnitude was
 small (e.g., for $d \leq 1.5$).  The $\text{LM}_o$ statistic is
@@ -658,11 +684,11 @@ in youth. However, one potential problem with this research is that
 scholars, with no exception, have used adult gratitude inventories to
 measure youth gratitude, thus raising the question of whether the
 existing gratitude scales used with adults are valid in research with
-youth. Addressing this issue, Froh et al.\ \citeyear{FroFan11} had a
+youth. Addressing this issue, \citeNP{FroFan11} had a
 large sample of 
 youth ($n$ = 1401, ranging from late childhood (10 years old) to
 late adolescent (19 years old)) complete the three most widely used
-adult gratitude inventories, including Gratitude Questionnaire – 6
+adult gratitude inventories, including Gratitude Questionnaire~6
 (GQ-6; \citeNP{MccEmm02}), Gratitude Adjective
 Checklist (GAC; \citeNP{MccEmm02}), and Gratitude, Resentment,
 Appreciation Test-Short Form (GRAT-Short Form;
@@ -679,11 +705,11 @@ youth age groups.
 
 \subsection{Method}
 
-Froh et al.\ \citeyear{FroFan11} used confirmatory factor analysis
+\citeNP{FroFan11} used confirmatory factor analysis
 models to study the invariance of three youth gratitude scales across
 students aged 10 to 19 years.  Due to sample size constraints, the age
-variable included six categories: 10-11 years, 12-13 years, 14 years,
-15 years, 16 years, and 17-19 years.  Thus, age is an ordinal variable
+variable included six categories: 10--11 years, 12--13 years, 14 years,
+15 years, 16 years, and 17--19 years.  Thus, age is an ordinal variable
 with which the proposed tests can be applied.
 
 To test for measurement invariance w.r.t.\ age, each of the three scales
@@ -695,9 +721,9 @@ followed by a tau-equivalent model (factor loadings restricted to be
 equal across each level of age) and a parallel model (all parameters restricted
 to be equal across levels of age).  Because their sample size was large ($n
 \approx 1400$), they could not rely solely on likelihood ratio tests
-(i.e., chi-square difference tests) for model comparison because the
+(i.e., $\chi^2$ difference tests) for model comparison because the
 tests were overly sensitive at their sample size.  To supplement these
-tests, Froh et al examined a set of alternative fit indices, including
+tests, \citeNP{FroFan11} examined a set of alternative fit indices, including
 the non-normed fit index, the comparative fit index, and the
 incremental fit index. %% TODO cite
 The authors generally found support for the tau-equivalent models
@@ -705,15 +731,15 @@ through these alternative fit indices; the likelihood ratio test often
 resulted in significance event when the alternative indices indicated
 good fit.
 
-In the analyses described below, we re-analyze the Froh et al.\ data using
+In the analyses described below, we re-analyze the \citeNP{FroFan11} data using
 the ordinal test statistics proposed in this paper.  This results in a
 series of tests that are less sensitive than the likelihood ratio test
 to minor parameter discrepancies,
 while being more sensitive to ordinal violations of measurement invariance.
-We focus on two analyses from Froh et al.\ where the likelihood
+We focus on two analyses from \citeNP{FroFan11} where the likelihood
 ratio test resulted in significance (indicating that the restricted
 model did not fit as well as the less-restricted model), but the
-alternative fit measures employed by Froh et al.\ indicated the opposite.
+alternative fit measures employed by \citeNP{FroFan11} indicated the opposite.
 These include
 comparison of a one-factor congeneric model to a one-factor
 tau-equivalent model using the 
@@ -723,7 +749,7 @@ using the GAC.  To conduct equivalent analyses via the proposed tests, we
 fit the more-restricted model in each case and test for instability in
 the focal model parameters.
 
-Of the 1401 cases originally collected by Froh et al., we use here all
+Of the 1401 cases originally collected by \citeNP{FroFan11}, we use here all
 subjects with complete data (resulting in $n=1327$).
 
 <<frohdata>>=
@@ -767,7 +793,7 @@ lrt1 <- anova(m1.f, m1)
 @ 
 
 \subsubsection{GQ-6} In fitting a tau-equivalent model and a congeneric
-model to the GQ-6 data, Froh et al.\ used alternative fit indices to
+model to the GQ-6 data, \citeNP{FroFan11} used alternative fit indices to
 conclude that the tau-equivalent model was as good as the congeneric
 model.  However, the likelihood ratio test comparing these two models
 was significant ($\chi^2_{20} = \Sexpr{round(lrt1[[5]][2],1)}, p=\Sexpr{round(lrt1[[7]][2],2)}$ for the data considered
@@ -779,8 +805,8 @@ fitting the tau-equivalent model and testing whether or
 not the factor loadings fluctuate with respect to age group.  In doing
 so, we obtain~$\text{WDM}_o=\Sexpr{round(omax1$statistic,1)}, p=\Sexpr{round(omax1$p.value,2)}$
  and~$\text{LM}_o=\Sexpr{round(ol2bb1$statistic,1)}, p=\Sexpr{round(ol2bb1$p.value,2)}$.
-Neither statistic is significant at an $\alpha$ of .05,
-which supports the conclusions that Froh et al.\ obtained from
+Neither statistic is significant at an $\alpha$ of 0.05,
+which supports the conclusions that \citeNP{FroFan11} obtained from
 alternative fit statistics.  This provides further evidence that the
 likelihood ratio statistic is overly sensitive for this particular
 analysis.
@@ -809,19 +835,19 @@ lrt2 <- anova(m2.f, m2)
 @ 
 
 \subsubsection{GAC} In fitting tau-equivalent and parallel models to the
-GAC data, Froh et al.\ obtained mixed results.  The alternative fit
+GAC data, \citeNP{FroFan11} obtained mixed results.  The alternative fit
 indices did not all agree with one another, and the likelihood ratio test
 indicated that the parallel model fit worse than the tau-equivalent
-model ($\chi^2_{20} = \Sexpr{round(lrt2[[5]][2],1)}, p<.01$
-for the data considered here).  Froh et al.\ ultimately 
+model ($\chi^2_{20} = \Sexpr{round(lrt2[[5]][2],1)}, p<0.01$
+for the data considered here).  \citeNP{FroFan11} ultimately 
 concluded that the tau-equivalent model provided a better fit than did
 the parallel model.
 
 To apply the ordinal statistics proposed in this paper, we fit the
 parallel model and test for instability in the variance parameters
 (unique variance and factor variance) w.r.t.\ age.
-This results in~$\text{WDM}_o=\Sexpr{round(omax2$statistic,1)}, p<.01$
-and~$\text{LM}_o=\Sexpr{round(ol2bb2$statistic,1)}, p<.01$.
+This results in~$\text{WDM}_o=\Sexpr{round(omax2$statistic,1)}, p<0.01$
+and~$\text{LM}_o=\Sexpr{round(ol2bb2$statistic,1)}, p<0.01$.
 Both of these statistics agree with the likelihood ratio test and with
 the general conclusion that the tau-equivalent model is better than
 the parallel model.  This provides further evidence that the
