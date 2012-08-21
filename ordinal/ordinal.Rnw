@@ -88,7 +88,7 @@ exists a measurement invariance violation.  We focus here on
 situations where $f()$ is parametric, and the measurement invariance
 violation occurs because the model parameters are
 unequal across individuals (and related to $V$).
-\readme{Maybe we should explicitly mention that in parametric settings, f is
+\fixme{Maybe we should explicitly mention that in parametric settings, f is
 the probability density function of x? Also, do we need to point out
 the relation between X and x, V and v, T and t?}
 
@@ -220,7 +220,7 @@ from~\eqref{eq:h2*}, which implicitly treats $V$ as categorical.
 Thus, test statistics that explicitly treat $V$ as ordinal should have
 higher power to detect the ``ordinal'' types of violations described above.
 
-\readme{My feeling is that we still need to explain better what type
+\fixme{My feeling is that we still need to explain better what type
 of patterns are covered by which alternative. Maybe we should do it
 the other way round and start with $H_2^*$ as the most general type
 of deviation from $H_0$. Then, we could explain that these also
