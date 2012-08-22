@@ -876,30 +876,75 @@ likelihood ratio test in the general discussion.
 
 \section{General Discussion}
 
-\begin{enumerate}
-  \item To my knowledge, these are the only proposed statistics that
-    treat ordinal auxiliary 
-    variables as truly ordinal.  LRT treats them as categorical,
-    inclusion in the model typically treats tham as continuous.
-  \item The first point is important because, if we test w.r.t.\ an
-    ordinal auxiliary variable, we are generally looking for ordinal
-    violations.  We don't care if a middle level differs from
-    all others because we would not usually have an intuitive
-    explanation for it.
-  \item If we know our sample size is large and have an ordinal
-    auxiliary variable, should we even use the LRT in
-    the first place?  If the measurement invariance violation is truly
-    ordinal, the proposed statistics should be better.  If it is not
-    ordinal, the violation will be difficult to explain as anything
-    but an anomaly.  The stakes might also play a role here.  In
-    high-stakes testing, you might be more interested in treating the
-    ordinal variable as categorical to detect any possible
-    instability, even those that don't make sense.
-  \item The proposed statistics should generally transfer to IRT and
-    other psychometric models.
-\end{enumerate}
+In this paper, we proposed two statistics for studying measurement
+invariance that can be used when one has an auxiliary ordinal
+variable.    To our knowledge,
+the ordinal measurement invariance statistics proposed here are the
+only ones that treat auxiliary variables as ordinal.  Other methods
+treat the auxiliary variable as either continuous or categorical, in a
+manner similar to the treatment of ordinal predictor variables in
+linear regression.  In the remainder of the paper, we provide 
+detail on test choice and on the tests' applicability to other
+models.
+
+\paragraph{Choice of Test}
+The results presented in this paper imply that the proposed
+ordinal statistics may ``miss'' measurement invariance violations that
+are not monotonic w.r.t.\ $V$, moreso than the likelihood ratio test.  We
+speculate that, in most applications, this will not be a major issue
+because the researcher's a priori hypotheses exclusively focus on
+monotonic measurement 
+invariance violations.  For example, in the youth gratitude
+application, we tested for measurement invariance across six age
+groups.  If we observed a measurement invariance violation whereby
+factor loadings were equal at all age groups except 14 years,
+we would
+have a hard time explaining the violation as anything but an anomaly
+in the 14-year-olds.  Further, if $n$ is large, we are likely to
+suspect that the result arises from the large sample size.
+We may still be interested in why the
+14-year-olds differed, but the analysis is purely exploratory at this
+point because this type of violation was unexpected.  
+However, there is generally a tradeoff between the ordinal statistics
+and the likelihood ratio statistic.  The
+proposed ordinal statistics usually provide sharper tests of one's a
+priori hypothesis regarding measurement invariance w.r.t.\ ordinal
+$V$, while the likelihood ratio statistic provides a sharper test of
+general (non-monotonic) measurement invariance w.r.t.\ $V$.  While the
+latter feature may be important in some high-stakes applications, many
+researchers are likely to find the former feature appealing for their
+work. 
+
+\paragraph{Extension to Other Models}
+We focused on testing for measurement invariance in factor
+analysis models here, but the proposed test statistics are applicable to
+other psychometric models that are estimated via ML.  The only
+requirement for carrying out the tests is that the casewise scores
+(Equation~\eqref{eq:score}) be available following model estimation.
+As a result, applications to studying DIF in IRT are immediate,
+as are general psychometric applications to studying parameter
+stability w.r.t.\ ordinal auxiliary variables.  We expect the
+same general results to hold for these applications, whereby the
+proposed test statistics are better than the LRT for detecting
+monotonic instabilities.   The strucchange package \cite{Zei06} noted
+previously can be used for these more-general applications.
 
 \subsection{Summary}
+The test statistics proposed in this paper have high power for
+detecting measurement 
+invariance violations that are monotonic with the ordinal variable,
+and they have low power for detecting minor violations that are not
+monotonic.  The former feature implies that the statistics are good at
+detecting measurement invariance violations that are interpretable to
+the researcher, while the latter feature implies that the statistics
+are feasible in situations where the likelihood ratio test commonly
+rejects $H_0$ in practice (e.g., \citeNP{Bent80}).  Furthermore, the
+focal psychometric model does not have to be modified in any way,
+which differs from approaches that may treat the ordinal variable as
+continuous 
+(e.g., \citeNP{BauHus09,MolDol10,NeaAgg06}).  In all, the tests have
+advantageous properties that should be useful in practice.
+
 
 \section*{Computational Details}
 
