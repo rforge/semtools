@@ -768,8 +768,6 @@ names(yg) <- tolower(names(yg))
 yg <- yg[yg$ao_4 <= 9,]
 decimals <- apply(yg[,4:28]%%1 > 0, 1, sum)
 yg <- yg[decimals==0,]
-
-## TODO Simulate critical values for ordL2BB
 @ 
 
 \subsection{Results}
@@ -783,7 +781,8 @@ ratio tests, while the second section contains the opposite.
 m1 <- cfa('f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5',
           data=yg, group="agegroup", group.equal="loadings",
           meanstructure=TRUE)
-gefp1 <- gefp(m1, fit = NULL, scores=estfun.lavaan, order.by = yg$agegroup, 
+gefp1 <- gefp(m1, fit = NULL, scores=estfun.lavaan, 
+              order.by = as.numeric(yg$agegroup), 
               vcov = info_full, sandwich = FALSE, parm=1:4)
 if(file.exists("ol2bb1.rda")){
   load("ol2bb1.rda")
@@ -799,6 +798,26 @@ m1.f <- cfa('f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5',
             data=yg, group="agegroup", meanstructure=TRUE)
 lrt1 <- anova(m1.f, m1)
 @ 
+
+\begin{figure}
+\caption{Fluctuation processes for the $\text{WDM}_o$ statistic (left panel) and
+  the $\text{LM}_o$ statistic (right panel).}
+\label{fig:gq6res}
+\setkeys{Gin}{width=\textwidth}
+<<gq6res, fig=TRUE, height=3, width=6>>=
+par(mfrow=c(1,2), cex=.65)
+
+plot(gefp1, functional=ordwmax(gefp1), axes=FALSE, main="",
+     xlab="Age group", ylab=expression("WDM"[o]))
+axis(1, at=1:5, labels=c("10-11","12-13","14","15","16"))
+axis(2)
+
+plot(gefp1, functional=ol2bb1.fun, axes=FALSE, ylim=c(0,14), main="",
+     xlab="Age group", ylab=expression("LM"[o]))
+axis(1, at=1:5, labels=c("10-11","12-13","14","15","16"))
+axis(2)
+@
+\end{figure}
 
 \subsubsection{GQ-6} In fitting a tau-equivalent model and a congeneric
 model to the GQ-6 data, \citeNP{FroFan11} used alternative fit indices to
@@ -819,12 +838,22 @@ alternative fit statistics.  This provides further evidence that the
 likelihood ratio statistic is overly sensitive for this particular
 analysis.
 
+Plots representing the statistics' fluctuations across levels of age
+group are displayed in Figure~\ref{fig:gq6res}.  The left panel
+displays the process associated with $\text{WDM}_o$, while the right
+panel displays the process associated with $\text{LM}_o$.  The final
+age group (17-19 years) is not displayed, because the statistics
+associated with this final age group are always zero (scores are
+summed across all individuals in the sample at this point).
+%% more detail
+
 <<gac>>=
 m2 <- cfa('f1 =~ gac_1 + gac_2 + gac_3
            f1 ~ 0*1', data=yg, group="agegroup",
            group.equal=c("loadings","residuals","lv.variances"), 
            meanstructure=TRUE)
-gefp2 <- gefp(m2, fit = NULL, scores=estfun.lavaan, order.by = yg$agegroup, 
+gefp2 <- gefp(m2, fit = NULL, scores=estfun.lavaan, 
+              order.by = as.numeric(yg$agegroup), 
               vcov = info_full, sandwich = FALSE, parm=3:6)
 if(file.exists("ol2bb2.rda")){
   load("ol2bb2.rda")
@@ -887,7 +916,7 @@ linear regression.  In the remainder of the paper, we provide
 detail on test choice and on the tests' applicability to other
 models.
 
-\paragraph{Choice of Test}
+\subsection{Choice of Test}
 The results presented in this paper imply that the proposed
 ordinal statistics may ``miss'' measurement invariance violations that
 are not monotonic w.r.t.\ $V$, moreso than the likelihood ratio test.  We
@@ -915,7 +944,7 @@ latter feature may be important in some high-stakes applications, many
 researchers are likely to find the former feature appealing for their
 work. 
 
-\paragraph{Extension to Other Models}
+\subsection{Extension to Other Models}
 We focused on testing for measurement invariance in factor
 analysis models here, but the proposed test statistics are applicable to
 other psychometric models that are estimated via ML.  The only
@@ -930,15 +959,15 @@ monotonic instabilities.   The strucchange package \cite{Zei06} noted
 previously can be used for these more-general applications.
 
 \subsection{Summary}
-The test statistics proposed in this paper have high power for
+The test statistics proposed in this paper have relatively-high power for
 detecting measurement 
 invariance violations that are monotonic with the ordinal variable,
-and they have low power for detecting minor violations that are not
+and they have relatively-low power for detecting minor violations that are not
 monotonic.  The former feature implies that the statistics are good at
 detecting measurement invariance violations that are interpretable to
 the researcher, while the latter feature implies that the statistics
 are feasible in situations where the likelihood ratio test commonly
-rejects $H_0$ in practice (e.g., \citeNP{Bent80}).  Furthermore, the
+rejects $H_0$ in practice (e.g., \citeNP{Ben80}).  Furthermore, the
 focal psychometric model does not have to be modified in any way,
 which differs from approaches that may treat the ordinal variable as
 continuous 
