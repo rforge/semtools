@@ -10,7 +10,7 @@ dgp <- function(nobs = 200, diff = 3, nlevels=10, gradual=FALSE, anomaly=FALSE)
   ## and gets larger.  If gradual==FALSE, the instability starts
   ## halfway up age and stays constant.
   ## If anomaly==TRUE, instability only occurs at level (1+nlevels/2).
-  ## Otherwise, anomaly continues up the ordinal variable.
+  ## Otherwise, instability continues up the ordinal variable.
   stopifnot(require("mvtnorm"))
   
   # ses is SE increase in parameters at last ordinal category.
