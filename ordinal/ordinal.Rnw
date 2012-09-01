@@ -764,7 +764,7 @@ Of the 1401 cases originally collected by \citeNP{FroFan11}, we use here all
 subjects with complete data (resulting in $n=1327$).
 
 <<frohdata>>=
-yg <- read.spss("grat data combined_9.29.09.sav", to.data.frame=TRUE)
+yg <- read.spss("../prelim_code/grat_data_combined_2009-09-29.sav", to.data.frame=TRUE)
 names(yg) <- tolower(names(yg))
 
 ## Remove cases with 'imputed' values
