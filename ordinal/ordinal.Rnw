@@ -7,7 +7,8 @@
 \threeauthors{Edgar C.\ Merkle}{Jinyan Fan}{Achim Zeileis}
 \threeaffiliations{University of Missouri}{Auburn University}{Universit\"{a}t Innsbruck}
 
-\abstract{Researchers are often interested in testing for 
+\abstract{
+  Researchers are often interested in testing for 
   measurement invariance with respect to an ordinal auxiliary variable such as
   age group, income class, or school grade.  In a factor-analytic
   context, these tests are traditionally carried out via a likelihood
@@ -15,8 +16,11 @@
   to a model where parameters are equal across groups.  This test
   neglects the fact that the auxiliary variable is ordinal, and it
   is also known to be overly sensitive at large sample sizes.  In this
-  paper, we propose test statistics that
-  explicitly account for the ordinality of the auxiliary variable.
+  paper, we propose test statistics that explicitly account for the ordinality
+  of the auxiliary variable and hence have higher power against ``monotonic''
+  violations of measurement invariance and less power against ``non-monotonic''
+  ones. \readme{I thought a comment like this might help. But I'm not sure
+  whether ``(non-)monotonic'' is intuitive to all readers.}  
   The statistics are derived from a family of tests based on stochastic
   processes that have recently received attention in the psychometric
   literature.  The statistics are illustrated via an application
@@ -201,7 +205,7 @@ written as
 \end{equation}
 stating that the parameter vector differs for every unique realization
 of $V$.  This alternative is commonly employed when $V$ is
-categorical.  In these situations, the likelihood ratio test compares
+categorical.  In these situations, the likelihood ratio test (LRT) compares
 a model where 
 parameters are restricted across groups (i.e., across values of $V$)
 to a model where parameters are free across groups; the exact
@@ -209,11 +213,12 @@ parameter values within each group are completely unrestricted.
 However, in situations where $V$ is categorical or
 continuous,~\eqref{eq:h2*} includes non-monotonic violations of
 measurement invariance.   This allows for instances where, e.g., the
-parameter values initially increase with $V$ and then decrease.
+parameter values initially increase with $V$ and then decrease
+or where just one or two ``middle'' levels of $V$ differ from the rest.
 Researchers typically do not expect such a result when testing
-measurement invariance wrt continuous or ordinal $V$, and 
+measurement invariance w.r.t.\ continuous or ordinal $V$, and 
 researchers often cannot interpret such violations.  Monotonic
-parameter changes wrt $V$ are of much more interest in these
+parameter changes w.r.t.\ $V$ are of much more interest in these
 situations, with the simplest type of change given by the alternative
 hypothesis
 \begin{equation}
@@ -224,7 +229,7 @@ hypothesis
   \end{array} \right.
 \end{equation}
 where $v_i$ reflects individual $i$'s value on an auxiliary variable
-$V$ and $\nu$ is a threshold dividing individuals into groups based on
+$V$ and $\nu$ is a threshold dividing individuals into two groups based on
 $V$.  This alternative is implicitly employed in ``median split''
 analyses, % TODO cite preacher
 where $\nu$ is given as the sample median of $V$.  The threshold $\nu$
@@ -379,10 +384,10 @@ cumulative scores only over $i_\ell = \lfloor n
 and~\eqref{eq:maxlm} above can then be written as
 \begin{eqnarray}
     \label{eq:wdm}
-      \mathit{WDM}_o & = & \max_{i \in \{i_1, \dots, i_m \}} ~ \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1/2}      
+      \mathit{WDM}_o & = & \max_{i \in \{i_1, \dots, i_{m-1} \}} ~ \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1/2}      
                              \max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} |,\\
     \label{eq:maxlmo}
-      \max \mathit{LM}_o & = & \max_{i \in \{i_1, \dots, i_m \}} ~
+      \max \mathit{LM}_o & = & \max_{i \in \{i_1, \dots, i_{m-1} \}} ~
                              \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1}
                              \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2.
 \end{eqnarray}
@@ -516,6 +521,9 @@ if(file.exists("sim1.rda")) {
   levels(sim1$test) <- c("LM_uo", "LRT", "LM_o", "WDM_o")
   save(sim1, file="sim1.rda")
 }
+sim1$test <- factor(as.character(sim1$test),
+  levels = c("LM_o", "WDM_o", "LRT", "LM_uo"),
+  labels = c("maxLM_o", "WDM_o", "LRT", "LM_uo"))
 @ 
 
 \subsection{Results}
@@ -525,7 +533,13 @@ the figure
 correspond to $n$, columns of the figure correspond to $m$, the x-axis
 of each panel corresponds to $d$, and the y-axis of each panel
 corresponds to power.  It is seen that one of the proposed test
-statistics, the $\max \mathit{LM}_o$ statistic from~\eqref{eq:maxlmo},
+statistics, the $\max \mathit{LM}_o$ statistic
+\readme{$\max \mathit{LM}_o$ is now consistently employed as the name
+for this statistic, also in the graphics. First, this is more consistent
+with the notation in the theory section. Second, it should remind the
+reader that this is not an ordinary LM test but an aggregation of
+LM statistics.}
+from~\eqref{eq:maxlmo},
 generally has the largest power to detect the ordinal measurement
 invariance violations.  The other three tests are considerably closer
 in power, with the second proposed ordinal statistic
@@ -553,7 +567,8 @@ leading to a clear advantage in these conditions.
 \label{fig:sim1res}
 \setkeys{Gin}{width=\textwidth}
 <<sim1res, fig=TRUE, height=7, width=7>>=
-mykey <- simpleKey(levels(sim1$test), points = FALSE, lines = TRUE)
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(sim1$test), points = TRUE, lines = TRUE)
 print(xyplot(power ~ diff | nlevels + nobs, group = ~ test, data = sim1, 
              type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey))
 @
@@ -607,6 +622,9 @@ if(file.exists("sim2.rda")) {
   levels(sim2$test) <- c("LM_uo", "LRT", "LM_o", "WDM_o")
   save(sim2, file="sim2.rda")
 }
+sim2$test <- factor(as.character(sim2$test),
+  levels = c("LM_o", "WDM_o", "LRT", "LM_uo"),
+  labels = c("maxLM_o", "WDM_o", "LRT", "LM_uo"))
 @ 
 
 \subsection{Results}
@@ -629,7 +647,7 @@ of Bentler and Bonett \citeyear{Ben80} and others that the
 likelihood ratio test statistic picks out minor 
 parameter discrepancies at large $n$.  In contrast, the two ordinal
 test statistics that we proposed have considerably lower power, with
-the $\text{WDM}_o$ statistic being the lowest and the $\text{LM}_o$
+the $\mathit{WDM}_o$ statistic being the lowest and the $\max\mathit{LM}_o$
 statistic being higher at larger values of $d$.  
 This demonstrates that the proposed ordinal test
 statistics can be especially useful at large sample sizes, where
@@ -649,33 +667,26 @@ variable.
 \label{fig:sim2res}
 \setkeys{Gin}{width=\textwidth}
 <<sim2res, fig=TRUE, height=7, width=7>>=
-mykey <- simpleKey(levels(sim2$test), points = FALSE, lines = TRUE)
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
 print(xyplot(power ~ diff | nlevels + nobs, group = ~ test, data = sim2, 
              type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey))
 @
 \end{figure}
 
-Taken together, the results from Simulation 1 and Simulation
-2 provide evidence that the $\text{LM}_o$ statistic should be
-preferred to the $\text{WDM}_o$ statistic for simultaneously assessing
-measurement invariance across multiple model parameters.  
-\readme{This is not surprising given that the models
-have quite a few parameters and we change many of them. We could 
-try to set up a simulation where only a single out of many parameters
-changes where the WDM should perform better. Also,
-in models that are simpler than most CFA models, the WDM may be more useful.
-I'm not sure how much we want to comment on this or illustrate this.}
-\readme{Achim: I decided not to set up a case where a single parameter
-changes, because measurement invariance researchers usually test
-multiple parameters simultaneously.  For now, I added the phrase "across
-multiple model parameters" above as a brief reference to this issue.}
-The $\text{LM}_o$ statistic has higher power to detect
+Taken together, the results from Simulation~1 and Simulation~2
+provide evidence that the $\max\mathit{LM}_o$ statistic should be
+preferred to the $\mathit{WDM}_o$ statistic for simultaneously assessing
+measurement invariance across multiple parameters in factor analysis models.
+\readme{Ed: For now, I added the phrase ``across multiple model parameters'' above as a brief reference to this issue.}
+\readme{Z: OK, I appended ``in factor analysis models'' to make the statement somewhat less general and more specific to our results.}
+The $\max\mathit{LM}_o$ statistic has higher power to detect
 ordinal violations, and its power to detect non-ordinal violations was
-similar to that of $\text{WDM}_o$ when the violation magnitude was
-small (e.g., for $d \leq 1.5$).  The $\text{LM}_o$ statistic is
+similar to that of $\mathit{WDM}_o$ when the violation magnitude was
+small (e.g., for $d \leq 1.5$).  The $\max\mathit{LM}_o$ statistic is
 advantageous because it can make use of invariance violations that
 simultaneously 
-occur in multiple parameters, whereas the $\text{WDM}_o$ focuses only
+occur in multiple parameters, whereas the $\mathit{WDM}_o$ focuses only
 on the parameter with the largest invariance violation.  
 Thus, the statistics are likely to exhibit
 similar performance if only a single model parameter violated
@@ -739,7 +750,7 @@ the non-normed fit index, the comparative fit index, and the
 incremental fit index. %% TODO cite
 The authors generally found support for the tau-equivalent models
 through these alternative fit indices; the likelihood ratio test often
-resulted in significance event when the alternative indices indicated
+resulted in significance even when the alternative indices indicated
 good fit.
 
 In the analyses described below, we re-analyze the \citeNP{FroFan11} data using
@@ -803,20 +814,20 @@ lrt1 <- anova(m1.f, m1)
 @ 
 
 \begin{figure}
-\caption{Fluctuation processes for the $\text{WDM}_o$ statistic (left panel) and
-  the $\text{LM}_o$ statistic (right panel), arising from the GQ-6 data.}
+\caption{Fluctuation processes for the $\mathit{WDM}_o$ statistic (left panel) and
+  the $\max\mathit{LM}_o$ statistic (right panel), arising from the GQ-6 data.}
 \label{fig:gq6res}
 \setkeys{Gin}{width=\textwidth}
 <<gq6res, fig=TRUE, height=3, width=6>>=
-par(mfrow=c(1,2), cex=.65)
+par(mfrow=c(1, 2), cex = 0.65)
 
 plot(gefp1, functional=ordwmax(gefp1), axes=FALSE, main="",
-     xlab="Age group", ylab=expression("WDM"[o]))
+     xlab="Age group", ylab="Weighted max statistics")
 axis(1, at=1:5, labels=c("10-11","12-13","14","15","16"))
 axis(2)
 
 plot(gefp1, functional=ol2bb1.fun, axes=FALSE, ylim=c(0,14), main="",
-     xlab="Age group", ylab=expression("LM"[o]))
+     xlab="Age group", ylab="LM statistics")
 axis(1, at=1:5, labels=c("10-11","12-13","14","15","16"))
 axis(2)
 @
@@ -826,41 +837,61 @@ axis(2)
 model to the GQ-6 data, \citeNP{FroFan11} used alternative fit indices to
 conclude that the tau-equivalent model was as good as the congeneric
 model.  However, the likelihood ratio test comparing these two models
-was significant ($\chi^2_{20} = \Sexpr{round(lrt1[[5]][2],1)}, p=\Sexpr{round(lrt1[[7]][2],2)}$ for the data considered
+was significant ($\chi^2_{20} = \Sexpr{round(lrt1[[5]][2], digits = 2)}, p=\Sexpr{round(lrt1[[7]][2], digits = 3)}$ for the data considered
 here).  
 
+\fixme{Here and also subsequently, formulations like ``we compare model~A
+and model~B'' are used. I'm not sure whether this sends the correct message.
+If I want to compare exactly these two models, then the LRT is the correct
+thing to do. But we are looking for other types of deviations, especially if
+a split into two (rather than all) groups might be sufficient to capture
+the effect of $V$. Hence, maybe we should explain in some more detail what
+we are testing and also explore other models when rejecting the model? For
+more comments in this vein see below.}
 We can use the proposed ordinal statistics to compare the
 tau-equivalent and congeneric models,
 fitting the tau-equivalent model and testing whether or
-not the factor loadings fluctuate with respect to age group.  In doing
-so, we obtain~$\text{WDM}_o=\Sexpr{round(omax1$statistic,1)}, p=\Sexpr{round(omax1$p.value,2)}$
- and~$\text{LM}_o=\Sexpr{round(ol2bb1$statistic,1)}, p=\Sexpr{round(ol2bb1$p.value,2)}$.
-Neither statistic is significant at an $\alpha$ of 0.05,
+not the factor loadings fluctuate with respect to age group.
+\fixme{Here, I would prefer something like: We can use the proposed
+ordinal statistics to assess whether or not the factor loadings in the
+tau-equivalent model are in fact stable or fluctuate with respect to age.}
+In doing so, we obtain~$\mathit{WDM}_o=\Sexpr{round(omax1$statistic, digits = 2)}, p=\Sexpr{round(omax1$p.value, digits = 3)}$
+ and~$\max\mathit{LM}_o=\Sexpr{round(ol2bb1$statistic, digits = 2)}, p=\Sexpr{round(ol2bb1$p.value, digits = 3)}$.
+Both $p$-values are clearly larger than that of the likelihood ratio test
+and neither is significant at an $\alpha$ of 0.05,
 which supports the conclusions that \citeNP{FroFan11} obtained from
-alternative fit statistics.  This provides further evidence that the
-likelihood ratio statistic is overly sensitive for this particular
-analysis.
+alternative fit statistics.  This provides further evidence that 
+there is no systematic deviation of the factor loadings along age
+and that the likelihood ratio statistic is overly sensitive, picking
+up some non-systematic dependence on age. \readme{I have changed the
+previous sentence somewhat to make clear that the LRT really picks up
+something but that it's not what we are looking for.}
+
 
 Plots representing the statistics' fluctuations across levels of age
 group are displayed in Figure~\ref{fig:gq6res}.  The left panel
-displays the process associated with $\text{WDM}_o$, while the right
-panel displays the process associated with $\text{LM}_o$.  The final
-age group (17-19 years) is not displayed, because the statistics
-associated with this final age group are always zero (scores are
-summed across all individuals in the sample at this point).
-Critical values are displayed as horizontal red lines, so that the
-hypothesis of invariance is rejected if the process ever crosses the
-red line.
+displays the process associated with $\mathit{WDM}_o$ from \eqref{eq:wdm},
+i.e., the sequence of weighted maximum (over $j$) statistics for each
+potential threshold~$i$.
+The right panel displays the process associated with $\max\mathit{LM}_o$
+from \eqref{eq:maxlmo}, i.e., the sequence of LM statistics for each
+potential threshold~$i$.
+In both cases, the test statistics in the sequence assess a split of
+the observations up to age group~$i$ vs.\ greater than $i$ and the
+null hypothesis is rejected if the maximum of the statistics is
+larger than its 5\% critical value (visualized by the horizontal red line).
+Therefore, the final age group (17--19 years) is not displayed, because the statistics
+associated with this final age group would encompass all observations
+in a single group and hence are always zero.
 It is observed that both statistics generally increase with age, with
-$\text{WDM}_o$ being largest in the 15-year group and $\text{LM}_o$
-being largest in the 16-year group.  The $\text{WDM}_o$ panel displays
-(a function of) the largest
-cumulative sum associated with a single parameter, while the
-$\text{LM}_o$ panel aggregates across the tested parameters.  The
+$\mathit{WDM}_o$ being largest for a threshold of 15~years and $\max\mathit{LM}_o$
+for a threshold of 16~years. The
 differing pattern of values for the 15- and 16-year-olds can be taken
-as evidence that a single factor loading is relatively unstable for the
-15-year-olds, but this is not a general trend across all the tested
-loadings.
+as an indication that some factor loading is somewhat unstable at an
+age of 15 or 16, but this is not a clear and general trend across all the tested
+loadings and age groups.
+\readme{Added some more detail about how to read the visualizations of
+the test statistics. Modified the interpretations somewhat.}
 
 
 <<gac>>=
@@ -888,20 +919,20 @@ lrt2 <- anova(m2.f, m2)
 @ 
 
 \begin{figure}
-\caption{Fluctuation processes for the $\text{WDM}_o$ statistic (left panel) and
-  the $\text{LM}_o$ statistic (right panel), arising from the GAC data.}
+\caption{Fluctuation processes for the $\mathit{WDM}_o$ statistic (left panel) and
+  the $\max\mathit{LM}_o$ statistic (right panel), arising from the GAC data.}
 \label{fig:gacres}
 \setkeys{Gin}{width=\textwidth}
 <<gacres, fig=TRUE, height=3, width=6>>=
-par(mfrow=c(1,2), cex=.65)
+par(mfrow=c(1, 2), cex = 0.65)
 
 plot(gefp2, functional=ordwmax(gefp2), axes=FALSE, main="",
-     xlab="Age group", ylab=expression("WDM"[o]))
+     xlab="Age group", ylab="Weighted max statistics")
 axis(1, at=1:5, labels=c("10-11","12-13","14","15","16"))
 axis(2)
 
 plot(gefp2, functional=ol2bb2.fun, axes=FALSE, ylim=c(0,115), main="",
-     xlab="Age group", ylab=expression("LM"[o]))
+     xlab="Age group", ylab="LM statistics")
 axis(1, at=1:5, labels=c("10-11","12-13","14","15","16"))
 axis(2)
 @
@@ -911,7 +942,7 @@ axis(2)
 GAC data, \citeNP{FroFan11} obtained mixed results.  The alternative fit
 indices did not all agree with one another, and the likelihood ratio test
 indicated that the parallel model fit worse than the tau-equivalent
-model ($\chi^2_{20} = \Sexpr{round(lrt2[[5]][2],1)}, p<0.01$
+model ($\chi^2_{20} = \Sexpr{round(lrt2[[5]][2], digits = 2)}, p<0.01$
 for the data considered here).  \citeNP{FroFan11} ultimately 
 concluded that the tau-equivalent model provided a better fit than did
 the parallel model.
@@ -919,24 +950,26 @@ the parallel model.
 To apply the ordinal statistics proposed in this paper, we fit the
 parallel model and test for instability in the variance parameters
 (unique variance and factor variance) w.r.t.\ age.
-This results in~$\text{WDM}_o=\Sexpr{round(omax2$statistic,1)}, p<0.01$
-and~$\text{LM}_o=\Sexpr{round(ol2bb2$statistic,1)}, p<0.01$.
-Both of these statistics agree with the likelihood ratio test and with
-the general conclusion that the tau-equivalent model is better than
-the parallel model.  This provides further evidence that the
+This results in~$\mathit{WDM}_o=\Sexpr{round(omax2$statistic, digits = 2)}, p<0.01$
+and~$\max\mathit{LM}_o=\Sexpr{round(ol2bb2$statistic, digits = 2)}, p<0.01$.
+Both of these statistics agree with the general conclusion that the
+parallel model is not sufficient, providing further evidence that the
 significant likelihood ratio test is not simply an artifact of the
-large sample size.
+large sample size. \readme{Sentence somewhat modified.}
 
-Plots representing the statistics' fluctuations across levels of age
-group are displayed in Figure~\ref{fig:gacres}.  The left panel
-displays the process associated with $\text{WDM}_o$, while the right
-panel displays the process associated with $\text{LM}_o$.  It is
+Plots representing the statistics' fluctuations across age
+groups are displayed in Figure~\ref{fig:gacres}.  The left panel
+displays the process associated with $\mathit{WDM}_o$, while the right
+panel displays the process associated with $\max\mathit{LM}_o$.  It is
 observed that both processes are fully above the critical value,
 implying the measurement invariance violation.  Additionally, both
-processes peak at the 12-13 age group.  This implies that fluctuation 
-in the variance parameters is largest within this age group, with the 
-parameters differing between individuals younger and
-older than 12 years.
+processes peak at the 12--13 age group, suggesting that
+parameters differ between individuals up to 13 years of age and older
+than 13 years. \fixme{Maybe we could additionally fit a tau-equivalent
+model for only two age groups: $\le 13$ vs.\ $> 13$. Then, we could
+re-run tests and check whether this already fits sufficiently well?
+This could help making the split into two subgroups clearer, rather
+than always splitting into all possible age groups.}
 
 \subsection{Summary}
 The application considered above shows that the ordinal test
@@ -957,7 +990,9 @@ In this paper, we proposed two statistics for studying measurement
 invariance that can be used when one has an auxiliary ordinal
 variable.    To our knowledge,
 the ordinal measurement invariance statistics proposed here are the
-only ones that treat auxiliary variables as ordinal.  Other methods
+only ones that treat auxiliary variables as ordinal and thus direct power against
+alternatives that are typically of interest to practitioners
+\readme{added half-sentence}.  Other methods
 treat the auxiliary variable as either continuous or categorical, in a
 manner similar to the treatment of ordinal predictor variables in
 linear regression.  In the remainder of the paper, we provide 
@@ -965,10 +1000,14 @@ detail on test choice and on the tests' applicability to other
 models.
 
 \subsection{Choice of Test}
+
 The results presented in this paper imply that the proposed
 ordinal statistics may ``miss'' measurement invariance violations that
-are not monotonic w.r.t.\ $V$, moreso than the likelihood ratio test.  We
-speculate that, in most applications, this will not be a major issue
+are not monotonic w.r.t.\ $V$. More precisely, while the suggested tests
+are also consistent for such non-monotonic violations, they seem to be
+clearly less powerful than the likelihood ratio test \readme{added some
+more ``technical'' detail}.
+We speculate that, in most applications, this will not be a major issue
 because the researcher's a priori hypotheses exclusively focus on
 monotonic measurement 
 invariance violations.  For example, in the youth gratitude
@@ -984,18 +1023,27 @@ We may still be interested in why the
 point because this type of violation was unexpected.  
 However, there is generally a tradeoff between the ordinal statistics
 and the likelihood ratio statistic.  The
-proposed ordinal statistics usually provide sharper tests of one's a
+proposed ordinal statistics usually provide more powerful tests of one's a
 priori hypothesis regarding measurement invariance w.r.t.\ ordinal
-$V$, while the likelihood ratio statistic provides a sharper test of
-general (non-monotonic) measurement invariance w.r.t.\ $V$.  While the
+$V$, while the likelihood ratio statistic provides a more powerful test of
+general (non-monotonic) measurement invariance w.r.t.\ $V$. \readme{I
+replace ``sharper'' by ``more powerful'' which would be the correct
+statistical jargon. Or is sharper the terminus technicus in psychometrics?}
+While the
 latter feature may be important in some high-stakes applications, many
 researchers are likely to find the former feature appealing for their
 work. 
 
 Along with using likelihood ratio tests to study measurement
 invariance, researchers may wish to treat ordinal $V$ as continuous
-(especially if $V$ has many levels).  This treatment would allow the
-researcher to employ moderated factor models
+(especially if $V$ has many levels).  
+\fixme{We should also point to the supLM test of our first paper here.
+The maxLM and supLM will generally be very close if the number of
+potential thresholds is large. Maybe we could also re-iterate that
+the forming of age groups a priori might not even be necessary and
+more studies could collect data about age as a continuous rather than
+just an ordinal variable.}
+This treatment would allow the researcher to employ moderated factor models
 \cite{BauHus09,MolDol10,Pur02} or factor mixture models
 \cite{DolMaa98,LubMut05}.  Under the moderated factor model approach,
 $V$ is inserted directly into the factor analysis model and allowed to
@@ -1014,7 +1062,10 @@ generally suitable for ordinal $V$.
 \subsection{Extension to Other Models}
 We focused on testing for measurement invariance in factor
 analysis models here, but the proposed test statistics are applicable to
-other psychometric models that are estimated via ML.  The only
+other psychometric models that are estimated via ML (or similar estimation
+techniques for independent observations that are governed by a central limit
+theorem). \readme{Added the comment in brackets. Useful or too detailed and
+potentially confusing?} The only
 requirement for carrying out the tests is that the casewise scores
 (Equation~\eqref{eq:score}) be available following model estimation.
 As a result, applications to studying DIF in IRT are immediate,
@@ -1024,6 +1075,12 @@ same general results to hold for these applications, whereby the
 proposed test statistics are better than the LRT for detecting
 monotonic instabilities.   The strucchange package \cite{Zei06} noted
 previously can be used for these more-general applications.
+
+\fixme{Should we make some practical remarks about the computation of
+$p$-values somewhere? The issue with the maxLM test is that it is hard
+to tabulate critical values in advance and hence simulation has to be
+done for each case and is potentially rather time-consuming. Not sure
+whether we should do this now or wait until the revision or so\dots}
 
 \subsection{Summary}
 The test statistics proposed in this paper have relatively-high power for
