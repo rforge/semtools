@@ -142,7 +142,7 @@ Finally, we provide some detail on the tests' use in practice.
 
 This section contains background on the theory underlying the
 proposed statistics; for a more detailed
-account, see Merkle and Zeileis \citeyear{MerZei12}.
+account, see \citeA{MerZei12}.
 
 We  consider situations in which a $p$-dimensional variable $X$
 with observations $\bm{x}_i, i=1,\dots,n$ is described by a 
@@ -267,7 +267,7 @@ with respect to $V$, then the scores should randomly fluctuate around
 zero.  Conversely, if measurement invariance does not hold, then the
 scores should systematically depart from zero.  These ideas are
 related to those underlying the Lagrange multiplier test and are
-discussed in detail by Merkle and Zeileis \citeyear{MerZei12}. Here,
+discussed in detail by \citeA{MerZei12}. Here,
 we review the tests' properties that are relevant for extending them
 to the ordinal case.
 
@@ -350,8 +350,7 @@ corresponding to a ``maximum'' Lagrange multiplier test, where the
 maximum is taken across all possible divisions of individuals into two
 groups w.r.t.\ $V$.  Additionally, the $\max \mathit{LM}$ statistic is
 scaled by the asymptotic variance $t (1 - t)$ of the process
-${\bm B}(t, \hat {\bm \theta})$.  In simulations, Merkle and Zeileis
-\citeyear{MerZei12} found 
+${\bm B}(t, \hat {\bm \theta})$.  In simulations, \citeA{MerZei12} found 
 that both tests perform well when assessing simultaneous changes
 in multiple factor analysis parameters, with the
 $\mathit{CvM}$ test being somewhat advantageous in their particular
@@ -407,7 +406,7 @@ a simple correlation structure: $\sqrt{s (1 - t)}/\sqrt{t (1 - s)}$ for
 $s \le t$ and both $\in \{t_1, \dots, t_{m-1}\}$. Therefore, critical
 values and $p$-values can be easily computed from a multivariate normal
 distribution with standard normal marginals and this particular correlation
-matrix; see also \citeNP{hotzei08} for more details. In R, this can be
+matrix; see also \citeA{hotzei08} for more details. In R, this can be
 accomplished using the mvtnorm package \cite{mvtnorm}.
 
 For $\max \mathit{LM}_o$ the resulting asymptotic distribution is
@@ -541,7 +540,7 @@ in power, with the second proposed ordinal statistic
 at large violation magnitudes.  This is because the double-max
 test discards information about multiple parameters changing together
 at specific levels of the ordinal variable
-(see Merkle and Zeileis, 2012, for related discussion), while the
+(see \citeNP{MerZei12}, for related discussion), while the
 three other tests under consideration make use of this information.
 Finally, it is seen that, in the small $n$ and large $m$ conditions,
 the likelihood ratio test exhibits large Type-I error rates (i.e.,
@@ -637,7 +636,7 @@ The more interesting result of this simulation lies in the comparison
 of the four test statistics within each panel of the figure.  The
 two ``unordered'' test statistics both have relatively-high power to
 detect the measurement invariance violation, illustrating the result 
-of Bentler and Bonett \citeyear{Ben80} and others that the
+of \citeA{Ben80} and others that the
 likelihood ratio test statistic picks out minor 
 parameter discrepancies at large $n$.  In contrast, the two ordinal
 test statistics that we proposed have considerably lower power, with
@@ -698,7 +697,7 @@ in youth. One potential problem with this research is that
 scholars, with no exception, have used adult gratitude inventories to
 measure youth gratitude, thus raising the question of whether the
 existing gratitude scales used with adults are valid in research with
-youth. Addressing this issue, \citeNP{FroFan11} had a
+youth. Addressing this issue, \citeA{FroFan11} had a
 large sample of 
 youth ($n$ = 1401, ranging from late childhood (10 years old) to
 late adolescent (19 years old)) complete the three most widely used
@@ -719,7 +718,7 @@ youth age groups.
 
 \subsection{Method}
 
-\citeNP{FroFan11} used confirmatory factor 
+\citeA{FroFan11} used confirmatory factor 
 models to study the invariance of three youth gratitude scales across
 students aged 10 to 19 years.  Due to sample size constraints, the age
 variable included six categories: 10--11 years, 12--13 years, 14 years,
@@ -737,7 +736,7 @@ to be equal across levels of age).  Because their sample size was large ($n
 \approx 1400$), they could not rely solely on likelihood ratio tests
 (i.e., $\chi^2$ difference tests) for model comparison because the
 tests were overly sensitive at their sample size.  To supplement these
-tests, \citeNP{FroFan11} examined a set of alternative fit indices, including
+tests, \citeA{FroFan11} examined a set of alternative fit indices, including
 the non-normed fit index, the comparative fit index, and the
 incremental fit index. %% TODO cite
 The authors generally found support for the tau-equivalent models
@@ -745,12 +744,12 @@ through these alternative fit indices; the likelihood ratio test often
 resulted in significance even when the alternative indices indicated
 good fit.
 
-In the analyses described below, we re-analyze the \citeNP{FroFan11} data using
+In the analyses described below, we re-analyze the \citeA{FroFan11} data using
 the ordinal test statistics proposed in this paper.  This results in a
 series of tests that are less sensitive than the likelihood ratio test
 to minor parameter discrepancies,
 while being more sensitive to ordinal violations of measurement invariance.
-We focus on two analyses from Froh et al.\ where the likelihood
+We focus on two analyses from \citeA{FroFan11} where the likelihood
 ratio test resulted in significance (indicating that the restricted
 model did not fit as well as the less-restricted model) but the
 alternative fit measures indicated the opposite.
@@ -763,7 +762,7 @@ using the GAC.  To conduct equivalent analyses via the proposed tests, we
 fit the more-restricted model in each case and test for instability in
 the focal model parameters.
 
-Of the 1401 cases originally collected by \citeNP{FroFan11}, we use here all
+Of the 1401 cases originally collected by \citeA{FroFan11}, we use here all
 subjects with complete data (resulting in $n=1327$).
 
 <<frohdata>>=
@@ -787,8 +786,7 @@ ratio tests, while the second subsection contains the opposite.
 m1 <- cfa('f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5',
           data=yg, group="agegroup", group.equal="loadings",
           meanstructure=TRUE)
-gefp1 <- gefp(m1, fit = NULL, scores=estfun.lavaan, 
-              order.by = as.numeric(yg$agegroup), 
+gefp1 <- gefp(m1, fit = NULL, order.by = as.numeric(yg$agegroup), 
               vcov = info_full, sandwich = FALSE, parm=1:4)
 if(file.exists("ol2bb1.rda")){
   load("ol2bb1.rda")
@@ -826,32 +824,24 @@ axis(2)
 \end{figure}
 
 \subsubsection{GQ-6} In fitting a tau-equivalent model and a congeneric
-model to the GQ-6 data, Froh et al.\ used alternative fit indices to
+model to the GQ-6 data, \citeA{FroFan11} used alternative fit indices to
 conclude that the tau-equivalent model was as good as the congeneric
 model.  However, the likelihood ratio test comparing these two models
 was significant ($\chi^2_{20} = \Sexpr{round(lrt1[[5]][2], digits = 2)}, p=\Sexpr{round(lrt1[[7]][2], digits = 3)}$ for the data considered
 here).  
 
-\fixme{Here and also subsequently, formulations like ``we compare model~A
-and model~B'' are used. I'm not sure whether this sends the correct message.
-If I want to compare exactly these two models, then the LRT is the correct
-thing to do. But we are looking for other types of deviations, especially if
-a split into two (rather than all) groups might be sufficient to capture
-the effect of $V$. Hence, maybe we should explain in some more detail what
-we are testing and also explore other models when rejecting the model? For
-more comments in this vein see below.}
-\readme{Achim: Added two sentences here that hopefully address the issue.}
 We can use the proposed ordinal statistics to assess whether or not
 the factor loadings in the tau-equivalent model fluctuate with respect
 to age.  Unlike the LRT, the test does not require parameters to
-differ within each subgroup.  Instead, we test for deviations such
-that a split into two subgroups is sufficient to capture the effect of
-$V$.
-In employing the ordinal tests, we obtain~$\mathit{WDM}_o=\Sexpr{round(omax1$statistic, digits = 2)}, p=\Sexpr{round(omax1$p.value, digits = 3)}$
- and~$\max\mathit{LM}_o=\Sexpr{round(ol2bb1$statistic, digits = 2)}, p=\Sexpr{round(ol2bb1$p.value, digits = 3)}$.
+differ across \emph{all} subgroups.  Instead, we test for deviations such
+that a split into two subgroups is sufficient to capture the effect of $V$.
+In employing the ordinal tests, we obtain~$\mathit{WDM}_o=\Sexpr{round(omax1$statistic, digits = 2)},
+p = \Sexpr{format(round(omax1$p.value, digits = 3), nsmall = 3)}$
+and~$\max\mathit{LM}_o=\Sexpr{round(ol2bb1$statistic, digits = 2)},
+p=\Sexpr{round(ol2bb1$p.value, digits = 3)}$.
 Both $p$-values are clearly larger than that of the likelihood ratio test
-and neither is significant at an $\alpha$ of 0.05,
-which supports the conclusions that Froh et al.\ obtained from
+and neither is significant at $\alpha = 0.05$,
+which supports the conclusions that \citeA{FroFan11} obtained from
 alternative fit statistics.  This provides further evidence that 
 there is no systematic deviation of the factor loadings along age
 and that the likelihood ratio statistic is overly sensitive, picking
@@ -887,8 +877,7 @@ m2 <- cfa('f1 =~ gac_1 + gac_2 + gac_3
            f1 ~ 0*1', data=yg, group="agegroup",
            group.equal=c("loadings","residuals","lv.variances"), 
            meanstructure=TRUE)
-gefp2 <- gefp(m2, fit = NULL, scores=estfun.lavaan, 
-              order.by = as.numeric(yg$agegroup), 
+gefp2 <- gefp(m2, fit = NULL, order.by = as.numeric(yg$agegroup), 
               vcov = info_full, sandwich = FALSE, parm=3:6)
 if(file.exists("ol2bb2.rda")){
   load("ol2bb2.rda")
@@ -927,11 +916,11 @@ axis(2)
 \end{figure}
 
 \subsubsection{GAC} In fitting tau-equivalent and parallel models to the
-GAC data, \citeNP{FroFan11} obtained mixed results.  The alternative fit
+GAC data, \citeA{FroFan11} obtained mixed results.  The alternative fit
 indices did not all agree with one another, and the likelihood ratio test
 indicated that the parallel model fit worse than the tau-equivalent
 model ($\chi^2_{20} = \Sexpr{round(lrt2[[5]][2], digits = 2)}, p<0.01$
-for the data considered here).  Froh et al.\ ultimately 
+for the data considered here).  \citeA{FroFan11} ultimately 
 concluded that the tau-equivalent model provided a better fit than did
 the parallel model.
 
@@ -953,13 +942,22 @@ observed that both processes are fully above the critical value,
 implying the measurement invariance violation.  Additionally, both
 processes peak at the 12--13 age group, suggesting that
 parameters differ between individuals up to 13 years of age and older
-than 13 years. \fixme{Maybe we could additionally fit a tau-equivalent
+than 13 years. \fixme{Z: Maybe we could additionally fit a tau-equivalent
 model for only two age groups: $\le 13$ vs.\ $> 13$. Then, we could
 re-run tests and check whether this already fits sufficiently well?
 This could help making the split into two subgroups clearer, rather
 than always splitting into all possible age groups.}
-\readme{Achim: See code starting on line 963 of the Rnw file. Even if we
+\readme{ECM: See code starting on line 963 of the Rnw file. Even if we
   split around age 13, the test statistics are all significant.}
+\readme{Z: My formulation above was misleading. We started out from
+model m2 with 24 parameters where variances are restricted to be equal
+across all groups. The LRT compares this to model m2.f with 44 parameters,
+where the group-specific variances for all 6 age groups are estimated.
+This ``costs'' us $(6 - 1) \cdot 4 = 20$ additional parameters. Instead,
+we could fit a model m2.2 with 4 additional parameters -- i.e., 28 in total --
+where the variances are just estimated separately for two age groups (split at age 14).
+This should improve significantly upon m2 but if we are lucky it is not
+significantly worse than m2.f.}
 
 <<gac.2grp>>=
 yg <- transform(yg, under14=as.numeric(agegroup)<=2)
@@ -1041,37 +1039,23 @@ and the likelihood ratio statistic.  The
 proposed ordinal statistics usually provide more powerful tests of one's a
 priori hypothesis regarding measurement invariance w.r.t.\ ordinal
 $V$, while the likelihood ratio statistic provides a more powerful test of
-general (non-monotonic) measurement invariance w.r.t.\ $V$. \readme{I
-replace ``sharper'' by ``more powerful'' which would be the correct
-statistical jargon. Or is sharper the terminus technicus in psychometrics?}
-\readme{Achim: No, ``sharper'' was simply my terminus technicus when I
-  was writing this section.}
-While the
+general (non-monotonic) measurement invariance w.r.t.\ $V$. While the
 latter feature may be important in some high-stakes applications, many
 researchers are likely to find the former feature appealing for their
 work. 
 
 Along with using likelihood ratio tests to study measurement
 invariance, researchers may wish to treat ordinal $V$ as continuous
-(especially if $V$ has many levels).  
-\fixme{We should also point to the supLM test of our first paper here.
-The maxLM and supLM will generally be very close if the number of
-potential thresholds is large. Maybe we could also re-iterate that
-the forming of age groups a priori might not even be necessary and
-more studies could collect data about age as a continuous rather than
-just an ordinal variable.}
-\readme{Achim: You say both ``maxLM'' and ``supLM'' above, but I assume
-  you are generally referring to maxLM for ordinal $V$ vs maxLM for
-  continuous $V$.  See sentences below.}
-As described in detail by Merkle and Zeileis \citeyear{MerZei12}, we
+(especially if $V$ has very many levels).  
+As described in detail by \citeA{MerZei12}, we
 can also use cumulative score processes with continuous $V$,
 resulting in, e.g., maximum LM statistics and Cram\'{e}r-von Mises
 statistics.  In fact, when the number of potential thresholds is
 large, the proposed~$\max\mathit{LM}_o$ statistic will be very close
-to the $\max\mathit{LM}$ statistic described in Merkle and Zeileis.
+to the $\max\mathit{LM}$ statistic described in \citeA{MerZei12}.
 Thus, the formation of ordinal age groups (or other variables) is not
 necessary for testing measurement invariance, and it may be beneficial
-to collect continuous age data (e.g., measured by days instead of by 
+to collect continuous age data (e.g., age measured in days rather than in
 years).
 
 There also exist alternative methods for testing measurement
@@ -1107,15 +1091,13 @@ proposed test statistics are better than the LRT for detecting
 monotonic instabilities.   The strucchange package \cite{Zei06} noted
 previously can be used for these more-general applications.
 
-\fixme{Should we make some practical remarks about the computation of
-$p$-values somewhere? The issue with the maxLM test is that it is hard
-to tabulate critical values in advance and hence simulation has to be
-done for each case and is potentially rather time-consuming. Not sure
-whether we should do this now or wait until the revision or so\dots}
-\readme{Achim: I am happy to wait for the revision, and for now have
-  inserted a TODO comment into the Rnw file.}
-
-% TODO Practical remarks about the computation of p-values
+% TODO % \fixme{Z: Should we make some practical remarks about the computation of
+% TODO % $p$-values somewhere? The issue with the maxLM test is that it is hard
+% TODO % to tabulate critical values in advance and hence simulation has to be
+% TODO % done for each case and is potentially rather time-consuming. Not sure
+% TODO % whether we should do this now or wait until the revision or so\dots}
+% TODO % \readme{ECM: I am happy to wait for the revision, and for now have
+% TODO %   inserted a TODO comment into the Rnw file.}
 
 \subsection{Summary}
 The test statistics proposed in this paper have relatively-high power for
