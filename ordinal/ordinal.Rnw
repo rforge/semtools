@@ -975,10 +975,12 @@ lrt2.2te <- anova(m2.f, m2.2)
 The finding that variance parameters differ between individuals up to 13 years and individuals over 13 years is reinforced by comparing the
 tau-equivalent and parallel models to an intermediate model.  This intermediate model is tau-equivalent in nature, but there exist only two groups: individuals up to 13 years
 and individuals older than 13 years.  A likelihood ratio test implies that
-this intermediate model fits as well as the original tau-equivalent model~($\chi^2_{16} = \Sexpr{round(lrt2.2te[[5]][2], digits = 2)}$, $p=\Sexpr{round(lrt2.2te[[7]][2], digits=2)}$), with 16 fewer parameters.  The intermediate model also fits 
-better than the parallel model, as judged by a second likelihood ratio test~($\chi^2_{4} = \Sexpr{round(lrt2.2par[[5]][2], digits = 2)}, p<.01$).
+this intermediate model fits as well as the original tau-equivalent model~($\chi^2_{16} = \Sexpr{round(lrt2.2te[[5]][2], digits = 2)}$, $p=\Sexpr{round(lrt2.2te[[7]][2], digits=2)}$),
+with 16 fewer parameters ($= 6 \cdot 4 - 2 \cdot 4$ because the four variances have to be estimated only in two rather than in six age groups).  The intermediate model also fits 
+better than the parallel model, as judged by a second likelihood ratio test~($\chi^2_{4} = \Sexpr{format(round(lrt2.2par[[5]][2], digits = 2), nsmall = 2)},
+p<0.01$).
 Finally, using the proposed ordinal test statistics with the intermediate model, we no 
-longer observe instability in the variance parameters
+longer observe further instability in the variance parameters
 ($\mathit{WDM}_o=\Sexpr{round(omax2.2$statistic, digits = 2)}, p=\Sexpr{round(omax2.2$p.value, digits = 2)}$; 
 $\max\mathit{LM}_o=\Sexpr{round(ol2bb2.2$statistic, digits = 2)}, p=\Sexpr{round(ol2bb2.2$p.value, digits = 2)}$).
 
