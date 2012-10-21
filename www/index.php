@@ -33,26 +33,28 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <!-- get project title  -->
 <!-- own website starts here, the following may be changed as you like -->
 
-<?php if ($handle=fopen('http://'.$domain.'/export/projtitl.php?group_name='.$group_name,'r')){
-$contents = '';
-while (!feof($handle)) {
-	$contents .= fread($handle, 8192);
-}
-fclose($handle);
-echo $contents; } ?>
+<h1>semtools: Methods for Testing Measurement Invariance in Structural Equation Models</h1>
 
-<!-- end of project description -->
+<h2>Tests of measurement invariance without subgroups: A generalization of classical methods</h2>
 
-<p> <a href="psychoco2012.pdf">Psychoco 2012 presentation</a> on generalizations of measurement invariance tests when subgroups are unknown.</p>
-
-<p> <a href="http://eeecon.uibk.ac.at/wopec2/repec/inn/wpaper/2011-09.pdf">Working paper</a> on generalizations of measurement invariance tests when subgroups are unknown.</p>  
-
-<p> R files for carrying out the examples and simulation described in Merkle & Zeileis (in press), Tests of measurement invariance without subgroups: A generalization of classical methods, <em>Psychometrika</em>:</p>
 <ul>
-<li> <a href="mz.R">Artificial example functions</a> for lavaan or OpenMx model estimation, along with score extraction.</li>
-<li> <a href="sim.R">Simulation functions</a> for data generation, power evaluation, and power summaries.</li>
-<li> <a href="replication.R">Replication script</a> containing code to run and summarize the examples and simulations, using the above files.</li>
+  <li><a href="http://econpapers.repec.org/RePEc:inn:wpaper:2011-09">Working paper</a>, revised version accepted for publication in <em>Psychometrika</em></li>
+  <li><a href="http://www.psychoco.org/2012/slides/Merkle.pdf">Psychoco 2012 presentation</a></li>
+  <li>Replication materials:<ul>
+    <li> <a href="mz.R">Artificial example functions</a> for lavaan or OpenMx model estimation, along with score extraction.</li>
+    <li> <a href="sim.R">Simulation functions</a> for data generation, power evaluation, and power summaries.</li>
+    <li> <a href="replication.R">Replication script</a> containing code to run and summarize the examples and simulations, using the above files.</li>
+  </ul></li>
 </ul>
+
+<h2>Testing for measurement invariance with respect to an ordinal variable</h2>
+
+<ul>
+  <li><a href="http://econpapers.repec.org/RePEc:inn:wpaper:2012-24">Working paper</a>, forthcoming</li>
+</ul>
+
+
+<h2>Acknowledgments</h2>
 
 <p> This material is based upon work supported by the U.S. National Science Foundation under Grant No. SES-1061334.  Any opinions, findings and conclusions or recommendations expressed in this material are those of the authors and do not necessarily reflect the views of the National Science Foundation (NSF). </p>
 
