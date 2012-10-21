@@ -33,9 +33,9 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <!-- get project title  -->
 <!-- own website starts here, the following may be changed as you like -->
 
-<h1>semtools: Methods for Testing Measurement Invariance in Structural Equation Models</h1>
+<h2>semtools: Methods for Testing Measurement Invariance in Structural Equation Models</h1>
 
-<h2>Tests of measurement invariance without subgroups: A generalization of classical methods</h2>
+<h3>Tests of measurement invariance without subgroups: A generalization of classical methods</h2>
 
 <ul>
   <li><a href="http://econpapers.repec.org/RePEc:inn:wpaper:2011-09">Working paper</a>, revised version accepted for publication in <em>Psychometrika</em></li>
@@ -47,7 +47,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
   </ul></li>
 </ul>
 
-<h2>Testing for measurement invariance with respect to an ordinal variable</h2>
+<h3>Testing for measurement invariance with respect to an ordinal variable</h2>
 
 <ul>
   <li><a href="http://econpapers.repec.org/RePEc:inn:wpaper:2012-24">Working paper</a>, forthcoming</li>
