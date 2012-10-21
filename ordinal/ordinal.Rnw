@@ -73,7 +73,6 @@ get_boundary <- function(obj, fun, trim = 0) {
 info_full <- function(x, ...) solve(vcov(x) * nobs(x))
 @
 
-%% TODO add some more citations to these initial paragraphs
 The study of measurement invariance and differential item functioning
 (DIF) 
 has received considerable attention in the psychometric literature
@@ -230,7 +229,7 @@ hypothesis
 \end{equation}
 where $\nu$ is a threshold dividing individuals into two groups based on
 $V$.  This alternative is implicitly employed in ``median split''
-analyses, % TODO cite preacher
+analyses, 
 where $\nu$ is given as the sample median of $V$.  The threshold $\nu$
 is usually unknown, however, so it is generally of interest to
 test~\eqref{eq:h1*} across all possible values of $\nu$.  The tests
@@ -738,7 +737,7 @@ to be equal across levels of age).  Because their sample size was large ($n
 tests were overly sensitive at their sample size.  To supplement these
 tests, \citeA{FroFan11} examined a set of alternative fit indices, including
 the non-normed fit index, the comparative fit index, and the
-incremental fit index. %% TODO cite
+incremental fit index (e.g., \citeNP{BroCud93}).
 The authors generally found support for the tau-equivalent models
 through these alternative fit indices; the likelihood ratio test often
 resulted in significance even when the alternative indices indicated
@@ -941,49 +940,48 @@ panel displays the process associated with $\max\mathit{LM}_o$.  It is
 observed that both processes are fully above the critical value,
 implying the measurement invariance violation.  Additionally, both
 processes peak at the 12--13 age group, suggesting that
-parameters differ between individuals up to 13 years of age and older
-than 13 years. \fixme{Z: Maybe we could additionally fit a tau-equivalent
-model for only two age groups: $\le 13$ vs.\ $> 13$. Then, we could
-re-run tests and check whether this already fits sufficiently well?
-This could help making the split into two subgroups clearer, rather
-than always splitting into all possible age groups.}
-\readme{ECM: See code starting on line 963 of the Rnw file. Even if we
-  split around age 13, the test statistics are all significant.}
-\readme{Z: My formulation above was misleading. We started out from
-model m2 with 24 parameters where variances are restricted to be equal
-across all groups. The LRT compares this to model m2.f with 44 parameters,
-where the group-specific variances for all 6 age groups are estimated.
-This ``costs'' us $(6 - 1) \cdot 4 = 20$ additional parameters. Instead,
-we could fit a model m2.2 with 4 additional parameters -- i.e., 28 in total --
-where the variances are just estimated separately for two age groups (split at age 14).
-This should improve significantly upon m2 but if we are lucky it is not
-significantly worse than m2.f.}
+parameters differ between individuals up to 13 years of age and
+individuals older 
+than 13 years of age.  
 
-<<gac.2grp>>=
-yg <- transform(yg, under14=as.numeric(agegroup)<=2)
+<<gac.mod>>=
+m2.2 <- cfa('f1 =~ gac_1 + gac_2 + gac_3
+             f1 ~ 0*1
+             gac_1 ~~ c("v1.1","v1.1","v1.2","v1.2","v1.2","v1.2")*gac_1
+             gac_2 ~~ c("v2.1","v2.1","v2.2","v2.2","v2.2","v2.2")*gac_2
+             gac_3 ~~ c("v3.1","v3.1","v3.2","v3.2","v3.2","v3.2")*gac_3
+             f1 ~~ c("v4.1","v4.1","v4.2","v4.2","v4.2","v4.2")*f1', 
+             data=yg, group="agegroup",
+             group.equal=c("loadings","residuals","lv.variances"), 
+             meanstructure=TRUE)
 
-m3 <- cfa('f1 =~ gac_1 + gac_2 + gac_3
-           f1 ~ 0*1', data=yg, group="under14",
-           group.equal=c("loadings","residuals","lv.variances"), 
-           meanstructure=TRUE)
-gefp3 <- gefp(m3, fit = NULL, scores=estfun.lavaan, 
-              order.by = as.numeric(yg$under14), 
-              vcov = info_full, sandwich = FALSE, parm=3:6)
-if(file.exists("ol2bb3.rda")){
-  load("ol2bb3.rda")
+gefp2.2 <- gefp(m2.2, fit = NULL, scores=estfun.lavaan, 
+                order.by = as.numeric(yg$agegroup), 
+                vcov = info_full, sandwich = FALSE, parm=c(3:6,13:16))
+
+if(file.exists("ol2bb22.rda")){
+  load("ol2bb22.rda")
 } else {
-  ol2bb3.fun <- ordL2BB(gefp3)
-  save(ol2bb3.fun, file="ol2bb3.rda")
+  ol2bb22.fun <- ordL2BB(gefp2.2)
+  save(ol2bb22.fun, file="ol2bb22.rda")
 }
-omax3 <- sctest(gefp3, functional=ordwmax(gefp3))
-ol2bb3 <- sctest(gefp3, functional=ol2bb3.fun)
 
-## Full model
-m3.f <- cfa('f1 =~ gac_1 + gac_2 + gac_3
-           f1 ~ 0*1', data=yg, group="under14",
-           group.equal="loadings", meanstructure=TRUE)
-lrt3 <- anova(m3.f, m3)
+omax2.2 <- sctest(gefp2.2, functional=ordwmax(gefp2.2))
+ol2bb2.2 <- sctest(gefp2.2, functional=ol2bb22.fun)
+lrt2.2par <- anova(m2.2, m2)
+lrt2.2te <- anova(m2.f, m2.2)
 @ 
+
+The finding that variance parameters differ between individuals up to 13 years and individuals over 13 years is reinforced by comparing the
+tau-equivalent and parallel models to an intermediate model.  This intermediate model is tau-equivalent in nature, but there exist only two groups: individuals up to 13 years
+and individuals older than 13 years.  A likelihood ratio test implies that
+this intermediate model fits as well as the original tau-equivalent model~($\chi^2_{16} = \Sexpr{round(lrt2.2te[[5]][2], digits = 2)}$, $p=\Sexpr{round(lrt2.2te[[7]][2], digits=2)}$), with 16 fewer parameters.  The intermediate model also fits 
+better than the parallel model, as judged by a second likelihood ratio test~($\chi^2_{4} = \Sexpr{round(lrt2.2par[[5]][2], digits = 2)}, p<.01$).
+Finally, using the proposed ordinal test statistics with the intermediate model, we no 
+longer observe instability in the variance parameters
+($\mathit{WDM}_o=\Sexpr{round(omax2.2$statistic, digits = 2)}, p=\Sexpr{round(omax2.2$p.value, digits = 2)}$; 
+$\max\mathit{LM}_o=\Sexpr{round(ol2bb2.2$statistic, digits = 2)}, p=\Sexpr{round(ol2bb2.2$p.value, digits = 2)}$).
+
 
 \subsection{Summary}
 The application considered above shows that the ordinal test
