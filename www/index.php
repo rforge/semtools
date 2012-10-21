@@ -54,7 +54,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 </ul>
 
 
-<h2>Acknowledgments</h2>
+<h3>Acknowledgments</h2>
 
 <p> This material is based upon work supported by the U.S. National Science Foundation under Grant No. SES-1061334.  Any opinions, findings and conclusions or recommendations expressed in this material are those of the authors and do not necessarily reflect the views of the National Science Foundation (NSF). </p>
 
