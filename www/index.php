@@ -51,7 +51,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <h3>Testing for measurement invariance with respect to an ordinal variable</h2>
 
 <ul>
-  <li><a href="http://econpapers.repec.org/RePEc:inn:wpaper:2012-24">Working paper</a>, forthcoming</li>
+  <li><a href="http://econpapers.repec.org/RePEc:inn:wpaper:2012-24">Working paper</a></li>
   <li>Replication materials:<ul>
     <li><a href="estfun-lavaan.R">lavaan extensions</a> containing <tt>estfun()</tt> method for lavaan objects.</li>
     <li><a href="efpFunctional-cat.R">strucchange extensions</a> containing <tt>efpFunctional</tt>s for ordinal measurement invariance tests.</li>
