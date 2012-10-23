@@ -41,9 +41,10 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
   <li><a href="http://econpapers.repec.org/RePEc:inn:wpaper:2011-09">Working paper</a>, revised version accepted for publication in <em>Psychometrika</em></li>
   <li><a href="http://www.psychoco.org/2012/slides/Merkle.pdf">Psychoco 2012 presentation</a></li>
   <li>Replication materials:<ul>
-    <li> <a href="mz.R">Artificial example functions</a> for lavaan or OpenMx model estimation, along with score extraction.</li>
-    <li> <a href="sim.R">Simulation functions</a> for data generation, power evaluation, and power summaries.</li>
-    <li> <a href="replication.R">Replication script</a> containing code to run and summarize the examples and simulations, using the above files.</li>
+    <li><a href="estfun-lavaan.R">lavaan extensions</a> containing <tt>estfun()</tt> method for lavaan objects.</li>
+    <li><a href="mz.R">Artificial example functions</a> for lavaan or OpenMx model estimation, along with score extraction.</li>
+    <li><a href="sim.R">Simulation functions</a> for data generation, power evaluation, and power summaries.</li>
+    <li><a href="replication.R">Replication script</a> containing code to run and summarize the examples and simulations, using the above files.</li>
   </ul></li>
 </ul>
 
@@ -51,6 +52,13 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 
 <ul>
   <li><a href="http://econpapers.repec.org/RePEc:inn:wpaper:2012-24">Working paper</a>, forthcoming</li>
+  <li>Replication materials:<ul>
+    <li><a href="estfun-lavaan.R">lavaan extensions</a> containing <tt>estfun()</tt> method for lavaan objects.</li>
+    <li><a href="efpFunctional-cat.R">strucchange extensions</a> containing <tt>efpFunctional</tt>s for ordinal measurement invariance tests.</li>
+    <li><a href="mz-ordinal.R">Artificial example functions</a> for lavaan model estimation, along with score extraction.</li>
+    <li><a href="sim-ordinal.R">Simulation functions</a> for data generation, power evaluation, and power summaries.</li>
+    <li><a href="replication-ordinal.R">Replication script</a> containing code to run and summarize the examples and simulations, using the above files.</li>
+  </ul></li>
 </ul>
 
 
