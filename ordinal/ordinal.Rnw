@@ -52,13 +52,12 @@ library("lavaan")
 library("strucchange")
 library("mvtnorm")
 library("lattice")
-library("foreign")
 
 ## auxiliary code
-source("mzo.R")
+source("../www/mz-ordinal.R")
 source("../www/estfun-lavaan.R")
-source("../prelim_code/efpFunctional-cat.R")
-source("sim_ordinal.R")
+source("../www/efpFunctional-cat.R")
+source("../www/sim-ordinal.R")
 
 ## convenience function for plotting boundaries without color
 get_boundary <- function(obj, fun, trim = 0) {
@@ -605,8 +604,7 @@ features match those from Simulation 1.
 if(file.exists("sim2.rda")) {
   load("sim2.rda")
 } else {
-  sim2 <- simulation(diff = seq(0, 3, by = 0.5), nobs = c(1200, 4800, 9600),
-                     anomaly=TRUE)
+  sim2 <- simulation(diff = seq(0, 3, by = 0.5), nobs = c(1200, 4800, 9600), anomaly = TRUE)
   sim2$nlevels <- factor(sim2$nlevels)
   levels(sim2$nlevels) <- paste("m=",levels(sim2$nlevels),sep="")
   sim2$nobs <- factor(sim2$nobs)
@@ -764,14 +762,10 @@ the focal model parameters.
 Of the 1401 cases originally collected by \citeA{FroFan11}, we use here all
 subjects with complete data (resulting in $n=1327$).
 
-<<frohdata>>=
-yg <- read.spss("../prelim_code/grat_data_combined_2009-09-29.sav", to.data.frame=TRUE)
-names(yg) <- tolower(names(yg))
-
-## Remove cases with 'imputed' values
-yg <- yg[yg$ao_4 <= 9,]
-decimals <- apply(yg[,4:28]%%1 > 0, 1, sum)
-yg <- yg[decimals==0,]
+<<frohetal-data>>=
+data("YouthGratitude", package = "psychotools")
+## remove cases with 'imputed' values (not in 1, ..., 9)
+yg <- YouthGratitude[apply(YouthGratitude[, 4:28], 1, function(x) all(x %in% 1:9)), ]
 @ 
 
 \subsection{Results}
@@ -782,23 +776,26 @@ example of the ordinal statistics disagreeing with the likelihood
 ratio tests, while the second subsection contains the opposite.
 
 <<gq6>>=
-m1 <- cfa('f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5',
-          data=yg, group="agegroup", group.equal="loadings",
-          meanstructure=TRUE)
+m1 <- cfa(
+  'f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5',
+  data = yg, group = "agegroup", meanstructure=TRUE,
+  group.equal = "loadings")
 gefp1 <- gefp(m1, fit = NULL, order.by = as.numeric(yg$agegroup), 
-              vcov = info_full, sandwich = FALSE, parm=1:4)
+  vcov = info_full, sandwich = FALSE, parm=1:4)
 if(file.exists("ol2bb1.rda")){
   load("ol2bb1.rda")
 } else {
+  set.seed(1163)
   ol2bb1.fun <- ordL2BB(gefp1)
-  save(ol2bb1.fun, file="ol2bb1.rda")
+  save(ol2bb1.fun, file = "ol2bb1.rda")
 }
-omax1 <- sctest(gefp1, functional=ordwmax(gefp1))
-ol2bb1 <- sctest(gefp1, functional=ol2bb1.fun)
+omax1 <- sctest(gefp1, functional = ordwmax(gefp1))
+ol2bb1 <- sctest(gefp1, functional = ol2bb1.fun)
 
 ## Full model
-m1.f <- cfa('f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5',
-            data=yg, group="agegroup", meanstructure=TRUE)
+m1.f <- cfa(
+  'f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5',
+  data = yg, group = "agegroup", meanstructure = TRUE)
 lrt1 <- anova(m1.f, m1)
 @ 
 
@@ -808,16 +805,16 @@ lrt1 <- anova(m1.f, m1)
 \label{fig:gq6res}
 \setkeys{Gin}{width=\textwidth}
 <<gq6res, fig=TRUE, height=3, width=6>>=
-par(mfrow=c(1, 2), cex = 0.65)
+par(mfrow = c(1, 2), cex = 0.65)
 
-plot(gefp1, functional=ordwmax(gefp1), axes=FALSE, main="",
-     xlab="Age group", ylab="Weighted max statistics")
-axis(1, at=1:5, labels=c("10-11","12-13","14","15","16"))
+plot(gefp1, functional = ordwmax(gefp1), axes = FALSE, main = "",
+     xlab = "Age group", ylab = "Weighted max statistics")
+axis(1, at = 1:5, labels = c("10-11", "12-13", "14", "15", "16"))
 axis(2)
 
-plot(gefp1, functional=ol2bb1.fun, axes=FALSE, ylim=c(0,14), main="",
-     xlab="Age group", ylab="LM statistics")
-axis(1, at=1:5, labels=c("10-11","12-13","14","15","16"))
+plot(gefp1, functional = ol2bb1.fun, axes = FALSE, ylim = c(0, 14), main = "",
+     xlab = "Age group", ylab = "LM statistics")
+axis(1, at = 1:5, labels = c("10-11", "12-13", "14", "15", "16"))
 axis(2)
 @
 \end{figure}
@@ -872,25 +869,30 @@ loadings and age groups.
 
 
 <<gac>>=
-m2 <- cfa('f1 =~ gac_1 + gac_2 + gac_3
-           f1 ~ 0*1', data=yg, group="agegroup",
-           group.equal=c("loadings","residuals","lv.variances"), 
-           meanstructure=TRUE)
+m2 <- cfa(
+  'f1 =~ gac_1 + gac_2 + gac_3
+   f1 ~ 0*1',
+  data = yg, group = "agegroup", meanstructure = TRUE,
+  group.equal = c("loadings", "residuals", "lv.variances"))
+
 gefp2 <- gefp(m2, fit = NULL, order.by = as.numeric(yg$agegroup), 
-              vcov = info_full, sandwich = FALSE, parm=3:6)
+  vcov = info_full, sandwich = FALSE, parm = 3:6)
 if(file.exists("ol2bb2.rda")){
   load("ol2bb2.rda")
 } else {
+  set.seed(1163)
   ol2bb2.fun <- ordL2BB(gefp2)
-  save(ol2bb2.fun, file="ol2bb2.rda")
+  save(ol2bb2.fun, file = "ol2bb2.rda")
 }
-omax2 <- sctest(gefp2, functional=ordwmax(gefp2))
-ol2bb2 <- sctest(gefp2, functional=ol2bb2.fun)
+omax2 <- sctest(gefp2, functional = ordwmax(gefp2))
+ol2bb2 <- sctest(gefp2, functional = ol2bb2.fun)
 
 ## Full model
-m2.f <- cfa('f1 =~ gac_1 + gac_2 + gac_3
-           f1 ~ 0*1', data=yg, group="agegroup",
-           group.equal="loadings", meanstructure=TRUE)
+m2.f <- cfa(
+  'f1 =~ gac_1 + gac_2 + gac_3
+   f1 ~ 0*1',
+  data = yg, group = "agegroup", meanstructure = TRUE,
+  group.equal = "loadings")
 lrt2 <- anova(m2.f, m2)
 @ 
 
@@ -900,16 +902,16 @@ lrt2 <- anova(m2.f, m2)
 \label{fig:gacres}
 \setkeys{Gin}{width=\textwidth}
 <<gacres, fig=TRUE, height=3, width=6>>=
-par(mfrow=c(1, 2), cex = 0.65)
+par(mfrow = c(1, 2), cex = 0.65)
 
-plot(gefp2, functional=ordwmax(gefp2), axes=FALSE, main="",
-     xlab="Age group", ylab="Weighted max statistics")
-axis(1, at=1:5, labels=c("10-11","12-13","14","15","16"))
+plot(gefp2, functional = ordwmax(gefp2), axes = FALSE, main = "",
+     xlab = "Age group", ylab = "Weighted max statistics")
+axis(1, at = 1:5, labels = c("10-11", "12-13", "14", "15", "16"))
 axis(2)
 
-plot(gefp2, functional=ol2bb2.fun, axes=FALSE, ylim=c(0,115), main="",
-     xlab="Age group", ylab="LM statistics")
-axis(1, at=1:5, labels=c("10-11","12-13","14","15","16"))
+plot(gefp2, functional = ol2bb2.fun, axes = FALSE, ylim = c(0, 115), main = "",
+     xlab = "Age group", ylab = "LM statistics")
+axis(1, at = 1:5, labels = c("10-11", "12-13", "14", "15", "16"))
 axis(2)
 @
 \end{figure}
@@ -945,29 +947,29 @@ individuals older
 than 13 years of age.  
 
 <<gac.mod>>=
-m2.2 <- cfa('f1 =~ gac_1 + gac_2 + gac_3
-             f1 ~ 0*1
-             gac_1 ~~ c("v1.1","v1.1","v1.2","v1.2","v1.2","v1.2")*gac_1
-             gac_2 ~~ c("v2.1","v2.1","v2.2","v2.2","v2.2","v2.2")*gac_2
-             gac_3 ~~ c("v3.1","v3.1","v3.2","v3.2","v3.2","v3.2")*gac_3
-             f1 ~~ c("v4.1","v4.1","v4.2","v4.2","v4.2","v4.2")*f1', 
-             data=yg, group="agegroup",
-             group.equal=c("loadings","residuals","lv.variances"), 
-             meanstructure=TRUE)
+m2.2 <- cfa(
+  'f1 =~ gac_1 + gac_2 + gac_3
+   f1 ~ 0*1
+   gac_1 ~~ c("v1.1","v1.1","v1.2","v1.2","v1.2","v1.2")*gac_1
+   gac_2 ~~ c("v2.1","v2.1","v2.2","v2.2","v2.2","v2.2")*gac_2
+   gac_3 ~~ c("v3.1","v3.1","v3.2","v3.2","v3.2","v3.2")*gac_3
+   f1 ~~ c("v4.1","v4.1","v4.2","v4.2","v4.2","v4.2")*f1', 
+  data = yg, group = "agegroup", meanstructure = TRUE,
+  group.equal = c("loadings", "residuals", "lv.variances"))
 
-gefp2.2 <- gefp(m2.2, fit = NULL, scores=estfun.lavaan, 
-                order.by = as.numeric(yg$agegroup), 
-                vcov = info_full, sandwich = FALSE, parm=c(3:6,13:16))
+gefp2.2 <- gefp(m2.2, fit = NULL, order.by = as.numeric(yg$agegroup), 
+  vcov = info_full, sandwich = FALSE, parm = c(3:6, 13:16))
 
 if(file.exists("ol2bb22.rda")){
   load("ol2bb22.rda")
 } else {
+  set.seed(1163)
   ol2bb22.fun <- ordL2BB(gefp2.2)
   save(ol2bb22.fun, file="ol2bb22.rda")
 }
 
-omax2.2 <- sctest(gefp2.2, functional=ordwmax(gefp2.2))
-ol2bb2.2 <- sctest(gefp2.2, functional=ol2bb22.fun)
+omax2.2 <- sctest(gefp2.2, functional = ordwmax(gefp2.2))
+ol2bb2.2 <- sctest(gefp2.2, functional = ol2bb22.fun)
 lrt2.2par <- anova(m2.2, m2)
 lrt2.2te <- anova(m2.f, m2.2)
 @ 
