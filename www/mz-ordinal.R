@@ -16,6 +16,11 @@ ordfit <- function(data, silent = TRUE, suppressWarnings = TRUE, ...)
             group = "age", group.equal = c("loadings","intercepts","regressions","lv.covariances")))
   m3 <- try(cfa(rval, data = data, meanstructure = TRUE, std.lv = TRUE,
             group = "age", group.equal = c("loadings","intercepts","regressions","lv.covariances","residuals","means")))
+  ## Get test stats at values of m3, for Satorra-Bentler correction
+  ## FIXME: User-specified starting values cannot be set in this way.
+  ##svals <- c(coef(m3), rep(coef(m3)[7:12], 9))
+  ##m2b <- try(cfa(rval, data = data, meanstructure = TRUE, std.lv = TRUE,
+  ##              group = "age", group.equal = c("loadings","intercepts","regressions","lv.covariances"), start = svals, control=list(iter.max=0)))
 
   ## model from Merkle & Zeileis
   rval <- 'verbal =~ x1 + x2 + x3; math =~ y1 + y2 + y3'
