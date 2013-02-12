@@ -16,16 +16,24 @@ ordfit <- function(data, silent = TRUE, suppressWarnings = TRUE, ...)
             group = "age", group.equal = c("loadings","intercepts","regressions","lv.covariances")))
   m3 <- try(cfa(rval, data = data, meanstructure = TRUE, std.lv = TRUE,
             group = "age", group.equal = c("loadings","intercepts","regressions","lv.covariances","residuals","means")))
-  ## Get test stats at values of m3, for Satorra-Bentler correction
-  ## FIXME: User-specified starting values: manipulate
-  ##        parameterEstimates(m3)$est?  Must first fix a bug in lavaan.
-  tmp.pars <- parameterEstimates(m3)
-  ## tmp.pars$est
-  ##m3@ParTable$ustart[!is.na(m3@ParTable$ustart)] <- c(coef(m3), rep(coef(m3)[7:12], 9))
-  ##m2b <- try(cfa(rval, data = data, meanstructure = TRUE, std.lv = TRUE,
-  ##              group = "age", group.equal = c("loadings","intercepts","regressions","lv.covariances"), start = svals, control=list(iter.max=0)))
-  ## For iter.max==0, fitMeasures() will not work.  But get value
-  ## of discrepancy function via m2b@Fit@fx (may need to multiply by 2)
+
+  ## Get test stats at values of m3, for Satorra-Bentler 2010 correction
+  ## for difference tests.  This is currently difficult in lavaan due to
+  ## 1. User-defined starting values are not working correctly.  However,
+  ##    you can trick lavaan by supplying a modified ParTable (filling in the
+  ##    ustart column).
+  ## 2. Lavaan will not return the usual S-B scaled statistic for models
+  ##    that have not converged.
+  ## Set up an m2 ParTable:
+  ## m2b <- try(cfa(rval, data = data, meanstructure = TRUE, std.lv = TRUE,
+  ##                group = "age", group.equal = c("loadings","intercepts","regressions","lv.covariances"), do.fit=FALSE))
+  ## Fill this ParTable in with values from m3:
+  ## m2b@ParTable$ustart <- coef(m3,"all")
+  ## Supply starting values from this partable, with do.fit=FALSE
+  ## m2b <- try(cfa(m2b@ParTable, data = data, meanstructure = TRUE,
+  ##               std.lv = TRUE, group = "age", group.equal = c("loadings","intercepts","regressions","lv.covariances"), do.fit=FALSE))
+  ## Problem: Still can't get a S-B scaled statistic from m2b.
+
   
   ## Get WLS fits, for Yuan-Bentler correction
   ## NB WLS is AKA ADF.  Yuan + Bentler 1997 call it Generalized
@@ -38,16 +46,18 @@ ordfit <- function(data, silent = TRUE, suppressWarnings = TRUE, ...)
   m3.wls <- try(cfa(rval, data = data, meanstructure = TRUE, std.lv = TRUE,
             group = "age", group.equal = c("loadings","intercepts","regressions","lv.covariances","residuals","means"), estimator="WLS"))
 
-  ## p-value for LRT Stat + Yuan-Bentler correction
+  ## p-value for LRT Stat + AIC
   if(!inherits(m2, "try-error") & !inherits(m3, "try-error") &
      m2@Fit@converged & m3@Fit@converged) {
     lrt.p <- anova(m3,m2)[[7]][2]
+    aic <- fitMeasures(m3, "aic") < fitMeasures(m2, "aic")
   } else {
     lrt.p <- NA
   }
+  ## p-value for Yuan-Bentler corrected statistic
   if(!inherits(m2.wls, "try-error") & !inherits(m3.wls, "try-error")) {
-    ## FIXME: Difference test with YB-corrected statistics may not be
-    ## technically correct, but I do not see a straightforward solution.
+    ## FIXME? Difference test with YB-corrected statistics problematic?
+    ## Seems not for the simulation, since the data are MVN...
     n <- nrow(data)
 
     if (m2.wls@Fit@converged){
@@ -86,6 +96,7 @@ ordfit <- function(data, silent = TRUE, suppressWarnings = TRUE, ...)
     data = data,
     model = rval,
     lrt.p = lrt.p,
+    aic = as.numeric(aic),
     yb.p = yb.p,
     names = c("verbal=~x1", "verbal=~x2", "verbal=~x3", "math=~y1", "math=~y2", "math=~y3", "x1~~x1", "x2~~x2", "x3~~x3",
         "y1~~y1", "y2~~y2", "y3~~y3", "verbal~~math", "x1~1", "x2~1", "x3~1", "y1~1", "y2~1", "y3~1")

@@ -107,6 +107,7 @@ testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, test = NULL, verb
       #pval[i, 4] <- sctest(ord_gefp,  functional = supLM(0.1))$p.value
       pval[i, 4] <- mz$lrt.p
       pval[i, 5] <- mz$yb.p
+      pval[i, 6] <- mz$aic
     }
   }
   rval <- colMeans(pval < size, na.rm = TRUE)
@@ -123,7 +124,7 @@ simulation <- function(diff = seq(0, 1.5, by = 0.25),
   prs <- expand.grid(diff = diff, nlevels = nlevels, nobs = nobs)
   nprs <- nrow(prs)
   
-  test <- c("ordmax","ordwmax","catdiff","lrt","yb97") # had suplm here
+  test <- c("ordmax","ordwmax","catdiff","lrt","yb97","aic") # had suplm here
   ntest <- length(test)
 
   ## Only simulate critical values if we need it.
@@ -137,7 +138,7 @@ simulation <- function(diff = seq(0, 1.5, by = 0.25),
   }
   cval.conds <- as.numeric(names(cval))
 
-  do.parallel <- F #require("parallel")
+  do.parallel <- require("parallel")
   if (do.parallel){
     pow <- mclapply(1:nprs, function(i){
       testpower(diff = prs$diff[i], nobs = prs$nobs[i],
