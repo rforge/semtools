@@ -50,12 +50,16 @@ ordfit <- function(data, silent = TRUE, suppressWarnings = TRUE, ...)
   if(!inherits(m2, "try-error") & !inherits(m3, "try-error") &
      m2@Fit@converged & m3@Fit@converged) {
     lrt.p <- anova(m3,m2)[[7]][2]
+    ## This is 1 if m3 judged better, 0 otherwise.
+    ## We eventually compute power as "number of aics < .05",
+    ## which will give us what we want.
     aic <- fitMeasures(m3, "aic") < fitMeasures(m2, "aic")
   } else {
     lrt.p <- NA
   }
   ## p-value for Yuan-Bentler corrected statistic
-  if(!inherits(m2.wls, "try-error") & !inherits(m3.wls, "try-error")) {
+  if(!inherits(m2.wls, "try-error") & !inherits(m3.wls, "try-error") &
+     m2.wls@Fit@converged & m3.wls@Fit@converged) {
     ## FIXME? Difference test with YB-corrected statistics problematic?
     ## Seems not for the simulation, since the data are MVN...
     n <- nrow(data)
@@ -126,7 +130,11 @@ vcov.mzfit <- function(object, ...) {
 
 bread.mzfit <- function(x, ...) vcov(x) * nrow(x$data)
 
-info.mzfit <- function(x, ...) solve(vcov(x) * nrow(x$data))
+## NB: The lavaan function estfun will scale the scores by
+##     -1/nrow(x$data), as compared to the scores that we have
+#      been using.  So this means that info.mzfit includes
+##     nrow(x$data)^3 instead of the previous nrow(x$data).
+info.mzfit <- function(x, ...) solve(vcov(x) * nrow(x$data)^3)
 
 estfun.mzfit <- function(x, ...)
 {
