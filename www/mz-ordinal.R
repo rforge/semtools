@@ -36,8 +36,10 @@ ordfit <- function(data, silent = TRUE, suppressWarnings = TRUE, ...)
 
   
   ## Get WLS fits, for Yuan-Bentler correction
-  ## NB WLS is AKA ADF.  Yuan + Bentler 1997 call it Generalized
-  ##    Least Squares with a weight matrix.
+  ## NB WLS is AKA ADF.  GLS is WLS assuming multivariate
+  ##    normality (see Browne + Arminger 95, p 189).  It seems
+  ##    that we need WLS here.  However, Type I errors are off
+  ##    the charts.
   ## NB It seems that these models do not converge as often
   ##    at smaller n.  The simulations will gloss over this.
   m2.wls <- try(cfa(rval, data = data, meanstructure = TRUE, std.lv = TRUE,
@@ -130,11 +132,7 @@ vcov.mzfit <- function(object, ...) {
 
 bread.mzfit <- function(x, ...) vcov(x) * nrow(x$data)
 
-## NB: The lavaan function estfun will scale the scores by
-##     -1/nrow(x$data), as compared to the scores that we have
-#      been using.  So this means that info.mzfit includes
-##     nrow(x$data)^3 instead of the previous nrow(x$data).
-info.mzfit <- function(x, ...) solve(vcov(x) * nrow(x$data)^3)
+info.mzfit <- function(x, ...) solve(vcov(x) * nrow(x$data))
 
 estfun.mzfit <- function(x, ...)
 {

@@ -65,7 +65,7 @@ dgp <- function(nobs = 200, diff = 3, nlevels=10, gradual=FALSE, anomaly=FALSE)
 
     mult <- ses
     if (anomaly) mult <- ifelse(i==(half.level+1), ses, 0)
-    
+
     ## SES found by fitting model to population S, multiplying
     ## observed SES by sqrt(n)
     if (gradual){
@@ -138,7 +138,7 @@ simulation <- function(diff = seq(0, 1.5, by = 0.25),
   }
   cval.conds <- as.numeric(names(cval))
 
-  do.parallel <- require("parallel")
+  do.parallel <- F #require("parallel")
   if (do.parallel){
     pow <- mclapply(1:nprs, function(i){
       testpower(diff = prs$diff[i], nobs = prs$nobs[i],
@@ -155,7 +155,7 @@ simulation <- function(diff = seq(0, 1.5, by = 0.25),
       ## Find critical values we need
       ordfun <- cval[[which(cval.conds == prs$nlevels[i])]]
 
-      pow[i,] <- testpower(diff = prs$diff[i], nobs = prs$nobs[i], nlevels = prs$nlevels[i], ordfun = ordfun, test = test, verbose = verbose, ...)
+      pow[i,] <- testpower(diff = prs$diff[i], nobs = prs$nobs[i], nlevels = prs$nlevels[i], ordfun = ordfun, test = test, anomaly = anomaly, verbose = verbose, ...)
     }
   }
 
