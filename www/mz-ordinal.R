@@ -13,9 +13,9 @@ ordfit <- function(data, silent = TRUE, suppressWarnings = TRUE, ...)
            verbal ~ 0*1; math ~ 0*1'
 
   m2 <- try(cfa(rval, data = data, meanstructure = TRUE, std.lv = TRUE,
-            group = "age", group.equal = c("loadings","intercepts","regressions","lv.covariances")))
+            group = "age", group.equal = c("loadings","intercepts","regressions","lv.covariances"), test="Satorra.Bentler"))
   m3 <- try(cfa(rval, data = data, meanstructure = TRUE, std.lv = TRUE,
-            group = "age", group.equal = c("loadings","intercepts","regressions","lv.covariances","residuals","means")))
+            group = "age", group.equal = c("loadings","intercepts","regressions","lv.covariances","residuals","means"), test="Satorra.Bentler"))
 
   ## Get test stats at values of m3, for Satorra-Bentler 2010 correction
   ## for difference tests.  This is currently difficult in lavaan due to
@@ -42,48 +42,61 @@ ordfit <- function(data, silent = TRUE, suppressWarnings = TRUE, ...)
   ##    the charts.
   ## NB It seems that these models do not converge as often
   ##    at smaller n.  The simulations will gloss over this.
-  m2.wls <- try(cfa(rval, data = data, meanstructure = TRUE, std.lv = TRUE,
-            group = "age", group.equal = c("loadings","intercepts","regressions","lv.covariances"), estimator="WLS"))
+  zinv <- try(get.zcov(data))
+  if(!inherits(zinv, "try-error")){
+    m2.wls <- try(cfa(rval, data = data, meanstructure = TRUE, std.lv = TRUE,
+                      group = "age", group.equal = c("loadings","intercepts","regressions","lv.covariances"), estimator="WLS", WLS.V=zinv))
 
-  m3.wls <- try(cfa(rval, data = data, meanstructure = TRUE, std.lv = TRUE,
-            group = "age", group.equal = c("loadings","intercepts","regressions","lv.covariances","residuals","means"), estimator="WLS"))
+    m3.wls <- try(cfa(rval, data = data, meanstructure = TRUE, std.lv = TRUE,
+                      group = "age", group.equal = c("loadings","intercepts","regressions","lv.covariances","residuals","means"), estimator="WLS", WLS.V=zinv))
+  }else{
+    m2.wls <- try(y12, silent=TRUE)
+    m3.wls <- try(y12, silent=TRUE)
+  }
 
-  ## p-value for LRT Stat + AIC
+  ## p-value for LRT Stat, AIC, Sat-Bent scaled difference
   if(!inherits(m2, "try-error") & !inherits(m3, "try-error") &
      m2@Fit@converged & m3@Fit@converged) {
-    lrt.p <- anova(m3,m2)[[7]][2]
+    lrt <- fitMeasures(m3,"chisq") - fitMeasures(m2,"chisq")
+    lrt.p <- pchisq(lrt, fitMeasures(m3,"df") - fitMeasures(m2, "df"),
+                    lower.tail=FALSE)
     ## This is 1 if m3 judged better, 0 otherwise.
     ## We eventually compute power as "number of aics < .05",
     ## which will give us what we want.
     aic <- fitMeasures(m3, "aic") < fitMeasures(m2, "aic")
+
+    ## Satorra-Bentler scaled difference test automatically
+    ## computed via anova()
+    lrt.sb <- anova(m2,m3,SB.classic=TRUE)[[7]][2]
   } else {
     lrt.p <- NA
+    aic <- NA
+    lrt.sb <- NA
   }
   ## p-value for Yuan-Bentler corrected statistic
-  if(!inherits(m2.wls, "try-error") & !inherits(m3.wls, "try-error") &
-     m2.wls@Fit@converged & m3.wls@Fit@converged) {
+  if(!inherits(m2.wls, "try-error") & !inherits(m3.wls, "try-error")){
+     # & m2.wls@Fit@converged & m3.wls@Fit@converged) {
     ## FIXME? Difference test with YB-corrected statistics problematic?
     ## Seems not for the simulation, since the data are MVN...
     n <- nrow(data)
 
     if (m2.wls@Fit@converged){
-      m2.fit <- fitMeasures(m2.wls)
-      m2.yb <- m2.fit[names(m2.fit)=="chisq"]/
-        (1 + m2.fit[names(m2.fit)=="chisq"]/n)
+      m2.fit <- fitMeasures(m2.wls, "chisq")
+      m2.yb <- m2.fit/(1 + m2.fit/n)
     } else {
       m2.yb <- NA
     }
 
     if (m3.wls@Fit@converged){
-      m3.fit <- fitMeasures(m3.wls)
-      m3.yb <- m3.fit[names(m3.fit)=="chisq"]/
-        (1 + m3.fit[names(m3.fit)=="chisq"]/n)
+      m3.fit <- fitMeasures(m3.wls, "chisq")
+      m3.yb <- m3.fit/(1 + m3.fit/n)
     } else {
       m3.yb <- NA
     }
 
     yb.diff <- m3.yb - m2.yb
-    yb.p <- pchisq(yb.diff, df=anova(m3,m2)[[6]][2], lower.tail=FALSE)
+    yb.p <- pchisq(yb.diff, df=anova(m2,m3)[[6]][2], lower.tail=FALSE)
+    if(!m2.wls@Fit@converged | !m3.wls@Fit@converged) yb.p <- NA
   } else {
     yb.p <- NA
   }
@@ -102,6 +115,7 @@ ordfit <- function(data, silent = TRUE, suppressWarnings = TRUE, ...)
     data = data,
     model = rval,
     lrt.p = lrt.p,
+    lrt.sb = lrt.sb,
     aic = as.numeric(aic),
     yb.p = yb.p,
     names = c("verbal=~x1", "verbal=~x2", "verbal=~x3", "math=~y1", "math=~y2", "math=~y3", "x1~~x1", "x2~~x2", "x3~~x3",
@@ -137,4 +151,27 @@ info.mzfit <- function(x, ...) solve(vcov(x) * nrow(x$data))
 estfun.mzfit <- function(x, ...)
 {
   estfun.lavaan(x$model)
+}
+
+get.zcov <- function(data){
+  age <- data$age
+  data <- data[,names(data) %in% c("x1", "x2", "x3", "y1", "y2", "y3")]
+  mat.size <- ncol(data) + ncol(data)*(ncol(data)+1)/2
+
+  s.zi <- NULL
+  ages <- unique(age)
+  for (i in 1:length(ages)){
+    zmat <- t(apply(data[age==ages[i],], 1, function(x){
+      zcp <- tcrossprod(x)
+      c(x, as.numeric(zcp[lower.tri(zcp, diag=TRUE)]))
+    }))
+
+    n.age <- nrow(zmat)
+    ## Take inverse of the covariane matrix:
+    s.zinv <- solve(((n.age-1)/n.age)*cov(zmat))
+
+    s.zi <- c(s.zi, list(s.zinv))
+  }
+
+  s.zi
 }
