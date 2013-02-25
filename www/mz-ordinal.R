@@ -42,17 +42,15 @@ ordfit <- function(data, silent = TRUE, suppressWarnings = TRUE, ...)
   ##    the charts.
   ## NB It seems that these models do not converge as often
   ##    at smaller n.  The simulations will gloss over this.
-  zinv <- try(get.zcov(data))
-  if(!inherits(zinv, "try-error")){
-    m2.wls <- try(cfa(rval, data = data, meanstructure = TRUE, std.lv = TRUE,
-                      group = "age", group.equal = c("loadings","intercepts","regressions","lv.covariances"), estimator="WLS", WLS.V=zinv))
+  ## NB: Use of zinv results in a stat with terrible Type I error
+  ## zinv <- try(get.zcov(data))
+  
+  m2.wls <- try(cfa(rval, data = data, meanstructure = TRUE, std.lv = TRUE,
+                      group = "age", group.equal = c("loadings","intercepts","regressions","lv.covariances"), estimator="WLS")) #, WLS.V=zinv))
 
-    m3.wls <- try(cfa(rval, data = data, meanstructure = TRUE, std.lv = TRUE,
-                      group = "age", group.equal = c("loadings","intercepts","regressions","lv.covariances","residuals","means"), estimator="WLS", WLS.V=zinv))
-  }else{
-    m2.wls <- try(y12, silent=TRUE)
-    m3.wls <- try(y12, silent=TRUE)
-  }
+  m3.wls <- try(cfa(rval, data = data, meanstructure = TRUE, std.lv = TRUE,
+                      group = "age", group.equal = c("loadings","intercepts","regressions","lv.covariances","residuals","means"), estimator="WLS")) #, WLS.V=zinv))
+
 
   ## p-value for LRT Stat, AIC, Sat-Bent scaled difference
   if(!inherits(m2, "try-error") & !inherits(m3, "try-error") &

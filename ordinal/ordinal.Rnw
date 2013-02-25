@@ -56,7 +56,7 @@ library("lattice")
 ## auxiliary code
 source("../www/mz-ordinal.R")
 ## TODO Change this:
-source("../sandbox/yves/estfun.R")
+source("../www/estfun-lavaan.R")
 source("../www/efpFunctional-cat.R")
 source("../www/sim-ordinal.R")
 
