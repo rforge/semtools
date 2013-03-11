@@ -38,7 +38,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <h3>Tests of measurement invariance without subgroups: A generalization of classical methods</h3>
 
 <ul>
-  <li><a href="http://econpapers.repec.org/RePEc:inn:wpaper:2011-09">Working paper</a>, revised version accepted for publication in <em>Psychometrika</em></li>
+  <li>Manuscript published in <a href="http://dx.doi.org/10.1007/S11336-012-9302-4">Psychometrika 78(1), 58-82</a>.</em></li>
   <li><a href="http://www.psychoco.org/2012/slides/Merkle.pdf">Psychoco 2012 presentation</a></li>
   <li>Replication materials:<ul>
     <li><a href="estfun-lavaan.R">lavaan extensions</a> containing <tt>estfun()</tt> method for lavaan objects.</li>
