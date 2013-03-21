@@ -65,7 +65,12 @@ ordfit <- function(data, silent = TRUE, suppressWarnings = TRUE, ...)
 
     ## Satorra-Bentler scaled difference test automatically
     ## computed via anova()
-    lrt.sb <- anova(m2,m3,SB.classic=TRUE)[[7]][2]
+    lrt.sb <- try(anova(m2,m3,SB.classic=TRUE)[[7]][2])
+    if(inherits(lrt.sb, "try-error")){
+      lrt.sb <- NA
+      tmp <- list(m2=m2, m3=m3, data=data)
+      save(tmp, file="SBerror.rda")
+    }
   } else {
     lrt.p <- NA
     aic <- NA
@@ -94,7 +99,6 @@ ordfit <- function(data, silent = TRUE, suppressWarnings = TRUE, ...)
 
     yb.diff <- m3.yb - m2.yb
     yb.p <- pchisq(yb.diff, df=anova(m2,m3)[[6]][2], lower.tail=FALSE)
-    if(!m2.wls@Fit@converged | !m3.wls@Fit@converged) yb.p <- NA
   } else {
     yb.p <- NA
   }
@@ -105,7 +109,7 @@ ordfit <- function(data, silent = TRUE, suppressWarnings = TRUE, ...)
   data <- data[, c("x1", "x2", "x3", "y1", "y2", "y3")]
   
   ## fit model
-  rval <- cfa(rval, data = data, meanstructure = TRUE, std.lv = TRUE)
+  rval <- try(cfa(rval, data = data, meanstructure = TRUE, std.lv = TRUE))
   
   ## store (1) fitted model object, (2) lavaan coefficient
   ## labeling and ordering

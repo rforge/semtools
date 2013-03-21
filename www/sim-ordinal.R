@@ -146,7 +146,8 @@ simulation <- function(diff = seq(0, 1.5, by = 0.25),
                 nlevels = prs$nlevels[i], gradual = gradual, test = test,
                 ordfun = cval[[which(cval.conds == prs$nlevels[i])]],
                 anomaly = anomaly, verbose = verbose, ...)},
-                    mc.cores = round(.75*detectCores()))
+                    mc.cores = round(.75*detectCores()),
+                    mc.preschedule = FALSE)
     pow <- t(matrix(unlist(pow), ntest, nprs))
   } else {
     pow <- matrix(rep(NA, ntest * nprs), ncol = ntest)

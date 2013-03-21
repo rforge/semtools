@@ -55,7 +55,6 @@ library("lattice")
 
 ## auxiliary code
 source("../www/mz-ordinal.R")
-## TODO Change this:
 source("../www/estfun-lavaan.R")
 source("../www/efpFunctional-cat.R")
 source("../www/sim-ordinal.R")
@@ -611,12 +610,14 @@ if(file.exists("sim2.rda")) {
   levels(sim2$nlevels) <- paste("m=",levels(sim2$nlevels),sep="")
   sim2$nobs <- factor(sim2$nobs)
   levels(sim2$nobs) <- paste("n=",levels(sim2$nobs),sep="")
-  levels(sim2$test) <- c("LM_uo", "LRT", "LM_o", "WDM_o")
+  levels(sim2$test) <- c("AIC","LM_uo", "LRT", "LRT_sb","LM_o", "WDM_o",
+                         "YB97")
   save(sim2, file="sim2.rda")
 }
 sim2$test <- factor(as.character(sim2$test),
-  levels = c("LM_o", "WDM_o", "LRT", "LM_uo"),
-  labels = c("maxLM_o", "WDM_o", "LRT", "LM_uo"))
+  levels = c("LM_o", "WDM_o", "LRT", "LM_uo", "LRT_sb",
+             "YB97", "AIC"),
+  labels = c("maxLM_o", "WDM_o", "LRT", "LM_uo", "LRT_sb", "YB97", "AIC"))
 @ 
 
 \subsection{Results}
