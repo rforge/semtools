@@ -127,7 +127,7 @@ possess good properties for use in practice.
 
 The test statistics proposed here are derived from a family of tests
 that were recently applied to the study of measurement invariance in
-psychometric models \cite{KopZei10,MerZei12}.
+psychometric models \cite{KopZei10,MerZei13}.
 In the following section, we provide an overview of the family and
 describe the proposed statistics in detail.  Subsequently, we report on the
 results of two simulation studies designed to compare the proposed
@@ -136,53 +136,7 @@ invariance.  Moreover, we illustrate the proposed statistics using
 psychometric data on scales purported to measure youth gratitude.  
 Finally, we provide some detail on the tests' use in practice.
 
-\section{Theoretical Detail}
-
-This section contains background on the theory underlying the
-proposed statistics; for a more detailed
-account, see \citeA{MerZei12}.
-
-We  consider situations in which a $p$-dimensional variable $X$
-with observations $\bm{x}_i, i=1,\dots,n$ is described by a 
-model with density $f(\bm{x}_i; \bm{\theta})$ and
-associated joint log-likelihood
-\begin{equation} \label{eq:loglik}
-  \ell(\bm{\theta}; \bm{x}_1, \dots, \bm{x}_n) ~=~
-    \sum_{i = 1}^n \ell(\bm{\theta}; \bm{x}_i) ~=~
-    \sum_{i = 1}^n  \log f(\bm{x}_i; \bm{\theta}),
-\end{equation}
-where ${\bm \theta}$ is some $k$-dimensional parameter vector that characterizes
-the distribution.  
-
-We focus on applications where the density $f(\bm{x}_i; \bm{\theta})$ arises
-from a structural equation model with assumed multivariate normality,
-though the proposed tests extend beyond this family of models.  Under
-the usual regularity conditions (e.g., \citeNP{Fer96}), the model parameters
-$\bm{\theta}$ can 
-be estimated by maximum likelihood (ML), i.e.,
-\begin{equation} \label{eq:ml}
-  \hat{\bm{\theta}} ~=~ \argmax_{\bm{\theta}} \ell(\bm{\theta}; x_1, \dots, x_n),
-\end{equation}
-or equivalently by solving the first order conditions
-\begin{equation}
-    \label{eq:ml1}
-  \sum_{i=1}^{n} {\bm s}(\hat{\bm{\theta}}; \bm{x}_i) ~=~ 0,    
-\end{equation}
-where 
-\begin{equation}
-  \label{eq:score}
-  {\bm s}({\bm \theta}; x_i) ~=~ \left(
-    \frac{\partial \ell({\bm \theta}; x_i)}{\partial \theta_1},
-    \dots,
-    \frac{\partial \ell({\bm \theta}; x_i)}{\partial \theta_k}
-  \right)^\top,
-\end{equation}
-is the score function of the model (the partial derivative of the casewise
-likelihood contributions w.r.t.\ the parameters $\bm{\theta}$).
-Evaluation of the score function at $\hat{\bm{\theta}}$ for $i=1,
-\dots, n$ essentially measures the extent to which the model maximizes
-each individual's likelihood: as an individual's scores stray further
-from zero, the model provides a poorer description of that individual.
+\section{Measurement Invariance}
 
 In studying measurement invariance, we are essentially testing the
 assumption that all  
@@ -244,9 +198,59 @@ Thus, test statistics that explicitly treat $V$ as ordinal should have
 higher power to detect measurement invariance violations that are
 monotonic with $V$.
 
-In the section below, we review tests where
-$V$ is continuous (and $\nu$ is unknown) before proceeding to the 
-proposed tests for ordinal $V$.
+In the section below, we review the theory underlying tests where
+$V$ is continuous (and $\nu$ is unknown).  We then propose novel tests
+for ordinal $V$.
+
+\section{Theoretical Detail}
+
+This section contains background on the theory underlying the
+proposed statistics; for a more detailed
+account, see \citeA{MerZei13}.
+
+We  consider situations in which a $p$-dimensional variable $X$
+with observations $\bm{x}_i, i=1,\dots,n$ is described by a 
+model with density $f(\bm{x}_i; \bm{\theta})$ and
+associated joint log-likelihood
+\begin{equation} \label{eq:loglik}
+  \ell(\bm{\theta}; \bm{x}_1, \dots, \bm{x}_n) ~=~
+    \sum_{i = 1}^n \ell(\bm{\theta}; \bm{x}_i) ~=~
+    \sum_{i = 1}^n  \log f(\bm{x}_i; \bm{\theta}),
+\end{equation}
+where ${\bm \theta}$ is some $k$-dimensional parameter vector that characterizes
+the distribution.  
+
+We focus on applications where the density $f(\bm{x}_i; \bm{\theta})$ arises
+from a structural equation model with assumed multivariate normality,
+though the proposed tests extend beyond this family of models.  Under
+the usual regularity conditions (e.g., \citeNP{Fer96}), the model parameters
+$\bm{\theta}$ can 
+be estimated by maximum likelihood (ML), i.e.,
+\begin{equation} \label{eq:ml}
+  \hat{\bm{\theta}} ~=~ \argmax_{\bm{\theta}} \ell(\bm{\theta}; x_1, \dots, x_n),
+\end{equation}
+or equivalently by solving the first order conditions
+\begin{equation}
+    \label{eq:ml1}
+  \sum_{i=1}^{n} {\bm s}(\hat{\bm{\theta}}; \bm{x}_i) ~=~ 0,    
+\end{equation}
+where 
+\begin{equation}
+  \label{eq:score}
+  {\bm s}({\bm \theta}; x_i) ~=~ \left(
+    \frac{\partial \ell({\bm \theta}; x_i)}{\partial \theta_1},
+    \dots,
+    \frac{\partial \ell({\bm \theta}; x_i)}{\partial \theta_k}
+  \right)^\top,
+\end{equation}
+is the score function of the model (the partial derivative of the casewise
+likelihood contributions w.r.t.\ the parameters $\bm{\theta}$).
+Evaluation of the score function at $\hat{\bm{\theta}}$ for $i=1,
+\dots, n$ essentially measures the extent to which the model maximizes
+each individual's likelihood: as an individual's scores stray further
+from zero, the model provides a poorer description of that individual.
+
+
 
 \subsection{Tests for Continuous $V$}
 
@@ -265,22 +269,33 @@ with respect to $V$, then the scores should randomly fluctuate around
 zero.  Conversely, if measurement invariance does not hold, then the
 scores should systematically depart from zero.  These ideas are
 related to those underlying the Lagrange multiplier test and are
-discussed in detail by \citeA{MerZei12}. Here,
-we review the tests' properties that are relevant for extending them
+discussed in detail by \citeA{MerZei13}.  Additionally, these ideas
+are related to those underlying Modification Indexes (e.g.,
+\citeNP{Sor89}): the Modification Index is equivalent to a Lagrange
+multiplier test, and the Lagrange multiplier test is contained in the
+family described by \citeA{MerZei13}.  Here,
+we focus on the tests' properties that are relevant for extending them
 to the ordinal case.
 
 To formalize the ideas discussed in the previous paragraph, we assume
 that the observations are ordered 
-w.r.t.\ $V$ (so that $v_i \le v_{i + 1}$) and define the $k$-dimensional
+w.r.t.\ $V$, with $x_{(i)}$ reflecting
+the data for the individual who has the 
+$i^{\text{th}}$-smallest value of $V$.  We then define the $k$-dimensional
 {\em cumulative score process} as 
 \begin{equation} \label{eq:cumscore}
   {\bm B}(t; \hat {\bm \theta}) ~=~ \hat {\bm I}^{-1/2} n^{-1/2}
-    \sum_{i = 1}^{\lfloor n t \rfloor} {\bm s}(\hat {\bm \theta}; x_i)
+    \sum_{i = 1}^{\lfloor n t \rfloor} {\bm s}(\hat {\bm \theta}; x_{(i)})
   \qquad (0 \le t \le 1)
 \end{equation}
 where $\lfloor nt \rfloor$ is the integer part of $nt$ and
 $\hat I$ is some consistent estimate of the covariance matrix of the
-scores, e.g., based on the information matrix or an outer product of the scores.
+scores.  Natural choices for $\hat I$ include the information matrix
+(which we use in our applications and simulations below) or
+alternatively some kind of outer product of the scores or sandwich
+estimator to guard the inference against potential misspecification of
+the model (see \citeNP{hub67} for the theoretical foundation and
+\citeNP{zei06b} for a computational framework).  
 Equation~\eqref{eq:cumscore} simultaneously accounts for the
 ordering of individuals w.r.t.\ $V$ and decorrelates the scores
 associated with each of the $k$ model parameters (which allows us to
@@ -330,7 +345,7 @@ discards information
 related to multiple parameters fluctuating simultaneously, resulting
 in it having relatively-low power for assessing measurement
 invariance when multiple factor analysis parameters change
-simultaneously \cite{MerZei12}.
+simultaneously \cite{MerZei13}.
 
 Test statistics that exhibit better performance in such situations 
 aggregate information across parameters and possibly also across
@@ -348,7 +363,7 @@ corresponding to a ``maximum'' Lagrange multiplier test, where the
 maximum is taken across all possible divisions of individuals into two
 groups w.r.t.\ $V$.  Additionally, the $\max \mathit{LM}$ statistic is
 scaled by the asymptotic variance $t (1 - t)$ of the process
-${\bm B}(t, \hat {\bm \theta})$.  In simulations, \citeA{MerZei12} found 
+${\bm B}(t, \hat {\bm \theta})$.  In simulations, \citeA{MerZei13} found 
 that both tests perform well when assessing simultaneous changes
 in multiple factor analysis parameters, with the
 $\mathit{CvM}$ test being somewhat advantageous in their particular
@@ -365,7 +380,7 @@ $V$ is continuous, so that there is a unique ordering of individuals with respec
 However, in situations where $V$ is ordinal, there is only a partial ordering
 of all individuals, i.e., observations with the same level of $V$ have no unique
 ordering. (Note that the same also applies if $V$ is continuous in nature but is only
-discretely measured leading to many ties.) 
+discretely measured, leading to many ties.) 
 
 The ordinal statistics proposed here are
 similar to those described in
@@ -385,8 +400,11 @@ and~\eqref{eq:maxlm} above can then be written as
     \label{eq:maxlmo}
       \max \mathit{LM}_o & = & \max_{i \in \{i_1, \dots, i_{m-1} \}} ~
                              \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1}
-                             \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2.
+                             \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2,
 \end{eqnarray}
+resulting in a ``weighted'' double maximum statistic (weighted by the
+asymptotic variance of the Brownian bridge) and an ordinal, maximum
+Lagrange multiplier statistic.
 Critical values associated with these test statistics can be obtained
 by applying the same functionals to bins of a Brownian bridge, where the
 bin sizes result in the cumulative proportions $t_\ell$ ($\ell=1, \dots,
@@ -470,15 +488,23 @@ traditional statistics.  We generate data from a two-factor,
 six-indicator model, with a measurement invariance violation occurring
 in the unique variance parameters.  We
 use the proposed test statistics to test for measurement invariance
-simultaneously across the unique variances, which is similar to
-comparing a tau-equivalent model to a congeneric model (e.g.,
-\citeNP{VanLan00}).
+simultaneously across the unique variances, which is similar to a test
+of ``invariant uniquenesses'' (see \citeNP{VanLan00}). % Or comparing
+                                        % parallel to tau-equivalent 
 
-We also compute two statistics that treat the ordinal
-auxiliary variable as categorical.  These include the likelihood ratio
-test of measurement 
-invariance in the six unique variance parameters, along with the
-unordered LM test from~\eqref{eq:lmuo}.
+The four ``traditional'' statistics that we consider generally treat
+the ordinal auxiliary variable as categorical.  The first two are the
+likelihood ratio test of measurement 
+invariance in the six unique variance parameters and the
+unordered LM test from~\eqref{eq:lmuo}.  Next, we consider the
+Satorra-Bentler \citeyear{SatBen01} scaled likelihood ratio test
+statistic with correction for difference testing.  Finally, we
+consider the use of AIC \cite{Aka74} for detecting measurement
+invariance.  In this context, we compute AIC for both the ``reduced'' 
+model (all parameters constrained equal across groups) and the
+``full'' model (unique variances allowed to differ between groups).
+We then declare a measurement invariance violation if the AIC for the
+full model is lower than the AIC for the reduced model.
 
 \subsection{Method}
 Data were generated from a two-factor model
@@ -525,7 +551,8 @@ sim1$test <- factor(as.character(sim1$test),
 
 \subsection{Results}
 
-Simulation results are presented in Figure~\ref{fig:sim1res}.  Rows of
+Simulation results comparing the ordinal tests to the unordered LM
+test and the LRT are presented in Figure~\ref{fig:sim1res}.  Rows of
 the figure 
 correspond to $n$, columns of the figure correspond to $m$, the x-axis
 of each panel corresponds to $d$, and the y-axis of each panel
@@ -539,7 +566,7 @@ in power, with the second proposed ordinal statistic
 at large violation magnitudes.  This is because the double-max
 test discards information about multiple parameters changing together
 at specific levels of the ordinal variable
-(see \citeNP{MerZei12}, for related discussion), while the
+(see \citeNP{MerZei13}, for related discussion), while the
 three other tests under consideration make use of this information.
 Finally, it is seen that, in the small $n$ and large $m$ conditions,
 the likelihood ratio test exhibits large Type-I error rates (i.e.,
@@ -547,21 +574,57 @@ power greater than 0.05 at $d=0$).  This is because the likelihood
 ratio test requires estimation of a multiple-groups model, which is very
 unstable with large numbers of groups and small sample sizes as only
 $n/m$ observations are available in each subsample.  The proposed
-statistics are all of the LM-type and just require estimation of the single-group model,
+statistics are all of the LM-type and just require estimation of the
+single-group model, 
 leading to a clear advantage in these conditions.
+
+Simulation results comparing the ordinal tests to the Satorra-Bentler
+scaled test statistic and to the AIC are presented in
+Figure~\ref{fig:sim1bres}.  This figure has the same design as the
+previous figure.  It is again seen that the $\max \mathit{LM}_o$
+statistic exhibits the greatest power across the conditions.
+Additionally, the Satorra-Bentler statistic has very large Type I
+error rates at low-$n$/large-$m$ combinations but is comparable to the
+ordinal double-max test at large $n$.  Finally, the ``power'' of the
+AIC (measured by the proportion of times that the full model has a
+lower AIC than the reduced model) is exceptionally low across all
+conditions.  The full model's gain in fit is seldom worth the extra
+parameters, at least according to AIC.
 
 \begin{figure}
 \caption{Simulated power curves for the ordered and unordered
-      $\max \mathit{LM}$ tests, the ordered double-max test, and the
+      $\max\mathit{LM}$ tests, the ordered double-max test, and the
       likelihood ratio test across three sample sizes $n$, three
       levels of the ordinal variable $m$, and measurement invariance
       violations of 0--1.5 standard errors (scaled by $\sqrt{n}$).}
 \label{fig:sim1res}
 \setkeys{Gin}{width=\textwidth}
 <<sim1res, fig=TRUE, height=7, width=7>>=
+sim1.tmp <- sim1[sim1$test %in% c("maxLM_o","WDM_o","LRT","LM_uo"),]
+sim1.tmp$test <- factor(sim1.tmp$test)
 trellis.par.set(theme = canonical.theme(color = FALSE))
-mykey <- simpleKey(levels(sim1$test), points = TRUE, lines = TRUE)
-print(xyplot(power ~ diff | nlevels + nobs, group = ~ test, data = sim1, 
+mykey <- simpleKey(levels(sim1.tmp$test), points = TRUE, lines = TRUE)
+print(xyplot(power ~ diff | nlevels + nobs, group = ~ test, data = sim1.tmp, 
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey))
+@
+\end{figure}
+
+\begin{figure}
+\caption{Simulated power curves for the ordered 
+      $\max\mathit{LM}$ tests, the ordered double-max test, the
+      Satorra-Bentler (2001) scaled likelihood ratio
+      test, and the use of AIC 
+      across three sample sizes $n$, three 
+      levels of the ordinal variable $m$, and measurement invariance
+      violations of 0--1.5 standard errors (scaled by $\sqrt{n}$).}
+\label{fig:sim1bres}
+\setkeys{Gin}{width=\textwidth}
+<<sim1bres, fig=TRUE, height=7, width=7>>=
+sim1.tmp <- sim1[sim1$test %in% c("maxLM_o","WDM_o","LRT_sb","AIC"),]
+sim1.tmp$test <- factor(sim1.tmp$test)
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(sim1.tmp$test), points = TRUE, lines = TRUE)
+print(xyplot(power ~ diff | nlevels + nobs, group = ~ test, data = sim1.tmp, 
              type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey))
 @
 \end{figure}
@@ -621,7 +684,8 @@ sim2$test <- factor(as.character(sim2$test),
 @ 
 
 \subsection{Results}
-Simulation results are presented in Figure~\ref{fig:sim2res}.  It is
+Simulation results for the two ordinal test statistics, the unordered LM
+test, and the LRT are presented in Figure~\ref{fig:sim2res}.  It is
 observed that results are very consistent across the sample sizes
 tested, implying that ``practical infinity'' is reached for this model
 by $n=1200$.   We also observe a negative 
@@ -632,7 +696,7 @@ constant), the number of individuals violating measurement invariance
 therefore decreases.  As a result, power to detect the violation decreases with
 increasing $m$.
 
-The more interesting result of this simulation lies in the comparison
+The more interesting result of Figure~\ref{fig:sim2res} lies in the comparison
 of the four test statistics within each panel of the figure.  The
 two ``unordered'' test statistics both have relatively-high power to
 detect the measurement invariance violation, illustrating the result 
@@ -642,7 +706,18 @@ parameter discrepancies at large $n$.  In contrast, the two ordinal
 test statistics that we proposed have considerably lower power, with
 the $\mathit{WDM}_o$ statistic being the lowest and the $\max\mathit{LM}_o$
 statistic being higher at larger values of $d$.  
-This demonstrates that the proposed ordinal test
+
+Simulation results for the two ordinal test statistics, the Satorra-Bentler
+scaled test statistic, and the AIC are presented in
+Figure~\ref{fig:sim2bres}.  It is observed that the Satorra-Bentler
+statistic exhibits performance that is similar to the usual LRT,
+with the two ordinal statistics having lower power.  The AIC, which
+generally exhibited low power even for Simulation 1, continues to
+exhibit low power here.  However, if $n$ or $d$ is large enough, the
+power exhibited by AIC is larger than the power of the ordinal test
+statistics.  
+
+These results demonstrate that the proposed ordinal test
 statistics can be especially useful at large sample sizes, where
 traditional test statistics result in frequent significance.
 Both statistics exhibited much lower power to detect a measurement
@@ -651,7 +726,7 @@ invariance violation that occurs only at a single level of $V$.
 
 \begin{figure}
 \caption{Simulated power curves for the ordered and unordered
-      $\max \mathit{LM}$ tests, the ordered double-max test, and the
+      $\max\mathit{LM}$ tests, the ordered double-max test, and the
       likelihood ratio test across three sample sizes $n$, three
       levels of the ordinal variable $m$, and measurement invariance
       violations of 0--3 standard errors (scaled by $\sqrt{n}$)
@@ -660,12 +735,37 @@ invariance violation that occurs only at a single level of $V$.
 \label{fig:sim2res}
 \setkeys{Gin}{width=\textwidth}
 <<sim2res, fig=TRUE, height=7, width=7>>=
+sim2.tmp <- sim2[sim2$test %in% c("maxLM_o","WDM_o","LRT","LM_uo"),]
+sim2.tmp$test <- factor(sim2.tmp$test)
 trellis.par.set(theme = canonical.theme(color = FALSE))
-mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
-print(xyplot(power ~ diff | nlevels + nobs, group = ~ test, data = sim2, 
+mykey <- simpleKey(levels(sim2.tmp$test), points = TRUE, lines = TRUE)
+print(xyplot(power ~ diff | nlevels + nobs, group = ~ test, data = sim2.tmp, 
              type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey))
 @
 \end{figure}
+
+\begin{figure}
+\caption{Simulated power curves for the ordered 
+      $\max\mathit{LM}$ tests, the ordered double-max test, the
+      Satorra-Bentler (2001) scaled likelihood ratio
+      test, and the use of AIC 
+      across three sample sizes $n$, three
+      levels of the ordinal variable $m$, and measurement invariance
+      violations of 0--3 standard errors (scaled by $\sqrt{n}$)
+      occurring at a single level (the $(1 +
+      m/2)^{\text{th}}$ level) of the ordinal auxiliary variable.}
+\label{fig:sim2bres}
+\setkeys{Gin}{width=\textwidth}
+<<sim2bres, fig=TRUE, height=7, width=7>>=
+sim2.tmp <- sim2[sim2$test %in% c("maxLM_o","WDM_o","LRT_sb","AIC"),]
+sim2.tmp$test <- factor(sim2.tmp$test)
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(sim2.tmp$test), points = TRUE, lines = TRUE)
+print(xyplot(power ~ diff | nlevels + nobs, group = ~ test, data = sim2.tmp, 
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey))
+@
+\end{figure}
+
 
 Taken together, the results from Simulation~1 and Simulation~2
 provide evidence that the $\max\mathit{LM}_o$ statistic should be
@@ -681,7 +781,10 @@ occur in multiple parameters, whereas the $\mathit{WDM}_o$ focuses only
 on the parameter with the largest invariance violation.  
 Thus, the statistics are likely to exhibit
 similar performance if only a single model parameter violated
-measurement invariance.
+measurement invariance.  The only disadvantage to $\max\mathit{LM}_o$ is
+that its critical- and/or $p$-values must be computed by simulation,
+which can significantly increase computation time.  We return to this
+issue in the General Discussion.
 
 In the next section, we compare the proposed statistics to the
 likelihood ratio test with real data.
@@ -1007,7 +1110,10 @@ likelihood ratio test in the general discussion.
 
 In this paper, we proposed two statistics that can be used when one
 has an auxiliary ordinal variable and wishes to study measurement
-invariance.    To our knowledge,
+invariance.  We demonstrated via simulation that these statistics have
+good properties, though these results necessarily examined a small
+number of models and invariance violations and may not hold in all
+situations.  To our knowledge, 
 the ordinal measurement invariance statistics proposed here are the
 only ones that treat auxiliary variables as ordinal and thus direct
 power against 
@@ -1052,12 +1158,12 @@ work.
 Along with using likelihood ratio tests to study measurement
 invariance, researchers may wish to treat ordinal $V$ as continuous
 (especially if $V$ has very many levels).  
-As described in detail by \citeA{MerZei12}, we
+As described in detail by \citeA{MerZei13}, we
 can also use cumulative score processes with continuous $V$,
 resulting in, e.g., maximum LM statistics and Cram\'{e}r-von Mises
 statistics.  In fact, when the number of potential thresholds is
 large, the proposed~$\max\mathit{LM}_o$ statistic will be very close
-to the $\max\mathit{LM}$ statistic described in \citeA{MerZei12}.
+to the $\max\mathit{LM}$ statistic described in \citeA{MerZei13}.
 Thus, the formation of ordinal age groups (or other variables) is not
 necessary for testing measurement invariance, and it may be beneficial
 to collect continuous age data (e.g., age measured in days rather than in
@@ -1080,6 +1186,15 @@ require models of greater complexity and may not be suitable for all
 ordinal $V$, however, while that the methods we propose here are
 generally suitable for ordinal $V$.
 
+Finally, a practical issue associated with the proposed
+$\max\mathit{LM}_o$ statistic involves the computation of $p$-values:
+$p$-values and/or critical values must be computed via simulation of a
+Brownian bridge, with the simulation depending on
+the relative proportion of cases at each level of the ordinal
+auxiliary variable.  Hence, a new simulation usually must be conducted
+for each dataset, which can be somewhat time-consuming.
+
+
 \subsection{Extension to Other Models}
 We focused on testing for measurement invariance in factor
 analysis models here, but the proposed test statistics are applicable to
@@ -1088,25 +1203,22 @@ techniques for independent observations that are governed by a central limit
 theorem). The only
 requirement for carrying out the tests is that the casewise scores
 (Equation~\eqref{eq:score}) be available following model estimation.
-As a result, applications to studying DIF in IRT are immediate,
+As a result, applications to studying DIF in IRT are immediate (for a
+presentation involving non-ordinal variables, see \citeNP{KopZei10}),
 as are general psychometric applications to studying parameter
-stability w.r.t.\ ordinal auxiliary variables.  We expect the
+stability w.r.t.\ ordinal auxiliary variables.  These could 
+include applications where ordinal variables are explicitly included
+in the model, such as ordinal factor analysis.
+We expect the
 same general results to hold for these applications, whereby the
 proposed test statistics are better than the LRT for detecting
 monotonic instabilities.   The strucchange package \cite{Zei06} noted
 previously can be used for these more-general applications.
 
-% TODO % \fixme{Z: Should we make some practical remarks about the computation of
-% TODO % $p$-values somewhere? The issue with the maxLM test is that it is hard
-% TODO % to tabulate critical values in advance and hence simulation has to be
-% TODO % done for each case and is potentially rather time-consuming. Not sure
-% TODO % whether we should do this now or wait until the revision or so\dots}
-% TODO % \readme{ECM: I am happy to wait for the revision, and for now have
-% TODO %   inserted a TODO comment into the Rnw file.}
 
 \subsection{Summary}
-The test statistics proposed in this paper have relatively-high power for
-detecting measurement 
+As demonstrated via simulation, the proposed test statistics 
+have relatively-high power for detecting measurement 
 invariance violations that are monotonic with the ordinal variable,
 and they have relatively-low power for detecting minor violations that are not
 monotonic.  The former feature implies that the statistics are good at

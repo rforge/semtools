@@ -1,0 +1,58 @@
+
+Reviewer 1
+
+Although I regard this work as rigorous, I have some doubts whether it adds sufficiently to the previous paper to warrant publication in its current form. I think it may need some additional extensions or additional work on power to render it publishable in Psychometrika. 
+Such extensions may entail the following:
+
+Comment 1.1. A comparison of the current approach with scenarios in which the factor analyst uses Modification Indices (MIs) to free parameters. In practice if one has, say, 5 age groups and a given parameter is found to lead to significant increases in model fit when restricted across groups, it is quite common to use MIs to detect the source(s) of the misfit and then to end up with, say one parameter for age groups 1-3  and another parameter for age groups 4 & 5 in a so-called partially invariant model (see Byrne et al., 1989). It would be interesting to see how that approach fares in comparison to the approaches described in the manuscript. I am also interested in reading the authors' ideas about the use MI in "ad hoc" model fitting.
+
+Response 1.1. MIs are quite related to the proposed tests: the MI described by, e.g., Sorbom 1989 is equivalent to a Lagrange multiplier test, and the maximum Lagrange multiplier test statistic (computed across all potential thresholds of V) is within the family of statistics described by Merkle & Zeileis (2013).  However, as the reviewer states, MIs are typically applied only after a significant likelihood ratio test has been obtained (because the MI focuses on a single model parameter).  Our proposed statistics can be used across multiple parameters, potentially in place of the likelihood ratio test.  If the test is significant, one could use MIs or parameter fluctuation plots such as those in manuscript Figures 5 & 6.  We have added some brief detail on this relationship to the "Tests for Continuous V" section.
+
+
+Comment 1.2. Given the widespread literature on ordinal factor analyses, it would be worthwhile to link the current modelling approach to ordinal factor analysis. Another major reason is that ordinal factor analysis naturally extends towards more standard IRT models. Therefore, by bridging the gap from the current modelling approach to ordinal factor analysis, the authors may also take steps to integrate it with the literature in measurement invariance in the IRT framework.
+
+Response 1.2. We have added detail in the General Discussion on the extension of the proposed tests to other factor analysis models and to IRT.  In particular, our proposed tests can potentially extend to any psychometric model that assumes independent observations and that uses ML estimation.  Additionally, we cite some work on the application of similar tests to IRT.
+
+
+Comment 1.3. Study of power under other violations of MI related to factor loadings or measurement intercepts. 
+
+Response 1.3. We now acknowledge that the obtained simulation results may not generalize to other measurement invariance violations or to other factor analysis models.  We feel that this suggestion would require multiple simulations that would result in a much longer paper, so we have not added new simulations to the manuscript.
+
+
+Comment 1.4. Consider issues related to model comparison by means of AICs or BICs and the like. This is particularly relevant in light of the fact that monotonic violations of MI should be detectable in a more parsimonious manner than how it is often done in practice with likelihood ratio tests with many DFs.
+
+Response 1.4. If we understand this comment correctly, the reviewer is suggesting that we compare the proposed statistics to the use of AIC or BIC (in addition to the LRT).  Under this framework, one would, e.g., reject the hypothesis of measurement invariance if the AIC for the "full" model were less than the AIC for the restricted model.  We have added the AIC strategy to our simulation, along with some other adjusted versions of the LRT (see Response 2.2).  The AIC turns out to have particularly low power.
+
+
+
+Reviewer 2
+
+Comment 2.1. On page 5 is the scaled sum of scores which is normalized by the square root of n and the covariance matrix of the scores I. This is fine theoretically, but what choice do you make in practice? In fact I think that here the problem is model misspecification, other than the biasing factor V. If the model used in ML is incorrect with respect to the number of factors for instance, then this will result in a inconsistent estimate of I. Why not use the sandwich by the late Halbert White (JASA, 1982 for instance)? This is easy to calculate and will improve the limiting distribution of the test statistics.  The choice of I is also missing in the simulations. Please be more specific what you did there.
+
+Response 2.1. We have added an extended discussion of choices for the covariance matrix of scores, with references.  We have also clarified that, in the simulations, we used the information matrix.  Because our simulation models were correctly specified (except for the measurement invariance violation), we do not expect the choice of I to play a large role there.
+
+
+Comment 2.2. The simulations show great improvement over the standard LR test on measurement invariance. And on page 10 the authors mention the results by Bentler and Bonett (1980) on LR tests picking up deviations too quickly. I think the alternative tests, adjustments of LR tests, like the one proposed in Yuan and Bentler (JASA, 1997). There the LR is downweighted ate rate O_p(1/n), which brings the results of the LR closer to the results of the authors' maxLM test. I would like to see a comparison with this or maybe some other adjusted LR test.
+
+Response 2.2. We implemented three adjusted LRTs in our simulations: (i) the Yuan-Bentler 1997 adjustment suggested by the reviewer, (ii) the use of AIC (which, for nested models, essentially adjusts the LRT for complexity), and (iii) the Satorra-Bentler adjustment with correction for difference tests.  While these corrections downweight individual LRTs, the impact of the adjustments on difference tests is less clear.  Further, the Yuan-Bentler adjustment is seemingly designed for situations where the model is estimated via WLS, and there are no available corrections for difference tests.  We suspect that these issues are problematic, as our simulation results indicated that the Yuan-Bentler adjustment performs poorly in nearly all conditions.  Because the reason for this poor performance is not obvious (and because this issue is not focal for the paper), we only report results of statistics (ii) and (iii) in the manuscript.
+
+
+
+Reviewer 3
+
+Comment 3.1. The section entitled 'Theoretical Detail' (page 4) starts with the background for the score-based test statistics. However, from lines 18 onwards, there is a section on measurement invariance (starting with 'In studying measurement invariance, we are essentially testing...' up to line 19 on page 5, just before the subsection 'Tests for Continuous V'). I would suggest to put the section on measurement invariance testing in a separate (sub)section, and present this first, before providing the background for the test statistics.
+
+Response 3.1.  We have moved these sections with thanks to the reviewer, so that measurement invariance comes before the theoretical discussion.
+
+
+Comment 3.2. For readers unfamiliar with case-based scores, it may be useful to have a table with artificial values for some B(theta)_ij values; say for 20 subjects, and 4 parameters; in an additional column, there could be ordered continuous values for a V variable; in the next column, the V values could be binned to get an ordinal variable; referring to this table, it would be trivial to illustrate how the values of eg DM, CvM, maxLM, etc are computed...
+
+Response 3.2. We agree that this would be useful for some readers, but we think that it would take up more space than it is worth.  For example, the calculation of ordinal test statistics would require both calculations within each bin and unique scaling (by (i/n)*(1 - i/n)) for each bin.  While these calculations are not difficult, they also consume space to write them out (especially if we included the non-ordinal statistics).  Additionally, besides the calculation of test statistics, it might be equally useful to show how the scores (s(theta; x_i)) can be used to calculate B(theta).  This implies that we would need both a table of scores (s(theta; x_i)) and a table of cumulative scores (B(theta)).  We feel that these ideas are represented more concisely and intuitively via their equations.
+
+
+Comment 3.3. related to 2), I would suggest adding (perhaps in an appendix) some R code illustrating how (for example, for the values in the aforementioned table) the p-values can be computed for the various test statistics
+
+Response 3.3. We have added some practical discussion of p-value computation to the "Choice of Test" subsection of the General Discussion.  We have also posted all the R code for replicating our results (p-values and otherwise) on our R-Forge page (listed in the "Computational Details" section).  We do not include code within the manuscript because the p-values associated with some of the statistics are computed via simulation (i.e., there is not a closed-form solution for critical values associated with the test statistic), and much of the underlying R code is already contained within R's strucchange package.
+
+
+All minor points have been addressed, with thanks to the reviewer.
