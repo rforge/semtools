@@ -1,5 +1,7 @@
 \documentclass[man]{apa}
 \usepackage{graphicx,epsfig,amsmath,alltt,setspace,bm}
+%% This keeps the tildes out when you use Rnw2pdf:
+\usepackage[english]{babel}
 %% need no \usepackage{Sweave}
 \SweaveOpts{engine = R, eps = FALSE, echo = FALSE, results = hide}
 
