@@ -129,7 +129,7 @@ possess good properties for use in practice.
 
 The test statistics proposed here are derived from a family of tests
 that were recently applied to the study of measurement invariance in
-psychometric models \cite{KopZei10,MerZei13}.
+psychometric models \cite{MerZei13,StrKop13}.
 In the following section, we provide an overview of the family and
 describe the proposed statistics in detail.  Subsequently, we report on the
 results of two simulation studies designed to compare the proposed
@@ -257,7 +257,7 @@ from zero, the model provides a poorer description of that individual.
 \subsection{Tests for Continuous $V$}
 
 As mentioned previously, when $V$ is categorical with a
-relatively-small number of categories, 
+relatively small number of categories, 
 tests of measurement invariance typically proceed via multiple-group
 models.  In this situation, we use likelihood ratio tests to compare a
 model whose parameters differ across groups to a model whose
@@ -272,8 +272,8 @@ zero.  Conversely, if measurement invariance does not hold, then the
 scores should systematically depart from zero.  These ideas are
 related to those underlying the Lagrange multiplier test and are
 discussed in detail by \citeA{MerZei13}.  Additionally, these ideas
-are related to those underlying Modification Indexes (e.g.,
-\citeNP{Sor89}): the Modification Index is equivalent to a Lagrange
+are related to those underlying modification indexes (e.g.,
+\citeNP{Sor89}): the modification index is equivalent to a Lagrange
 multiplier test, and the Lagrange multiplier test is contained in the
 family described by \citeA{MerZei13}.  Here,
 we focus on the tests' properties that are relevant for extending them
@@ -345,7 +345,7 @@ which essentially tests whether any component of the cumulative score
 process strays too far from zero and is easily visualized.  This test
 discards information 
 related to multiple parameters fluctuating simultaneously, resulting
-in it having relatively-low power for assessing measurement
+in it having relatively low power for assessing measurement
 invariance when multiple factor analysis parameters change
 simultaneously \cite{MerZei13}.
 
@@ -700,7 +700,7 @@ increasing $m$.
 
 The more interesting result of Figure~\ref{fig:sim2res} lies in the comparison
 of the four test statistics within each panel of the figure.  The
-two ``unordered'' test statistics both have relatively-high power to
+two ``unordered'' test statistics both have relatively high power to
 detect the measurement invariance violation, illustrating the result 
 of \citeA{Ben80} and others that the
 likelihood ratio test statistic picks out minor 
@@ -1206,7 +1206,7 @@ theorem). The only
 requirement for carrying out the tests is that the casewise scores
 (Equation~\eqref{eq:score}) be available following model estimation.
 As a result, applications to studying DIF in IRT are immediate (for a
-presentation involving non-ordinal variables, see \citeNP{KopZei10}),
+presentation involving non-ordinal variables, see \citeNP{StrKop10}),
 as are general psychometric applications to studying parameter
 stability w.r.t.\ ordinal auxiliary variables.  These could 
 include applications where ordinal variables are explicitly included
@@ -1220,9 +1220,9 @@ previously can be used for these more-general applications.
 
 \subsection{Summary}
 As demonstrated via simulation, the proposed test statistics 
-have relatively-high power for detecting measurement 
+have relatively high power for detecting measurement 
 invariance violations that are monotonic with the ordinal variable,
-and they have relatively-low power for detecting minor violations that are not
+and they have relatively low power for detecting minor violations that are not
 monotonic.  The former feature implies that the statistics are good at
 detecting measurement invariance violations that are interpretable to
 the researcher, while the latter feature implies that the statistics
