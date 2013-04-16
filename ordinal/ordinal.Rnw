@@ -140,11 +140,23 @@ Finally, we provide some detail on the tests' use in practice.
 
 \section{Measurement Invariance}
 
-In studying measurement invariance, we are essentially testing the
+In studying measurement invariance, we consider situations in which a $p$-dimensional variable $X$
+with observations $\bm{x}_i, i=1,\dots,n$ is described by a 
+model with density $f(\bm{x}_i; \bm{\theta})$ and
+associated joint log-likelihood
+\begin{equation} \label{eq:loglik}
+  \ell(\bm{\theta}; \bm{x}_1, \dots, \bm{x}_n) ~=~
+    \sum_{i = 1}^n \ell(\bm{\theta}; \bm{x}_i) ~=~
+    \sum_{i = 1}^n  \log f(\bm{x}_i; \bm{\theta}),
+\end{equation}
+where ${\bm \theta}$ is some $k$-dimensional parameter vector that characterizes
+the distribution.  
+
+Tests of  measurement invariance are essentially tests of the 
 assumption that all  
 individuals arise from the same 
 parameter vector ${\bm \theta}$.
-Thus, a hypothesis of invariance can be written as
+Thus, a hypothesis of measurement invariance can be written as
 \begin{equation}
     \label{eq:h0}
     H_0:~ {\bm \theta}_i = {\bm \theta}_0,\quad (i=1,\ldots,n),
@@ -210,21 +222,11 @@ This section contains background on the theory underlying the
 proposed statistics; for a more detailed
 account, see \citeA{MerZei13}.
 
-We  consider situations in which a $p$-dimensional variable $X$
-with observations $\bm{x}_i, i=1,\dots,n$ is described by a 
-model with density $f(\bm{x}_i; \bm{\theta})$ and
-associated joint log-likelihood
-\begin{equation} \label{eq:loglik}
-  \ell(\bm{\theta}; \bm{x}_1, \dots, \bm{x}_n) ~=~
-    \sum_{i = 1}^n \ell(\bm{\theta}; \bm{x}_i) ~=~
-    \sum_{i = 1}^n  \log f(\bm{x}_i; \bm{\theta}),
-\end{equation}
-where ${\bm \theta}$ is some $k$-dimensional parameter vector that characterizes
-the distribution.  
-
-We focus on applications where the density $f(\bm{x}_i; \bm{\theta})$ arises
+\subsection{Model Estimation}
+We focus specifically on applications where the density $f(\bm{x}_i; \bm{\theta})$ arises 
 from a structural equation model with assumed multivariate normality,
-though the proposed tests extend beyond this family of models.  Under
+though the proposed tests extend beyond this family of models.
+  Under
 the usual regularity conditions (e.g., \citeNP{Fer96}), the model parameters
 $\bm{\theta}$ can 
 be estimated by maximum likelihood (ML), i.e.,
@@ -248,7 +250,7 @@ where
 is the score function of the model (the partial derivative of the casewise
 likelihood contributions w.r.t.\ the parameters $\bm{\theta}$).
 Evaluation of the score function at $\hat{\bm{\theta}}$ for $i=1,
-\dots, n$ essentially measures the extent to which the model maximizes
+\dots, n$ measures the extent to which the model maximizes
 each individual's likelihood: as an individual's scores stray further
 from zero, the model provides a poorer description of that individual.
 
@@ -494,19 +496,25 @@ simultaneously across the unique variances, which is similar to a test
 of ``invariant uniquenesses'' (see \citeNP{VanLan00}). % Or comparing
                                         % parallel to tau-equivalent 
 
-The four ``traditional'' statistics that we consider generally treat
-the ordinal auxiliary variable as categorical.  The first two are the
+The two ``traditional'' statistics that we consider generally treat
+the ordinal auxiliary variable as categorical.  These include the
 likelihood ratio test of measurement 
 invariance in the six unique variance parameters and the
-unordered LM test from~\eqref{eq:lmuo}.  Next, we consider the
+unordered LM test from~\eqref{eq:lmuo}.  At the request of reviewers,
+we also considered the
 Satorra-Bentler \citeyear{SatBen01} scaled likelihood ratio test
-statistic with correction for difference testing.  Finally, we
-consider the use of AIC \cite{Aka74} for detecting measurement
-invariance.  In this context, we compute AIC for both the ``reduced'' 
-model (all parameters constrained equal across groups) and the
-``full'' model (unique variances allowed to differ between groups).
-We then declare a measurement invariance violation if the AIC for the
-full model is lower than the AIC for the reduced model.
+statistic with correction for difference testing, the Yuan-Bentler
+\citeyear{YuaBen97} scaled test statistic, and the use of AIC
+\cite{Aka74} for detecting measurement 
+invariance.  We do not report the latter results, because these test
+statistics performed worse than the usual likelihood ratio test (for
+both Simulation 1 and Simulation 2).
+
+%% In this context, we compute AIC for both the ``reduced'' 
+%% model (all parameters constrained equal across groups) and the
+%% ``full'' model (unique variances allowed to differ between groups).
+%% We then declare a measurement invariance violation if the AIC for the
+%% full model is lower than the AIC for the reduced model.
 
 \subsection{Method}
 Data were generated from a two-factor model
@@ -580,18 +588,18 @@ statistics are all of the LM-type and just require estimation of the
 single-group model, 
 leading to a clear advantage in these conditions.
 
-Simulation results comparing the ordinal tests to the Satorra-Bentler
-scaled test statistic and to the AIC are presented in
-Figure~\ref{fig:sim1bres}.  This figure has the same design as the
-previous figure.  It is again seen that the $\max \mathit{LM}_o$
-statistic exhibits the greatest power across the conditions.
-Additionally, the Satorra-Bentler statistic has very large Type I
-error rates at low-$n$/large-$m$ combinations but is comparable to the
-ordinal double-max test at large $n$.  Finally, the ``power'' of the
-AIC (measured by the proportion of times that the full model has a
-lower AIC than the reduced model) is exceptionally low across all
-conditions.  The full model's gain in fit is seldom worth the extra
-parameters, at least according to AIC.
+%% Simulation results comparing the ordinal tests to the Satorra-Bentler
+%% scaled test statistic and to the AIC are presented in
+%% Figure~\ref{fig:sim1bres}.  This figure has the same design as the
+%% previous figure.  It is again seen that the $\max \mathit{LM}_o$
+%% statistic exhibits the greatest power across the conditions.
+%% Additionally, the Satorra-Bentler statistic has very large Type I
+%% error rates at low-$n$/large-$m$ combinations but is comparable to the
+%% ordinal double-max test at large $n$.  Finally, the ``power'' of the
+%% AIC (measured by the proportion of times that the full model has a
+%% lower AIC than the reduced model) is exceptionally low across all
+%% conditions.  The full model's gain in fit is seldom worth the extra
+%% parameters, at least according to AIC.
 
 \begin{figure}
 \caption{Simulated power curves for the ordered and unordered
@@ -611,25 +619,25 @@ print(xyplot(power ~ diff | nlevels + nobs, group = ~ test, data = sim1.tmp,
 @
 \end{figure}
 
-\begin{figure}
-\caption{Simulated power curves for the ordered 
-      $\max\mathit{LM}$ tests, the ordered double-max test, the
-      Satorra-Bentler (2001) scaled likelihood ratio
-      test, and the use of AIC 
-      across three sample sizes $n$, three 
-      levels of the ordinal variable $m$, and measurement invariance
-      violations of 0--1.5 standard errors (scaled by $\sqrt{n}$).}
-\label{fig:sim1bres}
-\setkeys{Gin}{width=\textwidth}
-<<sim1bres, fig=TRUE, height=7, width=7>>=
-sim1.tmp <- sim1[sim1$test %in% c("maxLM_o","WDM_o","LRT_sb","AIC"),]
-sim1.tmp$test <- factor(sim1.tmp$test)
-trellis.par.set(theme = canonical.theme(color = FALSE))
-mykey <- simpleKey(levels(sim1.tmp$test), points = TRUE, lines = TRUE)
-print(xyplot(power ~ diff | nlevels + nobs, group = ~ test, data = sim1.tmp, 
-             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey))
-@
-\end{figure}
+%% \begin{figure}
+%% \caption{Simulated power curves for the ordered 
+%%       $\max\mathit{LM}$ tests, the ordered double-max test, the
+%%       Satorra-Bentler (2001) scaled likelihood ratio
+%%       test, and the use of AIC 
+%%       across three sample sizes $n$, three 
+%%       levels of the ordinal variable $m$, and measurement invariance
+%%       violations of 0--1.5 standard errors (scaled by $\sqrt{n}$).}
+%% \label{fig:sim1bres}
+%%\setkeys{Gin}{width=\textwidth}
+%%<<sim1bres, fig=TRUE, height=7, width=7>>=
+%%sim1.tmp <- sim1[sim1$test %in% c("maxLM_o","WDM_o","LRT_sb","AIC"),]
+%%sim1.tmp$test <- factor(sim1.tmp$test)
+%%trellis.par.set(theme = canonical.theme(color = FALSE))
+%%mykey <- simpleKey(levels(sim1.tmp$test), points = TRUE, lines = TRUE)
+%%print(xyplot(power ~ diff | nlevels + nobs, group = ~ test, data = sim1.tmp, 
+%%             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey))
+%%@
+%%\end{figure}
 
 To summarize, we found the $\max \mathit{LM}_o$ statistic to be
 advantageous for detecting measurement invariance violations that are
@@ -709,15 +717,15 @@ test statistics that we proposed have considerably lower power, with
 the $\mathit{WDM}_o$ statistic being the lowest and the $\max\mathit{LM}_o$
 statistic being higher at larger values of $d$.  
 
-Simulation results for the two ordinal test statistics, the Satorra-Bentler
-scaled test statistic, and the AIC are presented in
-Figure~\ref{fig:sim2bres}.  It is observed that the Satorra-Bentler
-statistic exhibits performance that is similar to the usual LRT,
-with the two ordinal statistics having lower power.  The AIC, which
-generally exhibited low power even for Simulation 1, continues to
-exhibit low power here.  However, if $n$ or $d$ is large enough, the
-power exhibited by AIC is larger than the power of the ordinal test
-statistics.  
+%% Simulation results for the two ordinal test statistics, the Satorra-Bentler
+%% scaled test statistic, and the AIC are presented in
+%% Figure~\ref{fig:sim2bres}.  It is observed that the Satorra-Bentler
+%% statistic exhibits performance that is similar to the usual LRT,
+%% with the two ordinal statistics having lower power.  The AIC, which
+%% generally exhibited low power even for Simulation 1, continues to
+%% exhibit low power here.  However, if $n$ or $d$ is large enough, the
+%% power exhibited by AIC is larger than the power of the ordinal test
+%% statistics.  
 
 These results demonstrate that the proposed ordinal test
 statistics can be especially useful at large sample sizes, where
@@ -746,27 +754,27 @@ print(xyplot(power ~ diff | nlevels + nobs, group = ~ test, data = sim2.tmp,
 @
 \end{figure}
 
-\begin{figure}
-\caption{Simulated power curves for the ordered 
-      $\max\mathit{LM}$ tests, the ordered double-max test, the
-      Satorra-Bentler (2001) scaled likelihood ratio
-      test, and the use of AIC 
-      across three sample sizes $n$, three
-      levels of the ordinal variable $m$, and measurement invariance
-      violations of 0--3 standard errors (scaled by $\sqrt{n}$)
-      occurring at a single level (the $(1 +
-      m/2)^{\text{th}}$ level) of the ordinal auxiliary variable.}
-\label{fig:sim2bres}
-\setkeys{Gin}{width=\textwidth}
-<<sim2bres, fig=TRUE, height=7, width=7>>=
-sim2.tmp <- sim2[sim2$test %in% c("maxLM_o","WDM_o","LRT_sb","AIC"),]
-sim2.tmp$test <- factor(sim2.tmp$test)
-trellis.par.set(theme = canonical.theme(color = FALSE))
-mykey <- simpleKey(levels(sim2.tmp$test), points = TRUE, lines = TRUE)
-print(xyplot(power ~ diff | nlevels + nobs, group = ~ test, data = sim2.tmp, 
-             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey))
-@
-\end{figure}
+%% \begin{figure}
+%% \caption{Simulated power curves for the ordered 
+%%       $\max\mathit{LM}$ tests, the ordered double-max test, the
+%%       Satorra-Bentler (2001) scaled likelihood ratio
+%%       test, and the use of AIC 
+%%       across three sample sizes $n$, three
+%%       levels of the ordinal variable $m$, and measurement invariance
+%%       violations of 0--3 standard errors (scaled by $\sqrt{n}$)
+%%       occurring at a single level (the $(1 +
+%%       m/2)^{\text{th}}$ level) of the ordinal auxiliary variable.}
+%% \label{fig:sim2bres}
+%%\setkeys{Gin}{width=\textwidth}
+%%<<sim2bres, fig=TRUE, height=7, width=7>>=
+%%sim2.tmp <- sim2[sim2$test %in% c("maxLM_o","WDM_o","LRT_sb","AIC"),]
+%%sim2.tmp$test <- factor(sim2.tmp$test)
+%%trellis.par.set(theme = canonical.theme(color = FALSE))
+%%mykey <- simpleKey(levels(sim2.tmp$test), points = TRUE, lines = TRUE)
+%%print(xyplot(power ~ diff | nlevels + nobs, group = ~ test, data = sim2.tmp, 
+%%             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey))
+%%@
+%%\end{figure}
 
 
 Taken together, the results from Simulation~1 and Simulation~2
