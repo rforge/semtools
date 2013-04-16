@@ -140,7 +140,7 @@ Finally, we provide some detail on the tests' use in practice.
 
 \section{Measurement Invariance}
 
-In studying measurement invariance, we consider situations in which a $p$-dimensional variable $X$
+In studying measurement invariance, we consider situations where a $p$-dimensional variable $X$
 with observations $\bm{x}_i, i=1,\dots,n$ is described by a 
 model with density $f(\bm{x}_i; \bm{\theta})$ and
 associated joint log-likelihood
@@ -182,7 +182,7 @@ measurement invariance.   This allows for instances where, e.g., the
 parameter values initially increase with $V$ and then decrease, 
 or where just one or two ``middle'' levels of $V$ differ from the rest.
 Researchers typically do not expect such a result when testing
-measurement invariance w.r.t.\ continuous or ordinal $V$, and 
+measurement invariance w.r.t.\ categorical or continuous $V$, and 
 researchers often cannot interpret such violations.  Monotonic
 parameter changes w.r.t.\ $V$ are of much more interest in these
 situations, with the simplest type of change given by the alternative
@@ -202,7 +202,7 @@ is usually unknown, however, so it is generally of interest to
 test~\eqref{eq:h1*} across all possible values of $\nu$.  The tests
 proposed below generally allow for this.
 
-As stated previously, we focus here on situations where $V$ is
+As stated previously, we specifically focus here on situations where $V$ is
 ordinal and where the measurement invariance violation is related to the ordinal
 variable (e.g., the violation is of the type from~\eqref{eq:h1*} or
 the violation grows/shrinks with $V$).  Researchers typically test for
@@ -418,7 +418,7 @@ m-1$) associated with the observed $V$.
 For the $\mathit{WDM}_o$ statistic, the resulting asymptotic distribution is
 $\max_{j = 1, \dots, k} \max_{\ell = 1, \dots, m-1} {\bm B}^{0}(t_\ell) / \sqrt{t_\ell (1 - t_\ell)}$.
 Note that the effect of the outer maximum can be easily captured by a Bonferroni
-correction as the $k$~components of the Brownian bridge are asymptotically independent.
+correction, as the $k$~components of the Brownian bridge are asymptotically independent.
 Moreover, the inner maximum is taken over $m-1$ variables
 ${\bm B}^{0}(t_\ell) / \sqrt{t_\ell (1 - t_\ell)}$ which are standard normal
 (due to the scaling with the standard deviation of a Brownian bridge) and have
@@ -1214,7 +1214,7 @@ theorem). The only
 requirement for carrying out the tests is that the casewise scores
 (Equation~\eqref{eq:score}) be available following model estimation.
 As a result, applications to studying DIF in IRT are immediate (for a
-presentation involving non-ordinal variables, see \citeNP{StrKop10}),
+presentation involving non-ordinal variables, see \citeNP{StrKop13}),
 as are general psychometric applications to studying parameter
 stability w.r.t.\ ordinal auxiliary variables.  These could 
 include applications where ordinal variables are explicitly included
