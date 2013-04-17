@@ -1,4 +1,4 @@
-\documentclass[man]{apa}
+\documentclass[man,mask,apacite]{apa6}
 \usepackage{graphicx,epsfig,amsmath,alltt,setspace,bm}
 %% This keeps the tildes out when you use Rnw2pdf:
 \usepackage[english]{babel}
@@ -28,7 +28,7 @@
   involving real data, and their performance is studied via simulation.
 }
 
-\acknowledgements{This work was supported by National Science
+\authornote{This work was supported by National Science
   Foundation grant SES-1061334. 
   Correspondence to Edgar C.\ Merkle, Department of  
   Psychological Sciences, University of Missouri, Columbia,

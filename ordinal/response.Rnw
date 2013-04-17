@@ -1,5 +1,7 @@
 \documentclass[a4paper]{article}
 \usepackage{a4wide}
+\usepackage[english]{babel} % To avoid tildes
+\SweaveOpts{engine = R, eps = FALSE, echo = FALSE, results = hide}
 
 \begin{document}
 
@@ -17,7 +19,7 @@ say one parameter for age groups 1-3  and another parameter for age groups 4 \& 
 in a so-called partially invariant model (see Byrne et al., 1989). It would be
 interesting to see how that approach fares in comparison to the approaches
 described in the manuscript. I am also interested in reading the authors' ideas
-about the use MI in ``ad hoc" model fitting.}
+about the use MI in ``ad hoc'' model fitting.}
 
 MIs are quite related to the proposed tests: the MI described by, e.g., Sorbom
 1989 is equivalent to a Lagrange multiplier test.  The maximum of Lagrange
@@ -29,7 +31,7 @@ can be used across multiple parameters, potentially in place of the likelihood
 ratio test.  If the test is significant, one could use MIs or parameter
 fluctuation plots such as those in manuscript Figures 3 \& 4 to determine the
 model misfit.  We have added some brief detail on this relationship to the
-"Tests for Continuous V" section.
+``Tests for Continuous V'' section.
 
 
 \item \emph{Given the widespread literature on ordinal factor analyses, it would
@@ -64,7 +66,7 @@ is often done in practice with likelihood ratio tests with many DFs.}
 If we understand this comment correctly, the reviewer is suggesting that we
 compare the proposed statistics to the use of AIC or BIC (in addition to the
 LRT).  Under this framework, one would, e.g., reject the hypothesis of
-measurement invariance if the AIC for the ``full" model were less than the AIC
+measurement invariance if the AIC for the ``full'' model were less than the AIC
 for the restricted model.  We have added the AIC strategy to our simulation,
 along with some other adjusted versions of the LRT (see Response 2.2).  The AIC
 turns out to have particularly low power.
@@ -102,11 +104,11 @@ would like to see a comparison with this or maybe some other adjusted LR test.}
 load("sim1.rda")
 library("lattice")
 
-lev0 <- c(   "LM_o","LRT","LRT_sb","AIC")
-lev  <- c("maxLM_o","LRT","LRT_sb","AIC")
-cl <- c(1, 4, 2, 3)
-pc <- c(1, 2, 3, 4)
-lt <- c(1, 1, 2, 2)
+lev0 <- c(   "LM_o","LRT","LRT_sb","AIC","YB97")
+lev  <- c("maxLM_o","LRT","LRT_sb","AIC","YB97")
+cl <- c(1, 4, 2, 3, 5)
+pc <- c(1, 2, 3, 4, 5)
+lt <- c(1, 1, 2, 2, 2)
 
 sim1.tmp <- sim1[sim1$test %in% lev0,]
 sim1.tmp$test <- factor(sim1.tmp$test, levels = lev0, labels = lev)
@@ -143,20 +145,31 @@ We have included the resulting graphs for Simulation~1 and Simulation~2 above
 \begin{itemize}
   \item Both graphs are organized in the same manner as the graphs in the paper,
     except that they contain different statistics: the ordinal maxLM test
-    ($\mathrm{LM}_o$), the Likelihood ratio test (LRT), the Satorra-Bentler LRT ($\mathrm{LRT}_\mathrm{sb}$),
-    and the use of AIC (AIC). The former two are presented in the manuscripts while the latter
-    two are only shown here.
+    ($\mathrm{maxLM}_o$), the Likelihood ratio test (LRT), the
+    Satorra-Bentler LRT ($\mathrm{LRT}_\mathrm{sb}$), the Yuan-Bentler
+    statistic (YB97), 
+    and the use of AIC (AIC). The first two are presented in the
+    manuscript while the last three are only shown here.
   \item It can be seen that $\mathrm{LRT}_\mathrm{sb}$ is virtually identical to
     the plain LRT in situations with small number of groups $m$ and/or large
     sample sizes $n$ (in particular throughout Simulation~2) while for the large $m$/small
-    $n$ scenarios , the problems of the LRT are even amplified.
+    $n$ scenarios, the problems of the LRT are even amplified.
+  \item The YB97 statistic is problematic at smaller $n$ and at large
+    $m$, generally resulting in 
+    very high Type I error rates.  We suspect that this is because the
+    statistic is based on models fits via WLS, which is generally
+    known to require very large $n$ to be reliable.  The extra
+    parameters from large $m$ would then seem to require even larger
+    $n$.  However, 
+    even in the Simulation~2 situations where the Type I error rate is
+    true, the performance of the statistic is similar to that of the plain LRT.
   \item Finally, the AIC has relatively low power throughout Simulation~1. This is
     because using AIC corresponds to using the LRT with an increased critical value
     here (because the models being compared are nested with relatively large differences in degrees
     of freedom).
 \end{itemize}
 Hence, we feel that the additional discussion of these modifications do not add
-substantial new insights and hence have omitted them from the paper (and only
+substantial new insights and so have omitted them from the paper (and only
 mention them very briefly). But we are willing to reconsider if the AE or
 reviewers find the results worthwhile.
 \end{enumerate}
@@ -196,14 +209,14 @@ $s(\theta; x_i)$ and a table of cumulative scores $B(\theta)$.  We feel that the
 ideas are represented more concisely and intuitively via their equations.
 
 
-\item \emph{related to 2), I would suggest adding (perhaps in an appendix) some
+\item \emph{Related to 2), I would suggest adding (perhaps in an appendix) some
 R code illustrating how (for example, for the values in the aforementioned
 table) the p-values can be computed for the various test statistics}
 
 We have added some practical discussion of p-value computation to the ``Choice of
-Test" subsection of the General Discussion.  We have also posted all the R code
+Test'' subsection of the General Discussion.  We have also posted all the R code
 for replicating our results (p-values and otherwise) on our R-Forge page (listed
-in the ``Computational Details" section).  We do not include code within the
+in the ``Computational Details'' section).  We do not include code within the
 manuscript because the p-values associated with some of the statistics are
 computed via simulation (i.e., there is not a closed-form solution for critical
 values associated with the test statistic), and much of the underlying R code is
