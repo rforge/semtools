@@ -1,4 +1,4 @@
-\documentclass[man,mask,apacite]{apa6}
+\documentclass[man,apacite]{apa6}
 \usepackage{graphicx,epsfig,amsmath,alltt,setspace,bm}
 %% This keeps the tildes out when you use Rnw2pdf:
 \usepackage[english]{babel}
