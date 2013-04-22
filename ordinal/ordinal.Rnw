@@ -78,7 +78,7 @@ The study of measurement invariance and differential item functioning
 (DIF) 
 has received considerable attention in the psychometric literature
 (see, e.g., \citeNP{Mil11} for a thorough review).  A set of
-psychometric scales $X$ are defined to be measurement invariant
+psychometric scales $X$ is defined to be measurement invariant
 with respect to an auxiliary variable $V$ if \cite{Mel89}
 \begin{equation}
     \label{eq:midef}
@@ -121,8 +121,10 @@ individuals may be categorized as having a
 While these variables are relatively easy to find in the literature,
 there exist very few psychometric methods that specifically
 account for the fact that $V$ is ordinal.  More often, $V$ is 
-treated as categorical so that the traditional tests can be applied.  Alternatively, if there are many levels of $V$, $V$ may also be treated as continuous. 
-It is the intent of this paper to propose
+treated as categorical so that the traditional tests can be applied.
+Additionally, if there are many levels, then $V$ may also be treated
+as continuous.  
+The goals of this paper are to propose 
 two test statistics that explicitly treat $V$ as ordinal and to show
 that the statistics 
 possess good properties for use in practice.
@@ -176,13 +178,13 @@ a model where
 parameters are restricted across groups (i.e., across values of $V$)
 to a model where parameters are free across groups; the exact
 parameter values within each group are completely unrestricted.
-However, in situations where $V$ is categorical or
+However, in situations where $V$ is ordinal or
 continuous,~\eqref{eq:h2*} includes non-monotonic violations of
 measurement invariance.   This allows for instances where, e.g., the
 parameter values initially increase with $V$ and then decrease, 
 or where just one or two ``middle'' levels of $V$ differ from the rest.
 Researchers typically do not expect such a result when testing
-measurement invariance w.r.t.\ categorical or continuous $V$, and 
+measurement invariance w.r.t.\ ordinal or continuous $V$, and 
 researchers often cannot interpret such violations.  Monotonic
 parameter changes w.r.t.\ $V$ are of much more interest in these
 situations, with the simplest type of change given by the alternative
@@ -202,7 +204,7 @@ is usually unknown, however, so it is generally of interest to
 test~\eqref{eq:h1*} across all possible values of $\nu$.  The tests
 proposed below generally allow for this.
 
-As stated previously, we specifically focus here on situations where $V$ is
+As stated previously, we specifically focus on situations where $V$ is
 ordinal and where the measurement invariance violation is related to the ordinal
 variable (e.g., the violation is of the type from~\eqref{eq:h1*} or
 the violation grows/shrinks with $V$).  Researchers typically test for
@@ -289,7 +291,7 @@ $i^{\text{th}}$-smallest value of $V$.  We then define the $k$-dimensional
 {\em cumulative score process} as 
 \begin{equation} \label{eq:cumscore}
   {\bm B}(t; \hat {\bm \theta}) ~=~ \hat {\bm I}^{-1/2} n^{-1/2}
-    \sum_{i = 1}^{\lfloor n t \rfloor} {\bm s}(\hat {\bm \theta}; x_{(i)})
+    \sum_{i = 1}^{\lfloor n \cdot t \rfloor} {\bm s}(\hat {\bm \theta}; x_{(i)})
   \qquad (0 \le t \le 1)
 \end{equation}
 where $\lfloor nt \rfloor$ is the integer part of $nt$ and
@@ -451,7 +453,9 @@ statistic \cite{HjoKon02}.  This test statistic can be formally written as
      \mathit{LM}_\mathit{uo} = \sum_{\ell = 1, \dots, m} \sum_{j = 1, \dots, k}
        \left( {\bm B}(\hat {\bm \theta})_{i_\ell j} - {\bm B}(\hat {\bm \theta})_{i_{\ell - 1}j} \right)^2,
 \end{equation}
-where, again, tests of subsets of model parameters can be obtained by
+where the first subscript on the two terms in parentheses are $i_\ell$
+and $i_{\ell-1}$, respectively.  Again, tests of subsets of model
+parameters can be obtained by 
 taking the inner sum over only the $k^* < k$ parameters of interest.
 This test statistic discards the ordinal nature of the auxiliary
 variable, essentially employing the alternative hypothesis
@@ -481,7 +485,7 @@ Moreover, the test statistics are rather insensitive to anomalies in a small
 number of categories of $V$ that are
 unrelated to the ordering of $V$.  This is especially relevant to situations
 in which the analyst has a large sample size, so that the usual
-likelihood ratio test is notoriously sensitive to minor parameter
+likelihood ratio test is overly sensitive to minor parameter
 instabilities (e.g., \citeNP{Ben80}).
 
 \section{Simulation 1: Detecting Ordinal Invariance Violations}
@@ -507,8 +511,8 @@ statistic with correction for difference testing, the Yuan-Bentler
 \citeyear{YuaBen97} scaled test statistic, and the use of AIC
 \cite{Aka74} for detecting measurement 
 invariance.  We do not report the latter results, because these test
-statistics performed worse than the usual likelihood ratio test (for
-both Simulation 1 and Simulation 2).
+statistics performed worse than the usual likelihood ratio test (both
+here and in Simulation 2).
 
 %% In this context, we compute AIC for both the ``reduced'' 
 %% model (all parameters constrained equal across groups) and the
@@ -582,9 +586,10 @@ Finally, it is seen that, in the small $n$ and large $m$ conditions,
 the likelihood ratio test exhibits large Type-I error rates (i.e.,
 power greater than 0.05 at $d=0$).  This is because the likelihood
 ratio test requires estimation of a multiple-groups model, which is very
-unstable with large numbers of groups and small sample sizes as only
-$n/m$ observations are available in each subsample.  The proposed
-statistics are all of the LM-type and just require estimation of the
+unstable with large numbers of groups and small sample sizes (as only
+$n/m$ observations are available in each subsample).  The statistics
+proposed here
+are all of the LM-type and just require estimation of the
 single-group model, 
 leading to a clear advantage in these conditions.
 
@@ -657,7 +662,7 @@ relatively insensitive to minor parameter violations that are
 unrelated to the ordering of the auxiliary variable.  As noted
 earlier, this feature is especially applicable to situations where
 one's sample size is very large.  Analysts often resort to informal
-fit measures in this case, because the traditional LRT is nearly
+fit measures in practice, because the traditional LRT is nearly
 guaranteed to result in significance.  This simulation is intended to
 show that the proposed ordinal tests remain viable for large $n$.
 
@@ -805,9 +810,9 @@ likelihood ratio test with real data.
 
 With the positive psychology movement, the construct of gratitude has
 received much research attention (for a review, see \citeNP{EmmMcc04}).
-Recently, scholars have begun to explore gratitude
-in youth. One potential problem with this research is that
-scholars, with no exception, have used adult gratitude inventories to
+Recently, researchers have begun to explore gratitude
+in youth. One potential problem with this is that
+researchers, with no exception, have used adult gratitude inventories to
 measure youth gratitude, thus raising the question of whether the
 existing gratitude scales used with adults are valid in research with
 youth. Addressing this issue, \citeA{FroFan11} had a
@@ -836,7 +841,7 @@ models to study the invariance of three youth gratitude scales across
 students aged 10 to 19 years.  Due to sample size constraints, the age
 variable included six categories: 10--11 years, 12--13 years, 14 years,
 15 years, 16 years, and 17--19 years.  Thus, age is an ordinal variable
-with which the proposed tests can be applied.
+to which the proposed tests can be applied.
 
 To test for measurement invariance w.r.t.\ age, each of the three scales
 was individually 
@@ -853,7 +858,7 @@ tests, \citeA{FroFan11} examined a set of alternative fit indices, including
 the non-normed fit index, the comparative fit index, and the
 incremental fit index (e.g., \citeNP{BroCud93}).
 The authors generally found support for the tau-equivalent models
-through these alternative fit indices; the likelihood ratio test often
+through these alternative fit indices: the likelihood ratio test often
 resulted in significance even when the alternative indices indicated
 good fit.
 
@@ -979,7 +984,7 @@ It is observed that both statistics generally increase with age, with
 $\mathit{WDM}_o$ being largest for a threshold of 15~years and $\max\mathit{LM}_o$
 for a threshold of 16~years. The
 differing pattern of values for the 15- and 16-year-olds can be taken
-as an indication that some factor loading is somewhat unstable at an
+as an indication that some factor loading is unstable at an
 age of 15 or 16, but this is not a clear and general trend across all the tested
 loadings and age groups.
 
@@ -1094,7 +1099,8 @@ The finding that variance parameters differ between individuals up to 13 years a
 tau-equivalent and parallel models to an intermediate model.  This intermediate model is tau-equivalent in nature, but there exist only two groups: individuals up to 13 years
 and individuals older than 13 years.  A likelihood ratio test implies that
 this intermediate model fits as well as the original tau-equivalent model~($\chi^2_{16} = \Sexpr{round(lrt2.2te[[5]][2], digits = 2)}$, $p=\Sexpr{round(lrt2.2te[[7]][2], digits=2)}$),
-with 16 fewer parameters ($= 6 \cdot 4 - 2 \cdot 4$ because the four variances have to be estimated only in two rather than in six age groups).  The intermediate model also fits 
+with 16 fewer parameters ($= 6 \cdot 4 - 2 \cdot 4$ because the four
+variances have to be estimated in only two rather than six age groups).  The intermediate model also fits 
 better than the parallel model, as judged by a second likelihood ratio test~($\chi^2_{4} = \Sexpr{format(round(lrt2.2par[[5]][2], digits = 2), nsmall = 2)},
 p<0.01$).
 Finally, using the proposed ordinal test statistics with the intermediate model, we no 
@@ -1119,7 +1125,7 @@ likelihood ratio test in the general discussion.
 \section{General Discussion}
 
 In this paper, we proposed two statistics that can be used when one
-has an auxiliary ordinal variable and wishes to study measurement
+has an ordinal auxiliary variable and wishes to study measurement
 invariance.  We demonstrated via simulation that these statistics have
 good properties, though these results necessarily examined a small
 number of models and invariance violations and may not hold in all
@@ -1189,11 +1195,11 @@ mixture model approach, individuals are typically assumed to arise
 from a small number of distinct factor analysis models.  The ordinal
 variable $V$ could then be used to predict the probability that an
 individual arises from each model.  These treatments of ordinal $V$ as
-continuous are likely to be advantageous, especially if the levels of
+continuous will often be advantageous, especially if the levels of
 $V$ are approximately equally-spaced and the relationship between $V$
 and the measurement invariance violation is linear.  The approaches do
 require models of greater complexity and may not be suitable for all
-ordinal $V$, however, while that the methods we propose here are
+ordinal $V$, however, while the methods we propose here are
 generally suitable for ordinal $V$.
 
 Finally, a practical issue associated with the proposed
@@ -1202,7 +1208,8 @@ $p$-values and/or critical values must be computed via simulation of a
 Brownian bridge, with the simulation depending on
 the relative proportion of cases at each level of the ordinal
 auxiliary variable.  Hence, a new simulation usually must be conducted
-for each dataset, which can be somewhat time-consuming.
+for each dataset, which can be somewhat time-consuming (on the order
+of minutes, as opposed to seconds or hours).
 
 
 \subsection{Extension to Other Models}
