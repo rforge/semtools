@@ -454,8 +454,8 @@ statistic \cite{HjoKon02}.  This test statistic can be formally written as
        \left( {\bm B}(\hat {\bm \theta})_{i_\ell j} - {\bm B}(\hat {\bm \theta})_{i_{\ell - 1}j} \right)^2,
 \end{equation}
 where the first subscript on the two terms in parentheses are $i_\ell$
-and $i_{\ell-1}$, respectively (and for $i_0 = 0$ the cumulative score is
-${\bm B}(0, \hat {\bm \theta}) = 0$).
+and $i_{\ell-1}$, respectively (and where we take $i_0 = 0$, so that
+the cumulative score is ${\bm B}(0, \hat {\bm \theta}) = \bm{0}$).
 Again, tests of subsets of model parameters can be obtained by 
 taking the inner sum over only the $k^* < k$ parameters of interest.
 This test statistic discards the ordinal nature of the auxiliary
@@ -930,12 +930,15 @@ lrt1 <- anova(m1.f, m1)
 par(mfrow = c(1, 2), cex = 0.65)
 
 plot(gefp1, functional = ordwmax(gefp1), axes = FALSE, main = "",
-     xlab = "Age group", ylab = "Weighted max statistics")
+     xlab = "Age group", ylab = "Weighted max statistics",
+     boundary = FALSE)
+lines(get_boundary(gefp1, ordwmax(gefp1)), col = "slategray", lwd = 1.7)
 axis(1, at = 1:5, labels = c("10-11", "12-13", "14", "15", "16"))
 axis(2)
 
 plot(gefp1, functional = ol2bb1.fun, axes = FALSE, ylim = c(0, 14), main = "",
-     xlab = "Age group", ylab = "LM statistics")
+     xlab = "Age group", ylab = "LM statistics", boundary = FALSE)
+lines(get_boundary(gefp1, ol2bb1.fun), col = "slategray", lwd = 1.7)
 axis(1, at = 1:5, labels = c("10-11", "12-13", "14", "15", "16"))
 axis(2)
 @
@@ -1027,12 +1030,15 @@ lrt2 <- anova(m2.f, m2)
 par(mfrow = c(1, 2), cex = 0.65)
 
 plot(gefp2, functional = ordwmax(gefp2), axes = FALSE, main = "",
-     xlab = "Age group", ylab = "Weighted max statistics")
+     xlab = "Age group", ylab = "Weighted max statistics",
+     boundary = FALSE)
+lines(get_boundary(gefp2, ordwmax(gefp2)), col = "slategray", lwd = 1.7)
 axis(1, at = 1:5, labels = c("10-11", "12-13", "14", "15", "16"))
 axis(2)
 
 plot(gefp2, functional = ol2bb2.fun, axes = FALSE, ylim = c(0, 115), main = "",
-     xlab = "Age group", ylab = "LM statistics")
+     xlab = "Age group", ylab = "LM statistics", boundary = FALSE)
+lines(get_boundary(gefp2, ol2bb2.fun), col = "slategray", lwd = 1.7)
 axis(1, at = 1:5, labels = c("10-11", "12-13", "14", "15", "16"))
 axis(2)
 @
