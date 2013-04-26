@@ -29,7 +29,12 @@
 }
 
 \authornote{This work was supported by National Science
-  Foundation grant SES-1061334. 
+  Foundation grant SES-1061334.  Portions of this work were presented
+  at 2012 meeting of the Psychometric Society.  The authors thank Yves
+  Rosseel for 
+  lavaan asssistance, along with the associate
+  editor and three anonymous reviewers for comments that improved the
+  paper.  
   Correspondence to Edgar C.\ Merkle, Department of  
   Psychological Sciences, University of Missouri, Columbia,
   MO 65211.
