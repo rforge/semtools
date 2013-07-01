@@ -1,0 +1,81 @@
+\documentclass[11pt]{article}
+\usepackage{hyperref,amsmath,bm,apacite}
+
+\begin{document}
+
+{\large
+\begin{center}
+\noindent {\em Title:} Score-based tests of measurment invariance: Use
+in practice\\ \ \\
+
+\noindent {\em Authors:} Ting Wang, Edgar Merkle, Achim Zeileis
+\end{center}}
+
+\pagestyle{empty}
+
+% Paragraph 1: Background
+%% General statement about measurement invariance
+
+
+%% Summary of Merkle + Zeileis 2013
+
+%% The tests have had only limited application to measurement
+%% invariance, and their properties as applied to measurement
+%% invariance are not fully known.
+
+As the Research Topic indicates, measurement invariance is a critical
+issue in psychometric modeling.  Recently, Merkle and
+Zeileis \citeyear{MerZei13} studied a novel family of
+score-based tests of 
+measurement invariance for factor analysis models.  This family can
+be used to test for measurement invariance w.r.t.\ a continuous
+auxiliary variable, and the family is advantageous because it can
+identify subgroups of observations and model parameters that violate
+measurement invariance.  Merkle, Fan, and Zeileis \citeyear{MerFanZei}
+extended this framework to testing measurement invariance w.r.t.\ an
+ordinal 
+auxiliary variable, yielding test statistics that are sensitive to
+violations that are monotonically related to the auxiliary variable
+(and insensitive to non-monotonic violations).
+
+% Paragraph 2: Tutorial in lavaan
+The papers cited in the above paragraph have been relatively technical
+and slanted towards psychometricians.  In the proposed paper for the
+Research Topic, we plan to focus on the 
+test statistics' use in practice.  We will first provide a 
+minimally-technical overview of the tests, along with a tutorial on
+carrying out the tests using the R packages lavaan (for model
+estimation) and strucchange (for measurement invariance testing).
+These packages currently have all the functionality necessary for
+carrying out the tests on arbitrary structural equation models, so the
+tutorial will be especially useful for researchers who wish to apply
+the tests to their own data.
+%% Ting: I think the following details are too specific for the abstract.
+% To carry out these tests, a confirmatory factor analysis model is fit to the data first. Then R package lavaan could
+% provide casewise derivatives and observed information matrix, and then they are used to calculate the cumulative
+% score process. In the end, by using different aggregation function of cumulative
+% score process, we obtain three tests' statistics and \emph{p}-values, which could indicate whether or not measurement invariance is 
+% violated.
+
+% Paragraph 3: Simulations to examine issues that are of importance in
+% practice.
+Following the tutorial, we plan to conduct and report on
+some novel simulations that are relevant to the tests' use in practice.  In
+Simulation 1, we will study the extent to which the proposed
+tests attribute measurement invariance violations to the correct model
+parameters.  In Simulation 2, we will study the extent to which the
+tests are robust to model misspecification.  Taken together, the
+tutorial and simulations will provide researchers with both the means
+to carry out the tests and the knowledge of when the tests are likely to
+be useful in practice. 
+%% Ting: For this proposed abstract, I think we do not need to discuss
+%% any results.
+% The resutls indicate that the tests
+% could correctly locate the violation parameter, as long as the violation parameter is included
+% in the model. If not, the tests show violation in more than one parameter associated with the
+% particular manifest variable which is unduely modeled.
+\bibliographystyle{apacite}
+\bibliography{refs}
+
+
+\end{document}
