@@ -1,0 +1,801 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Editing Rules:                                                            %
+%1. Ed's comment and questions:\readme{}                                   %     
+%2. Ting's comment and questions:\seeme{}                                  % 
+%3. When comments and questions are resovled, the corresponding \readme or %  
+%   \seeme will be removed by Ting.                                        %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\documentclass[doc]{apa}
+\usepackage{graphicx,epsfig,amsmath,alltt,setspace,bm}
+\usepackage[english]{babel}
+
+
+
+\SweaveOpts{engine = R, eps = FALSE, echo = FALSE, results = hide}
+
+\title{Tests of measurement invariance via stochastic processes:
+  {S}ome properties}
+\twoauthors{Ting Wang and Edgar C.\ Merkle}{Achim Zeileis}
+\twoaffiliations{University of Missouri}{Universit\"{a}t Innsbruck}
+
+\abstract{
+We study a family of 
+recently-proposed measurement invariance tests that are derived from
+stochastic processes.  As applied to factor analysis and other
+psychometric models, the tests are advantageous in that (i) they do
+not require advance definition of subgroups of cases that violate
+measurement invariance; (ii) they can potentially identify specific
+model parameters that violate measurement invariance; and (iii) they
+do not require a model of additional complexity to be estimated.  
+Because the tests have been applied to only a small number of
+psychometric examples, we conduct a series of simulation studies that provide
+a detailed examination of test properties.  These studies allow us
+to study (details here).  The studies indicate that.}
+
+
+
+
+\acknowledgements{This work was supported by National Science
+  Foundation grant SES-1061334. 
+  Correspondence to. 
+  Email: }
+\shorttitle{Measurement invariance test properties}
+\rightheader{Measurement invariance test properties}
+
+\newcommand{\argmax}{\operatorname{argmax}\displaylimits}
+%% for internal use
+\newcommand{\fixme}[1]{\emph{\marginpar{FIXME} (#1)}}
+\newcommand{\readme}[1]{\emph{\marginpar{README} (#1)}}
+\newcommand{\seeme}[1]{\emph{\marginpar{SEEME} (#1)}}
+
+
+\spacing{1}
+
+\begin{document}
+\maketitle
+
+<<preliminaries1>>=
+## packages
+library("lavaan")
+library("strucchange")
+library("mvtnorm")
+library("lattice")
+
+## auxiliary code
+source("simall.R")
+source("mz.R")
+
+## convenience function for plotting boundaries without color
+get_boundary <- function(obj, fun, trim = 0) {
+  bound <- fun$boundary(0:obj$nobs/obj$nobs)
+  bound <- fun$computeCritval(0.05, ncol(obj$process)) * bound
+  bound <- zoo(bound, time(obj$process))
+  if(trim > 0) bound <- head(tail(bound, - floor(trim * obj$nobs)), - floor(trim * obj$nobs))
+  return(bound)
+}
+
+## convenience function for applying tests to real data
+info_full <- function(x, ...) solve(vcov(x) * nobs(x))
+@
+
+Parameter invariance is a fundamental assumption for measurement model in 
+developing psychometric scales. Violation of it could happen in any estimated parameter.  
+In order to fix the psychometric scale, we need to specify the violating parameter.  
+Moreover, in practice model misspecification is an inevitable issue to a certain extent 
+and may interfere with parameter invariance specificity. A family of tests derived from 
+stochastic process has been recently proposed to identify specific parameters impacted 
+by measurement invariance violation. However, these tests have only been used to a limited 
+type of parameter violation. It is this paper's intent to provide a detailed examination 
+of the tests' performance under practical research scenarios. 
+
+In the following section, we first briefly review the 
+theoretical framework of proposed statistical tests. Subsequently, we study the tests'
+ability through simulations that mimic practical research. 
+Finally, some suggestion on the tests' use in practice is provided.  
+
+
+\section{Simulation 1}
+
+In Simulation 1, we examined the extent to which the proposed tests
+are sensitive to the specific model parameter that violates measurement
+invariance.  If, say, a factor loading violates measurement
+invariance, it is plausible that this violation impacts other
+parameters such as factor covariances or other loadings 
+associated with the factor in question.  Thus, the goal of the
+simulation was to examine the extent to which the proposed tests
+attribute the measurement invariance violation to the parameters that
+are truly in violation.  
+
+\subsection{Methods}
+To examine these specificity issues, we generated data from a
+two-factor model with three indicators each (the same model used in
+Merkle and Zeileis, \citeyearNP{MerZei13}).  The measurement invariance
+violation occurred in one of three parameters: the factor loading
+associated with the first indicator $\lambda_{11}$, the unique variance associated
+with the first indicator $\epsilon_{11}$, or the factor covariance $\sigma_{12}$.  
+We then tested for measurement invariance in seven subsets of parameters: the three
+individual parameters noted above, all six factor loadings $\lambda_{11}--\lambda_{62}$, 
+all six unique variances $\epsilon_{11}--\epsilon_{66}$. The path diagram is shown in  
+Figure~\ref{fig:path}.
+
+\begin{figure}
+\caption{Path diagram representing the factor analysis model 
+         used for simulations.}
+\label{fig:path}
+\includegraphics{PathDiagram}
+\end{figure}
+
+Power and Type I error were examined across three sample sizes
+($n=100,200,500$) and 17 magnitudes of invariance violations. These
+violations were based on the auxiliary variable $V$: individuals below
+the 50th percentile of $V$ deviated from individuals above the 50th
+percentile  by $d$ times the parameters' asymptotic standard errors
+(scaled by $\sqrt n$), with $d=0,0,25,0.5,...,4$. 
+For each combination of sample size ($n$) $\times$ violation
+magnitude ($d$) $\times$ violating parameter, 5000 datasets were
+generated and tested.
+
+
+\subsection{Results}
+Full simulation results are presented in Figure~\ref{fig:sim11res} to
+Figure~\ref{fig:sim13res}; all three test statistics exhibited very
+similar results, so the figures include only results for the CvM statistic.
+Figure~\ref{fig:sim11res} displays power curves as a function of 
+violation magnitude for the first
+factor loading $\lambda_{11}$, with panels reflecting the parameters 
+being tested and lines reflecting $n$.
+Figures~\ref{fig:sim12res} and Figure~\ref{fig:sim13res} display 
+similar power curves when the factor covariance 
+$\phi_{12}$ and error variance $\epsilon_{11}$ violate measurement
+invariance, respectively. 
+
+From these figures, one generally observe that the tests isolate 
+the parameter violating measurementinvariance.  Additionally, the tests 
+have somewhat-higher power to detect measurement invariance violations 
+in the factor loading and factor covariance parameters, as opposed to the error variance
+parameter.  Finally, simultaneous tests of all factor loadings or all error
+parameters result in decreased power, as compared to the situation
+where one tests only the violating parameter.  This occurs because, in
+testing a subset of parameters (only one of which violates measurement
+invariance), we are effectively dampening the signal of a measurement
+invariance violation.  
+
+
+In summary, we found that the proposed tests can attribute
+measurement invariance violations to the correct parameter.  This
+provides evidence that, in practice, one can have confidence in the
+tests' abilities to locate the measurement invariance violation.  Of
+course, this statement is qualified by the fact that, in this
+simulation, the model was correctly specified.  In the following
+simulations, we examine the tests' performance when the model is
+misspecified.
+
+
+
+%% Example of how to call a simulation in R:
+<<sim1>>=
+## seed for replication
+RNGkind(kind = "default", normal.kind = "default")
+set.seed(1090)
+
+if(file.exists("sim1.rda")) {
+  load("sim1.rda")
+} else {
+  ## Arguments lead to small-scale simulation:
+  sim1 <- simulation(nobs=c(100,200,500), diff=seq(0,4,.25), parms=c("loading","var","error"))
+  save(sim1, file="sim1.rda")
+}
+
+## Add to column names so that plots look nicer
+sim1$nobs <- paste("n=", sim1$nobs, sep="")
+
+#Not sure how to express all loadings and all error terms in greek letters.
+greekExprList<-expression(lambda[11],epsilon[11],sigma[12],lambda[11]--lambda[62],
+                          epsilon[11]--epsilon[66])
+greekpar<-as.expression(greekExprList)
+
+@ 
+
+%% Example of how to create a figure of results
+\begin{figure}
+\caption{Simulated power curves for Simulation 1.Violation Parameter is loading}
+\label{fig:sim11res}
+\setkeys{Gin}{width=\textwidth}
+<<sim11res, fig=TRUE, height=7, width=7>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey1 <- simpleKey(unique(sim1$nobs), points = TRUE, lines = TRUE)
+print(xyplot(power ~ diff | pars, group = ~ nobs, data = sim1,
+             subset = diff <= 4 & parms == "loading" & test=="CvM" &  pars %in% 
+             c("1","7","13","1:6","7:12"),
+              strip = function(which.given, which.panel, var.name,
+                        strip.levels = FALSE,
+                        strip.names = TRUE, ...) {
+       	      strip.default(which.given, which.panel,
+       	               var.name = greekpar[which.panel],
+                       strip.levels = FALSE,
+                       strip.names = TRUE, ...)},
+             layout = c(3,2),type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey1,
+             as.table=TRUE))
+@
+\end{figure}
+
+%% Example of how to create a figure of results
+\begin{figure}
+\caption{Simulated power curves for Simulation 1.Violation Parameter is covariance}
+\label{fig:sim12res}
+\setkeys{Gin}{width=\textwidth}
+<<sim12res, fig=TRUE, height=7, width=7>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+print(xyplot(power ~ diff | pars, group = ~ nobs, data = sim1,
+             subset = diff <= 4 & parms == "var" & test == "CvM" &  pars %in% 
+             c("1","7","13","1:6","7:12"),
+              strip = function(which.given, which.panel, var.name,
+                        strip.levels = FALSE,
+                        strip.names = TRUE, ...) {
+       	      strip.default(which.given, which.panel,
+       	               var.name = greekpar[which.panel],
+                       strip.levels = FALSE,
+                       strip.names = TRUE, ...)},
+             layout = c(3,2),
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey1,
+             as.table=TRUE))
+@
+\end{figure}
+
+\begin{figure}
+\caption{Simulated power curves for Simulation 1.Violation Parameter is error terms}
+\label{fig:sim13res}
+\setkeys{Gin}{width=\textwidth}
+<<sim13res, fig=TRUE, height=7, width=7>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+print(xyplot(power ~ diff | pars, group = ~ nobs, data = sim1,
+             subset = diff <= 4 & parms == "error" & test == "CvM" &  pars %in%
+             c("1","7","13","1:6","7:12"),
+              strip = function(which.given, which.panel, var.name,
+                        strip.levels = FALSE,
+                        strip.names = TRUE, ...) {
+       	      strip.default(which.given, which.panel,
+       	               var.name = greekpar[which.panel],
+                       strip.levels = FALSE,
+                       strip.names = TRUE, ...)},
+             layout = c(3,2),
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey1,
+             as.table=TRUE))
+@
+\end{figure}
+
+%###########################################################################################
+\section{Simulation 2}
+In Simulation 2, we examine the extent to which the results of
+Simulation 1 are robust to model misspecification. Specifically, we
+generate data from the factor analysis model used in the previous
+section, but with adding an extra loading from the second factor to the first
+indicator (of the first factor).  The estimated model lacks this extra
+loading, however. The goal of this simulation is to examine the proposed statitics'
+power and spicificity under model misspecification.
+
+
+\subsection{Method}
+Measurement invariance violations could occur in
+each of the three parameters from Simulation 1 (factor loading,factor covariance,unique
+variance), and they could also occur in the extra,unmodeled loading. 
+Sample size and magnitude of measurementinvariance violation were manipulated 
+in the same way as they were in Simulation 1.The tested parameters are the same as Simulation
+1,too.
+
+\subsection{Results}
+Results are presented by the paramter that violated measurement invariance.
+Figure~\ref{fig:sim21res} displays results when the unmodeled loading violates 
+measurement invariance. One can generally observe that 
+the first loading and error variance parameter showed high measurement invariance 
+violation simultaneously, while factor covariance did not demonstrate violation.
+
+
+Figure~\ref{fig:sim22res} displays results when the loading $\lambda_{11}$ violates
+measurement invariance. Even though lacking one loading associated with the first indicator, 
+CvM statistic showed enough power to detect the first loading violation specifically. 
+Similar pattern of specificity and power were observed when the violation parameter 
+was $\sigma_{12}$ (Figure~\ref{fig:sim23res}) and $\epsilon_{11}$ (Figure~\ref{fig:sim24res}).
+
+In summary, the proposed test statistics appear robust to unmodeled loading parameters,so long
+as the umodeled parameter does not violate measurment invariance. If the unmodeled parameter 
+dose violate measurement invariance, however, then the tests assign this violation to other 
+parameters that do not violate measurement invariance. The impacted parameters include the error
+variance and other loadings associated with the manifest variables that had the unmodeled 
+loading. Thus, prior to testing measurement invariance, it is important to study the extent to
+which the hypothesized model includes all parameters of importance.
+
+
+
+%% Example of how to call a simulation in R:
+<<sim2>>=
+## seed for replication
+RNGkind(kind = "default", normal.kind = "default")
+set.seed(1090)
+
+if(file.exists("sim2.rda")) {
+  load("sim2.rda")
+} else {
+  ## Arguments lead to small-scale simulation:
+  sim2 <- simulation(nobs=c(100,200,500), diff=seq(0,4,.25), parms=c("extra",
+                    "extra+loading", "extra+var","extra+error"))
+  save(sim2, file="sim2.rda")
+}
+
+## Add to column names so that plots look nicer
+sim2$nobs <- paste("n=", sim2$nobs, sep="")
+
+@ 
+
+%% Example of how to create a figure of results
+\begin{figure}
+\caption{Simulated power curves for Simulation 2.Violation Parameter is extra loading}
+\label{fig:sim21res}
+\setkeys{Gin}{width=\textwidth}
+<<sim21res, fig=TRUE, height=7, width=7>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey2 <- simpleKey(unique(sim2$nobs), points = TRUE, lines = TRUE)
+print(xyplot(power ~ diff |pars , group = ~ nobs, data = sim2,
+             subset = diff <= 4 & parms == "extra" & test == "CvM" & pars %in%
+              c("1","7","13","1:6","7:12"),
+              strip = function(which.given, which.panel, var.name,
+                        strip.levels = FALSE,
+                        strip.names = TRUE, ...) {
+       	      strip.default(which.given, which.panel,
+       	               var.name = greekpar[which.panel],
+                       strip.levels = FALSE,
+                       strip.names = TRUE, ...)},
+             layout = c(3,2),
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey2))
+@
+\end{figure}
+
+
+%% Example of how to create a figure of results
+\begin{figure}
+\caption{Simulated power curves for Simulation 2.Violation Parameter is loading, 
+         but model misspecified}
+\label{fig:sim22res}
+\setkeys{Gin}{width=\textwidth}
+<<sim22res, fig=TRUE, height=7, width=7>>=
+print(xyplot(power ~ diff | pars, group = ~ nobs , data = sim2,
+             subset = diff <= 4 & parms == "extra+loading" & test == "CvM" & pars %in% 
+             c("1","7","13","1:6","7:12"),
+              strip = function(which.given, which.panel, var.name,
+                        strip.levels = FALSE,
+                        strip.names = TRUE, ...) {
+       	      strip.default(which.given, which.panel,
+       	               var.name = greekpar[which.panel],
+                       strip.levels = FALSE,
+                       strip.names = TRUE, ...)},
+             layout = c(3,2),
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey2))
+@
+\end{figure}
+
+%% Example of how to create a figure of results
+\begin{figure}
+\caption{Simulated power curves for Simulation 2.Violation Parameter is var, 
+         but model misspecified}
+\label{fig:sim23res}
+\setkeys{Gin}{width=\textwidth}
+<<sim23res, fig=TRUE, height=7, width=7>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+print(xyplot(power ~ diff | pars, group = ~ nobs , data = sim2,
+             subset = diff <=4 & parms == "extra+var" & test == "CvM" & pars %in%
+             c("1","7","13","1:6","7:12"),
+              strip = function(which.given, which.panel, var.name,
+                        strip.levels = FALSE,
+                        strip.names = TRUE, ...) {
+       	      strip.default(which.given, which.panel,
+       	               var.name = greekpar[which.panel],
+                       strip.levels = FALSE,
+                       strip.names = TRUE, ...)},
+             layout = c(3,2),
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey2))
+@
+\end{figure}
+
+%% Example of how to create a figure of results
+\begin{figure}
+\caption{Simulated power curves for Simulation 2.Violation Parameter is var, 
+         but model misspecified}
+\label{fig:sim24res}
+\setkeys{Gin}{width=\textwidth}
+<<sim24res, fig=TRUE, height=7, width=7>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+## 
+print(xyplot(power ~ diff | pars, group = ~ nobs , data = sim2,
+             subset = diff <=4 & parms == "extra+error" & test == "CvM" & pars %in% 
+             c("1","7","13","1:6","7:12"),
+              strip = function(which.given, which.panel, var.name,
+                        strip.levels = FALSE,
+                        strip.names = TRUE, ...) {
+       	      strip.default(which.given, which.panel,
+       	               var.name = greekpar[which.panel],
+                       strip.levels = FALSE,
+                       strip.names = TRUE, ...)},
+             layout = c(3,2),
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey2))
+@
+\end{figure}
+
+
+%###########################################################################################
+
+\section{Simulation 3}
+In this section, we are aiming to test the extent to which the results of Simulation 1 
+are robust to percentage of violation group impact. Specifically, we generate data from 
+the factor analysis model used in Simulation 1 but manipulating the percentage of violating 
+individuals. The goal of this simulation is to examine the proposed three statistics'
+power and spicificity in different percentage violating individuals.
+
+
+\subsection{Method}
+The percentage of violation group is manipulated from 10\% to 90\% by 10\% in 
+each simulation. Violation magnitude is fixed to 3. Sample size is fixed to 500. 
+The violation parameters are the same as Simulation 1, including factor loading, 
+factor correlation and error term. 5000 datasets were generated and tested.  
+
+\subsection{Results}
+Simulation results were shown in Figure~\ref{fig:sim31res} 
+to Figure~\ref{fig:sim33res}. The highest power exhibited 
+when the percentage is 0.5 for all three violation paramter, as shown in Simualition 1 when 
+group divided by half. As the percentage decrease or increase from 0.5, the power decreases.
+However, the decreasing pattern is not symmetric. Specifically, when the violation percentage
+is approaching to 0.1, the power decreases more rappidly and down to lower than 0.1 when the 
+violation percentage is 10\%. Meanwhile, the power decrease less dramatically as the violation
+percentage approaching to 0.9. As for the difference among these three statistics, we noticed 
+that supLM which takes the maximum over individuals is the most robust to violation percentage.
+The power remains to 0.2 as violation percentage reaches 0.9, while dmax and CvM drop to near 
+0.1. This observation is consistent with the statistics' property. dmax or CvM takes the 
+maximum or sums over the parameters and individuals, respectively. While supLM sums over 
+parameters then take the maximum over individuals. Therefore, when the violation percentage is
+small, this statistics is more resistent to the contamination produced by aggregation across 
+individuals. 
+However, when there are more than one parameter violates the measurement invariance, the 
+difference pattern among these three statistics might change.We will explore this problem in 
+simulation 4. 
+
+\seeme{The asymptotic pattern should be interpreted with the parameter value. I write some 
+  in the discussion part. Basically, if most individuals' parameter value is larger, 
+  the power will be larger.}
+\seeme{I think the natural question would be when more than one paramter violate in different
+  individual percentage, how the three statistics would perform. So these two simulations would
+  be looked as exploration of the difference among these three statisitcs.}
+
+%% Example of how to call a simulation in R:
+<<sim3>>=
+## seed for replication
+RNGkind(kind = "default", normal.kind = "default")
+set.seed(1090)
+
+if(file.exists("sim3.rda")) {
+  load("sim3.rda")
+} else {
+  ## Arguments lead to small-scale simulation:
+  sim3 <- simulation(nobs=c(100,200,500), diff=seq(0,4,.25), parms=c("loading","var","error"))
+  save(sim3, file="sim3.rda")
+}
+
+## Add to column names so that plots look nicer
+sim3$test <- paste("", sim3$test, sep="")
+levels(sim3$perc)<-c(".05",".1",".15",".2",".25",".3",".35",".4",".45",".5",".55",
+                     ".6",".65",".7",".75",".8",".85",".9",".95")
+
+@ 
+
+%% Example of how to create a figure of results
+\begin{figure}
+\caption{Simulated power curves for Simulation 3.Violation Parameter is loading}
+\label{fig:sim31res}
+\setkeys{Gin}{width=\textwidth}
+<<sim31res, fig=TRUE, height=7, width=7>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey3 <- simpleKey(unique(sim3$test), points = TRUE, lines = TRUE)
+print(xyplot(power ~ perc | pars, group = ~ test, data = sim3,
+             subset = diff ==3 & parms == "loading"  & nobs == 500 & pars %in%
+             c("1","7","13","1:6","7:12") & perc %in% c(".1",".2",
+               ".3",".4",".5",".6",".7",".8",".9"),
+              strip = function(which.given, which.panel, var.name,
+                        strip.levels = FALSE,
+                        strip.names = TRUE, ...) {
+       	      strip.default(which.given, which.panel,
+       	               var.name = greekpar[which.panel],
+                       strip.levels = FALSE,
+                       strip.names = TRUE, ...)},
+             layout = c(3,2),
+             type = "b", xlab="Violation Percentage",ylab="Power", key=mykey3))
+@
+\end{figure}
+
+
+%% Example of how to create a figure of results
+\begin{figure}
+\caption{Simulated power curves for Simulation 3.Violation Parameter is var}
+\label{fig:sim32res}
+\setkeys{Gin}{width=\textwidth}
+<<sim32res, fig=TRUE, height=7, width=7>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey3 <- simpleKey(unique(sim3$test), points = TRUE, lines = TRUE)
+print(xyplot(power ~ perc | pars, group = ~ test, data = sim3,
+             subset = diff ==3 & parms == "var" & nobs == 500 & pars %in% 
+             c("1","7","13","1:6","7:12") & perc %in% c(".1",".2",
+               ".3",".4",".5",".6",".7",".8",".9"),
+              strip = function(which.given, which.panel, var.name,
+                        strip.levels = FALSE,
+                        strip.names = TRUE, ...) {
+       	      strip.default(which.given, which.panel,
+       	               var.name = greekpar[which.panel],
+                       strip.levels = FALSE,
+                       strip.names = TRUE, ...)},
+             layout = c(3,2),
+             type = "b", xlab="Violation Percentage",ylab="Power", key=mykey3))
+@
+\end{figure}
+
+%% Example of how to create a figure of results
+\begin{figure}
+\caption{Simulated power curves for Simulation 3.Violation Parameter is loading}
+\label{fig:sim33res}
+\setkeys{Gin}{width=\textwidth}
+<<sim33res, fig=TRUE, height=7, width=7>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey3 <- simpleKey(unique(sim3$test), points = TRUE, lines = TRUE)
+
+print(xyplot(power ~ perc | pars , group = ~ test, data = sim3,
+             subset = diff ==3 & parms == "error" & nobs == 500 & pars %in% 
+             c("1","7","13","1:6","7:12") & perc %in% c(".1",".2",
+               ".3",".4",".5",".6",".7",".8",".9"),
+              strip = function(which.given, which.panel, var.name,
+                        strip.levels = FALSE,
+                        strip.names = TRUE, ...) {
+       	      strip.default(which.given, which.panel,
+       	               var.name = greekpar[which.panel],
+                       strip.levels = FALSE,
+                       strip.names = TRUE, ...)},
+             layout = c(3,2),
+             type = "b", xlab="Violation Percentage", ylab="Power", key=mykey3))
+@
+\end{figure}
+
+
+
+
+%###########################################################################################
+
+
+\section{Simulation 4}
+In Simulation 4, we are aiming to test the extent to which the results of Simulation 1 
+are robust to multiple group violation.Specifically, we generate data from the factor 
+analysis model used in Simulation 1 but adding one more group which violates the measurement 
+invariance by a different degree. The goal of this simulation is to examine the proposed 
+statistics'power and spicificity in multiple group violation condition.
+
+\subsection{Method}
+The violations were still based on the auxiliary variable $V$, but there are two cutoff 
+points for $V$. Therefore,individuals is divided into three groups.For simplicity reason,
+individuals were assigned to these three groups equally. Group difference were $d/2$ times 
+the parameters' asymptotic standard errors(scaled by $\sqrt n$), with $d=0,0,25,0.5,...,4$. 
+For each combination of sample size ($n$) $\times$ violation magnitude ($d$) $\times$ violating 
+parameter, 5000 datasets were generated and tested.
+
+\subsection{Results}
+Simulation results were displayed in Figure~\ref{fig:sim41res} to Figure~\ref{fig:sim43res}. 
+The test specificity were retained as in two group setting.However, the powers are generally 
+lower than the corresponding two group setting as shown in Simulation 1. 
+
+In summary, when there is more than one group violating measurement invariance, the proposed 
+test statistic could remain specificity and enough power to test the particular violating 
+parameter.
+
+
+
+%% Example of how to call a simulation in R:
+<<sim4>>=
+## seed for replication
+RNGkind(kind = "default", normal.kind = "default")
+set.seed(1090)
+
+if(file.exists("sim4.rda")) {
+  load("sim4.rda")
+} else {
+  ## Arguments lead to small-scale simulation:
+  sim4 <- simulation(nobs=c(100,200,500), diff=seq(0,4,.25), parms=c("loading","var","error"))
+  save(sim4, file="sim4.rda")
+}
+
+## Add to column names so that plots look nicer
+sim4$nobs <- paste("n=", sim4$nobs, sep="")
+## Not fully happy with this, but haven't figured out how
+## to get greek letters in xyplot panel labels.
+
+@ 
+
+%% Example of how to create a figure of results
+\begin{figure}
+\caption{Simulated power curves for Simulation 4.Violation Parameter is loading}
+\label{fig:sim41res}
+\setkeys{Gin}{width=\textwidth}
+<<sim41res, fig=TRUE, height=7, width=7>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey4 <- simpleKey(unique(sim4$nobs), points = TRUE, lines = TRUE)
+
+print(xyplot(power ~ diff | pars, group = ~ nobs, data = sim4,
+             subset = diff <= 4 & parms == "loading" & test=="CvM" & pars %in%
+             c("1","7","13","1:6","7:12"),
+              strip = function(which.given, which.panel, var.name,
+                        strip.levels = FALSE,
+                        strip.names = TRUE, ...) {
+       	      strip.default(which.given, which.panel,
+       	               var.name = greekpar[which.panel],
+                       strip.levels = FALSE,
+                       strip.names = TRUE, ...)},
+             layout = c(3,2),
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey4))
+@
+\end{figure}
+
+%% Example of how to create a figure of results
+\begin{figure}
+\caption{Simulated power curves for Simulation 4. Violation Parameter is covariance}
+\label{fig:sim42res}
+\setkeys{Gin}{width=\textwidth}
+<<sim42res, fig=TRUE, height=7, width=7>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+print(xyplot(power ~ diff | pars, group = ~ nobs, data = sim4,
+             subset = diff <= 4 & parms == "var" & test == "CvM" & pars %in% 
+             c("1","7","13","1:6","7:12"),
+              strip = function(which.given, which.panel, var.name,
+                        strip.levels = FALSE,
+                        strip.names = TRUE, ...) {
+       	      strip.default(which.given, which.panel,
+       	               var.name = greekpar[which.panel],
+                       strip.levels = FALSE,
+                       strip.names = TRUE, ...)},
+             layout = c(3,2),
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey4))
+@
+\end{figure}
+
+\begin{figure}
+\caption{Simulated power curves for Simulation 4. Violation Parameter is error terms}
+\label{fig:sim43res}
+\setkeys{Gin}{width=\textwidth}
+<<sim43res, fig=TRUE, height=7, width=7>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+
+print(xyplot(power ~ diff | pars, group = ~ nobs, data = sim4,
+             subset = diff <= 4 & parms == "error" & test == "CvM" & pars %in% 
+             c("1","7","13","1:6","7:12"),
+              strip = function(which.given, which.panel, var.name,
+                        strip.levels = FALSE,
+                        strip.names = TRUE, ...) {
+       	      strip.default(which.given, which.panel,
+       	               var.name = greekpar[which.panel],
+                       strip.levels = FALSE,
+                       strip.names = TRUE, ...)},
+             layout = c(3,2),
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey4))
+@
+\end{figure}
+
+%###########################################################################################
+
+
+\section{Simulation 6}
+Follow sim3. The problem need concern is that when fix diff=3, the plot is similar to sim3. However,
+if we look at with diffrent diff in perc=0.5, the plot would be similar to psychometric paper. 
+CvM's advantageous is depending on percentage. 
+
+
+
+%% Example of how to call a simulation in R:
+<<sim6>>=
+## seed for replication
+RNGkind(kind = "default", normal.kind = "default")
+set.seed(1090)
+
+if(file.exists("sim6.rda")) {
+  load("sim6.rda")
+} else {
+  ## Arguments lead to small-scale simulation:
+  sim6 <- simulation(nobs=c(100,200,500), diff=seq(0,4,.25), parms=c("loading","var","error"))
+  save(sim6, file="sim6.rda")
+}
+
+## Add to column names so that plots look nicer
+sim6$test <- paste("", sim6$test, sep="")
+levels(sim6$perc)<-c(".05",".1",".15",".2",".25",".3",".35",".4",".45",".5",".55",
+                     ".6",".65",".7",".75",".8",".85",".9",".95")
+
+@ 
+
+%% Example of how to create a figure of results
+\begin{figure}
+\caption{Simulated power curves for Simulation 3.Violation Parameter is loading}
+\label{fig:sim61res}
+\setkeys{Gin}{width=\textwidth}
+<<sim61res, fig=TRUE, height=7, width=7>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey6 <- simpleKey(unique(sim6$test), points = TRUE, lines = TRUE)
+print(xyplot(power ~ perc | pars, group = ~ test, data = sim6,
+             subset = diff ==3 & parms == "loading"  & nobs == 500 & pars %in%
+             c("1","7","13","1:6","7:12","1:3","7:9") & perc %in% c(".1",".2",
+               ".3",".4",".5",".6",".7",".8",".9"),
+              strip = function(which.given, which.panel, var.name,
+                        strip.levels = FALSE,
+                        strip.names = TRUE, ...) {
+       	      strip.default(which.given, which.panel,
+       	               var.name = greekpar[which.panel],
+                       strip.levels = FALSE,
+                       strip.names = TRUE, ...)},
+             layout = c(3,3),
+             type = "b", xlab="Violation Percentage",ylab="Power", key=mykey6))
+@
+\end{figure}
+
+%% Example of how to create a figure of results
+\begin{figure}
+\caption{Simulated power curves for Simulation 3.Violation Parameter is loading}
+\label{fig:sim62res}
+\setkeys{Gin}{width=\textwidth}
+<<sim62res, fig=TRUE, height=7, width=7>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey6 <- simpleKey(unique(sim6$test), points = TRUE, lines = TRUE)
+print(xyplot(power ~ perc | pars, group = ~ test, data = sim6,
+             subset = diff ==3 & parms == "error"  & nobs == 500 & pars %in%
+             c("1","7","13","1:6","7:12","1:3","7:9") & perc %in% c(".1",".2",
+               ".3",".4",".5",".6",".7",".8",".9"),
+              strip = function(which.given, which.panel, var.name,
+                        strip.levels = FALSE,
+                        strip.names = TRUE, ...) {
+       	      strip.default(which.given, which.panel,
+       	               var.name = greekpar[which.panel],
+                       strip.levels = FALSE,
+                       strip.names = TRUE, ...)},
+             layout = c(3,3),
+             type = "b", xlab="Violation Percentage",ylab="Power", key=mykey6))
+@
+\end{figure}
+
+
+\section{General Discussion}
+
+What do the results mean, future studies, etc.
+
+In Simulation 3, the asymmetric pattern is asscociated with parameter value.
+Specifically, given unequal groups, when most(percentage is 0.6,0.7,0.8,0.9) of the 
+individuals' parameter value is larger, the measurement variance is easier to be detected.
+In the situation that violation group parameter value is smaller, as the percentage increases,
+individuals' parameter value is smaller, too, the measurement variance is more difficult to be 
+detected. Thus the asymmptotic pattern would look reversed (percentage 0.1,0.2,0.3,0.4 would be
+associated with larger power compared with the 0.9,0.8,0.7,0.6).
+
+
+
+\subsection{Summary}
+
+Concluding paragraph.
+
+\section*{Computational Details}
+
+All results were obtained using the {R}~system for statistical computing \cite{R11},
+version~\Sexpr{paste(R.Version()[6:7], collapse = ".")}, employing the add-on package
+{lavaan}~\Sexpr{packageDescription("lavaan")["Version"]} \cite{lavaan11} for fitting 
+of the factor analysis models and
+{strucchange}~\Sexpr{packageDescription("strucchange")["Version"]} \cite{ZeiLei02,Zei06}
+for evaluating the parameter instability tests. {R}~and the packages {lavaan} and 
+{strucchange} are
+freely available under the General Public License~2 from the
+Comprehensive {R} Archive Network at \url{http://CRAN.R-project.org/}.
+{R}~code for replication of our results is
+available at \url{http://semtools.R-Forge.R-project.org/}.
+
+
+\bibliography{refs}
+
+\end{document}
+
