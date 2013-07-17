@@ -128,22 +128,80 @@ s(\theta;x_{i})=(\frac{\partial l(\theta;x_{i})}{\partial(\theta_{1})},...,\frac
 
 is the score function of the model(the partial derivative of the casewise likelihood contributions w.r.t. the parameters $\theta$). Evaluation of the score function at $\hat{\theta}$ for $i=1,...n$ essentially measures the extent to which the model maximizes each individual's likelihood: as an individual's score stray further from zero,the model provides a poorer description of that individual. 
 
-
+\SweaveOpts{engine = R, eps = FALSE, echo = TRUE, pdf=TRUE}
 \section{Tutorial}
-We can take a look at some random numbers from N(0, 1):
-<<test1>>=
-## Data to use for tutorial:
-data("YouthGratitude", package="psychotools")
+In general, a set of scales is defined to be measurement invariant with respect to an auxiliary variable $V$ if: 
+
+\begin{equation}
+\label{equ:invariance}
+f(x_{i}|t_{i},v_{i},...)=f(x_{i}|t_{i},...),
+\end{equation}
+
+where $x_{i}$ is the data vector for individual $i$, $t_{i}$ is the latent variable for variable $i$ that the scales purport to measure, and $f$ is the model's distributional form \citep{}. If the cut point of $v$ is known in advance, i.e. gender, nested multiple group models\citep{} coupled with likelihood ratio test are most commonly applied. 
+Suppose there are two groups A and B. The null hypothesis of measurement invariance is 
+
+\begin{equation}
+\label{equ:null}
+H_{0}: \theta_{A}=\theta_{B},
+\end{equation}
+
+The alternative hypothesis is 
+
+\begin{equation}
+\label{equ:alternative}
+H_{1}:\theta_{i}=
+\begin{cases}
+\theta^{(A)} & v_{i}\leq v\\
+\theta^{(B)} & v_{i}\geq v
+\end{cases}
+\end{equation}
+
+The parameter estimate $\hat{\theta}^{(A)}$ , $\hat{\theta}^{(B)}$ ,$\hat{\theta}$ (group A and group B) can be obtained by Maximum Likelihood(ML) from observations $i=1,...m(v_{i}\leq v),i=m+1,...n(v_{i}\geq v), i=1,...,n$,respectively. The LR test statistic for the given threshold $v$ is then 
+\begin{equation}
+\label{equ:LRT}
+LR(v)=-2[\ell(\hat{\theta};x_{1},,,,x_{n})-{\ell(\hat{\theta}^
+{(A)};x_{1},...,x_{m})+\ell(\hat{\theta}^{(B)};x_{m+1},...,x_{n})
+}],
+\end{equation}
+
+has an asymptotic $\chi^{2}$ distribution with degrees of freedom equal to the number difference of parameters in $\theta$. 
+
+To be more specific, in the following section, we will introduce how to implement multi group analysis in lavaan package. For more details, see\citep{}
+\subsection{Multiple Group Analysis}
+First of all, we need to read in data to R.  
+<<read data>>=
+# Reading in the data
+## (need data here)Data <- read.table("example.dat")
+## names(Data) <- c("y1","y2","y3","y4","y5","y6","g")
 @
+Second, the model need to be specified using lavaan package. 
+<<specify model>>=
+library(lavaan)
+model <- 'f1=~NA*y1+y2+y3
+          f2=~NA*y4+y5+y6
+          f1 ~~1*f1
+          f2 ~~1*f2'
+@
+Third, we want to test which parameter(s) violate measurement invariance. In lavaan package, loading, manifest variables' intercept and factor means could be tested together or specifically. For more details, please see \citep{}. Since in most cases researchers are interested in the factor loading invariance, we will use that as the example in this tutorial.
+To implement LRT as ~\ref{equ:likelihood}, we need to get estimation for \hat{\theta}
+<<theta estimate>>=
+# estimate theta 
+## theta<-cfa(model,data=Data,group="g",group.equal="loadings")
+@
+Then we can get estimate for group A and group B. 
+<<theta A and theta B estimate>>=
+# estimate theta A,B 
+## thetaAB<-cfa(model,data=Data,group="g")
+@
+In the end, we can get the LRT results by calling the measurement invariance function in lavaan. 
+<<LRT>>=
+# LRT
+## measurementInvariance(model,data=Data,group="g",strict=FALSE)
+@
+\subsection{Extensions for Unknown Group}
 
-%% First illustrate the statistics assuming age is continuous
-%% (with many ties)
 
-
-%% Then illustrate the ordinal statistics, correctly assuming
-%% that age is ordinal
-
-
+\SweaveOpts{engine = R, eps = FALSE, echo = FALSE, pdf=TRUE}
 \section{Simulation 1}
 
 In Simulation 1, we examined the extent to which the proposed tests
