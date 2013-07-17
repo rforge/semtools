@@ -137,7 +137,7 @@ In general, a set of scales is defined to be measurement invariant with respect 
 f(x_{i}|t_{i},v_{i},...)=f(x_{i}|t_{i},...),
 \end{equation}
 
-where $x_{i}$ is the data vector for individual $i$, $t_{i}$ is the latent variable for variable $i$ that the scales purport to measure, and $f$ is the model's distributional form \citep{}. If the cut point of $v$ is known in advance, i.e. gender, nested multiple group models\citep{} coupled with likelihood ratio test are most commonly applied. 
+where $x_{i}$ is the data vector for individual $i$, $t_{i}$ is the latent variable for variable $i$ that the scales purport to measure, and $f$ is the model's distributional form {addref}. If the cut point of $v$ is known in advance, i.e. gender, nested multiple group models {addref} coupled with likelihood ratio test are most commonly applied. 
 Suppose there are two groups A and B. The null hypothesis of measurement invariance is 
 
 \begin{equation}
@@ -166,7 +166,7 @@ LR(v)=-2[\ell(\hat{\theta};x_{1},,,,x_{n})-{\ell(\hat{\theta}^
 
 has an asymptotic $\chi^{2}$ distribution with degrees of freedom equal to the number difference of parameters in $\theta$. 
 
-To be more specific, in the following section, we will introduce how to implement multi group analysis in lavaan package. For more details, see\citep{}
+To be more specific, in the following section, we will introduce how to implement multi group analysis in lavaan package. For more details, see {addref}
 \subsection{Multiple Group Analysis}
 First of all, we need to read in data to R.  
 <<read data>>=
@@ -182,8 +182,9 @@ model <- 'f1=~NA*y1+y2+y3
           f1 ~~1*f1
           f2 ~~1*f2'
 @
-Third, we want to test which parameter(s) violate measurement invariance. In lavaan package, loading, manifest variables' intercept and factor means could be tested together or specifically. For more details, please see \citep{}. Since in most cases researchers are interested in the factor loading invariance, we will use that as the example in this tutorial.
-To implement LRT as ~\ref{equ:likelihood}, we need to get estimation for \hat{\theta}
+Third, we want to test which parameter(s) violate measurement invariance. In lavaan package, loading, manifest variables' intercept and factor means could be tested together or specifically. For more details, please see {addref}. Since in most cases researchers are interested in the factor loading invariance, we will use that as the example in this tutorial.
+To implement LRT as ~\ref{equ:LRT}, we need to get estimation for $\hat{\theta}$, without differing groups. 
+
 <<theta estimate>>=
 # estimate theta 
 ## theta<-cfa(model,data=Data,group="g",group.equal="loadings")
