@@ -128,16 +128,22 @@ s(\theta;x_{i})=(\frac{\partial l(\theta;x_{i})}{\partial(\theta_{1})},...,\frac
 
 is the score function of the model(the partial derivative of the casewise likelihood contributions w.r.t. the parameters $\theta$). Evaluation of the score function at $\hat{\theta}$ for $i=1,...n$ essentially measures the extent to which the model maximizes each individual's likelihood: as an individual's score stray further from zero,the model provides a poorer description of that individual. 
 
-\SweaveOpts{engine = R, eps = FALSE, echo=TRUE, pdf=TRUE}
+
 \section{Tutorial}
 We can take a look at some random numbers from N(0, 1):
 <<test1>>=
-x = rnorm(5)
-x
+## Data to use for tutorial:
+data("YouthGratitude", package="psychotools")
 @
 
+%% First illustrate the statistics assuming age is continuous
+%% (with many ties)
 
-\SweaveOpts{engine = R, eps = FALSE, echo = FALSE, pdf=TRUE}
+
+%% Then illustrate the ordinal statistics, correctly assuming
+%% that age is ordinal
+
+
 \section{Simulation 1}
 
 In Simulation 1, we examined the extent to which the proposed tests
