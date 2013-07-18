@@ -368,7 +368,7 @@ dgp4 <- function(nobs = 200, diff = 3, parms="loading", perc = 1/3)
  
 
 ######################################################################################
-dgp5 <- function(nobs = 200, diff = 3, parms="loading", perc = 0.5)
+dgp5 <- function(nobs = 200, diff = 3, parms="loading",perc=1)
 {
   # Generates data from a factor analysis model that violates
   # measurement invariance.  Also generates a continuous auxiliary
@@ -381,7 +381,16 @@ dgp5 <- function(nobs = 200, diff = 3, parms="loading", perc = 0.5)
   ses <- diff
   theta<-c(4.92,2.96,5.96,3.24,4.32,7.21,26.77,13.01,30.93,3.17,8.82,22.5,-0.48,
            29.32,24.70,14.84,10.59,19.30,18.01)
+  asym<-c( 7.565818,4.951599,8.644422,3.093014,4.499676,7.368059,
+            56.672724,24.255196,74.917170,8.264380,17.664706,47.093002,
+           1.024326,7.139776,4.666005,8.151785,3.696972,5.242366,
+            8.630417)
   age <- c(runif(sampsize,13,18))
+  z.age<-scale(age)
+
+  # Initialize data matrix:
+  datmat <- matrix(0,sampsize,6)
+  colnames(datmat) <- c("x1", "x2", "x3", "y1", "y2", "y3")
  
   
   # Define parameter vectors/matrices:  
@@ -394,45 +403,34 @@ dgp5 <- function(nobs = 200, diff = 3, parms="loading", perc = 0.5)
   ####################################################
   theta.age <- matrix(0,sampsize,length(theta))
   
-  lambda <-list()
-  phi<-list()
-  psi<-list()
-  mu<-list()
-  z<-list()
-  u<-list()
   
   for (i in 1:sampsize){
-  theta.age[i,] <- theta + diff*age[i]*parmsvector/sqrt(nobs/2) 
+  theta.age[i,] <- theta + diff*asym*z.age[i]*parmsvector/sqrt(nobs/2)*perc 
 
-  lambda[[i]] <- matrix(0,6,2)
+  lambda <- matrix(0,6,2)
   
-  lambda[[i]][,1] <- c(theta.age[i,1:3],0,0,0)
-  lambda[[i]][,2] <- c(0,0,0,theta.age[i,4:6])
+  lambda[,1]<- c(theta.age[i,1:3],0,0,0)
+  lambda[,2] <- c(0,0,0,theta.age[i,4:6])
 
 
-  phi[[i]] <- matrix(theta.age[i,13],2,2)
-  diag(phi[[i]]) <- 1
+  phi <- matrix(theta.age[i,13],2,2)
+  diag(phi) <- 1
   
 
-  psi[[i]] <- matrix(0,6,6)
-  diag(psi[[i]]) <- theta.age[i,7:12]
+  psi <- matrix(0,6,6)
+  diag(psi) <- theta.age[i,7:12]
 
-  mu[[i]] <- theta.age[i,14:19]
+  mu <- theta.age[i,14:19]
 
   # Generate z and u vectors:
 
-  z[[i]] <- t(rmvnorm(sampsize,rep(0,2),phi[[i]])) 
-  u[[i]] <- t(rmvnorm(sampsize,rep(0,6),psi[[i]]))
-  } 
-  # Initialize data matrix:
-  datmat <- matrix(0,sampsize,6)
-  colnames(datmat) <- c("x1", "x2", "x3", "y1", "y2", "y3")
-  
+  z <- t(rmvnorm(sampsize,rep(0,2),phi)) 
+  u <- t(rmvnorm(sampsize,rep(0,6),psi))
+ 
   # Based on z and u, generate data:
-   for (i in 1:sampsize){
-    datmat[i,] <- mu[[i]] + lambda[[i]]%*%z[[i]][,i] + u[[i]][,i]
+  datmat[i,] <- mu + lambda %*%z[,i] + u[,i]
   }
-  cbind(as.data.frame(datmat), age)
+  cbind(as.data.frame(datmat), z.age)
 }
 
 ######################################################################################
@@ -514,7 +512,7 @@ dgp6 <- function(nobs = 200, diff = 3, parms = "loading", perc = 0.5)
   for (i in (num.y+1):sampsize){
     datmat[i,] <- mu + lambda.o%*%z.o[,i] + u.o[,i]
   }
-  cbind(as.data.frame(datmat), age)
+  cbind(as.data.frame(datmat), z.age)
 }
 
 
@@ -641,8 +639,8 @@ if(FALSE) {  ## Ignore this line, it just tells R to ignore this code:
                      parms=c("loading","var","error"),perc=c(0.1,0.25,0.5,0.75,0.9))
   sim4 <- simulation(sim=c("sim4"), nobs=c(100,500),nrep=300, diff=seq(2,4),parms=c("loading",
                      "var","error"),perc=0.5)
-  sim5 <- simulation(sim=c("sim5"), nobs=c(100,500),nrep=300,diff=c(60,100),
-                     parms=c("loading","error"),perc=0.5)
+  sim5 <- simulation(sim=c("sim5"), nobs=500,nrep=300,diff=100,
+                     parms=c("loading"),perc=1)
   sim6 <- simulation(sim=c("sim6"), nobs=c(100,500),nrep=300, diff = c(2,4),
                      parms=c("loading","error"),perc=c(0.1,0.25,0.5,0.75,0.9))
 
@@ -655,8 +653,8 @@ if(FALSE) {  ## Ignore this line, it just tells R to ignore this code:
                      perc=seq(0.05,0.95,0.05))
   sim4 <- simulation(sim=c("sim4"), nobs=c(100,200,500), diff=seq(0,4,.25),
                      parms=c("loading","var","error"),perc=1/3)
-  sim5 <- simulation(sim=c("sim5"), nobs=c(100,200,500),diff=seq(10,100,5),
-                     parms=c("loading","error"))
+ # sim5 <- simulation(sim=c("sim5"), nobs=c(100,200,500),diff=seq(10,100,5),
+ #                    parms=c("loading","error"))
   sim6 <- simulation(sim=c("sim6"), nobs=500, diff=seq(0,4,.25), parms=c("loading","error"),
                      perc=seq(0.05,0.95,0.05))
   
@@ -677,6 +675,7 @@ if(FALSE) {  ## Ignore this line, it just tells R to ignore this code:
   trellis.par.set(theme = canonical.theme(color = FALSE))
   ## all
   postscript("sim1.pdf")
+  mykey1 <- simpleKey(unique(sim1$test), points = TRUE, lines = TRUE)
   xyplot(power ~ diff | pars + nobs + parms, group = ~ test,
          data = sim1, subset = diff %in% c(seq(0, 4, by = 0.5)),type = "b",
          xlab="Violation Magnitude", ylab="Power")
@@ -764,13 +763,16 @@ if(FALSE) {  ## Ignore this line, it just tells R to ignore this code:
   trellis.par.set(theme = canonical.theme(color = FALSE))
   ## all
   postscript("sim6.pdf")
+  mykey6 <- simpleKey(unique(sim6$test), points = TRUE, lines = TRUE)
   xyplot(power ~ diff | pars + nobs + parms + perc, group = ~ test,
          data = sim6, subset = diff %in% c(seq(0, 4, by = 0.5)),type = "b",
-         xlab="Violation Magnitude", ylab="Power")
+         xlab="Violation Magnitude", ylab="Power",key=mykey6)
   args.list <- c(xyplot,list(nrow=6,ncol=7))
   dev.off()
+
+
 }
 
-
+ 
 
 
