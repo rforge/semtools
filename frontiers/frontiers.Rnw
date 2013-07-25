@@ -1,0 +1,558 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Editing Rules:                                                            %
+%1. Ed's comment and questions:\readme{}                                   %     
+%2. Ting's comment and questions:\seeme{}                                  % 
+%3. When comments and questions are resovled, the corresponding \readme or %  
+%   \seeme will be removed by Ting.                                        %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\documentclass[doc]{apa}
+\usepackage{graphicx,epsfig,amsmath,alltt,setspace,bm}
+\usepackage[english]{babel}
+
+
+
+\SweaveOpts{engine = R, eps = FALSE, echo = FALSE, pdf=TRUE}
+
+\title{Tests of measurement invariance via stochastic processes:
+  {S}ome properties}
+\twoauthors{Ting Wang and Edgar C.\ Merkle}{Achim Zeileis}
+\twoaffiliations{University of Missouri}{Universit\"{a}t Innsbruck}
+
+\abstract{
+We study a family of 
+recently-proposed measurement invariance tests that are derived from
+stochastic processes.  As applied to factor analysis and other
+psychometric models, the tests are advantageous in that (i) they do
+not require advance definition of subgroups of cases that violate
+measurement invariance; (ii) they can potentially identify specific
+model parameters that violate measurement invariance; and (iii) they
+do not require a model of additional complexity to be estimated.  
+Because the tests have been applied to only a small number of
+psychometric examples, we conduct a series of simulation studies that provide
+a detailed examination of test properties.  These studies allow us
+to study (details here).  The studies indicate that.}
+
+
+
+
+\acknowledgements{This work was supported by National Science
+  Foundation grant SES-1061334. 
+  Correspondence to. 
+  Email: }
+\shorttitle{Measurement invariance test properties}
+\rightheader{Measurement invariance test properties}
+
+\newcommand{\argmax}{\operatorname{argmax}\displaylimits}
+%% for internal use
+\newcommand{\fixme}[1]{\emph{\marginpar{FIXME} (#1)}}
+\newcommand{\readme}[1]{\emph{\marginpar{README} (#1)}}
+\newcommand{\seeme}[1]{\emph{\marginpar{SEEME} (#1)}}
+
+
+\spacing{1}
+
+\begin{document}
+\maketitle
+
+<<preliminaries1>>=
+## packages
+library("lavaan")
+library("strucchange")
+library("mvtnorm")
+library("lattice")
+
+## auxiliary code
+source("simall.R")
+source("mz.R")
+
+## convenience function for plotting boundaries without color
+get_boundary <- function(obj, fun, trim = 0) {
+  bound <- fun$boundary(0:obj$nobs/obj$nobs)
+  bound <- fun$computeCritval(0.05, ncol(obj$process)) * bound
+  bound <- zoo(bound, time(obj$process))
+  if(trim > 0) bound <- head(tail(bound, - floor(trim * obj$nobs)), - floor(trim * obj$nobs))
+  return(bound)
+}
+
+## convenience function for applying tests to real data
+info_full <- function(x, ...) solve(vcov(x) * nobs(x))
+@
+
+Parameter invariance is a fundamental assumption for measurement model in 
+developing psychometric scales. Violation of it could happen in any estimated parameter.  
+In order to fix the psychometric scale, we need to specify the violating parameter.  
+Moreover, in practice model misspecification is an inevitable issue to a certain extent 
+and may interfere with parameter invariance specificity. A family of tests derived from 
+stochastic process has been recently proposed to identify specific parameters impacted 
+by measurement invariance violation. However, these tests have only been used to a limited 
+type of parameter violation. It is this paper's intent to provide a detailed examination 
+of the tests' performance under practical research scenarios. 
+
+In the following section, we first briefly review the 
+theoretical framework of proposed statistical tests. Subsequently, we study the tests'
+ability through simulations that mimic practical research. 
+Finally, some suggestion on the tests' use in practice is provided.  
+
+\section{Theoretical Detail}
+This section contains background on the theory underlying the proposed statistics; for a more detailed account, see Merkle and Zeileis\citeyearNP{MerZei13}. 
+We consider situations in which a $p$-dimensional variable $X$ with observations $x_{i},i=1,...n$ is described by a model with density $f(x_{i};\theta)$ and associated joint log-likelihood
+
+\begin{equation}
+\label{equ:likelihood}
+\ell(\theta;x_{1},...,x_{n})=\overset{n}{\underset{i=1}{\Sigma}}\ell(\theta;x_{i})=\overset{n}{\underset{i=1}{\Sigma}}logf(x_{i};\theta)
+\end{equation}
+
+where $\theta$ is some $k-$dimensional parameter vector that characterizes the distribution. 
+We focus on applications where the density $f(x_{i};\theta)$ arises from a structural equation model with assumed multivariate normality, though the proposed tests extend beyond this family of models. Under the usual regularity condition\cite{}, the model parameters $\theta$ can be estimated by maximum likelihood(ML),i.e., 
+
+\begin{equation}
+\label{equ:ml}
+\hat{\theta}=\underset{\theta}{argmax}\ell(\theta;x_{1},...,x_{n})
+\end{equation} 
+
+or equivalently by solving the first order conditions
+
+\begin{equation}
+\label{equ:max}
+\overset{n}{\underset{i=1}{\Sigma}}s(\hat{\theta};x_{i})=0,
+\end{equation} 
+
+where
+ 
+\begin{equation}
+\label{equ:score}
+s(\theta;x_{i})=(\frac{\partial l(\theta;x_{i})}{\partial(\theta_{1})},...,\frac{\partial l(\theta;x_{i})}{\partial(\theta_{k})})^{T}
+\end{equation} 
+
+is the score function of the model(the partial derivative of the casewise likelihood contributions w.r.t. the parameters $\theta$). Evaluation of the score function at $\hat{\theta}$ for $i=1,...n$ essentially measures the extent to which the model maximizes each individual's likelihood: as an individual's score stray further from zero,the model provides a poorer description of that individual. 
+
+\SweaveOpts{engine = R, eps = FALSE, echo = TRUE, pdf=TRUE}
+\section{Tutorial}
+In general, a set of scales is defined to be measurement invariant with respect to an auxiliary variable $V$ if: 
+
+\begin{equation}
+\label{equ:invariance}
+f(x_{i}|t_{i},v_{i},...)=f(x_{i}|t_{i},...),
+\end{equation}
+
+where $x_{i}$ is the data vector for individual $i$, $t_{i}$ is the latent variable for variable $i$ that the scales purport to measure, and $f$ is the model's distributional form {addref}. If the cut point of $v$ is known in advance, i.e. gender, nested multiple group models {addref} coupled with likelihood ratio test are most commonly applied. 
+Suppose there are two groups A and B. The null hypothesis of measurement invariance is 
+
+\begin{equation}
+\label{equ:null}
+H_{0}: \theta_{A}=\theta_{B},
+\end{equation}
+
+The alternative hypothesis is 
+
+\begin{equation}
+\label{equ:alternative}
+H_{1}:\theta_{i}=
+\begin{cases}
+\theta^{(A)} & v_{i}\leq v\\
+\theta^{(B)} & v_{i}\geq v
+\end{cases}
+\end{equation}
+
+The parameter estimate $\hat{\theta}^{(A)}$ , $\hat{\theta}^{(B)}$ ,$\hat{\theta}$ (group A and group B) can be obtained by Maximum Likelihood(ML) from observations $i=1,...m(v_{i}\leq v),i=m+1,...n(v_{i}\geq v), i=1,...,n$,respectively. The LR test statistic for the given threshold $v$ is then 
+\begin{equation}
+\label{equ:LRT}
+LR(v)=-2[\ell(\hat{\theta};x_{1},,,,x_{n})-{\ell(\hat{\theta}^
+{(A)};x_{1},...,x_{m})+\ell(\hat{\theta}^{(B)};x_{m+1},...,x_{n})
+}],
+\end{equation}
+
+has an asymptotic $\chi^{2}$ distribution with degrees of freedom equal to the number difference of parameters in $\theta$. 
+
+To be more specific, in the following section, we will introduce how to implement multi group analysis in lavaan package. For more details, see {addref}
+\subsection{Multiple Group Analysis}
+First of all, we need to read in data to R.  
+<<read data>>=
+# Reading in the data
+## (need data here)Data <- read.table("example.dat")
+## names(Data) <- c("y1","y2","y3","y4","y5","y6","g")
+@
+Second, the model need to be specified using lavaan package. 
+<<specify model>>=
+library(lavaan)
+model <- 'f1=~NA*y1+y2+y3
+          f2=~NA*y4+y5+y6
+          f1 ~~1*f1
+          f2 ~~1*f2'
+@
+Third, we want to test which parameter(s) violate measurement invariance. In lavaan package, loading, manifest variables' intercept and factor means could be tested together or specifically. For more details, please see {addref}. Since in most cases researchers are interested in the factor loading invariance, we will use that as the example in this tutorial.
+To implement LRT as ~\ref{equ:LRT}, we need to get estimation for $\hat{\theta}$, without differing groups. 
+
+<<theta estimate>>=
+# estimate theta 
+## theta<-cfa(model,data=Data,group="g",group.equal="loadings")
+@
+Then we can get estimate for group A and group B. 
+<<theta A and theta B estimate>>=
+# estimate theta A,B 
+## thetaAB<-cfa(model,data=Data,group="g")
+@
+In the end, we can get the LRT results by calling the measurement invariance function in lavaan. 
+<<LRT>>=
+# LRT
+## measurementInvariance(model,data=Data,group="g",strict=FALSE)
+@
+\subsection{Extensions for Unknown Group}
+
+
+\SweaveOpts{engine = R, eps = FALSE, echo = FALSE, pdf=TRUE}
+\section{Simulation 1}
+
+In Simulation 1, we examined the extent to which the proposed tests
+are sensitive to the specific model parameter that violates measurement
+invariance.  If, say, a factor loading violates measurement
+invariance, it is plausible that this violation impacts other
+parameters such as factor covariances or other loadings 
+associated with the factor in question.  Thus, the goal of the
+simulation was to examine the extent to which the proposed tests
+attribute the measurement invariance violation to the parameters that
+are truly in violation.  
+
+\subsection{Methods}
+To examine these specificity issues, we generated data from a
+two-factor model with three indicators each (the same model used in
+Merkle and Zeileis, \citeyearNP{MerZei13}). The measurement invariance
+violation occurred in one of three parameters: the factor loading
+associated with the first indicator $\lambda_{11}$, the unique variance associated
+with the first indicator $\epsilon_{11}$, or the factor covariance $\sigma_{12}$.  
+We then tested for measurement invariance in seven subsets of parameters: the three
+individual parameters noted above, all six factor loadings $\lambda_{11}--\lambda_{62}$, 
+all six unique variances $\epsilon_{11}--\epsilon_{66}$. The path diagram is shown in  
+Figure~\ref{fig:path}.
+
+\begin{figure}
+\caption{Path diagram representing the factor analysis model 
+         used for simulations.}
+\label{fig:path}
+\includegraphics{PathDiagram}
+\end{figure}
+
+Power and Type I error were examined across three sample sizes
+($n=100,200,500$) and 17 magnitudes of invariance violations. These
+violations were based on the auxiliary variable $V$: individuals below
+the 50th percentile of $V$ deviated from individuals above the 50th
+percentile  by $d$ times the parameters' asymptotic standard errors
+(scaled by $\sqrt n$), with $d=0,0,25,0.5,...,4$. 
+For each combination of sample size ($n$) $\times$ violation
+magnitude ($d$) $\times$ violating parameter, 5000 datasets were
+generated and tested.
+
+
+\subsection{Results}
+Full simulation results are presented in Figure~\ref{fig:sim11res} to
+Figure~\ref{fig:sim13res}; all three test statistics exhibited very
+similar results, so the figures include only results for the CvM statistic.
+Figure~\ref{fig:sim11res} displays power curves as a function of 
+violation magnitude for the first
+factor loading $\lambda_{11}$, with panels reflecting the parameters 
+being tested and lines reflecting $n$.
+Figures~\ref{fig:sim12res} and Figure~\ref{fig:sim13res} display 
+similar power curves when the factor covariance 
+$\phi_{12}$ and error variance $\epsilon_{11}$ violate measurement
+invariance, respectively. 
+
+From these figures, one generally observe that the tests isolate 
+the parameter violating measurement invariance.  Additionally, the tests 
+have somewhat-higher power to detect measurement invariance violations 
+in the factor loading and factor covariance parameters, as opposed to the error variance
+parameter.  Finally, simultaneous tests of all factor loadings or all error
+parameters result in decreased power, as compared to the situation
+where one tests only the violating parameter.  This occurs because, in
+testing a subset of parameters (only one of which violates measurement
+invariance), we are effectively dampening the signal of a measurement
+invariance violation.  
+
+
+In summary, we found that the proposed tests can attribute
+measurement invariance violations to the correct parameter.  This
+provides evidence that, in practice, one can have confidence in the
+tests' abilities to locate the measurement invariance violation.  Of
+course, this statement is qualified by the fact that, in this
+simulation, the model was correctly specified.  In the following
+simulations, we examine the tests' performance when the model is
+misspecified.
+
+
+
+%% Example of how to call a simulation in R:
+<<sim1>>=
+## seed for replication
+RNGkind(kind = "default", normal.kind = "default")
+set.seed(1090)
+
+if(file.exists("sim1.rda")) {
+  load("sim1.rda")
+} else {
+  ## Arguments lead to small-scale simulation:
+  sim1 <- simulation(nobs=c(100,200,500), diff=seq(0,4,.25), parms=c("loading","var","error"))
+  save(sim1, file="sim1.rda")
+}
+
+## Add to column names so that plots look nicer
+sim1$nobs <- paste("n=", sim1$nobs, sep="")
+
+#Not sure how to express all loadings and all error terms in greek letters.
+greekExprList<-expression(lambda[11],epsilon[11],sigma[12],lambda[11]--lambda[62],
+                          epsilon[11]--epsilon[66])
+greekpar<-as.expression(greekExprList)
+
+@ 
+
+%% Example of how to create a figure of results
+\begin{figure}
+\caption{Simulated power curves for Simulation 1.Violation Parameter is loading}
+\label{fig:sim11res}
+\setkeys{Gin}{width=\textwidth}
+<<sim11res, fig=TRUE, height=7, width=7>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey1 <- simpleKey(unique(sim1$nobs), points = TRUE, lines = TRUE)
+print(xyplot(power ~ diff | pars, group = ~ nobs, data = sim1,
+             subset = diff <= 4 & parms == "loading" & test=="CvM" &  pars %in% 
+             c("1","7","13","1:6","7:12"),
+              strip = function(which.given, which.panel, var.name,
+                        strip.levels = FALSE,
+                        strip.names = TRUE, ...) {
+       	      strip.default(which.given, which.panel,
+       	               var.name = greekpar[which.panel],
+                       strip.levels = FALSE,
+                       strip.names = TRUE, ...)},
+             layout = c(3,2),type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey1,
+             as.table=TRUE))
+@
+\end{figure}
+
+%% Example of how to create a figure of results
+\begin{figure}
+\caption{Simulated power curves for Simulation 1.Violation Parameter is covariance}
+\label{fig:sim12res}
+\setkeys{Gin}{width=\textwidth}
+<<sim12res, fig=TRUE, height=7, width=7>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+print(xyplot(power ~ diff | pars, group = ~ nobs, data = sim1,
+             subset = diff <= 4 & parms == "var" & test == "CvM" &  pars %in% 
+             c("1","7","13","1:6","7:12"),
+              strip = function(which.given, which.panel, var.name,
+                        strip.levels = FALSE,
+                        strip.names = TRUE, ...) {
+       	      strip.default(which.given, which.panel,
+       	               var.name = greekpar[which.panel],
+                       strip.levels = FALSE,
+                       strip.names = TRUE, ...)},
+             layout = c(3,2),
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey1,
+             as.table=TRUE))
+@
+\end{figure}
+
+\begin{figure}
+\caption{Simulated power curves for Simulation 1.Violation Parameter is error terms}
+\label{fig:sim13res}
+\setkeys{Gin}{width=\textwidth}
+<<sim13res, fig=TRUE, height=7, width=7>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+print(xyplot(power ~ diff | pars, group = ~ nobs, data = sim1,
+             subset = diff <= 4 & parms == "error" & test == "CvM" &  pars %in%
+             c("1","7","13","1:6","7:12"),
+              strip = function(which.given, which.panel, var.name,
+                        strip.levels = FALSE,
+                        strip.names = TRUE, ...) {
+       	      strip.default(which.given, which.panel,
+       	               var.name = greekpar[which.panel],
+                       strip.levels = FALSE,
+                       strip.names = TRUE, ...)},
+             layout = c(3,2),
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey1,
+             as.table=TRUE))
+@
+\end{figure}
+
+%###########################################################################################
+\section{Simulation 2}
+In Simulation 2, we examine the extent to which the results of
+Simulation 1 are robust to model misspecification. Specifically, we
+generate data from the factor analysis model used in the previous
+section, but with adding an extra loading from the second factor to the first
+indicator (of the first factor).  The estimated model lacks this extra
+loading, however. The goal of this simulation is to examine the proposed statitics'
+power and spicificity under model misspecification.
+
+
+\subsection{Method}
+Measurement invariance violations could occur in
+each of the three parameters from Simulation 1 (factor loading,factor covariance,unique
+variance), and they could also occur in the extra,unmodeled loading. 
+Sample size and magnitude of measurementinvariance violation were manipulated 
+in the same way as they were in Simulation 1.The tested parameters are the same as Simulation
+1,too.
+
+\subsection{Results}
+Results are presented by the paramter that violated measurement invariance.
+Figure~\ref{fig:sim21res} displays results when the unmodeled loading violates 
+measurement invariance. One can generally observe that 
+the first loading and error variance parameter showed high measurement invariance 
+violation simultaneously, while factor covariance did not demonstrate violation.
+
+
+Figure~\ref{fig:sim22res} displays results when the loading $\lambda_{11}$ violates
+measurement invariance. Even though lacking one loading associated with the first indicator, 
+CvM statistic showed enough power to detect the first loading violation specifically. 
+Similar pattern of specificity and power were observed when the violation parameter 
+was $\sigma_{12}$ (Figure~\ref{fig:sim23res}) and $\epsilon_{11}$ (Figure~\ref{fig:sim24res}).
+
+In summary, the proposed test statistics appear robust to unmodeled loading parameters,so long
+as the umodeled parameter does not violate measurment invariance. If the unmodeled parameter 
+dose violate measurement invariance, however, then the tests assign this violation to other 
+parameters that do not violate measurement invariance. The impacted parameters include the error
+variance and other loadings associated with the manifest variables that had the unmodeled 
+loading. Thus, prior to testing measurement invariance, it is important to study the extent to
+which the hypothesized model includes all parameters of importance.
+
+
+
+%% Example of how to call a simulation in R:
+<<sim2>>=
+## seed for replication
+RNGkind(kind = "default", normal.kind = "default")
+set.seed(1090)
+
+if(file.exists("sim2.rda")) {
+  load("sim2.rda")
+} else {
+  ## Arguments lead to small-scale simulation:
+  sim2 <- simulation(nobs=c(100,200,500), diff=seq(0,4,.25), parms=c("extra",
+                    "extra+loading", "extra+var","extra+error"))
+  save(sim2, file="sim2.rda")
+}
+
+## Add to column names so that plots look nicer
+sim2$nobs <- paste("n=", sim2$nobs, sep="")
+
+@ 
+
+%% Example of how to create a figure of results
+\begin{figure}
+\caption{Simulated power curves for Simulation 2.Violation Parameter is extra loading}
+\label{fig:sim21res}
+\setkeys{Gin}{width=\textwidth}
+<<sim21res, fig=TRUE, height=7, width=7>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey2 <- simpleKey(unique(sim2$nobs), points = TRUE, lines = TRUE)
+print(xyplot(power ~ diff |pars , group = ~ nobs, data = sim2,
+             subset = diff <= 4 & parms == "extra" & test == "CvM" & pars %in%
+              c("1","7","13","1:6","7:12"),
+              strip = function(which.given, which.panel, var.name,
+                        strip.levels = FALSE,
+                        strip.names = TRUE, ...) {
+       	      strip.default(which.given, which.panel,
+       	               var.name = greekpar[which.panel],
+                       strip.levels = FALSE,
+                       strip.names = TRUE, ...)},
+             layout = c(3,2),
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey2))
+@
+\end{figure}
+
+
+%% Example of how to create a figure of results
+\begin{figure}
+\caption{Simulated power curves for Simulation 2.Violation Parameter is loading, 
+         but model misspecified}
+\label{fig:sim22res}
+\setkeys{Gin}{width=\textwidth}
+<<sim22res, fig=TRUE, height=7, width=7>>=
+print(xyplot(power ~ diff | pars, group = ~ nobs , data = sim2,
+             subset = diff <= 4 & parms == "extra+loading" & test == "CvM" & pars %in% 
+             c("1","7","13","1:6","7:12"),
+              strip = function(which.given, which.panel, var.name,
+                        strip.levels = FALSE,
+                        strip.names = TRUE, ...) {
+       	      strip.default(which.given, which.panel,
+       	               var.name = greekpar[which.panel],
+                       strip.levels = FALSE,
+                       strip.names = TRUE, ...)},
+             layout = c(3,2),
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey2))
+@
+\end{figure}
+
+%% Example of how to create a figure of results
+\begin{figure}
+\caption{Simulated power curves for Simulation 2.Violation Parameter is var, 
+         but model misspecified}
+\label{fig:sim23res}
+\setkeys{Gin}{width=\textwidth}
+<<sim23res, fig=TRUE, height=7, width=7>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+print(xyplot(power ~ diff | pars, group = ~ nobs , data = sim2,
+             subset = diff <=4 & parms == "extra+var" & test == "CvM" & pars %in%
+             c("1","7","13","1:6","7:12"),
+              strip = function(which.given, which.panel, var.name,
+                        strip.levels = FALSE,
+                        strip.names = TRUE, ...) {
+       	      strip.default(which.given, which.panel,
+       	               var.name = greekpar[which.panel],
+                       strip.levels = FALSE,
+                       strip.names = TRUE, ...)},
+             layout = c(3,2),
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey2))
+@
+\end{figure}
+
+%% Example of how to create a figure of results
+\begin{figure}
+\caption{Simulated power curves for Simulation 2.Violation Parameter is var, 
+         but model misspecified}
+\label{fig:sim24res}
+\setkeys{Gin}{width=\textwidth}
+<<sim24res, fig=TRUE, height=7, width=7>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+## 
+print(xyplot(power ~ diff | pars, group = ~ nobs , data = sim2,
+             subset = diff <=4 & parms == "extra+error" & test == "CvM" & pars %in% 
+             c("1","7","13","1:6","7:12"),
+              strip = function(which.given, which.panel, var.name,
+                        strip.levels = FALSE,
+                        strip.names = TRUE, ...) {
+       	      strip.default(which.given, which.panel,
+       	               var.name = greekpar[which.panel],
+                       strip.levels = FALSE,
+                       strip.names = TRUE, ...)},
+             layout = c(3,2),
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey2))
+@
+\end{figure}
+
+\section{General Discussion}
+
+What do the results mean, future studies, etc.
+
+
+
+
+
+
+\section*{Computational Details}
+
+All results were obtained using the {R}~system for statistical computing \cite{R11},
+version~\Sexpr{paste(R.Version()[6:7], collapse = ".")}, employing the add-on package
+{lavaan}~\Sexpr{packageDescription("lavaan")["Version"]} \cite{lavaan11} for fitting 
+of the factor analysis models and
+{strucchange}~\Sexpr{packageDescription("strucchange")["Version"]} \cite{ZeiLei02,Zei06}
+for evaluating the parameter instability tests. {R}~and the packages {lavaan} and 
+{strucchange} are
+freely available under the General Public License~2 from the
+Comprehensive {R} Archive Network at \url{http://CRAN.R-project.org/}.
+{R}~code for replication of our results is
+available at \url{http://semtools.R-Forge.R-project.org/}.
+
+
+\bibliography{refs}
+
+\end{document}
