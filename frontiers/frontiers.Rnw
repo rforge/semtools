@@ -200,7 +200,61 @@ In the end, we can get the LRT results by calling the measurement invariance fun
 ## measurementInvariance(model,data=Data,group="g",strict=FALSE)
 @
 \subsection{Extensions for Unknown Group}
+The multiple group test performs typically well when the $V$ is a relatively-small number of categories and the sample size is not too large (LRT is sensitive to large sample and will return "false" significance results, details see next section). However, when $V$ (in this case, age) continuous variable, however, multiple-group analysis usually cannot be performed because there are no existing groups. Instead, we can follow the procedure proposed by Ed Merkle and Zeileis. Specifically, we can fit a model whose parameters are restricted to be equal across across all individuals and then examine how individuals' scores $s(\hat{theta};x_{i})$ fluctuate with their values of $V$. To formalize the idea, we assume that the observations are ordered w.r.t. $V$ and define the $k$ dimensional cumulative score process as 
+\begin{equation}
+\label{equ:B}
+B(t;\hat{\theta})=\hat{I}^{-1/2}n^{-1/2}\overset{\lfloor nt \rfloor}{\underset{i=1}{\Sigma}}s(\hat{\theta};x_{i}) (0 \leq t \leq 1)
+\end{equation}
+where $\lfloor nt \rfloor$ is the integer part of nt and $\hat{I}$ is some consistent estimate of the covariance matrix of the scores,e.g. information matrix. ~\ref{equ:B} simultaneously accounts for the ordering of individuals w.r.t. $V$ and decorrelates the scores between $k$ components of the parameters in the model. 
+Further, there exists a functional central limit theorem that allows us to make formal inference with this cumulative score process. Assuming that individuals are independent and the usual ML regularity condition hold, it is possible to show that(addref) 
+\begin{equation}
+B(\cdot;\hat{\theta})\overset{d}{\rightarrow} B^{0}(\cdot)
+\end{equation} 
+where $\overset{d}{\rightarrow}$ denotes convergence in distribution and $B^{0}(\cdot)$ is a $k$ dimensional Brownian bridge. Thus, we can construct tests of measurement invariance by comparing the behavior of cumulative score process to that of a Brownian bridge. In practice, there are three test statistics can be used: double maximum, CvM and maxLM. 
+\begin{equation}
+DM={\underset{i=1,...,n}{\max}}{\underset{j=1,...,k}{\max}}|B(\hat{\theta})_{ij}|
+\end{equation}
+\begin{equation}
+CvM=n^{-1}{\underset{i=1,...,n}{\Sigma}}{\underset{j=1,...,k}{\Sigma}}B(\hat{\theta_{ij}})^{2}
+\end{equation}
+\begin{equation}
+maxLM={\underset{i=1,...,n}{\max}}{\frac{i}{n}(1-\frac{i}{n})}^{-1}{\underset{j=1,...,k}{\Sigma}}B(\hat{\theta}_{ij})^{2})
+\end{equation}
 
+Specifically, we will use the previous example, except changing categorical agegroup to continuous age.
+Like before, after read in data, we fit the model in lavaan package. 
+<<theta estimate>>=
+# estimate theta 
+## theta<-cfa(model,data=Data,group="g",group.equal="loadings")
+@
+Then we will use the gefp function in strucchange package to get the $B(\hat{\theta}_{ij})$. Then we can get the three test statistics' significance by using sctest function. 
+<<Get B Estimate>>=
+library(strucchange)
+ for(i in 1:1327) {
+  parnum <- c(1,2,3,4,5)
+  tname <- c("dmax","CvM","maxLM")
+ test <- paste(rep(tname,length(parnum)), rep(parnum, each=length(tname)),
+               sep="")
+  nrep=1
+  pval <- matrix(rep(NA,length(test) * nrep), ncol = length(test))
+   colnames(pval) <- test
+    mz_gefp <- vector("list", length(parnum))
+    for(j in 1:length(parnum)){
+      mz_gefp[[j]] <- try(gefp(theta, fit = NULL, vcov = info.mzfit,
+                               order.by = yg$agegroup, sandwich = FALSE,
+                                 parm = eval(parse(text=parnum[j]))),
+                            silent = TRUE)
+     if(!inherits(mz_gefp[[j]], "try-error")) {
+       pval[i, (j-1)*3 + 1] <- sctest(mz_gefp[[j]],  functional = maxBB)$p.value
+      pval[i, (j-1)*3 + 2] <- sctest(mz_gefp[[j]],  functional = meanL2BB)$p.value
+       pval[i, (j-1)*3 + 3] <- sctest(mz_gefp[[j]],  functional = supLM(0.1))$p.value
+         }
+    }
+   }
+  size = 0.05
+  rval <- colMeans(pval < size, na.rm = TRUE)
+  return(pval)
+@
 
 \SweaveOpts{engine = R, eps = FALSE, echo = FALSE, pdf=TRUE}
 \section{Simulation 1}
