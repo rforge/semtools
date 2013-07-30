@@ -168,36 +168,38 @@ has an asymptotic $\chi^{2}$ distribution with degrees of freedom equal to the n
 
 To be more specific, in the following section, we will introduce how to implement multi group analysis in lavaan package. For more details, see {addref}
 \subsection{Multiple Group Analysis}
-First of all, we need to read in data to R.  
+Froh et al had a large sample of youth(n=1401, ranging from late childhood(10 years old) to late adolescent(19 years old) complete the three most widely used adult gratitude inventories, including Gratitude Questionnaire 6(GQ-6; addref), Gratitude Adjective Checklist(GAC; addref) and Gratitude, Resentment, Appreciation Test-Short Form (GRAT-Short Form); addref). In this specific analysis, the authors were interested in whether the youth factor structure for GQ-6 is tau equivalent model or a congeneric model.
+
+To conduct the analysis, first of all, we need to read in data to R and clean the data.
 <<read data>>=
 # Reading in the data
-## (need data here)Data <- read.table("example.dat")
-## names(Data) <- c("y1","y2","y3","y4","y5","y6","g")
+data("YouthGratitude",package="psychotools")
+# remove cases with 'imputed' values(not in 1,...,9)
+yg<-YouthGratitude[apply(YouthGratitude[,4:28],1,function(x)all(x %in% 1:9)),]
 @
-Second, the model need to be specified using lavaan package. 
-<<specify model>>=
-library(lavaan)
-model <- 'f1=~NA*y1+y2+y3
-          f2=~NA*y4+y5+y6
-          f1 ~~1*f1
-          f2 ~~1*f2'
-@
-Third, we want to test which parameter(s) violate measurement invariance. In lavaan package, loading, manifest variables' intercept and factor means could be tested together or specifically. For more details, please see {addref}. Since in most cases researchers are interested in the factor loading invariance, we will use that as the example in this tutorial.
+Second, we want to test which parameter(s) violate measurement invariance. In lavaan package, loading, manifest variables' intercept and factor means could be tested together or specifically. For more details, please see {addref}. Since in most cases researchers are interested in the factor loading invariance, we will use that as the example in this tutorial.
 To implement LRT as ~\ref{equ:LRT}, we need to get estimation for $\hat{\theta}$, without differing groups. 
 
 <<theta estimate>>=
 # estimate theta 
-## theta<-cfa(model,data=Data,group="g",group.equal="loadings")
+library(lavaan)
+theta<-cfa(
+  'f1=~gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5',
+  data=yg,group="agegroup",meanstructure=TRUE,
+  group.equal="loadings")
 @
 Then we can get estimate for group A and group B. 
 <<theta A and theta B estimate>>=
 # estimate theta A,B 
-## thetaAB<-cfa(model,data=Data,group="g")
+thetaAB<-cfa(
+  'f1=~gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5',
+  data=yg,group="agegroup",meanstructure=TRUE)
 @
 In the end, we can get the LRT results by calling the measurement invariance function in lavaan. 
 <<LRT>>=
 # LRT
-## measurementInvariance(model,data=Data,group="g",strict=FALSE)
+LRT<-anova(theta, thetaAB)
+LRT
 @
 \subsection{Extensions for Unknown Group}
 The multiple group test performs typically well when the $V$ is a relatively-small number of categories and the sample size is not too large (LRT is sensitive to large sample and will return "false" significance results, details see next section). However, when $V$ (in this case, age) continuous variable, however, multiple-group analysis usually cannot be performed because there are no existing groups. Instead, we can follow the procedure proposed by Ed Merkle and Zeileis. Specifically, we can fit a model whose parameters are restricted to be equal across across all individuals and then examine how individuals' scores $s(\hat{theta};x_{i})$ fluctuate with their values of $V$. To formalize the idea, we assume that the observations are ordered w.r.t. $V$ and define the $k$ dimensional cumulative score process as 
@@ -224,37 +226,25 @@ maxLM={\underset{i=1,...,n}{\max}}{\frac{i}{n}(1-\frac{i}{n})}^{-1}{\underset{j=
 Specifically, we will use the previous example, except changing categorical agegroup to continuous age.
 Like before, after read in data, we fit the model in lavaan package. 
 <<theta estimate>>=
-# estimate theta 
-## theta<-cfa(model,data=Data,group="g",group.equal="loadings")
+library(lavaan)
+theta<-cfa(
+  'f1=~gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5',
+  data=yg,group="agegroup",meanstructure=TRUE,
+  group.equal="loadings")
 @
 Then we will use the gefp function in strucchange package to get the $B(\hat{\theta}_{ij})$. Then we can get the three test statistics' significance by using sctest function. 
-<<Get B Estimate>>=
-library(strucchange)
- for(i in 1:1327) {
-  parnum <- c(1,2,3,4,5)
-  tname <- c("dmax","CvM","maxLM")
- test <- paste(rep(tname,length(parnum)), rep(parnum, each=length(tname)),
-               sep="")
-  nrep=1
-  pval <- matrix(rep(NA,length(test) * nrep), ncol = length(test))
-   colnames(pval) <- test
-    mz_gefp <- vector("list", length(parnum))
-    for(j in 1:length(parnum)){
-      mz_gefp[[j]] <- try(gefp(theta, fit = NULL, vcov = info.mzfit,
-                               order.by = yg$agegroup, sandwich = FALSE,
-                                 parm = eval(parse(text=parnum[j]))),
-                            silent = TRUE)
-     if(!inherits(mz_gefp[[j]], "try-error")) {
-       pval[i, (j-1)*3 + 1] <- sctest(mz_gefp[[j]],  functional = maxBB)$p.value
-      pval[i, (j-1)*3 + 2] <- sctest(mz_gefp[[j]],  functional = meanL2BB)$p.value
-       pval[i, (j-1)*3 + 3] <- sctest(mz_gefp[[j]],  functional = supLM(0.1))$p.value
-         }
-    }
-   }
-  size = 0.05
-  rval <- colMeans(pval < size, na.rm = TRUE)
-  return(pval)
+<<Get >>=
+gefp1<-gefp(theta,fit=NULL,order.by=as.numeric(yg$agegroup),
+       vcov=info_full,sandwich=FALSE,parm=1:4)
+pval=rep(NA,3)
+pval[1]<-sctest(gefp1,functional=maxBB)$p.value
+pval[2]<-sctest(gefp1,functional=meanL2BB)$p.value
+pval[3]<-sctest(gefp1,functional=supLM(0.1))$p.value
+pval
 @
+
+\subsection{Ordinal Test}
+However, in this dataset, $V$ is actually ordinal instead of continuous. There is only a partial ordering of individuals with respect to $V$,i.e. observations with the same level of $V$ have no unique ordering. The ordinal statistics proposed here are similar to those described in Equation and above.
 
 \SweaveOpts{engine = R, eps = FALSE, echo = FALSE, pdf=TRUE}
 \section{Simulation 1}
