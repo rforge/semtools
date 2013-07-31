@@ -95,38 +95,48 @@ theoretical framework of proposed statistical tests. Subsequently, we study the 
 ability through simulations that mimic practical research. 
 Finally, some suggestion on the tests' use in practice is provided.  
 
-\section{Theoretical Detail}
-This section contains background on the theory underlying the proposed statistics; for a more detailed account, see Merkle and Zeileis\citeyearNP{MerZei13}. 
-We consider situations in which a $p$-dimensional variable $X$ with observations $x_{i},i=1,...n$ is described by a model with density $f(x_{i};\theta)$ and associated joint log-likelihood
+\section{Background}
+This section contains background and discussion of the 
+proposed statistics as applied to SEM; for a more detailed account, see
+\citeA{MerZei13} and \citeA{MerFanZei}.  For details on the
+statistics' application to general statistical models, see
+\citeA{zeihor07}.
 
+As currently implemented for SEM, the statistical tests described in
+this paper can be applied to models that are estimated via a
+multivariate normal or Wishart likelihood (or discrepancy) function
+(though extension to other discrepancy functions is straightforward).
+The tests are carried out after model estimation, making use of output
+associated with the fitted model.  In general, we fit a model that
+restricts parameters to be equal across observations, then carry out a
+``posthoc'' test to examine whether certain parameters instead vary
+across observations.  This procedure is similar in spirit to the
+calculation of modification indices CITE and to Lagrange multiplier
+tests CITE, and, in fact, these statistics can be viewed as  
+special cases of the family described here.
+
+Following model estimation, the tests primarily work on the {\em
+  scores} of the fitted model; these are defined as
+%% TODO indicate that this is evaluated at theta hat
 \begin{equation}
-\label{equ:likelihood}
-\ell(\theta;x_{1},...,x_{n})=\overset{n}{\underset{i=1}{\Sigma}}\ell(\theta;x_{i})=\overset{n}{\underset{i=1}{\Sigma}}logf(x_{i};\theta)
-\end{equation}
-
-where $\theta$ is some $k-$dimensional parameter vector that characterizes the distribution. 
-We focus on applications where the density $f(x_{i};\theta)$ arises from a structural equation model with assumed multivariate normality, though the proposed tests extend beyond this family of models. Under the usual regularity condition\cite{}, the model parameters $\theta$ can be estimated by maximum likelihood(ML),i.e., 
-
-\begin{equation}
-\label{equ:ml}
-\hat{\theta}=\underset{\theta}{argmax}\ell(\theta;x_{1},...,x_{n})
+\label{eq:score}
+s(\hat{\theta};x_{i}) = \left ( \frac{\partial
+      l(\theta;x_{i})}{\partial(\theta_{1})},...,\frac{\partial
+      l(\theta;x_{i})}{\partial(\theta_{k})} \right )^{T},
 \end{equation} 
+where $l(\theta; x_i)$ is the likelihood associated with individual
+$i$, $\theta$ is a $k$-dimensional parameter vector, and
+$\hat{\theta}$ is the maximum likelihood estimate.  In words, each
+individual has $k$ scores describing the extent to which the fitted
+model describes that particular individual.  Scores close to zero
+indicate a ``good'' description, and scores far from zero indicate a
+``bad'' description.  Each of an individual's $k$ scores represent one
+model parameter, so that the scores provide specific information about
+each parameter's fit to each individual.
 
-or equivalently by solving the first order conditions
+%% Next: How scores can be used for testing
 
-\begin{equation}
-\label{equ:max}
-\overset{n}{\underset{i=1}{\Sigma}}s(\hat{\theta};x_{i})=0,
-\end{equation} 
 
-where
- 
-\begin{equation}
-\label{equ:score}
-s(\theta;x_{i})=(\frac{\partial l(\theta;x_{i})}{\partial(\theta_{1})},...,\frac{\partial l(\theta;x_{i})}{\partial(\theta_{k})})^{T}
-\end{equation} 
-
-is the score function of the model(the partial derivative of the casewise likelihood contributions w.r.t. the parameters $\theta$). Evaluation of the score function at $\hat{\theta}$ for $i=1,...n$ essentially measures the extent to which the model maximizes each individual's likelihood: as an individual's score stray further from zero,the model provides a poorer description of that individual. 
 
 \SweaveOpts{engine = R, eps = FALSE, echo = TRUE, pdf=TRUE}
 \section{Tutorial}
