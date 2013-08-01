@@ -104,15 +104,15 @@ statistics' application to general statistical models, see
 
 As currently implemented for SEM, the statistical tests described in
 this paper can be applied to models that are estimated via a
-multivariate normal or Wishart likelihood (or discrepancy) function
-(though extension to other discrepancy functions is straightforward).
-The tests are carried out after model estimation, making use of output
+multivariate normal or Wishart likelihood (or discrepancy) function,
+with extension to other discrepancy functions being straightforward.
+The tests are carried out following model estimation, making use of output
 associated with the fitted model.  In general, we fit a model that
 restricts parameters to be equal across observations, then carry out a
-``posthoc'' test to examine whether certain parameters instead vary
+posthoc test to examine whether specific parameters vary
 across observations.  This procedure is similar in spirit to the
 calculation of modification indices CITE and to Lagrange multiplier
-tests CITE, and, in fact, these statistics can be viewed as  
+tests CITE, and, in fact, those statistics can be viewed as  
 special cases of the family described here.
 
 Following model estimation, the tests primarily work on the {\em
@@ -126,7 +126,11 @@ s(\hat{\theta};x_{i}) = \left ( \frac{\partial
 \end{equation} 
 where $l(\theta; x_i)$ is the likelihood associated with individual
 $i$, $\theta$ is a $k$-dimensional parameter vector, and
-$\hat{\theta}$ is the maximum likelihood estimate.  In words, each
+$\hat{\theta}$ is the maximum likelihood estimate.  The cross-product
+of these scores forms the ``meat'' for the calculation of robust
+(Huber-White) standard errors. %TODO cite
+
+To expand on the above equation, each
 individual has $k$ scores describing the extent to which the fitted
 model describes that particular individual.  Scores close to zero
 indicate a ``good'' description, and scores far from zero indicate a
@@ -134,8 +138,40 @@ indicate a ``good'' description, and scores far from zero indicate a
 model parameter, so that the scores provide specific information about
 each parameter's fit to each individual.
 
-%% Next: How scores can be used for testing
+To use these scores for testing, we order individuals according to
+an auxiliary variable (the variable against which we are testing 
+measurement invariance) and look for trends in the
+scores (roughly speaking).  For example, imagine that we are testing
+for measurement 
+invariance w.r.t.\ age.  If the manifest variables violate measurement
+invariance here, then some parameter estimates may be too large for
+young individuals and too small for old individuals (say).  This
+result would be reflected in the scores, where young individuals'
+scores would be greater than zero and old individuals' scores would be
+less than zero.  Conversely, if measurement invariance holds, then all
+individuals' scores will fluctuate around zero.
 
+To formalize the ideas in the previous paragraph, we focus on a cumulative
+sum of the ordered scores.  Specifically, we focus on how the
+cumulative sum fluctuates as more individuals' scores are added to it,
+starting with the youngest and ending with the oldest individual
+(assuming that age is the auxiliary variable of interest).  Under the
+hypothesis of measurement invariance, a central limit theorem can be
+used to show that the fluctuation of the cumulative sum follows a
+Brownian bridge.  This result allows us to calculate $p$-values and
+critical values for test statistics under the hypothesis of
+measurement invariance.  This includes test statistics associated with
+all model parameters and subsets of model parameters.
+
+%% TODO focus on ordinal
+Multiple test statistics are available, depending on how one
+summarizes the behavior of the cumulative sum of scores.  One could
+take the absolute maximum that the cumulative sum attains for any
+parameter of interest, resulting in a {\em double max} statistic.
+Alternatively, one could sum the (squared) cumulative sum across parameters
+of interest and take the maximum across individuals, resulting in a
+{\em maximum Lagrange multiplier} statistic 
+\cite<see>[for further discussion of this idea]{MerZei13}.
 
 
 \SweaveOpts{engine = R, eps = FALSE, echo = TRUE, pdf=TRUE}
