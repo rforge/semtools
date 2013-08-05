@@ -66,6 +66,8 @@ library("lattice")
 ## auxiliary code
 source("simall.R")
 source("mz.R")
+source("../www/efpFunctional-cat.R")
+source("../pkg/sctest.lavaan.R")
 
 ## convenience function for plotting boundaries without color
 get_boundary <- function(obj, fun, trim = 0) {
@@ -244,8 +246,8 @@ thetaAB<-cfa(
 In the end, we can get the LRT results by calling the measurement invariance function in lavaan. 
 <<LRT>>=
 # LRT
-LRT<-anova(theta, thetaAB)
-LRT
+LRT<-as.matrix(anova(theta, thetaAB))
+print(LRT,na.print="", quote=FALSE)
 @
 \subsection{Extensions for Unknown Group}
 The multiple group test performs typically well when the $V$ is a relatively-small number of categories and the sample size is not too large (LRT is sensitive to large sample and will return "false" significance results, details see next section). However, when $V$ (in this case, age) continuous variable, however, multiple-group analysis usually cannot be performed because there are no existing groups. Instead, we can follow the procedure proposed by Ed Merkle and Zeileis. Specifically, we can fit a model whose parameters are restricted to be equal across across all individuals and then examine how individuals' scores $s(\hat{theta};x_{i})$ fluctuate with their values of $V$. To formalize the idea, we assume that the observations are ordered w.r.t. $V$ and define the $k$ dimensional cumulative score process as 
@@ -279,7 +281,7 @@ theta<-cfa(
   group.equal="loadings")
 @
 Then we will use the gefp function in strucchange package to get the $B(\hat{\theta}_{ij})$. Then we can get the three test statistics' significance by using sctest function. 
-<<Get >>=
+<<Get Estimate>>=
 gefp1<-gefp(theta,fit=NULL,order.by=as.numeric(yg$agegroup),
        vcov=info_full,sandwich=FALSE,parm=1:4)
 pval=rep(NA,3)
@@ -288,11 +290,47 @@ pval[2]<-sctest(gefp1,functional=meanL2BB)$p.value
 pval[3]<-sctest(gefp1,functional=supLM(0.1))$p.value
 pval
 @
+In applying the proposed continuous test, the $p$ value for CvM and maxBB $p$ value is larger than likelihood test. Besides, CvM $p$ value is not significant.  
 
+\SweaveOpts{engine = R, eps = FALSE, echo = TRUE, pdf=TRUE}
+Alternatively, we could use sctest.lavaan function to get the results. 
+<<Get Estimate Alternative Way>>=
+DM<-sctest(theta, as.numeric(yg$agegroup),parm=1:4, stat="DM", fplot=TRUE) 
+CvM<-sctest(theta, as.numeric(yg$agegroup),parm=1:4, stat="CvM", fplot=TRUE) 
+#maxLM<-sctest(theta, as.numeric(yg$agegroup),parm=1:4, #stat="maxLM", fplot=TRUE) 
+DM
+CvM
+#maxLM
+@
 \subsection{Ordinal Test}
-However, in this dataset, $V$ is actually ordinal instead of continuous. There is only a partial ordering of individuals with respect to $V$,i.e. observations with the same level of $V$ have no unique ordering. The ordinal statistics proposed here are similar to those described in Equation and above.
+However, in this dataset, $V$ is actually ordinal instead of continuous. There is only a partial ordering of individuals with respect to $V$,i.e. observations with the same level of $V$ have no unique ordering. The ordinal statistics proposed here are similar to those described in Equation and above, except that we focus on "bins" of individuals at each level of the ordinal variable. That is, instead of aggregating over all $i=1,...n$ individuals, we first compute cumulative proportions $t_{l}(l=1,...,m-1)$ associated with the first $m-1$ levels of $V$. We then aggregate the cumulative scores only over $i_{l}=\lfloor n \cdot t_{l} \rfloor$. Test statistics related can be written as 
+\begin{eqnarray}
+    \label{eq:wdm}
+      \mathit{WDM}_o & = & \max_{i \in \{i_1, \dots, i_{m-1} \}} ~ \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1/2}\max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} |,\\
+    \label{eq:maxlmo}
+      \max \mathit{LM}_o & = & \max_{i \in \{i_1, \dots, i_{m-1} \}} ~\left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1}\sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2,
+\end{eqnarray} 
 
-\SweaveOpts{engine = R, eps = FALSE, echo = FALSE, pdf=TRUE}
+The difference between the continuous test and ordinal test is that we don't force arbitary order on the observations within the same age groups. Therefore, this ordinal test should reflect more of the data. In terms of code, we still need the gefp function to get the B estimate. After that, we can use different functions to aggregate and scale B estimation. The function are called ordwmax and ol2bb1.fun, respectively. 
+<<Ordinal Test>>=
+gefp1<-gefp(theta,fit=NULL,order.by=as.numeric(yg$agegroup),
+       vcov=info_full,sandwich=FALSE,parm=1:4)
+pval.ord=rep(NA,2)
+pval.ord[1]<-sctest(gefp1,functional=ordwmax(gefp1))$p.value
+pval.ord[2]<-sctest(gefp1,functional=ordL2BB(gefp1))$p.value
+pval.ord
+@
+
+<<Get Estimate Alternative Way for Ordinal>>=
+WDMo<-sctest(theta, as.numeric(yg$agegroup),parm=1:4, stat="WDMo", fplot=TRUE) 
+#maxLMo<-sctest(theta, as.numeric(yg$agegroup),parm=1:4, #stat="maxLMo", fplot=TRUE)
+WDMo
+#maxLMo
+@
+
+In employing the ordinal tests, we obtain $p=0.060$ and $p=0.096$. Both $p-$values are clearly larger than that of the likelihood ratio test and neigher is significant at $\alpha=0.5$
+
+
 \section{Simulation 1}
 
 In Simulation 1, we examined the extent to which the proposed tests
