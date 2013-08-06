@@ -292,16 +292,28 @@ pval
 @
 In applying the proposed continuous test, the $p$ value for CvM and maxBB $p$ value is larger than likelihood test. Besides, CvM $p$ value is not significant.  
 
-\SweaveOpts{engine = R, eps = FALSE, echo = TRUE, pdf=TRUE}
+\SweaveOpts{engine = R, eps = TRUE, echo = TRUE, pdf=TRUE}
 Alternatively, we could use sctest.lavaan function to get the results. 
+
 <<Get Estimate Alternative Way>>=
 DM<-sctest(theta, as.numeric(yg$agegroup),parm=1:4, stat="DM", fplot=TRUE) 
-CvM<-sctest(theta, as.numeric(yg$agegroup),parm=1:4, stat="CvM", fplot=TRUE) 
-#maxLM<-sctest(theta, as.numeric(yg$agegroup),parm=1:4, #stat="maxLM", fplot=TRUE) 
 DM
+CvM<-sctest(theta, as.numeric(yg$agegroup),parm=1:4, stat="CvM", fplot=TRUE) 
 CvM
+#maxLM<-sctest(theta, as.numeric(yg$agegroup),parm=1:4, #stat="maxLM", fplot=TRUE) 
 #maxLM
 @
+
+\begin{figure}
+\label{fig:statistics}
+\includegraphics[page=1]{Rplots}
+\end{figure}
+
+\begin{figure}
+\label{fig:statistics}
+\includegraphics[page=2]{Rplots}
+\end{figure}
+
 \subsection{Ordinal Test}
 However, in this dataset, $V$ is actually ordinal instead of continuous. There is only a partial ordering of individuals with respect to $V$,i.e. observations with the same level of $V$ have no unique ordering. The ordinal statistics proposed here are similar to those described in Equation and above, except that we focus on "bins" of individuals at each level of the ordinal variable. That is, instead of aggregating over all $i=1,...n$ individuals, we first compute cumulative proportions $t_{l}(l=1,...,m-1)$ associated with the first $m-1$ levels of $V$. We then aggregate the cumulative scores only over $i_{l}=\lfloor n \cdot t_{l} \rfloor$. Test statistics related can be written as 
 \begin{eqnarray}
@@ -322,340 +334,29 @@ pval.ord
 @
 
 <<Get Estimate Alternative Way for Ordinal>>=
-WDMo<-sctest(theta, as.numeric(yg$agegroup),parm=1:4, stat="WDMo", fplot=TRUE) 
-#maxLMo<-sctest(theta, as.numeric(yg$agegroup),parm=1:4, #stat="maxLMo", fplot=TRUE)
-WDMo
-#maxLMo
+WDMo<-sctest(theta, as.numeric(yg$agegroup),parm=1:4, stat="WDMo", fplot=TRUE)
+WDMo 
+maxLMo<-sctest(theta, as.numeric(yg$agegroup),parm=1:4, stat="maxLMo", fplot=TRUE)
+maxLMo
 @
+
+\begin{figure}
+\label{fig:statistics}
+\includegraphics[page=3]{Rplots}
+\end{figure}
+
+\begin{figure}
+\label{fig:statistics}
+\includegraphics[page=4]{Rplots}
+\end{figure}
+
 
 In employing the ordinal tests, we obtain $p=0.060$ and $p=0.096$. Both $p-$values are clearly larger than that of the likelihood ratio test and neigher is significant at $\alpha=0.5$
 
-
-\section{Simulation 1}
-
-In Simulation 1, we examined the extent to which the proposed tests
-are sensitive to the specific model parameter that violates measurement
-invariance.  If, say, a factor loading violates measurement
-invariance, it is plausible that this violation impacts other
-parameters such as factor covariances or other loadings 
-associated with the factor in question.  Thus, the goal of the
-simulation was to examine the extent to which the proposed tests
-attribute the measurement invariance violation to the parameters that
-are truly in violation.  
-
-\subsection{Methods}
-To examine these specificity issues, we generated data from a
-two-factor model with three indicators each (the same model used in
-Merkle and Zeileis, \citeyearNP{MerZei13}). The measurement invariance
-violation occurred in one of three parameters: the factor loading
-associated with the first indicator $\lambda_{11}$, the unique variance associated
-with the first indicator $\epsilon_{11}$, or the factor covariance $\sigma_{12}$.  
-We then tested for measurement invariance in seven subsets of parameters: the three
-individual parameters noted above, all six factor loadings $\lambda_{11}--\lambda_{62}$, 
-all six unique variances $\epsilon_{11}--\epsilon_{66}$. The path diagram is shown in  
-Figure~\ref{fig:path}.
-
-\begin{figure}
-\caption{Path diagram representing the factor analysis model 
-         used for simulations.}
-\label{fig:path}
-\includegraphics{PathDiagram}
-\end{figure}
-
-Power and Type I error were examined across three sample sizes
-($n=100,200,500$) and 17 magnitudes of invariance violations. These
-violations were based on the auxiliary variable $V$: individuals below
-the 50th percentile of $V$ deviated from individuals above the 50th
-percentile  by $d$ times the parameters' asymptotic standard errors
-(scaled by $\sqrt n$), with $d=0,0,25,0.5,...,4$. 
-For each combination of sample size ($n$) $\times$ violation
-magnitude ($d$) $\times$ violating parameter, 5000 datasets were
-generated and tested.
-
-
-\subsection{Results}
-Full simulation results are presented in Figure~\ref{fig:sim11res} to
-Figure~\ref{fig:sim13res}; all three test statistics exhibited very
-similar results, so the figures include only results for the CvM statistic.
-Figure~\ref{fig:sim11res} displays power curves as a function of 
-violation magnitude for the first
-factor loading $\lambda_{11}$, with panels reflecting the parameters 
-being tested and lines reflecting $n$.
-Figures~\ref{fig:sim12res} and Figure~\ref{fig:sim13res} display 
-similar power curves when the factor covariance 
-$\phi_{12}$ and error variance $\epsilon_{11}$ violate measurement
-invariance, respectively. 
-
-From these figures, one generally observe that the tests isolate 
-the parameter violating measurement invariance.  Additionally, the tests 
-have somewhat-higher power to detect measurement invariance violations 
-in the factor loading and factor covariance parameters, as opposed to the error variance
-parameter.  Finally, simultaneous tests of all factor loadings or all error
-parameters result in decreased power, as compared to the situation
-where one tests only the violating parameter.  This occurs because, in
-testing a subset of parameters (only one of which violates measurement
-invariance), we are effectively dampening the signal of a measurement
-invariance violation.  
-
-
-In summary, we found that the proposed tests can attribute
-measurement invariance violations to the correct parameter.  This
-provides evidence that, in practice, one can have confidence in the
-tests' abilities to locate the measurement invariance violation.  Of
-course, this statement is qualified by the fact that, in this
-simulation, the model was correctly specified.  In the following
-simulations, we examine the tests' performance when the model is
-misspecified.
+\section{Simulation}
 
 
 
-%% Example of how to call a simulation in R:
-<<sim1>>=
-## seed for replication
-RNGkind(kind = "default", normal.kind = "default")
-set.seed(1090)
-
-if(file.exists("sim1.rda")) {
-  load("sim1.rda")
-} else {
-  ## Arguments lead to small-scale simulation:
-  sim1 <- simulation(nobs=c(100,200,500), diff=seq(0,4,.25), parms=c("loading","var","error"))
-  save(sim1, file="sim1.rda")
-}
-
-## Add to column names so that plots look nicer
-sim1$nobs <- paste("n=", sim1$nobs, sep="")
-
-#Not sure how to express all loadings and all error terms in greek letters.
-greekExprList<-expression(lambda[11],epsilon[11],sigma[12],lambda[11]--lambda[62],
-                          epsilon[11]--epsilon[66])
-greekpar<-as.expression(greekExprList)
-
-@ 
-
-%% Example of how to create a figure of results
-\begin{figure}
-\caption{Simulated power curves for Simulation 1.Violation Parameter is loading}
-\label{fig:sim11res}
-\setkeys{Gin}{width=\textwidth}
-<<sim11res, fig=TRUE, height=7, width=7>>=
-trellis.par.set(theme = canonical.theme(color = FALSE))
-mykey1 <- simpleKey(unique(sim1$nobs), points = TRUE, lines = TRUE)
-print(xyplot(power ~ diff | pars, group = ~ nobs, data = sim1,
-             subset = diff <= 4 & parms == "loading" & test=="CvM" &  pars %in% 
-             c("1","7","13","1:6","7:12"),
-              strip = function(which.given, which.panel, var.name,
-                        strip.levels = FALSE,
-                        strip.names = TRUE, ...) {
-       	      strip.default(which.given, which.panel,
-       	               var.name = greekpar[which.panel],
-                       strip.levels = FALSE,
-                       strip.names = TRUE, ...)},
-             layout = c(3,2),type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey1,
-             as.table=TRUE))
-@
-\end{figure}
-
-%% Example of how to create a figure of results
-\begin{figure}
-\caption{Simulated power curves for Simulation 1.Violation Parameter is covariance}
-\label{fig:sim12res}
-\setkeys{Gin}{width=\textwidth}
-<<sim12res, fig=TRUE, height=7, width=7>>=
-trellis.par.set(theme = canonical.theme(color = FALSE))
-print(xyplot(power ~ diff | pars, group = ~ nobs, data = sim1,
-             subset = diff <= 4 & parms == "var" & test == "CvM" &  pars %in% 
-             c("1","7","13","1:6","7:12"),
-              strip = function(which.given, which.panel, var.name,
-                        strip.levels = FALSE,
-                        strip.names = TRUE, ...) {
-       	      strip.default(which.given, which.panel,
-       	               var.name = greekpar[which.panel],
-                       strip.levels = FALSE,
-                       strip.names = TRUE, ...)},
-             layout = c(3,2),
-             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey1,
-             as.table=TRUE))
-@
-\end{figure}
-
-\begin{figure}
-\caption{Simulated power curves for Simulation 1.Violation Parameter is error terms}
-\label{fig:sim13res}
-\setkeys{Gin}{width=\textwidth}
-<<sim13res, fig=TRUE, height=7, width=7>>=
-trellis.par.set(theme = canonical.theme(color = FALSE))
-print(xyplot(power ~ diff | pars, group = ~ nobs, data = sim1,
-             subset = diff <= 4 & parms == "error" & test == "CvM" &  pars %in%
-             c("1","7","13","1:6","7:12"),
-              strip = function(which.given, which.panel, var.name,
-                        strip.levels = FALSE,
-                        strip.names = TRUE, ...) {
-       	      strip.default(which.given, which.panel,
-       	               var.name = greekpar[which.panel],
-                       strip.levels = FALSE,
-                       strip.names = TRUE, ...)},
-             layout = c(3,2),
-             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey1,
-             as.table=TRUE))
-@
-\end{figure}
-
-%###########################################################################################
-\section{Simulation 2}
-In Simulation 2, we examine the extent to which the results of
-Simulation 1 are robust to model misspecification. Specifically, we
-generate data from the factor analysis model used in the previous
-section, but with adding an extra loading from the second factor to the first
-indicator (of the first factor).  The estimated model lacks this extra
-loading, however. The goal of this simulation is to examine the proposed statitics'
-power and spicificity under model misspecification.
-
-
-\subsection{Method}
-Measurement invariance violations could occur in
-each of the three parameters from Simulation 1 (factor loading,factor covariance,unique
-variance), and they could also occur in the extra,unmodeled loading. 
-Sample size and magnitude of measurementinvariance violation were manipulated 
-in the same way as they were in Simulation 1.The tested parameters are the same as Simulation
-1,too.
-
-\subsection{Results}
-Results are presented by the paramter that violated measurement invariance.
-Figure~\ref{fig:sim21res} displays results when the unmodeled loading violates 
-measurement invariance. One can generally observe that 
-the first loading and error variance parameter showed high measurement invariance 
-violation simultaneously, while factor covariance did not demonstrate violation.
-
-
-Figure~\ref{fig:sim22res} displays results when the loading $\lambda_{11}$ violates
-measurement invariance. Even though lacking one loading associated with the first indicator, 
-CvM statistic showed enough power to detect the first loading violation specifically. 
-Similar pattern of specificity and power were observed when the violation parameter 
-was $\sigma_{12}$ (Figure~\ref{fig:sim23res}) and $\epsilon_{11}$ (Figure~\ref{fig:sim24res}).
-
-In summary, the proposed test statistics appear robust to unmodeled loading parameters,so long
-as the umodeled parameter does not violate measurment invariance. If the unmodeled parameter 
-dose violate measurement invariance, however, then the tests assign this violation to other 
-parameters that do not violate measurement invariance. The impacted parameters include the error
-variance and other loadings associated with the manifest variables that had the unmodeled 
-loading. Thus, prior to testing measurement invariance, it is important to study the extent to
-which the hypothesized model includes all parameters of importance.
-
-
-
-%% Example of how to call a simulation in R:
-<<sim2>>=
-## seed for replication
-RNGkind(kind = "default", normal.kind = "default")
-set.seed(1090)
-
-if(file.exists("sim2.rda")) {
-  load("sim2.rda")
-} else {
-  ## Arguments lead to small-scale simulation:
-  sim2 <- simulation(nobs=c(100,200,500), diff=seq(0,4,.25), parms=c("extra",
-                    "extra+loading", "extra+var","extra+error"))
-  save(sim2, file="sim2.rda")
-}
-
-## Add to column names so that plots look nicer
-sim2$nobs <- paste("n=", sim2$nobs, sep="")
-
-@ 
-
-%% Example of how to create a figure of results
-\begin{figure}
-\caption{Simulated power curves for Simulation 2.Violation Parameter is extra loading}
-\label{fig:sim21res}
-\setkeys{Gin}{width=\textwidth}
-<<sim21res, fig=TRUE, height=7, width=7>>=
-trellis.par.set(theme = canonical.theme(color = FALSE))
-mykey2 <- simpleKey(unique(sim2$nobs), points = TRUE, lines = TRUE)
-print(xyplot(power ~ diff |pars , group = ~ nobs, data = sim2,
-             subset = diff <= 4 & parms == "extra" & test == "CvM" & pars %in%
-              c("1","7","13","1:6","7:12"),
-              strip = function(which.given, which.panel, var.name,
-                        strip.levels = FALSE,
-                        strip.names = TRUE, ...) {
-       	      strip.default(which.given, which.panel,
-       	               var.name = greekpar[which.panel],
-                       strip.levels = FALSE,
-                       strip.names = TRUE, ...)},
-             layout = c(3,2),
-             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey2))
-@
-\end{figure}
-
-
-%% Example of how to create a figure of results
-\begin{figure}
-\caption{Simulated power curves for Simulation 2.Violation Parameter is loading, 
-         but model misspecified}
-\label{fig:sim22res}
-\setkeys{Gin}{width=\textwidth}
-<<sim22res, fig=TRUE, height=7, width=7>>=
-print(xyplot(power ~ diff | pars, group = ~ nobs , data = sim2,
-             subset = diff <= 4 & parms == "extra+loading" & test == "CvM" & pars %in% 
-             c("1","7","13","1:6","7:12"),
-              strip = function(which.given, which.panel, var.name,
-                        strip.levels = FALSE,
-                        strip.names = TRUE, ...) {
-       	      strip.default(which.given, which.panel,
-       	               var.name = greekpar[which.panel],
-                       strip.levels = FALSE,
-                       strip.names = TRUE, ...)},
-             layout = c(3,2),
-             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey2))
-@
-\end{figure}
-
-%% Example of how to create a figure of results
-\begin{figure}
-\caption{Simulated power curves for Simulation 2.Violation Parameter is var, 
-         but model misspecified}
-\label{fig:sim23res}
-\setkeys{Gin}{width=\textwidth}
-<<sim23res, fig=TRUE, height=7, width=7>>=
-trellis.par.set(theme = canonical.theme(color = FALSE))
-print(xyplot(power ~ diff | pars, group = ~ nobs , data = sim2,
-             subset = diff <=4 & parms == "extra+var" & test == "CvM" & pars %in%
-             c("1","7","13","1:6","7:12"),
-              strip = function(which.given, which.panel, var.name,
-                        strip.levels = FALSE,
-                        strip.names = TRUE, ...) {
-       	      strip.default(which.given, which.panel,
-       	               var.name = greekpar[which.panel],
-                       strip.levels = FALSE,
-                       strip.names = TRUE, ...)},
-             layout = c(3,2),
-             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey2))
-@
-\end{figure}
-
-%% Example of how to create a figure of results
-\begin{figure}
-\caption{Simulated power curves for Simulation 2.Violation Parameter is var, 
-         but model misspecified}
-\label{fig:sim24res}
-\setkeys{Gin}{width=\textwidth}
-<<sim24res, fig=TRUE, height=7, width=7>>=
-trellis.par.set(theme = canonical.theme(color = FALSE))
-## 
-print(xyplot(power ~ diff | pars, group = ~ nobs , data = sim2,
-             subset = diff <=4 & parms == "extra+error" & test == "CvM" & pars %in% 
-             c("1","7","13","1:6","7:12"),
-              strip = function(which.given, which.panel, var.name,
-                        strip.levels = FALSE,
-                        strip.names = TRUE, ...) {
-       	      strip.default(which.given, which.panel,
-       	               var.name = greekpar[which.panel],
-                       strip.levels = FALSE,
-                       strip.names = TRUE, ...)},
-             layout = c(3,2),
-             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey2))
-@
-\end{figure}
 
 \section{General Discussion}
 
