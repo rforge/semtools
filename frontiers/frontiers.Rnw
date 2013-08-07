@@ -178,15 +178,20 @@ of interest and take the maximum across individuals, resulting in a
 
 \SweaveOpts{engine = R, eps = FALSE, echo = TRUE, pdf=TRUE}
 \section{Tutorial}
-In general, a set of scales is defined to be measurement invariant with respect to an auxiliary variable $V$ if: 
+In general, a set of scales is defined to be measurement invariant with respect
+to an auxiliary variable $V$ if: 
 
 \begin{equation}
 \label{equ:invariance}
 f(x_{i}|t_{i},v_{i},...)=f(x_{i}|t_{i},...),
 \end{equation}
 
-where $x_{i}$ is the data vector for individual $i$, $t_{i}$ is the latent variable for variable $i$ that the scales purport to measure, and $f$ is the model's distributional form {addref}. If the cut point of $v$ is known in advance, i.e. gender, nested multiple group models {addref} coupled with likelihood ratio test are most commonly applied. 
-Suppose there are two groups A and B. The null hypothesis of measurement invariance is 
+where $x_{i}$ is the data vector for individual $i$, $t_{i}$ is the latent variable 
+for variable $i$ that the scales purport to measure, and $f$ is the model's 
+distributional form {addref}. If the cut point of $v$ is known in advance, i.e. 
+gender, nested multiple group models {addref} coupled with likelihood ratio test 
+are most commonly applied. Suppose there are two groups A and B. The null hypothesis 
+of measurement invariance is 
 
 \begin{equation}
 \label{equ:null}
@@ -204,7 +209,11 @@ H_{1}:\theta_{i}=
 \end{cases}
 \end{equation}
 
-The parameter estimate $\hat{\theta}^{(A)}$ , $\hat{\theta}^{(B)}$ ,$\hat{\theta}$ (group A and group B) can be obtained by Maximum Likelihood(ML) from observations $i=1,...m(v_{i}\leq v),i=m+1,...n(v_{i}\geq v), i=1,...,n$,respectively. The LR test statistic for the given threshold $v$ is then 
+The parameter estimate $\hat{\theta}^{(A)}$ , $\hat{\theta}^{(B)}$ ,$\hat{\theta}$ 
+(group A and group B) can be obtained by Maximum Likelihood(ML) 
+from observations $i=1,...m(v_{i}\leq v),i=m+1,...n(v_{i}\geq v), i=1,...,n$,
+respectively. The LR test statistic for the given threshold $v$ is then 
+
 \begin{equation}
 \label{equ:LRT}
 LR(v)=-2[\ell(\hat{\theta};x_{1},,,,x_{n})-{\ell(\hat{\theta}^
@@ -212,11 +221,18 @@ LR(v)=-2[\ell(\hat{\theta};x_{1},,,,x_{n})-{\ell(\hat{\theta}^
 }],
 \end{equation}
 
-has an asymptotic $\chi^{2}$ distribution with degrees of freedom equal to the number difference of parameters in $\theta$. 
+has an asymptotic $\chi^{2}$ distribution with degrees of freedom equal 
+to the number difference of parameters in $\theta$. 
 
-To be more specific, in the following section, we will introduce how to implement multi group analysis in lavaan package. For more details, see {addref}
+To be more specific, in the following section, we will introduce how to implement 
+multi group analysis in lavaan package. For more details, see {addref}
 \subsection{Multiple Group Analysis}
-Froh et al had a large sample of youth(n=1401, ranging from late childhood(10 years old) to late adolescent(19 years old) complete the three most widely used adult gratitude inventories, including Gratitude Questionnaire 6(GQ-6; addref), Gratitude Adjective Checklist(GAC; addref) and Gratitude, Resentment, Appreciation Test-Short Form (GRAT-Short Form); addref). In this specific analysis, the authors were interested in whether the youth factor structure for GQ-6 is tau equivalent model or a congeneric model.
+Froh et al had a large sample of youth(n=1401, ranging from late childhood(10 years old) 
+to late adolescent(19 years old) complete the three most widely used adult gratitude inventories, 
+including Gratitude Questionnaire 6(GQ-6; addref), Gratitude Adjective Checklist(GAC; addref) 
+and Gratitude, Resentment, Appreciation Test-Short Form (GRAT-Short Form); addref). 
+In this specific analysis, the authors were interested in whether the youth factor 
+structure for GQ-6 is tau equivalent model or a congeneric model.
 
 To conduct the analysis, first of all, we need to read in data to R and clean the data.
 <<read data>>=
@@ -225,8 +241,14 @@ data("YouthGratitude",package="psychotools")
 # remove cases with 'imputed' values(not in 1,...,9)
 yg<-YouthGratitude[apply(YouthGratitude[,4:28],1,function(x)all(x %in% 1:9)),]
 @
-Second, we want to test which parameter(s) violate measurement invariance. In lavaan package, loading, manifest variables' intercept and factor means could be tested together or specifically. For more details, please see {addref}. Since in most cases researchers are interested in the factor loading invariance, we will use that as the example in this tutorial.
-To implement LRT as ~\ref{equ:LRT}, we need to get estimation for $\hat{\theta}$, without differing groups. 
+Second, we want to test which parameter(s) violate measurement invariance. 
+In lavaan package, loading, manifest variables' intercept and factor means 
+could be tested together or specifically. For more details, 
+please see {addref}. Since in most cases researchers are 
+interested in the factor loading invariance, we will use that as the 
+example in this tutorial.
+To implement LRT as ~\ref{equ:LRT}, we need to get estimation 
+for $\hat{\theta}$, without differing groups. 
 
 <<theta estimate>>=
 # estimate theta 
@@ -243,24 +265,47 @@ thetaAB<-cfa(
   'f1=~gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5',
   data=yg,group="agegroup",meanstructure=TRUE)
 @
-In the end, we can get the LRT results by calling the measurement invariance function in lavaan. 
+In the end, we can get the LRT results by conducting 
+log likelihood test, which is done by anova function in R. 
 <<LRT>>=
 # LRT
 LRT<-as.matrix(anova(theta, thetaAB))
 print(LRT,na.print="", quote=FALSE)
 @
 \subsection{Extensions for Unknown Group}
-The multiple group test performs typically well when the $V$ is a relatively-small number of categories and the sample size is not too large (LRT is sensitive to large sample and will return "false" significance results, details see next section). However, when $V$ (in this case, age) continuous variable, however, multiple-group analysis usually cannot be performed because there are no existing groups. Instead, we can follow the procedure proposed by Ed Merkle and Zeileis. Specifically, we can fit a model whose parameters are restricted to be equal across across all individuals and then examine how individuals' scores $s(\hat{theta};x_{i})$ fluctuate with their values of $V$. To formalize the idea, we assume that the observations are ordered w.r.t. $V$ and define the $k$ dimensional cumulative score process as 
+The multiple group test performs typically well when the $V$ 
+is a relatively-small number of categories and the sample size 
+is not too large (LRT is sensitive to large sample and will 
+return "false" significance results, details see next section). 
+However, when $V$ (in this case, age) continuous variable, however, 
+multiple-group analysis usually cannot be performed because there are 
+no existing groups. Instead, we can follow the procedure proposed by 
+Ed Merkle and Zeileis. Specifically, we can fit a model whose parameters 
+are restricted to be equal across across all individuals and then examine 
+how individuals' scores $s(\hat{theta};x_{i})$ fluctuate with their values of $V$. 
+To formalize the idea, we assume that the observations are ordered w.r.t. $V$ and 
+define the $k$ dimensional cumulative score process as 
 \begin{equation}
 \label{equ:B}
-B(t;\hat{\theta})=\hat{I}^{-1/2}n^{-1/2}\overset{\lfloor nt \rfloor}{\underset{i=1}{\Sigma}}s(\hat{\theta};x_{i}) (0 \leq t \leq 1)
+B(t;\hat{\theta})=\hat{I}^{-1/2}n^{-1/2}\overset{\lfloor nt \rfloor}
+{\underset{i=1}{\Sigma}}s(\hat{\theta};x_{i}) (0 \leq t \leq 1)
 \end{equation}
-where $\lfloor nt \rfloor$ is the integer part of nt and $\hat{I}$ is some consistent estimate of the covariance matrix of the scores,e.g. information matrix. ~\ref{equ:B} simultaneously accounts for the ordering of individuals w.r.t. $V$ and decorrelates the scores between $k$ components of the parameters in the model. 
-Further, there exists a functional central limit theorem that allows us to make formal inference with this cumulative score process. Assuming that individuals are independent and the usual ML regularity condition hold, it is possible to show that(addref) 
+where $\lfloor nt \rfloor$ is the integer part of nt and $\hat{I}$ 
+is some consistent estimate of the covariance matrix of the scores,e.g. information matrix. 
+~\ref{equ:B} simultaneously accounts for the ordering of individuals w.r.t. 
+$V$ and decorrelates the scores between $k$ components of the parameters in the model. 
+Further, there exists a functional central limit theorem 
+that allows us to make formal inference with this cumulative 
+score process. Assuming that individuals are independent and the usual 
+ML regularity condition hold, it is possible to show that(addref) 
 \begin{equation}
 B(\cdot;\hat{\theta})\overset{d}{\rightarrow} B^{0}(\cdot)
 \end{equation} 
-where $\overset{d}{\rightarrow}$ denotes convergence in distribution and $B^{0}(\cdot)$ is a $k$ dimensional Brownian bridge. Thus, we can construct tests of measurement invariance by comparing the behavior of cumulative score process to that of a Brownian bridge. In practice, there are three test statistics can be used: double maximum, CvM and maxLM. 
+where $\overset{d}{\rightarrow}$ denotes convergence in distribution and $B^{0}(\cdot)$ 
+is a $k$ dimensional Brownian bridge. Thus, we can construct tests of measurement 
+invariance by comparing the behavior of cumulative score process to that of 
+a Brownian bridge. In practice, there are three test statistics can be used: 
+double maximum, CvM and maxLM. 
 \begin{equation}
 DM={\underset{i=1,...,n}{\max}}{\underset{j=1,...,k}{\max}}|B(\hat{\theta})_{ij}|
 \end{equation}
@@ -271,16 +316,18 @@ CvM=n^{-1}{\underset{i=1,...,n}{\Sigma}}{\underset{j=1,...,k}{\Sigma}}B(\hat{\th
 maxLM={\underset{i=1,...,n}{\max}}{\frac{i}{n}(1-\frac{i}{n})}^{-1}{\underset{j=1,...,k}{\Sigma}}B(\hat{\theta}_{ij})^{2})
 \end{equation}
 
-Specifically, we will use the previous example, except changing categorical agegroup to continuous age.
+Specifically, we will use the previous example, except assuming ordinal agegroup to be continuous.
 Like before, after read in data, we fit the model in lavaan package. 
 <<theta estimate>>=
-library(lavaan)
 theta<-cfa(
   'f1=~gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5',
   data=yg,group="agegroup",meanstructure=TRUE,
   group.equal="loadings")
 @
-Then we will use the gefp function in strucchange package to get the $B(\hat{\theta}_{ij})$. Then we can get the three test statistics' significance by using sctest function. 
+Then we will use the gefp function in strucchange package to 
+get the $B(\hat{\theta}_{ij})$. After that, we can get the 
+three test statistics' significance by using sctest function. 
+
 <<Get Estimate>>=
 gefp1<-gefp(theta,fit=NULL,order.by=as.numeric(yg$agegroup),
        vcov=info_full,sandwich=FALSE,parm=1:4)
@@ -290,7 +337,9 @@ pval[2]<-sctest(gefp1,functional=meanL2BB)$p.value
 pval[3]<-sctest(gefp1,functional=supLM(0.1))$p.value
 pval
 @
-In applying the proposed continuous test, the $p$ value for CvM and maxBB $p$ value is larger than likelihood test. Besides, CvM $p$ value is not significant.  
+In applying the proposed continuous test, the $p$ value for 
+CvM and maxBB $p$ value is larger than likelihood test. 
+Besides, CvM $p$ value is not significant.  
 
 \SweaveOpts{engine = R, eps = TRUE, echo = TRUE, pdf=TRUE}
 Alternatively, we could use sctest.lavaan function to get the results. 
@@ -301,7 +350,7 @@ DM
 CvM<-sctest(theta, as.numeric(yg$agegroup),parm=1:4, stat="CvM", fplot=TRUE) 
 CvM
 #maxLM<-sctest(theta, as.numeric(yg$agegroup),parm=1:4, #stat="maxLM", fplot=TRUE) 
-#maxLM
+#maxLM (Problem: nonconsistent with sctest(gefp1))
 @
 
 \begin{figure}
@@ -315,15 +364,37 @@ CvM
 \end{figure}
 
 \subsection{Ordinal Test}
-However, in this dataset, $V$ is actually ordinal instead of continuous. There is only a partial ordering of individuals with respect to $V$,i.e. observations with the same level of $V$ have no unique ordering. The ordinal statistics proposed here are similar to those described in Equation and above, except that we focus on "bins" of individuals at each level of the ordinal variable. That is, instead of aggregating over all $i=1,...n$ individuals, we first compute cumulative proportions $t_{l}(l=1,...,m-1)$ associated with the first $m-1$ levels of $V$. We then aggregate the cumulative scores only over $i_{l}=\lfloor n \cdot t_{l} \rfloor$. Test statistics related can be written as 
+However, in this dataset, $V$ is actually ordinal instead of 
+continuous. There is only a partial ordering of individuals 
+with respect to $V$,i.e. observations with the same level 
+of $V$ have no unique ordering. The ordinal statistics 
+proposed here are similar to those described in Equation 
+and above, except that we focus on "bins" of individuals 
+at each level of the ordinal variable. That is, instead 
+of aggregating over all $i=1,...n$ individuals, we 
+first compute cumulative proportions $t_{l}(l=1,...,m-1)$ 
+associated with the first $m-1$ levels of $V$. 
+We then aggregate the cumulative scores only over 
+$i_{l}=\lfloor n \cdot t_{l} \rfloor$. Test statistics 
+related can be written as 
 \begin{eqnarray}
     \label{eq:wdm}
-      \mathit{WDM}_o & = & \max_{i \in \{i_1, \dots, i_{m-1} \}} ~ \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1/2}\max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} |,\\
+      \mathit{WDM}_o & = & \max_{i \in \{i_1, \dots, i_{m-1} \}} ~ 
+      \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) 
+      \right\}^{-1/2}\max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} |,\\
     \label{eq:maxlmo}
-      \max \mathit{LM}_o & = & \max_{i \in \{i_1, \dots, i_{m-1} \}} ~\left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1}\sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2,
+      \max \mathit{LM}_o & = & \max_{i \in \{i_1, \dots, i_{m-1} \}} 
+      ~\left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) 
+      \right\}^{-1}\sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2,
 \end{eqnarray} 
 
-The difference between the continuous test and ordinal test is that we don't force arbitary order on the observations within the same age groups. Therefore, this ordinal test should reflect more of the data. In terms of code, we still need the gefp function to get the B estimate. After that, we can use different functions to aggregate and scale B estimation. The function are called ordwmax and ol2bb1.fun, respectively. 
+The difference between the continuous test and ordinal 
+test is that we don't force arbitary order on the observations 
+within the same age groups. Therefore, this ordinal test should 
+reflect more of the data. In terms of code, we still need the gefp 
+function to get the B estimate. After that, we can use different 
+functions to aggregate and scale B estimation. 
+The function are called ordwmax and ol2bb1.fun, respectively. 
 <<Ordinal Test>>=
 gefp1<-gefp(theta,fit=NULL,order.by=as.numeric(yg$agegroup),
        vcov=info_full,sandwich=FALSE,parm=1:4)
@@ -351,12 +422,96 @@ maxLMo
 \end{figure}
 
 
-In employing the ordinal tests, we obtain $p=0.060$ and $p=0.096$. Both $p-$values are clearly larger than that of the likelihood ratio test and neigher is significant at $\alpha=0.5$
+In employing the ordinal tests, we obtain $p=0.060$ and $p=0.096$. 
+Both $p-$values are clearly larger than that of the 
+likelihood ratio test and neither is significant at $\alpha=0.5$
 
 \section{Simulation}
+\section{Simulation 1}
 
+In Simulation 1, we examined the extent to which the proposed tests
+are sensitive to the specific model parameter that violates measurement
+invariance.  If, say, a factor loading violates measurement
+invariance, it is plausible that this violation impacts other
+parameters such as factor covariances or other loadings 
+associated with the factor in question.  Thus, the goal of the
+simulation was to examine the extent to which the proposed tests
+attribute the measurement invariance violation to the parameters that
+are truly in violation.  
 
+\subsection{Methods}
+To examine these specificity issues, we generated data from a
+two-factor model with three indicators each (the same model used in
+Merkle and Zeileis, \citeyearNP{MerZei13}). The measurement invariance
+violation occurred in one of three places: the factor loadings
+ $\lambda_{11}--\lambda_{62}$, the unique variance associated
+ $\epsilon_{11}--\epsilon_{66}$, or the factor covariance $\sigma_{12}$.  
+We then tested for measurement invariance in seven subsets of parameters: the three
+individual parameters noted above, all six factor loadings $\lambda_{11}--\lambda_{62}$, 
+all six unique variances $\epsilon_{11}--\epsilon_{66}$. The path diagram is shown in  
+Figure~\ref{fig:path}.
 
+\begin{figure}
+\caption{Path diagram representing the factor analysis model 
+         used for simulations.}
+\label{fig:path}
+\includegraphics{PathDiagram}
+\end{figure}
+
+Power and Type I error were examined across three sample sizes
+($n=120,480,960$) , three numbers of categories ($m=4,8,12$)and
+7 magnitudes of invariance violations. 
+The meaurement invariance violations began at level $1+m/2$ of $V$
+and were consistant thereafter. These
+violations were based on the auxiliary variable $V$: individuals below
+the $1+m/2$ percentile of $V$ deviated from individuals above the $1+m/2$ 
+percentile  by $d$ times the parameters' asymptotic standard errors
+(scaled by $\sqrt n$), with $d=0,0,25,0.5,...,1.5$. 
+For each combination of sample size ($n$) $\times$ violation
+magnitude ($d$) $\times$ violating parameter $\times$ categories $m$, 5000 datasets were
+generated and tested.Four statistics were examined above. In all conditions, we
+maintained equal sample sizes at each level of the ordinal variable. 
+
+\subsection{Results}
+<<sim1>>=
+## seed for replication
+RNGkind(kind = "default", normal.kind = "default")
+set.seed(1163)
+
+if(file.exists("sim1.rda")) {
+  load("sim1.rda")
+} else {
+  sim1 <- simulation()
+  sim1$nlevels <- factor(sim1$nlevels)
+  levels(sim1$nlevels) <- paste("m=",levels(sim1$nlevels),sep="")
+  sim1$nobs <- factor(sim1$nobs)
+  levels(sim1$nobs) <- paste("n=",levels(sim1$nobs),sep="")
+  levels(sim1$test) <- c("AIC","LM_uo", "LRT", "LRT_sb", "LM_o", "WDM_o",
+                         "YB97")
+  save(sim1, file="sim1.rda")
+}
+sim1$test <- factor(as.character(sim1$test),
+  levels = c("LM_o", "WDM_o", "LRT", "LM_uo", "AIC", "LRT_sb", "YB97"),
+  labels = c("maxLM_o", "WDM_o", "LRT", "LM_uo", "AIC", "LRT_sb", "YB97"))
+@ 
+
+\begin{figure}
+\caption{Simulated power curves for the ordered and unordered
+      $\max\mathit{LM}$ tests, the ordered double-max test, and the
+      likelihood ratio test across three sample sizes $n$, three
+      levels of the ordinal variable $m$, and measurement invariance
+      violations of 0--1.5 standard errors (scaled by $\sqrt{n}$).}
+\label{fig:sim1res}
+\setkeys{Gin}{width=\textwidth}
+<<sim1res, fig=TRUE, height=7, width=7>>=
+sim1.tmp <- sim1[sim1$test %in% c("maxLM_o","WDM_o","LRT","LM_uo"),]
+sim1.tmp$test <- factor(sim1.tmp$test)
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(sim1.tmp$test), points = TRUE, lines = TRUE)
+print(xyplot(power ~ diff | nlevels + nobs, group = ~ test, data = sim1.tmp, 
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey))
+@
+\end{figure}
 
 \section{General Discussion}
 
