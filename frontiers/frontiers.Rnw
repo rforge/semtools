@@ -473,45 +473,6 @@ generated and tested.Four statistics were examined above. In all conditions, we
 maintained equal sample sizes at each level of the ordinal variable. 
 
 \subsection{Results}
-<<sim1>>=
-## seed for replication
-RNGkind(kind = "default", normal.kind = "default")
-set.seed(1163)
-
-if(file.exists("sim1.rda")) {
-  load("sim1.rda")
-} else {
-  sim1 <- simulation()
-  sim1$nlevels <- factor(sim1$nlevels)
-  levels(sim1$nlevels) <- paste("m=",levels(sim1$nlevels),sep="")
-  sim1$nobs <- factor(sim1$nobs)
-  levels(sim1$nobs) <- paste("n=",levels(sim1$nobs),sep="")
-  levels(sim1$test) <- c("AIC","LM_uo", "LRT", "LRT_sb", "LM_o", "WDM_o",
-                         "YB97")
-  save(sim1, file="sim1.rda")
-}
-sim1$test <- factor(as.character(sim1$test),
-  levels = c("LM_o", "WDM_o", "LRT", "LM_uo", "AIC", "LRT_sb", "YB97"),
-  labels = c("maxLM_o", "WDM_o", "LRT", "LM_uo", "AIC", "LRT_sb", "YB97"))
-@ 
-
-\begin{figure}
-\caption{Simulated power curves for the ordered and unordered
-      $\max\mathit{LM}$ tests, the ordered double-max test, and the
-      likelihood ratio test across three sample sizes $n$, three
-      levels of the ordinal variable $m$, and measurement invariance
-      violations of 0--1.5 standard errors (scaled by $\sqrt{n}$).}
-\label{fig:sim1res}
-\setkeys{Gin}{width=\textwidth}
-<<sim1res, fig=TRUE, height=7, width=7>>=
-sim1.tmp <- sim1[sim1$test %in% c("maxLM_o","WDM_o","LRT","LM_uo"),]
-sim1.tmp$test <- factor(sim1.tmp$test)
-trellis.par.set(theme = canonical.theme(color = FALSE))
-mykey <- simpleKey(levels(sim1.tmp$test), points = TRUE, lines = TRUE)
-print(xyplot(power ~ diff | nlevels + nobs, group = ~ test, data = sim1.tmp, 
-             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey))
-@
-\end{figure}
 
 \section{General Discussion}
 
