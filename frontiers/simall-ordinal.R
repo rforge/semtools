@@ -113,7 +113,8 @@ dgp <- function(nobs = 200, diff = 3, nlevels=10, gradual=FALSE, anomaly=FALSE, 
 }
 
 ## Evaluate power simulation on a single dgp() scenario
-testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, parnum = parnum, test = NULL, verbose = TRUE, ...)
+testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, parnum = parnum, test = NULL,
+                      verbose = TRUE, ...)
 {
   pval <- matrix(rep(NA, length(test) * nrep), ncol = length(test))
   colnames(pval) <- test
@@ -124,7 +125,8 @@ testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, parnum = parnum, 
     mz <- ordfit(d)
 
     ## Requires estfun.lavaan
-    ord_gefp  <- try(gefp(mz, fit = NULL, vcov = info.mzfit, order.by = d$age, sandwich = FALSE, parm = eval(parse(text=parnum[j]))), silent = TRUE)
+    ord_gefp  <- try(gefp(mz, fit = NULL, vcov = info.mzfit, order.by = d$age, sandwich =
+                          FALSE, parm = eval(parse(text=parnum[j]))), silent = TRUE)
 
     if(!inherits(ord_gefp[[j]], "try-error")) {
       pval[i, (j-1)*7+1] <- sctest(ord_gefp,  functional = ordfun)$p.value
@@ -148,7 +150,7 @@ simulation <- function(diff = seq(0, 1.5, by = 0.25),parms="error",
   nobs = c(120, 480, 960), nlevels = c(4, 8, 12), gradual = FALSE,
   anomaly = FALSE, verbose = TRUE, ...)
 {
-  prs <- expand.grid(diff = diff, nlevels = nlevels, nobs = nobs)
+  prs <- expand.grid(diff = diff, nlevels = nlevels, nobs = nobs, parms = parms)
   nprs <- nrow(prs)
 
   parnum <- c("1:6",13,"7:12")
@@ -174,7 +176,8 @@ simulation <- function(diff = seq(0, 1.5, by = 0.25),parms="error",
   if (do.parallel){
     pow <- mclapply(1:nprs, function(i){
       testpower(diff = prs$diff[i], nobs = prs$nobs[i],
-                parms = prs$parms[i],parnum = parnum, nlevels = prs$nlevels[i], gradual = gradual, test = test,
+                parms = prs$parms[i],parnum = parnum, nlevels = prs$nlevels[i], gradual =
+                gradual, test = test,
                 ordfun = cval[[which(cval.conds == prs$nlevels[i])]],
                 anomaly = anomaly, verbose = verbose, ...)},
                     mc.cores = round(.75*detectCores()),
@@ -188,14 +191,20 @@ simulation <- function(diff = seq(0, 1.5, by = 0.25),parms="error",
       ## Find critical values we need
       ordfun <- cval[[which(cval.conds == prs$nlevels[i])]]
 
-      pow[i,] <- testpower(diff = prs$diff[i], nobs = prs$nobs[i],  parms = prs$parms[i],parnum = parnum, nlevels = prs$nlevels[i], ordfun = ordfun, test = test, anomaly = anomaly, verbose = verbose, ...)
+      pow[i,] <- testpower(diff = prs$diff[i], nobs = prs$nobs[i],
+                           parms = prs$parms[i],parnum = parnum,
+                           nlevels = prs$nlevels[i], ordfun = ordfun, test = test,
+                           anomaly = anomaly, verbose = verbose, ...)
     }
   }
 
   rval <- data.frame()
   for(i in 1:ntest) rval <- rbind(rval, prs)
-  rval$test <- factor(rep(test, each = nprs))
+  rval$test <- factor(rep(rep(tname,length(parnum)), each = nprs),
+                      levels=c("ordmax","ordwmax","catdiff","lrt","lrt.sb","yb97","aic"))
+  rval$pars <- factor(rep(rep(parnum,each=length(tname)),each=nprs),levels=parnum)
   rval$nobs <- factor(rval$nobs)
+  rval$parms <- factor(rval$parms)
   rval$power <- as.vector(pow)
   return(rval)
 }
@@ -226,6 +235,5 @@ source("../www/mz-ordinal.R")
 source("../www/estfun-lavaan.R")
 source("../www/efpFunctional-cat.R")
 source("simall-ordinal.R")
-
 simtry <- simulation(nobs=c(120,480),nrep=300, diff=c(0.5,1.5),parms=c("error","loading"))
 }
