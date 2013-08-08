@@ -1,4 +1,4 @@
-sctest.lavaan <- function(x, order.by, parm, stat, fplot = FALSE, ...){
+sctest.lavaan <- function(x, order.by, parm, stat, fnl = NULL, fplot = FALSE, ...){
   ## Carry out a score-based test of a fitted lavaan model x
 
   require("strucchange")
@@ -13,14 +13,17 @@ sctest.lavaan <- function(x, order.by, parm, stat, fplot = FALSE, ...){
   ## ordwmax(fp), ordL2BB(fp), maxBB, meanL2BB, supLM(0.1), rangeBB
   ## WDMo         maxLMo       DM     CvM       maxLM,      range
   ## TODO? Allow user to modify the 0.1 of supLM?
-  fnl <- switch(stat,
-                WDMo = ordwmax(fp),
-                maxLMo = ordL2BB(fp),
-                DM = maxBB,
-                CvM = meanL2BB,
-                maxLM = supLM(0.1),
-                range = rangeBB)
+  if(is.null(fnl)){
+    fnl <- switch(stat,
+                  WDMo = ordwmax(fp),
+                  maxLMo = ordL2BB(fp),
+                  DM = maxBB,
+                  CvM = meanL2BB,
+                  maxLM = supLM(0.1),
+                  range = rangeBB)
+  }
 
+  ## If stat argument is messed up
   if(is.null(fnl)) stop(paste("Argument stat=",stat," is unknown",sep=""))
   
   testres <- sctest(fp, functional = fnl)
