@@ -361,27 +361,36 @@ Besides, CvM $p$ value is not significant.
 \SweaveOpts{engine = R, eps = TRUE, echo = TRUE, pdf=TRUE}
 Alternatively, we could use sctest.lavaan function to get the results. 
 
-\readme{Ting: The problem with the last statistic is having
-  fplot=TRUE.  To get around this, you can add random noise or set
-  fplot=FALSE (I've done the latter).}
-<<Get Estimate Alternative Way>>=
+\begin{figure}
+\caption{Get Continuous Estimate DM Alternative Way}
+\label{fig:conti1res}
+\setkeys{Gin}{width=\textwidth}
+<<conti1res, fig=TRUE, height=7, width=7>>=
 DM<-sctest(theta, as.numeric(yg$agegroup), parm=1:4, stat="DM", fplot=TRUE) 
 DM
+@
+\end{figure}
+
+\begin{figure}
+\caption{Get Continuous Estimate CvM Alternative Way}
+\label{fig:conti2res}
+\setkeys{Gin}{width=\textwidth}
+<<conti2res, fig=TRUE, height=7, width=7>>=
 CvM<-sctest(theta, as.numeric(yg$agegroup), parm=1:4, stat="CvM", fplot=TRUE) 
 CvM
+@
+\end{figure}
+
+
+<<conti3resmaxLM>>=
 maxLM<-sctest(theta, as.numeric(yg$agegroup), parm=1:4, stat="maxLM", fplot=FALSE) 
 maxLM
 @
 
-\begin{figure}
-\label{fig:statistics}
-\includegraphics[page=1]{Rplots}
-\end{figure}
 
-\begin{figure}
-\label{fig:statistics}
-\includegraphics[page=2]{Rplots}
-\end{figure}
+
+
+
 
 \subsection{Ordinal Test}
 However, in this dataset, $V$ is actually ordinal instead of 
@@ -432,23 +441,27 @@ pval.ord[2]<-sctest(gefp1, functional=opval1)$p.value
 pval.ord
 @
 
-<<Get Estimate Alternative Way for Ordinal>>=
+\begin{figure}
+\caption{Get Ordinal Estimate WDMo Alternative Way}
+\label{fig:ord1res}
+\setkeys{Gin}{width=\textwidth}
+<<ord1res, fig=TRUE, height=7, width=7>>=
 WDMo<-sctest(theta, as.numeric(yg$agegroup),parm=1:4, stat="WDMo", fplot=TRUE)
 WDMo 
+@
+\end{figure}
+
+\begin{figure}
+\caption{Get Ordinal Estimate maxLMo Alternative Way}
+\label{fig:ord2res}
+\setkeys{Gin}{width=\textwidth}
+<<ord2res, fig=TRUE, height=7, width=7>>=
 maxLMo<-sctest(theta, as.numeric(yg$agegroup),parm=1:4, stat="maxLMo", 
                fnl=opval1, fplot=TRUE)
-maxLMo
+maxLMo 
 @
-
-\begin{figure}
-\label{fig:statistics}
-\includegraphics[page=3]{Rplots}
 \end{figure}
 
-\begin{figure}
-\label{fig:statistics}
-\includegraphics[page=4]{Rplots}
-\end{figure}
 
 
 In employing the ordinal tests, we obtain $p=0.060$ and $p=0.096$. 
@@ -458,7 +471,11 @@ likelihood ratio test and neither is significant at $\alpha=0.05$
 \section{Simulation}
 \section{Simulation 1}
 
-In Simulation 1, we examined the extent to which the proposed tests
+In Simulation 1, we examined the extent
+
+
+
+ to which the proposed tests
 are sensitive to the specific model parameter that violates measurement
 invariance.  If, say, a factor loading violates measurement
 invariance, it is plausible that this violation impacts other
