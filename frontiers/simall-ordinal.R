@@ -1,6 +1,6 @@
 
 ## Data-generating process
-dgp <- function(nobs = 200, diff = 3, nlevels=10, gradual=FALSE, anomaly=FALSE, parms="loadings")
+dgp <- function(nobs = 200, diff = 3, nlevels=4, gradual=FALSE, anomaly=FALSE, parms="loadings")
 {
   ## Generates data from a factor analysis model that violates
   ## measurement invariance.  Also generates an ordinal auxiliary
@@ -32,7 +32,7 @@ dgp <- function(nobs = 200, diff = 3, nlevels=10, gradual=FALSE, anomaly=FALSE, 
             56.672724,24.255196,74.917170,8.264380,17.664706,47.093002,
            1.024326,7.139776,4.666005,8.151785,3.696972,5.242366,
             8.630417)
-
+  mu<-theta[14:19]
   # Loadings:
   lambda <- matrix(0,6,2)
   lambda[,1] <- c(theta[1:3],0,0,0)
@@ -66,7 +66,11 @@ dgp <- function(nobs = 200, diff = 3, nlevels=10, gradual=FALSE, anomaly=FALSE, 
   for (i in (half.level+1):nlevels){
     tmp.n <- sum(age==i)
     tmp.ind <- which(age==i)
-    z <- t(rmvnorm(tmp.n,rep(0,2),phi))
+    tmp.lambda <- matrix(0,6,2)
+    tmp.lambda[,1] <- lambda[,1] 
+    tmp.lambda[,2] <- lambda[,2]
+    tmp.psi <- psi
+    tmp.phi <- phi
 
     mult <- ses
     if (anomaly) mult <- ifelse(i==(half.level+1), ses, 0)
@@ -76,36 +80,34 @@ dgp <- function(nobs = 200, diff = 3, nlevels=10, gradual=FALSE, anomaly=FALSE, 
     if (gradual){
       if (anomaly) stop("gradual=TRUE and anomaly=TRUE do not work together.")
       if (parms=="error"){
-      diag(psi) <- diag(psi) + (each.vary*asym[7:12])/sqrt(tmp.n)
-      tmp.psi <- psi
+      diag(tmp.psi) <- diag(psi) + (each.vary*asym[7:12])/sqrt(tmp.n)
     }
       if (parms=="var"){
-      diag(phi) <- diag(phi) + (each.vary*asym[13])/sqrt(tmp.n)
-      tmp.phi <- phi
+      diag(tmp.phi) <- diag(phi) + (each.vary*asym[13])/sqrt(tmp.n)
     }
       if (parms=="loading"){
-      lambda[,1] <- lambda[,1] + (each.vary*asym[1:3])/sqrt(tmp.n)
-      lambda[,2] <- lambda[,2] + (each.vary*asym[4:6])/sqrt(tmp.n)
+      tmp.lambda[,1] <- lambda[,1] + (each.vary*asym[1:3])/sqrt(tmp.n)
+      tmp.lambda[,2] <- lambda[,2] + (each.vary*asym[4:6])/sqrt(tmp.n)
     }
     } else {
       if (parms=="error"){
-      tmp.psi <- psi
       diag(tmp.psi) <- diag(tmp.psi) + (mult*asym[7:12])/sqrt(tmp.n)
     }
       if (parms=="var"){
-      tmp.psi <- phi
-      diag(tmp.phi) <- diag(tmp.phi) + (mult*asym[13])/sqrt(tmp.n) 
+      diag(tmp.phi) <- diag(tmp.phi) + (mult*asym[13])/sqrt(tmp.n)
     }
       if (parms=="loading"){
-      lambda[,1] <- lambda[,1] + (mult*asym[1:3])/sqrt(tmp.n)
-      lambda[,2] <- lambda[,2] + (mult*asym[4:6])/sqrt(tmp.n)
+      tmp.lambda[,1] <- lambda[,1] + (mult*asym[1:3])/sqrt(tmp.n)
+      tmp.lambda[,2] <- lambda[,2] + (mult*asym[4:6])/sqrt(tmp.n)
+      
     }
     }
     
 
     u <- t(rmvnorm(tmp.n,rep(0,6),tmp.psi))
+    z <- t(rmvnorm(n.invariant,rep(0,2),tmp.phi))
     for (j in 1:tmp.n){
-      datmat[tmp.ind[j],] <- mu + lambda%*%z[,j] + u[,j]
+      datmat[tmp.ind[j],] <- mu + tmp.lambda%*%z[,j] + u[,j]
     }
   }
   
@@ -113,31 +115,35 @@ dgp <- function(nobs = 200, diff = 3, nlevels=10, gradual=FALSE, anomaly=FALSE, 
 }
 
 ## Evaluate power simulation on a single dgp() scenario
-testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, parnum = parnum, test = NULL,
+testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, parnum = parnum, test = test,
                       verbose = TRUE, ...)
 {
   pval <- matrix(rep(NA, length(test) * nrep), ncol = length(test))
   colnames(pval) <- test
   
   for(i in 1:nrep) {
-    d <- dgp(...)
+    d <- dgp()
 
     mz <- ordfit(d)
 
     ## Requires estfun.lavaan
-    ord_gefp  <- try(gefp(mz, fit = NULL, vcov = info.mzfit, order.by = d$age, sandwich =
-                          FALSE, parm = eval(parse(text=parnum[j]))), silent = TRUE)
+    ord_gefp <-vector("list",length(parnum))
+    for (j in 1: length(parnum)){
+    ord_gefp[[j]]  <- try(gefp(mz, fit = NULL, vcov = info.mzfit, order.by = d$age,
+                               sandwich =FALSE, parm = eval(parse(text=parnum[j]))),
+                          silent = TRUE)
 
     if(!inherits(ord_gefp[[j]], "try-error")) {
-      pval[i, (j-1)*7+1] <- sctest(ord_gefp,  functional = ordfun)$p.value
-      pval[i, (j-1)*7+2] <- sctest(ord_gefp,  functional = ordwmax(ord_gefp))$p.value
-      pval[i, (j-1)*7+3] <- sctest(ord_gefp,  functional = catL2BB(ord_gefp))$p.value
-      #pval[i, 4] <- sctest(ord_gefp,  functional = supLM(0.1))$p.value
-      pval[i, (j-1)*7+4] <- mz$lrt.p
-      pval[i, (j-1)*7+5] <- mz$lrt.sb
-      pval[i, (j-1)*7+6] <- mz$yb.p
-      pval[i, (j-1)*7+7] <- mz$aic
+      pval[i, (j-1)*7+1] <- sctest(ord_gefp[[j]],  functional = ordfun)$p.value
+      pval[i, (j-1)*2+2] <- sctest(ord_gefp[[j]],  functional = ordwmax(ord_gefp))$p.value
+      pval[i, (j-1)*2+3] <- sctest(ord_gefp[[j]],  functional = catL2BB(ord_gefp))$p.value
+      #pval[i, (j-1)*7+1] <- sctest(ord_gefp,  functional = supLM(0.1))$p.value
+      pval[i, (j-1)*7+4] <- mz$lrt.p[[j]]
+      pval[i, (j-1)*7+5] <- mz$lrt.sb[[j]]
+      pval[i, (j-1)*7+6] <- mz$yb.p[[j]]
+      pval[i, (j-1)*7+7] <- mz$aic[[j]]
     }
+  }
   }
   rval <- colMeans(pval < size, na.rm = TRUE)
   if(verbose) print(rval)
@@ -228,6 +234,7 @@ critvals <- function(nlevels = c(4, 8, 12), verbose = TRUE, ...)
 
 
 if(FALSE){
+
 library("lavaan")
 library("strucchange")
 library("mvtnorm")
@@ -235,5 +242,5 @@ source("../www/mz-ordinal.R")
 source("../www/estfun-lavaan.R")
 source("../www/efpFunctional-cat.R")
 source("simall-ordinal.R")
-simtry <- simulation(nobs=c(120,480),nrep=300, diff=c(0.5,1.5),parms=c("error","loading"))
+simtry <- simulation(nobs=c(480),nrep=300, diff=c(0.5),parms=c("loading"))
 }
