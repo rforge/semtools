@@ -223,10 +223,11 @@ f(x_{i}|t_{i},v_{i},...)=f(x_{i}|t_{i},...),
 
 where $x_{i}$ is the data vector for individual $i$, $t_{i}$ is the latent variable 
 for variable $i$ that the scales purport to measure, and $f$ is the model's 
-distributional form {addref}. If the cut point of $v$ is known in advance, i.e. 
-gender, nested multiple group models {addref} coupled with likelihood ratio test 
+distributional form \cite{mel89}. If the cut point of $v$ is known in advance, i.e. 
+gender, nested multiple group models \cite{bollen98} coupled with likelihood ratio test 
 are most commonly applied. Suppose there are two groups A and B. The null hypothesis 
 of measurement invariance is 
+
 
 \begin{equation}
 \label{equ:null}
@@ -256,18 +257,17 @@ LR(v)=-2[\ell(\hat{\theta};x_{1},,,,x_{n})-{\ell(\hat{\theta}^
 }],
 \end{equation}
 
-has an asymptotic $\chi^{2}$ distribution with degrees of freedom equal 
+,which has an asymptotic $\chi^{2}$ distribution with degrees of freedom equal 
 to the number difference of parameters in $\theta$. 
 
-To be more specific, in the following section, we will introduce how to implement 
-multi group analysis in lavaan package. For more details, see {addref}
+To be more specific, in the following section, we will illustrate with an example to demonstrate how to implement multi group analysis in lavaan package. For more details, see \cite{vande12}
+
 \subsection{Multiple Group Analysis}
-Froh et al had a large sample of youth(n=1401, ranging from late childhood(10 years old) 
+Froh et al\citeA{FroFan11} had a large sample of youth(n=1401, ranging from late childhood(10 years old) 
 to late adolescent(19 years old) complete the three most widely used adult gratitude inventories, 
-including Gratitude Questionnaire 6(GQ-6; addref), Gratitude Adjective Checklist(GAC; addref) 
-and Gratitude, Resentment, Appreciation Test-Short Form (GRAT-Short Form); addref). 
-In this specific analysis, the authors were interested in whether the youth factor 
-structure for GQ-6 is tau equivalent model or a congeneric model.
+including Gratitude Questionnaire 6(GQ-6; \citeNP{MccEmm02}), Gratitude Adjective Checklist(GAC; \citeNP{MccEmm02})  and Gratitude, Resentment, Appreciation Test-Short Form (GRAT-Short Form); \citeNP{ThoWat03}). In this specific analysis, the authors were interested in whether the youth factor 
+structure for GQ-6 is a tau equivalent model (factor loadings restricted to be equal across
+levels of age)or a congeneric model(all parameters free for each level of age).
 
 To conduct the analysis, first of all, we need to read in data to R and clean the data.
 <<read data>>=
@@ -279,7 +279,7 @@ yg<-YouthGratitude[apply(YouthGratitude[,4:28],1,function(x)all(x %in% 1:9)),]
 Second, we want to test which parameter(s) violate measurement invariance. 
 In lavaan package, loading, manifest variables' intercept and factor means 
 could be tested together or specifically. For more details, 
-please see {addref}. Since in most cases researchers are 
+please see \cite{vande12}. Since in most cases researchers are 
 interested in the factor loading invariance, we will use that as the 
 example in this tutorial.
 To implement LRT as ~\ref{equ:LRT}, we need to get estimation 
@@ -305,13 +305,14 @@ log likelihood test, which is done by anova function in R.
 # LRT
 anova(theta, thetaAB)
 @
+Likelihood test is sensitive to large observations (CITE), it is not surprising to 
+have a significant result, although Froh et al\citeA{FroFan11} showed that tau equivalent
+model has as good alternative fit indices as congeneric model. 
 
 \subsection{Extensions for Unknown Group}
 The multiple group test performs typically well when the $V$ 
 is a relatively-small number of categories and the sample size 
-is not too large (LRT is sensitive to large sample and will 
-return "false" significance results, details see next section). 
-However, when $V$ (in this case, age) continuous variable, however, 
+is not too large. However, when $V$ (in this case, age) continuous variable, however, 
 multiple-group analysis usually cannot be performed because there are 
 no existing groups. Instead, we can follow the procedure described in
 the Background section.  That is, we can fit a model whose parameters 
@@ -359,7 +360,8 @@ CvM and maxBB $p$ value is larger than likelihood test.
 Besides, CvM $p$ value is not significant.  
 
 \SweaveOpts{engine = R, eps = TRUE, echo = TRUE, pdf=TRUE}
-Alternatively, we could use sctest.lavaan function to get the results. 
+Alternatively, we could use sctest.lavaan function to get the statistics value,
+corresponding $p$ value and the plot ordered by age level. 
 
 \begin{figure}
 \caption{Get Continuous Estimate DM Alternative Way}
@@ -386,15 +388,15 @@ CvM
 maxLM<-sctest(theta, as.numeric(yg$agegroup), parm=1:4, stat="maxLM", fplot=FALSE) 
 maxLM
 @
-
-
-
-
-
+Since there are more than one observations located in each age level. 
+So the observation order within each age level is not unique, thus, 
+maxLM can't produce the plot. Actually, all three continuous statistics 
+were calculated on the arbitrary order that particular dataset entered 
+in each age level. In order to accurately account for the multiple observations 
+at the same age level, it is more appropriate to use the proposed ordinal test.
 
 \subsection{Ordinal Test}
-However, in this dataset, $V$ is actually ordinal instead of 
-continuous. There is only a partial ordering of individuals 
+As a matter of fact, there is only a partial ordering of individuals 
 with respect to $V$,i.e. observations with the same level 
 of $V$ have no unique ordering. The ordinal statistics 
 proposed here are similar to those described in Equation 
@@ -419,9 +421,9 @@ related can be written as
 \end{eqnarray} 
 
 The difference between the continuous test and ordinal 
-test is that we don't force arbitary order on the observations 
+test is that we don't force arbitrary order on the observations 
 within the same age groups. Therefore, this ordinal test should 
-reflect more of the data. In terms of code, we still need the gefp 
+reflect more real status of the data. In terms of code, we still need the gefp 
 function to get the B estimate. After that, we can use different 
 functions to aggregate and scale B estimation. 
 The function are called ordwmax and ol2bb1.fun, respectively. 
@@ -441,6 +443,7 @@ pval.ord[2]<-sctest(gefp1, functional=opval1)$p.value
 pval.ord
 @
 
+Or alternatively, we could use the sctest.lavaan function, but assign ordinal statistics.
 \begin{figure}
 \caption{Get Ordinal Estimate WDMo Alternative Way}
 \label{fig:ord1res}
@@ -466,7 +469,8 @@ maxLMo
 
 In employing the ordinal tests, we obtain $p=0.060$ and $p=0.096$. 
 Both $p-$values are clearly larger than that of the 
-likelihood ratio test and neither is significant at $\alpha=0.05$
+likelihood ratio test and neither is significant at $\alpha=0.05$. 
+This result is consistent with alternative fit indices used in Froh et al paper\citeA{FroFan11}.
 
 \section{Simulation}
 \section{Simulation 1}
