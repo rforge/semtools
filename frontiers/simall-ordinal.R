@@ -1,6 +1,7 @@
 
 ## Data-generating process
-dgp <- function(nobs = 200, diff = 3, nlevels=4, gradual=FALSE, anomaly=FALSE, parms="loadings")
+set.seed=1090
+dgp <- function(nobs = 240, diff = 1.5, nlevels = 3, gradual=FALSE, anomaly=FALSE, parms="loadings")
 {
   ## Generates data from a factor analysis model that violates
   ## measurement invariance.  Also generates an ordinal auxiliary
@@ -26,7 +27,7 @@ dgp <- function(nobs = 200, diff = 3, nlevels=4, gradual=FALSE, anomaly=FALSE, p
   half.level <- ifelse(nlevels %% 2 == 1, (nlevels %/% 2)+1, nlevels/2)
   
   # Define parameter vectors/matrices:
-  theta<-c(4.92,2.96,5.96,3.24,4.32,7.21,26.77,13.01,30.93,3.17,8.82,22.5,-0.48,
+  theta<-c(4.92,2.96,5.96,3.24,4.32,7.21,26.77,13.01,30.93,3.17,8.82,22.5, 0.48,
            29.32,24.70,14.84,10.59,19.30,18.01)
   asym<-c( 7.565818,4.951599,8.644422,3.093014,4.499676,7.368059,
             56.672724,24.255196,74.917170,8.264380,17.664706,47.093002,
@@ -105,7 +106,7 @@ dgp <- function(nobs = 200, diff = 3, nlevels=4, gradual=FALSE, anomaly=FALSE, p
     
 
     u <- t(rmvnorm(tmp.n,rep(0,6),tmp.psi))
-    z <- t(rmvnorm(n.invariant,rep(0,2),tmp.phi))
+    z <- t(rmvnorm(tmp.n,rep(0,2),tmp.phi))
     for (j in 1:tmp.n){
       datmat[tmp.ind[j],] <- mu + tmp.lambda%*%z[,j] + u[,j]
     }
@@ -122,7 +123,7 @@ testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, parnum = parnum, 
   colnames(pval) <- test
   
   for(i in 1:nrep) {
-    d <- dgp()
+    d <- dgp(...)
 
     mz <- ordfit(d)
 
@@ -134,14 +135,14 @@ testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, parnum = parnum, 
                           silent = TRUE)
 
     if(!inherits(ord_gefp[[j]], "try-error")) {
-      pval[i, (j-1)*7+1] <- sctest(ord_gefp[[j]],  functional = ordfun)$p.value
-      pval[i, (j-1)*2+2] <- sctest(ord_gefp[[j]],  functional = ordwmax(ord_gefp))$p.value
-      pval[i, (j-1)*2+3] <- sctest(ord_gefp[[j]],  functional = catL2BB(ord_gefp))$p.value
+      pval[i, (j-1)*3+1] <- sctest(ord_gefp[[j]],  functional = ordfun)$p.value
+      pval[i, (j-1)*3+2] <- sctest(ord_gefp[[j]],  functional = ordwmax(ord_gefp[[j]]))$p.value
+      pval[i, (j-1)*3+3] <- sctest(ord_gefp[[j]],  functional = catL2BB(ord_gefp[[j]]))$p.value
       #pval[i, (j-1)*7+1] <- sctest(ord_gefp,  functional = supLM(0.1))$p.value
-      pval[i, (j-1)*7+4] <- mz$lrt.p[[j]]
-      pval[i, (j-1)*7+5] <- mz$lrt.sb[[j]]
-      pval[i, (j-1)*7+6] <- mz$yb.p[[j]]
-      pval[i, (j-1)*7+7] <- mz$aic[[j]]
+      #pval[i, (j-1)*7+4] <- mz$lrt.p
+      #pval[i, (j-1)*7+5] <- mz$lrt.sb
+      #pval[i, (j-1)*7+6] <- mz$yb.p
+      #pval[i, (j-1)*7+7] <- mz$aic
     }
   }
   }
@@ -161,7 +162,7 @@ simulation <- function(diff = seq(0, 1.5, by = 0.25),parms="error",
 
   parnum <- c("1:6",13,"7:12")
 
-  tname <- c("ordmax","ordwmax","catdiff","lrt","lrt.sb","yb97","aic") # had suplm here
+  tname <- c("ordmax","ordwmax","catdiff") # had suplm here
   
   test <- paste(rep(tname,length(parnum)), rep(parnum, each=length(tname)),sep="")
   ntest <- length(test)
@@ -178,7 +179,7 @@ simulation <- function(diff = seq(0, 1.5, by = 0.25),parms="error",
   cval.conds <- as.numeric(names(cval))
 
   pow <- matrix(rep(NA,ntest*nprs),ncol=ntest)
-  do.parallel <- require("parallel")
+  do.parallel <-require("parallel")
   if (do.parallel){
     pow <- mclapply(1:nprs, function(i){
       testpower(diff = prs$diff[i], nobs = prs$nobs[i],
@@ -207,7 +208,7 @@ simulation <- function(diff = seq(0, 1.5, by = 0.25),parms="error",
   rval <- data.frame()
   for(i in 1:ntest) rval <- rbind(rval, prs)
   rval$test <- factor(rep(rep(tname,length(parnum)), each = nprs),
-                      levels=c("ordmax","ordwmax","catdiff","lrt","lrt.sb","yb97","aic"))
+                      levels=c("ordmax","ordwmax","catdiff"))
   rval$pars <- factor(rep(rep(parnum,each=length(tname)),each=nprs),levels=parnum)
   rval$nobs <- factor(rval$nobs)
   rval$parms <- factor(rval$parms)
@@ -242,5 +243,5 @@ source("../www/mz-ordinal.R")
 source("../www/estfun-lavaan.R")
 source("../www/efpFunctional-cat.R")
 source("simall-ordinal.R")
-simtry <- simulation(nobs=c(480),nrep=300, diff=c(0.5),parms=c("loading"))
+simtry <- simulation(nobs=c(480),nrep=300, diff=c(1.5),parms=c("error","loading","var"))
 }
