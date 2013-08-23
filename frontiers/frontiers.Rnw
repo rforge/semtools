@@ -358,84 +358,111 @@ dm <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="DM")
 cvm <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="CvM")
 maxlm <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="maxLM")
 
-c(dm$p.value, cvm$p.value, maxlm$p.value)
+round(c(dm$p.value, cvm$p.value, maxlm$p.value), 2)
 @
-In the code above, the \verb+parm=1:4+ argument contains parameter numbers reflecting the factor loadings that we wish to test.  The ordering of parameters can be obtained via the command \verb+coef(reduced)+.  Two of the three $p$-values output at the end of the code are larger than that associated with the LRT (with the CvM statistic being non-significant).  
+In the code above, the \verb+parm=1:4+ argument means that we wish to test model parameter numbers 1 through 4 (which are the factor loadings), which are supplied by lavaan.  The ordering of parameters can be obtained via the command \verb+coef(reduced)+.  We see that two of the three $p$-values output at the end of the code are larger than that associated with the LRT (with the CvM statistic being non-significant).  
 
-%% Aug 21: Ed stopped here.  TODO: graphs
-
-
-\begin{figure}
-\caption{Get Continuous Estimate DM Alternative Way}
-\label{fig:conti1res}
-\setkeys{Gin}{width=\textwidth}
-<<conti1res, fig=TRUE, height=7, width=7>>=
-DM<-sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="DM", fplot=TRUE) 
-DM
-@
-\end{figure}
-
-\begin{figure}
-\caption{Get Continuous Estimate CvM Alternative Way}
-\label{fig:conti2res}
-\setkeys{Gin}{width=\textwidth}
-<<conti2res, fig=TRUE, height=7, width=7>>=
-CvM<-sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="CvM", fplot=TRUE) 
-CvM
-@
-\end{figure}
+%% TODO Illustrate with graphs?
 
 
-<<conti3resmaxLM>>=
-maxLM<-sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="maxLM", fplot=FALSE) 
-maxLM
-@
-Since there are more than one observations located in each age level. 
-So the observation order within each age level is not unique, thus, 
-maxLM can't produce the plot. Actually, all three continuous statistics 
-were calculated on the arbitrary order that particular dataset entered 
-in each age level. In order to accurately account for the multiple observations 
-at the same age level, it is more appropriate to use the proposed ordinal test.
+%% THE FOLLOWING HAS BEEN MOVED
+%% \begin{figure}
+%% \caption{Get Continuous Estimate DM Alternative Way}
+%% \label{fig:conti1res}
+%% \setkeys{Gin}{width=\textwidth}
+%% <<conti1res, fig=TRUE, height=7, width=7>>=
+%% DM<-sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="DM", fplot=TRUE) 
+%% DM
+%% @
+%% \end{figure}
 
-\subsection{Ordinal Test}
-As a matter of fact, there is only a partial ordering of individuals 
-with respect to $V$,i.e. observations with the same level 
-of $V$ have no unique ordering. The ordinal statistics 
-proposed here are similar to those described in Equation 
-and above, except that we focus on "bins" of individuals 
-at each level of the ordinal variable.  
+%% \begin{figure}
+%% \caption{Get Continuous Estimate CvM Alternative Way}
+%% \label{fig:conti2res}
+%% \setkeys{Gin}{width=\textwidth}
+%% <<conti2res, fig=TRUE, height=7, width=7>>=
+%% CvM<-sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="CvM", fplot=TRUE) 
+%% CvM
+%% @
+%% \end{figure}
 
-The difference between the continuous test and ordinal 
-test is that we don't force arbitrary order on the observations 
-within the same age groups. Therefore, this ordinal test should 
-reflect more real status of the data. In terms of code, we still need the gefp 
-function to get the B estimate. After that, we can use different 
-functions to aggregate and scale B estimation. 
-The function are called ordwmax and ol2bb1.fun, respectively. 
-<<Ordinal Test>>=
-gefp1<-gefp(reduced,fit=NULL,order.by=as.numeric(yg$agegroup),
-       vcov=info_full,sandwich=FALSE,parm=1:4)
-pval.ord=rep(NA,2)
-pval.ord[1]<-sctest(gefp1,functional=ordwmax(gefp1))$p.value
 
+%% <<conti3resmaxLM>>=
+%% maxLM<-sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="maxLM", fplot=FALSE) 
+%% maxLM
+%% @
+The tests carried out here assume a unique ordering of individuals by age, but this is obviously not the case.  To compute the statistics and $p$-values, the strucchange package implicitly assumed an arbitrary ordering of individuals who are tied on age.  If we were to change this ordering, the resulting statistics and $p$-values would also change, which is obviously problematic.  To accurately account for the multiple observations  
+at the same age level, we must used the ordinal tests from Equations~\eqref{eq:wdm} and~\eqref{eq:maxlmo}.  These are described next.
+
+\subsection{Ordinal Treatment}
+
+%% As a matter of fact, there is only a partial ordering of individuals 
+%% with respect to $V$,i.e. observations with the same level 
+%% of $V$ have no unique ordering. The ordinal statistics 
+%% proposed here are similar to those described in Equation 
+%% and above, except that we focus on "bins" of individuals 
+%% at each level of the ordinal variable.  
+
+The difference between the ordinal test statistics and their
+continuous counterparts is that the ordinal statistics do not require
+an ordering of individuals  
+within the same age group.  To compute the test statistics, we allow
+the scores of all tied individuals to enter the cumulative sum
+(Equation~\eqref{eq:cumscore}) simultaneously.  This results in
+modified critical values and test statistics that are sensitive to
+measurement invariance violations that are monotonic with age group.
+%% Therefore, this ordinal test should 
+%% reflect more real status of the data. In terms of code, we still need the gefp 
+%% function to get the B estimate. After that, we can use different 
+%% functions to aggregate and scale B estimation. 
+%% The function are called ordwmax and ol2bb1.fun, respectively. 
+
+To carry out the tests, we can rely on the same function that we used
+for the continuous test statistics.  As mentioned previously,
+calculation of the ``maxLMo'' statistic (Equation~\eqref{eq:maxlmo})
+can be lengthy from the need to simulate critical values.
+<<critvals,echo=FALSE>>=
 if(file.exists("opval1.rda")){
   load("opval1.rda")
 } else {
   opval1 <- ordL2BB(gefp1)
   save(opval1, file="opval1.rda")
 }
-pval.ord[2]<-sctest(gefp1, functional=opval1)$p.value
-pval.ord
-@
+## Get test statistics using fnl=opval1 without showing it in the paper
+wdmo <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="WDMo")
+maxlmo <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="maxLMo",
+                 fnl=opval1)
+@ 
 
-Or alternatively, we could use the sctest.lavaan function, but assign ordinal statistics.
+<<ordtest,eval=FALSE>>=
+wdmo <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="WDMo")
+maxlmo <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="maxLMo")
+@ 
+<<pvals>>=
+round(c(wdmo$p.value, maxlmo$p.value), 2)
+@ 
+
+%% TODO Describe graphs
+
+
+%% gefp1<-gefp(reduced,fit=NULL,order.by=as.numeric(yg$agegroup),
+%%        vcov=info_full,sandwich=FALSE,parm=1:4)
+%% pval.ord=rep(NA,2)
+%% pval.ord[1]<-sctest(gefp1,functional=ordwmax(gefp1))$p.value
+
+
+%% pval.ord[2]<-sctest(gefp1, functional=opval1)$p.value
+%% pval.ord
+%% @
+
+%Or alternatively, we could use the sctest.lavaan function, but assign ordinal statistics.
 \begin{figure}
 \caption{Get Ordinal Estimate WDMo Alternative Way}
 \label{fig:ord1res}
 \setkeys{Gin}{width=\textwidth}
-<<ord1res, fig=TRUE, height=7, width=7>>=
+<<ord1res, fig=TRUE, height=7, width=7, echo=FALSE>>=
 WDMo<-sctest(reduced, as.numeric(yg$agegroup),parm=1:4, stat="WDMo", fplot=TRUE)
-WDMo 
+#WDMo 
 @
 \end{figure}
 
@@ -443,19 +470,33 @@ WDMo
 \caption{Get Ordinal Estimate maxLMo Alternative Way}
 \label{fig:ord2res}
 \setkeys{Gin}{width=\textwidth}
-<<ord2res, fig=TRUE, height=7, width=7>>=
+<<ord2res, fig=TRUE, height=7, width=7, echo=FALSE>>=
 maxLMo<-sctest(reduced, as.numeric(yg$agegroup),parm=1:4, stat="maxLMo", 
                fnl=opval1, fplot=TRUE)
-maxLMo 
+#maxLMo 
 @
 \end{figure}
 
-
-
-In employing the ordinal tests, we obtain $p=0.060$ and $p=0.096$. 
+In computing the ordinal test statistics, we
+obtain~$p=\Sexpr{round(wdmo$p.value,2)}$
+and~$p=\Sexpr{round(maxlmo$p.value,2)}$, respectively.
 Both $p-$values are clearly larger than that of the 
 likelihood ratio test and neither is significant at $\alpha=0.05$. 
-This result is consistent with alternative fit indices used in Froh et al paper\citeA{FroFan11}.
+This provides evidence that there is no measurement
+invariance violation that is monotonic with age group.  Instead, given
+the large sample size, the likelihood ratio test may be overly
+sensitive to anomalous, non-monotonic violations at one (or a few) age groups.
+
+In the above sections, we have illustrated the score-based tests'
+computation in R.  We suspect that the ordinal tests will be most
+popular with users, because measurement invariance tests are typically
+carried out across categories (ordered or not), as opposed to
+continuous variables.  Thus, in the sections below, we report
+novel simulations to study the ordinal statistics' expected behavior
+in practice.  In particular, we wish to study (i) the extent to which the
+ordinal statistics attribute measurement invariance violations to the
+correct parameter(s), and (ii) the extent to which the tests are
+robust to model misspecification.
 
 \section{Simulation}
 \section{Simulation 1}
