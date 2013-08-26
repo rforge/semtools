@@ -27,7 +27,7 @@ dgp <- function(nobs = 240, diff = 1.5, nlevels = 3, gradual=FALSE, anomaly=FALS
   half.level <- ifelse(nlevels %% 2 == 1, (nlevels %/% 2)+1, nlevels/2)
   
   # Define parameter vectors/matrices:
-  theta<-c(4.92,2.96,5.96,3.24,4.32,7.21,26.77,13.01,30.93,3.17,8.82,22.5, 0.48,
+  theta<-c(4.92,2.96,5.96,3.24,4.32,7.21,26.77,13.01,30.93,3.17,8.82,22.5, -0.48,
            29.32,24.70,14.84,10.59,19.30,18.01)
   asym<-c( 7.565818,4.951599,8.644422,3.093014,4.499676,7.368059,
             56.672724,24.255196,74.917170,8.264380,17.664706,47.093002,
@@ -104,11 +104,10 @@ dgp <- function(nobs = 240, diff = 1.5, nlevels = 3, gradual=FALSE, anomaly=FALS
     }
     }
     
-
-    u <- t(rmvnorm(tmp.n,rep(0,6),tmp.psi))
-    z <- t(rmvnorm(tmp.n,rep(0,2),tmp.phi))
+    u.tmp <- t(rmvnorm(tmp.n,rep(0,6),tmp.psi))
+    z.tmp <- t(rmvnorm(tmp.n,rep(0,2),tmp.phi))
     for (j in 1:tmp.n){
-      datmat[tmp.ind[j],] <- mu + tmp.lambda%*%z[,j] + u[,j]
+      datmat[tmp.ind[j],] <- mu + tmp.lambda%*%z.tmp[,j] + u.tmp[,j]
     }
   }
   
@@ -153,7 +152,7 @@ testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, parnum = parnum, 
 }
 
 ## Loop over scenarios
-simulation <- function(diff = seq(0, 1.5, by = 0.25),parms="error",
+simulation <- function(diff = seq(0, 2, by = 0.25),parms=c("error","loading","var")
   nobs = c(120, 480, 960), nlevels = c(4, 8, 12), gradual = FALSE,
   anomaly = FALSE, verbose = TRUE, ...)
 {
@@ -244,4 +243,6 @@ source("../www/estfun-lavaan.R")
 source("../www/efpFunctional-cat.R")
 source("simall-ordinal.R")
 simtry <- simulation(nobs=c(480),nrep=300, diff=c(1.5),parms=c("error","loading","var"))
+sim1 <-simulation()
+save(sim1,file ="sim1.rda")
 }
