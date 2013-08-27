@@ -70,9 +70,9 @@ dgp <- function(nobs = 240, diff = 1.5, nlevels = 3, gradual=FALSE, anomaly=FALS
     tmp.lambda <- matrix(0,6,2)
     tmp.lambda[,1] <- lambda[,1] 
     tmp.lambda[,2] <- lambda[,2]
-    tmp.psi <- psi
     tmp.phi <- phi
-
+    tmp.psi <- psi
+    
     mult <- ses
     if (anomaly) mult <- ifelse(i==(half.level+1), ses, 0)
 
@@ -81,23 +81,29 @@ dgp <- function(nobs = 240, diff = 1.5, nlevels = 3, gradual=FALSE, anomaly=FALS
     if (gradual){
       if (anomaly) stop("gradual=TRUE and anomaly=TRUE do not work together.")
       if (parms=="error"){
-      diag(tmp.psi) <- diag(psi) + (each.vary*asym[7:12])/sqrt(tmp.n)
+      tmp.psi <- psi
+      diag(tmp.psi) <- diag(tmp.psi) + (each.vary*asym[7:12])/sqrt(tmp.n)
     }
       if (parms=="var"){
-      diag(tmp.phi) <- diag(phi) + (each.vary*asym[13])/sqrt(tmp.n)
+      tmp.phi <- phi
+      diag(tmp.phi) <- diag(tmp.phi) + (each.vary*asym[13])/sqrt(tmp.n)
     }
       if (parms=="loading"){
+      tmp.lambda <- matrix(0,6,2)
       tmp.lambda[,1] <- lambda[,1] + (each.vary*asym[1:3])/sqrt(tmp.n)
       tmp.lambda[,2] <- lambda[,2] + (each.vary*asym[4:6])/sqrt(tmp.n)
     }
     } else {
       if (parms=="error"){
+      tmp.psi <- psi
       diag(tmp.psi) <- diag(tmp.psi) + (mult*asym[7:12])/sqrt(tmp.n)
     }
       if (parms=="var"){
+      tmp.phi <- phi
       diag(tmp.phi) <- diag(tmp.phi) + (mult*asym[13])/sqrt(tmp.n)
     }
       if (parms=="loading"){
+      tmp.lambda <- matrix(0,6,2)
       tmp.lambda[,1] <- lambda[,1] + (mult*asym[1:3])/sqrt(tmp.n)
       tmp.lambda[,2] <- lambda[,2] + (mult*asym[4:6])/sqrt(tmp.n)
       
@@ -152,14 +158,14 @@ testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, parnum = parnum, 
 }
 
 ## Loop over scenarios
-simulation <- function(diff = seq(0, 2, by = 0.25),parms=c("error","loading","var")
+simulation <- function(diff = seq(0, 2, by = 0.25),parms=c("error","loading","var"),
   nobs = c(120, 480, 960), nlevels = c(4, 8, 12), gradual = FALSE,
   anomaly = FALSE, verbose = TRUE, ...)
 {
   prs <- expand.grid(diff = diff, nlevels = nlevels, nobs = nobs, parms = parms)
   nprs <- nrow(prs)
 
-  parnum <- c("1:6",13,"7:12")
+  parnum <- c(13,"1:6","7:12")
 
   tname <- c("ordmax","ordwmax","catdiff") # had suplm here
   
@@ -179,6 +185,7 @@ simulation <- function(diff = seq(0, 2, by = 0.25),parms=c("error","loading","va
 
   pow <- matrix(rep(NA,ntest*nprs),ncol=ntest)
   do.parallel <-require("parallel")
+  #do.parallel=FALSE
   if (do.parallel){
     pow <- mclapply(1:nprs, function(i){
       testpower(diff = prs$diff[i], nobs = prs$nobs[i],
@@ -242,7 +249,64 @@ source("../www/mz-ordinal.R")
 source("../www/estfun-lavaan.R")
 source("../www/efpFunctional-cat.R")
 source("simall-ordinal.R")
-simtry <- simulation(nobs=c(480),nrep=300, diff=c(1.5),parms=c("error","loading","var"))
+simtry <- simulation(nobs=c(480),nrep=300, diff=seq(0, 1.5, by = 0.25),
+                     parms=c("loading","error","var"))
 sim1 <-simulation()
-save(sim1,file ="sim1.rda")
+save(simtry,file ="simtry.rda")
+
+
+
+#load data file and give names for different levels in each variable.
+if(file.exists("simtry.rda")) {
+  load("simtry.rda")
+} else {
+  simtry <- simulation()
+  simtry$nlevels <- factor(simtry$nlevels)
+  levels(simtry$nlevels) <- paste("m=",levels(simtry$nlevels),sep="")
+  simtry$nobs <- factor(simtry$nobs)
+  levels(simtry$nobs) <- paste("n=",levels(simtry$nobs),sep="")
+  levels(simtry$test) <- c("ordmax","ordwmax","catdiff")
+  save(simtry, file="simtry.rda")
+}
+simtry$test <- factor(as.character(simtry$test),
+  levels = c("ordmax","ordwmax","catdiff"),
+  labels = c("ordmax","ordwmax","catdiff"))
+   simtry$nlevels <- factor(simtry$nlevels)
+ levels(simtry$nlevels) <- paste("m=",levels(simtry$nlevels),sep="")
+
+
+library(lattice)
+#parm=loading
+postscript("loading.pdf")
+simtry.tmp <- simtry[simtry$test %in% c("ordmax","ordwmax","catdiff")& simtry$nobs %in%
+                     c(480)&simtry$parms %in% c("loading"),]
+simtry.tmp$test <- factor(simtry.tmp$test)
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(simtry.tmp$test), points = TRUE, lines = TRUE)
+xyplot(power ~ diff | nlevels + pars + parms, group = ~ test, data = simtry.tmp, 
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey)
+dev.off()
+
+
+#parm=var
+postscript("var.pdf")
+simtry.tmp <- simtry[simtry$test %in% c("ordmax","ordwmax","catdiff")& simtry$nobs %in%
+                     c(480)&simtry$parms %in% c("var"),]
+simtry.tmp$test <- factor(simtry.tmp$test)
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(simtry.tmp$test), points = TRUE, lines = TRUE)
+xyplot(power ~ diff | nlevels + pars + parms, group = ~ test, data = simtry.tmp, 
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey)
+dev.off()
+
+#parm=error
+postscript("error.pdf")
+simtry.tmp <- simtry[simtry$test %in% c("ordmax","ordwmax","catdiff")& simtry$nobs %in%
+                     c(480)&simtry$parms %in% c("error"),]
+simtry.tmp$test <- factor(simtry.tmp$test)
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(simtry.tmp$test), points = TRUE, lines = TRUE)
+xyplot(power ~ diff | nlevels + pars + parms, group = ~ test, data = simtry.tmp, 
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey)
+dev.off()
 }
