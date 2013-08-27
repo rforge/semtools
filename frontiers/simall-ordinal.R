@@ -29,7 +29,7 @@ dgp <- function(nobs = 240, diff = 1.5, nlevels = 3, gradual=FALSE, anomaly=FALS
   # Define parameter vectors/matrices:
   theta<-c(4.92,2.96,5.96,3.24,4.32,7.21,26.77,13.01,30.93,3.17,8.82,22.5, -0.48,
            29.32,24.70,14.84,10.59,19.30,18.01)
-  asym<-c( 7.565818,4.951599,8.644422,3.093014,4.499676,7.368059,
+  asym<-c(7.565818,4.951599,8.644422,3.093014,4.499676,7.368059,
             56.672724,24.255196,74.917170,8.264380,17.664706,47.093002,
            1.024326,7.139776,4.666005,8.151785,3.696972,5.242366,
             8.630417)
@@ -67,12 +67,11 @@ dgp <- function(nobs = 240, diff = 1.5, nlevels = 3, gradual=FALSE, anomaly=FALS
   for (i in (half.level+1):nlevels){
     tmp.n <- sum(age==i)
     tmp.ind <- which(age==i)
-    tmp.lambda <- matrix(0,6,2)
-    tmp.lambda[,1] <- lambda[,1] 
-    tmp.lambda[,2] <- lambda[,2]
-    tmp.phi <- phi
-    tmp.psi <- psi
-    
+
+    if (parms=="loading"){parmsvector=c(1,rep(0,18))}
+    if (parms=="var"){parmsvector=c(rep(0,12),1,rep(0,6))}
+    if (parms=="error"){parmsvector=c(rep(0,6),1,rep(0,5),rep(0,7))}
+   
     mult <- ses
     if (anomaly) mult <- ifelse(i==(half.level+1), ses, 0)
 
@@ -80,34 +79,31 @@ dgp <- function(nobs = 240, diff = 1.5, nlevels = 3, gradual=FALSE, anomaly=FALS
     ## observed SES by sqrt(n)
     if (gradual){
       if (anomaly) stop("gradual=TRUE and anomaly=TRUE do not work together.")
-      if (parms=="error"){
-      tmp.psi <- psi
-      diag(tmp.psi) <- diag(tmp.psi) + (each.vary*asym[7:12])/sqrt(tmp.n)
-    }
-      if (parms=="var"){
-      tmp.phi <- phi
-      diag(tmp.phi) <- diag(tmp.phi) + (each.vary*asym[13])/sqrt(tmp.n)
-    }
-      if (parms=="loading"){
-      tmp.lambda <- matrix(0,6,2)
-      tmp.lambda[,1] <- lambda[,1] + (each.vary*asym[1:3])/sqrt(tmp.n)
-      tmp.lambda[,2] <- lambda[,2] + (each.vary*asym[4:6])/sqrt(tmp.n)
-    }
+    theta.tmp <- theta + (each.vary*asym*parmsvector/sqrt(tmp.n))
+    # Loadings:
+    tmp.lambda <- matrix(0,6,2)
+    tmp.lambda[,1] <- c(theta.tmp[1:3],0,0,0)
+    tmp.lambda[,2] <- c(0,0,0,theta.tmp[4:6])
+
+    tmp.phi <- matrix(theta.tmp[13],2,2)
+    diag(tmp.phi) <- 1
+
+    # variances
+    tmp.psi <- matrix(0,6,6)
+    diag(tmp.psi) <- theta.tmp[7:12]
     } else {
-      if (parms=="error"){
-      tmp.psi <- psi
-      diag(tmp.psi) <- diag(tmp.psi) + (mult*asym[7:12])/sqrt(tmp.n)
-    }
-      if (parms=="var"){
-      tmp.phi <- phi
-      diag(tmp.phi) <- diag(tmp.phi) + (mult*asym[13])/sqrt(tmp.n)
-    }
-      if (parms=="loading"){
-      tmp.lambda <- matrix(0,6,2)
-      tmp.lambda[,1] <- lambda[,1] + (mult*asym[1:3])/sqrt(tmp.n)
-      tmp.lambda[,2] <- lambda[,2] + (mult*asym[4:6])/sqrt(tmp.n)
-      
-    }
+    theta.tmp <- theta + (mult*asym*parmsvector/sqrt(tmp.n))
+    # Loadings:
+    tmp.lambda <- matrix(0,6,2)
+    tmp.lambda[,1] <- c(theta.tmp[1:3],0,0,0)
+    tmp.lambda[,2] <- c(0,0,0,theta.tmp[4:6])
+
+    tmp.phi <- matrix(theta.tmp[13],2,2)
+    diag(tmp.phi) <- 1
+
+    # variances
+    tmp.psi <- matrix(0,6,6)
+    diag(tmp.psi) <- theta.tmp[7:12]  
     }
     
     u.tmp <- t(rmvnorm(tmp.n,rep(0,6),tmp.psi))
@@ -158,14 +154,14 @@ testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, parnum = parnum, 
 }
 
 ## Loop over scenarios
-simulation <- function(diff = seq(0, 2, by = 0.25),parms=c("error","loading","var"),
+simulation <- function(diff = seq(0, 4, by = 0.25),parms=c("error","loading","var"),
   nobs = c(120, 480, 960), nlevels = c(4, 8, 12), gradual = FALSE,
   anomaly = FALSE, verbose = TRUE, ...)
 {
   prs <- expand.grid(diff = diff, nlevels = nlevels, nobs = nobs, parms = parms)
   nprs <- nrow(prs)
 
-  parnum <- c(13,"1:6","7:12")
+  parnum <- c(1,13,7)
 
   tname <- c("ordmax","ordwmax","catdiff") # had suplm here
   
