@@ -63,10 +63,13 @@ library("mvtnorm")
 library("lattice")
 
 ## auxiliary code
-source("simall.R")
+source("simall-ordinal.R")
 source("mz.R")
 source("../www/efpFunctional-cat.R")
 source("../pkg/sctest.lavaan.R")
+source("../www/mz-ordinal.R")
+source("../www/estfun-lavaan.R")
+
 
 ## turn off stars
 options(show.signif.stars = FALSE)
@@ -563,11 +566,7 @@ robust to model misspecification.
 
 \section{Simulation}
 \section{Simulation 1}
-
-
-
-
- to which the proposed tests
+In Simulation 1, we examined the extent to which the proposed tests
 are sensitive to the specific model parameter that violates measurement
 invariance.  If, say, a factor loading violates measurement
 invariance, it is plausible that this violation impacts other
@@ -589,13 +588,6 @@ individual parameters noted above, all six factor loadings $\lambda_{11}--\lambd
 all six unique variances $\epsilon_{11}--\epsilon_{66}$. The path diagram is shown in  
 Figure~\ref{fig:path}.
 
-\begin{figure}
-\caption{Path diagram representing the factor analysis model 
-         used for simulations.}
-\label{fig:path}
-\includegraphics{PathDiagram}
-\end{figure}
-
 Power and Type I error were examined across three sample sizes
 ($n=120,480,960$) , three numbers of categories ($m=4,8,12$)and
 7 magnitudes of invariance violations. 
@@ -610,7 +602,72 @@ magnitude ($d$) $\times$ violating parameter $\times$ categories $m$, 5000 datas
 generated and tested.Four statistics were examined above. In all conditions, we
 maintained equal sample sizes at each level of the ordinal variable. 
 
+<<sim1>>=
+## seed for replication
+RNGkind(kind = "default", normal.kind = "default")
+set.seed(1163)
+
+if(file.exists("sim1.rda")) {
+  load("sim1.rda")
+} else {
+  sim1 <- simulation(sim=c("sim1"), nobs=c(480),parms=c("loading","error","var"))
+  sim1$nlevels <- factor(sim1$nlevels)
+  levels(sim1$nlevels) <- paste("m=",levels(sim1$nlevels),sep="")
+  sim1$nobs <- factor(sim1$nobs)
+  levels(sim1$nobs) <- paste("n=",levels(sim1$nobs),sep="")
+  levels(sim1$test) <- c("ordmax","ordwmax","catdiff")
+  save(sim1, file="sim1.rda")
+}
+sim1$test <- factor(as.character(sim1$test),
+  levels = c("ordmax","ordwmax","catdiff"),
+  labels = c("ordmax","ordwmax","catdiff"))
+@ 
+
+
 \subsection{Results}
+
+
+\section{Simulation 2}
+In Simulation 2, we examine the extent to which the results of
+Simulation 1 are robust to model misspecification. Specifically, we
+generate data from the factor analysis model used in the previous
+section, but with adding an extra loading from the second factor to the first
+indicator (of the first factor).  The estimated model lacks this extra
+loading, however. The goal of this simulation is to examine the proposed statitics'
+power and spicificity under model misspecification.
+
+
+\subsection{Method}
+Measurement invariance violations could occur in
+each of the three parameters from Simulation 1 (factor loading,factor covariance,unique
+variance), and they could also occur in the extra,unmodeled loading. 
+Sample size and magnitude of measurementinvariance violation were manipulated 
+in the same way as they were in Simulation 1.The tested parameters are the same as Simulation
+1,too.
+
+
+\subsection{Results}
+
+<<sim2>>=
+## seed for replication
+RNGkind(kind = "default", normal.kind = "default")
+set.seed(1163)
+
+if(file.exists("sim2.rda")) {
+  load("sim2.rda")
+} else {
+  sim2 <- simulation(sim=c("sim2"), nobs=c(480),parms=c("extra","extra+loading","extra+var","extra+error"))
+  sim2$nlevels <- factor(sim2$nlevels)
+  levels(sim2$nlevels) <- paste("m=",levels(sim2$nlevels),sep="")
+  sim2$nobs <- factor(sim2$nobs)
+  levels(sim2$nobs) <- paste("n=",levels(sim2$nobs),sep="")
+  levels(sim2$test) <- c("ordmax","ordwmax","catdiff")
+  save(sim2, file="sim2.rda")
+}
+sim2$test <- factor(as.character(sim2$test),
+  levels = c("ordmax","ordwmax","catdiff"),
+  labels = c("ordmax","ordwmax","catdiff"))
+@ 
 
 \section{General Discussion}
 
