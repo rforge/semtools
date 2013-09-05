@@ -613,7 +613,7 @@ set.seed(1163)
 if(file.exists("sim1.rda")) {
   load("sim1.rda")
 } else {
-  sim1 <- simulation(sim=c("sim1"), nobs=c(480),parms=c("loading","error","var"))
+  sim1 <- simulation(sim="sim1", nobs=480, parms=c("loading","error","var"))
   sim1$nlevels <- factor(sim1$nlevels)
   levels(sim1$nlevels) <- paste("m=",levels(sim1$nlevels),sep="")
   sim1$nobs <- factor(sim1$nobs)
@@ -659,7 +659,7 @@ set.seed(1163)
 if(file.exists("sim2.rda")) {
   load("sim2.rda")
 } else {
-  sim2 <- simulation(sim=c("sim2"), nobs=c(480),parms=c("extra","extra+loading","extra+var","extra+error"))
+  sim2 <- simulation(sim="sim2", nobs=480, parms=c("extra","extra+loading","extra+var","extra+error"))
   sim2$nlevels <- factor(sim2$nlevels)
   levels(sim2$nlevels) <- paste("m=",levels(sim2$nlevels),sep="")
   sim2$nobs <- factor(sim2$nobs)
