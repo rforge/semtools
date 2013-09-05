@@ -13,7 +13,7 @@
 
 
 
-\SweaveOpts{engine = R, eps = FALSE, echo = FALSE, pdf=TRUE}
+
 
 \title{Score-based tests of measurement invariance: Use in practice}
 \twoauthors{Ting Wang and Edgar C.\ Merkle}{Achim Zeileis}
@@ -34,7 +34,7 @@ a detailed examination of test properties.  These studies allow us
 to study (details here).  The studies indicate that.}
 
 
-
+\SweaveOpts{engine = R, eps = FALSE, echo = FALSE, pdf=TRUE}
 
 \acknowledgements{This work was supported by National Science
   Foundation grant SES-1061334. 
@@ -138,6 +138,8 @@ $i$, $\theta$ is a $k$-dimensional parameter vector, and
 $\hat{\theta}$ is the maximum likelihood estimate.  The cross-product
 of these scores forms the ``meat'' for the calculation of robust
 (Huber-White) standard errors. %TODO cite
+\seeme{I don't understand this sentence. cross-product of each individual for each parameter? Why this 
+is the standard error?}
 
 To verbally describe the above equation, each
 individual has $k$ scores describing the extent to which the fitted
@@ -270,8 +272,8 @@ across age.  Because the sample size at each age was unbalanced, the authors
 created age groups of approximately equal sample size.  In the examples below, 
 we test for measurement invariance across these age groups.
 
-We focus on measurement invariance of the factor loadings associated with t
-he GQ-6 scale, using a one-factor model.While the ``age group'' variable against 
+We focus on measurement invariance of the factor loadings associated with 
+the GQ-6 scale, using a one-factor model. While the ``age group'' variable against 
 which we are testing measurement invariance is best considered ordinal, 
 for demonstration we consider its treatment as categorical, continuous, and ordinal.  
 Each of these treatments is described below in a separate section.
@@ -328,6 +330,7 @@ Each of these treatments is described below in a separate section.
 \subsection{Categorical Treatment}
 
 \fixme{Need to update the citation below so that the last name is ``van de Schoot''.}
+\seeme{Is it a different paper from vande12?}
 Measurement invariance is most often tested using multiple groups models \cite<see, e.g., >{vande12}.  
 This amounts to assuming that our auxiliary variable is categorical (i.e., unordered), 
 which is not true for the age groups in the data.  However, we demonstrate the procedure for completeness.
@@ -380,7 +383,7 @@ monotonic with the age groups, it is perhaps simplest to treat the
 age groups as continuous.  In doing so, we can use the statistics 
 from Equations~\eqref{eq:dmax},~\eqref{eq:cvm}, and~\eqref{eq:maxlm}.  
 That is, we can fit a model whose parameters 
-are restricted to be equal across across all individuals and then examine 
+are restricted to be equal across all individuals and then examine 
 how individuals' scores $s(\hat{theta};x_{i})$ fluctuate with their
 age (where age ties are broken arbitrarily).
 This is demonstrated below, with similar code being useful when one is 
@@ -590,16 +593,16 @@ Figure~\ref{fig:path}.
 
 Power and Type I error were examined across three sample sizes
 ($n=120,480,960$) , three numbers of categories ($m=4,8,12$)and
-7 magnitudes of invariance violations. 
-The meaurement invariance violations began at level $1+m/2$ of $V$
-and were consistant thereafter. These
+17 magnitudes of invariance violations. 
+The measurement invariance violations began at level $1+m/2$ of $V$
+and were consistent thereafter. These
 violations were based on the auxiliary variable $V$: individuals below
 the $1+m/2$ percentile of $V$ deviated from individuals above the $1+m/2$ 
 percentile  by $d$ times the parameters' asymptotic standard errors
-(scaled by $\sqrt n$), with $d=0,0,25,0.5,...,1.5$. 
+(scaled by $\sqrt n$), with $d=0,0,25,0.5,...,4$. 
 For each combination of sample size ($n$) $\times$ violation
 magnitude ($d$) $\times$ violating parameter $\times$ categories $m$, 5000 datasets were
-generated and tested.Four statistics were examined above. In all conditions, we
+generated and tested. Four statistics were examined above. In all conditions, we
 maintained equal sample sizes at each level of the ordinal variable. 
 
 <<sim1>>=
@@ -633,14 +636,14 @@ Simulation 1 are robust to model misspecification. Specifically, we
 generate data from the factor analysis model used in the previous
 section, but with adding an extra loading from the second factor to the first
 indicator (of the first factor).  The estimated model lacks this extra
-loading, however. The goal of this simulation is to examine the proposed statitics'
-power and spicificity under model misspecification.
+loading, however. The goal of this simulation is to examine the proposed statistics'
+power and specificity under model misspecification.
 
 
 \subsection{Method}
 Measurement invariance violations could occur in
 each of the three parameters from Simulation 1 (factor loading,factor covariance,unique
-variance), and they could also occur in the extra,unmodeled loading. 
+variance), and they could also occur in the extra, unmodeled loading. 
 Sample size and magnitude of measurementinvariance violation were manipulated 
 in the same way as they were in Simulation 1.The tested parameters are the same as Simulation
 1,too.
