@@ -8,8 +8,9 @@
 
 
 \documentclass[doc]{apa}
-\usepackage{graphicx,epsfig,amsmath,alltt,setspace,bm}
+\usepackage{graphicx,epsfig,amsmath,alltt,setspace,bm,float}
 \usepackage[english]{babel}
+
 
 
 
@@ -525,7 +526,7 @@ round(c(wdmo$p.value, maxlmo$p.value), 2)
 %% @
 
 %Or alternatively, we could use the sctest.lavaan function, but assign ordinal statistics.
-\begin{figure}
+\begin{figure}[H]
 \caption{Get Ordinal Estimate WDMo Alternative Way}
 \label{fig:ord1res}
 \setkeys{Gin}{width=\textwidth}
@@ -535,7 +536,7 @@ WDMo<-sctest(reduced, as.numeric(yg$agegroup),parm=1:4, stat="WDMo", fplot=TRUE)
 @
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
 \caption{Get Ordinal Estimate maxLMo Alternative Way}
 \label{fig:ord2res}
 \setkeys{Gin}{width=\textwidth}
@@ -567,6 +568,7 @@ ordinal statistics attribute measurement invariance violations to the
 correct parameter(s), and (ii) the extent to which the tests are
 robust to model misspecification.
 
+\SweaveOpts{engine = R, eps = FALSE, echo = FALSE, pdf=TRUE}
 \section{Simulation}
 \section{Simulation 1}
 In Simulation 1, we examined the extent to which the proposed tests
@@ -605,6 +607,40 @@ magnitude ($d$) $\times$ violating parameter $\times$ categories $m$, 5000 datas
 generated and tested. Four statistics were examined above. In all conditions, we
 maintained equal sample sizes at each level of the ordinal variable. 
 
+\subsection{Results}
+Full simulation results are presented in Figure~\ref{fig:sim11res} to
+Figure~\ref{fig:sim13res}; all three test statistics exhibited 
+similar results, with the unordered $\max\mathit{LM}$ 
+Figure~\ref{fig:sim11res} displays power curves as a function of 
+violation magnitude for the first
+factor loading $\lambda_{11}$, with panels reflecting the parameters 
+being tested and lines reflecting $n$.
+Figures~\ref{fig:sim12res} and Figure~\ref{fig:sim13res} display 
+similar power curves when the factor covariance 
+$\phi_{12}$ and error variance $\epsilon_{11}$ violate measurement
+invariance, respectively. 
+
+From these figures, one generally observe that the tests isolate 
+the parameter violating measurement invariance.  Additionally, the tests 
+have somewhat-higher power to detect measurement invariance violations 
+in the factor loading and factor covariance parameters, as opposed to the error variance
+parameter.  Finally, simultaneous tests of all factor loadings or all error
+parameters result in decreased power, as compared to the situation
+where one tests only the violating parameter.  This occurs because, in
+testing a subset of parameters (only one of which violates measurement
+invariance), we are effectively dampening the signal of a measurement
+invariance violation.  
+
+
+In summary, we found that the proposed tests can attribute
+measurement invariance violations to the correct parameter.  This
+provides evidence that, in practice, one can have confidence in the
+tests' abilities to locate the measurement invariance violation.  Of
+course, this statement is qualified by the fact that, in this
+simulation, the model was correctly specified.  In the following
+simulations, we examine the tests' performance when the model is
+misspecified.
+
 <<sim1>>=
 ## seed for replication
 RNGkind(kind = "default", normal.kind = "default")
@@ -616,6 +652,7 @@ if(file.exists("sim1.rda")) {
   sim1 <- simulation(sim="sim1", nobs=480, parms=c("loading","error","var"))
   sim1$nlevels <- factor(sim1$nlevels)
   levels(sim1$nlevels) <- paste("m=",levels(sim1$nlevels),sep="")
+ 
   sim1$nobs <- factor(sim1$nobs)
   levels(sim1$nobs) <- paste("n=",levels(sim1$nobs),sep="")
   levels(sim1$test) <- c("ordmax","ordwmax","catdiff")
@@ -624,10 +661,63 @@ if(file.exists("sim1.rda")) {
 sim1$test <- factor(as.character(sim1$test),
   levels = c("ordmax","ordwmax","catdiff"),
   labels = c("ordmax","ordwmax","catdiff"))
+  levels(sim1$pars) <- c("Loading1","Covariance","Error1","All Loadings","All Errors")  
+
 @ 
 
+\begin{figure}[H]
+\caption{Simulated power curves for the ordered 
+      $\max\mathit{LM}$ tests, the double-max test and the unordered $\max\mathit{LM}$ across three
+      levels of the ordinal variable $m$, and measurement invariance 
+      violations of 0--4 standard errors (scaled by $\sqrt{n}$). The violation parameter is Loading1.}
+\label{fig:sim11res}
+\setkeys{Gin}{width=\textwidth}
+<<sim11res, fig=TRUE, height=7, width=7>>=
+sim1.tmp <- sim1[sim1$test %in% c("ordmax","ordwmax","catdiff")&sim1$parms %in% c("loading"),]
+sim1.tmp$test <- factor(sim1.tmp$test)
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(sim1.tmp$test), points = TRUE, lines = TRUE)
+print(xyplot(power ~ diff | nlevels+pars, group = ~ test, data = sim1.tmp, 
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey))
+@
 
-\subsection{Results}
+\end{figure}
+
+\begin{figure}[H]
+\caption{Simulated power curves for the ordered 
+      $\max\mathit{LM}$ tests, the ordered double-max test the unordered $\max\mathit{LM}$ across three
+      levels of the ordinal variable $m$, and measurement invariance
+      violations of 0--4 standard errors (scaled by $\sqrt{n}$). The violation parameter is Covariance}
+\label{fig:sim12res}
+\setkeys{Gin}{width=\textwidth}
+<<sim12res, fig=TRUE, height=7, width=7>>=
+sim1.tmp <- sim1[sim1$test %in% c("ordmax","ordwmax","catdiff")&sim1$parms %in% c("var"),]
+sim1.tmp$test <- factor(sim1.tmp$test)
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(sim1.tmp$test), points = TRUE, lines = TRUE)
+print(xyplot(power ~ diff | nlevels+pars, group = ~ test, data = sim1.tmp, 
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey))
+@
+
+\end{figure}
+
+\begin{figure}[H]
+\caption{Simulated power curves for the ordered 
+      $\max\mathit{LM}$ tests, the ordered double-max test the unordered $\max\mathit{LM}$ across three
+      levels of the ordinal variable $m$, and measurement invariance
+      violations of 0--4 standard errors (scaled by $\sqrt{n}$). The violation parameter is Error1}
+\label{fig:sim13res}
+\setkeys{Gin}{width=\textwidth}
+<<sim13res, fig=TRUE, height=7, width=7>>=
+sim1.tmp <- sim1[sim1$test %in% c("ordmax","ordwmax","catdiff")&sim1$parms %in% c("error"),]
+sim1.tmp$test <- factor(sim1.tmp$test)
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(sim1.tmp$test), points = TRUE, lines = TRUE)
+print(xyplot(power ~ diff | nlevels+pars, group = ~ test, data = sim1.tmp, 
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey))
+@
+
+\end{figure}
 
 
 \section{Simulation 2}
@@ -651,26 +741,26 @@ in the same way as they were in Simulation 1.The tested parameters are the same 
 
 \subsection{Results}
 
-<<sim2>>=
-## seed for replication
-RNGkind(kind = "default", normal.kind = "default")
-set.seed(1163)
+%<<sim2>>=
+%## seed for replication
+%RNGkind(kind = "default", normal.kind = "default")
+%set.seed(1163)
 
-if(file.exists("sim2.rda")) {
-  load("sim2.rda")
-} else {
-  sim2 <- simulation(sim="sim2", nobs=480, parms=c("extra","extra+loading","extra+var","extra+error"))
-  sim2$nlevels <- factor(sim2$nlevels)
-  levels(sim2$nlevels) <- paste("m=",levels(sim2$nlevels),sep="")
-  sim2$nobs <- factor(sim2$nobs)
-  levels(sim2$nobs) <- paste("n=",levels(sim2$nobs),sep="")
-  levels(sim2$test) <- c("ordmax","ordwmax","catdiff")
-  save(sim2, file="sim2.rda")
-}
-sim2$test <- factor(as.character(sim2$test),
-  levels = c("ordmax","ordwmax","catdiff"),
-  labels = c("ordmax","ordwmax","catdiff"))
-@ 
+%if(file.exists("sim2.rda")) {
+%  load("sim2.rda")
+%} else {
+%  sim2 <- simulation(sim="sim2", nobs=480, parms=c("extra","extra+loading","extra+var","extra+error"))
+%  sim2$nlevels <- factor(sim2$nlevels)
+%  levels(sim2$nlevels) <- paste("m=",levels(sim2$nlevels),sep="")
+%  sim2$nobs <- factor(sim2$nobs)
+%  levels(sim2$nobs) <- paste("n=",levels(sim2$nobs),sep="")
+%  levels(sim2$test) <- c("ordmax","ordwmax","catdiff")
+%  save(sim2, file="sim2.rda")
+%}
+%sim2$test <- factor(as.character(sim2$test),
+%  levels = c("ordmax","ordwmax","catdiff"),
+%  labels = c("ordmax","ordwmax","catdiff"))
+%@ 
 
 \section{General Discussion}
 
