@@ -608,9 +608,9 @@ generated and tested. Four statistics were examined above. In all conditions, we
 maintained equal sample sizes at each level of the ordinal variable. 
 
 \subsection{Results}
-Full simulation results are presented in Figure~\ref{fig:sim11res} to
+Full simulation results are presented in Figure~\ref{fig:sim11res} to 
 Figure~\ref{fig:sim13res}; all three test statistics exhibited 
-similar results, with the unordered $\max\mathit{LM}$ 
+similar results, with unordered  $\max\mathit{LM}$ demonstrated lower powers across all situations. ordered $\max\mathit{LM}$ and double-max exhibited equivalent power curves since there is only one parameter violating measurement invariance. Thus, different ways of aggregating $\bm B(\hat{\theta})$ would be the same.
 Figure~\ref{fig:sim11res} displays power curves as a function of 
 violation magnitude for the first
 factor loading $\lambda_{11}$, with panels reflecting the parameters 

@@ -359,7 +359,8 @@ if(FALSE){
 library("lavaan")
 library("strucchange")
 library("mvtnorm")
-source("../www/mz-ordinal.R")
+#source("../www/mz-ordinal.R")
+source("mz-ordinal-proptest.R")
 source("../www/estfun-lavaan.R")
 source("../www/efpFunctional-cat.R")
 source("simall-ordinal.R")
@@ -381,6 +382,24 @@ save(simtry,file ="simtry.rda")
 sim1 <- simulation(sim=c("sim1"), nobs=c(480),parms=c("loading","error","var"))
 sim2 <- simulation(sim=c("sim2"), nobs=c(480),
                    parms=c("extra","extra+loading","extra+var","extra+error"))
+
+#load data file and give names for different levels in each variable.
+if(file.exists("simtry.rda")) {
+  load("simtry.rda")
+} else {
+  simtry <- simulation()
+  simtry$nlevels <- factor(simtry$nlevels)
+  levels(simtry$nlevels) <- paste("m=",levels(simtry$nlevels),sep="")
+  simtry$nobs <- factor(simtry$nobs)
+  levels(simtry$nobs) <- paste("n=",levels(simtry$nobs),sep="")
+  levels(simtry$test) <- c("ordmax","ordwmax","catdiff")
+  save(simtry, file="simtry.rda")
+}
+simtry$test <- factor(as.character(simtry$test),
+  levels = c("ordmax","ordwmax","catdiff"),
+  labels = c("ordmax","ordwmax","catdiff"))
+   simtry$nlevels <- factor(simtry$nlevels)
+ levels(simtry$nlevels) <- paste("m=",levels(simtry$nlevels),sep="")
 
 library(lattice)
 #parm=loading
@@ -418,24 +437,6 @@ xyplot(power ~ diff | nlevels + pars + parms, group = ~ test, data = simtry.tmp,
 dev.off()
 
 
-
-#load data file and give names for different levels in each variable.
-if(file.exists("simtry.rda")) {
-  load("simtry.rda")
-} else {
-  simtry <- simulation()
-  simtry$nlevels <- factor(simtry$nlevels)
-  levels(simtry$nlevels) <- paste("m=",levels(simtry$nlevels),sep="")
-  simtry$nobs <- factor(simtry$nobs)
-  levels(simtry$nobs) <- paste("n=",levels(simtry$nobs),sep="")
-  levels(simtry$test) <- c("ordmax","ordwmax","catdiff")
-  save(simtry, file="simtry.rda")
-}
-simtry$test <- factor(as.character(simtry$test),
-  levels = c("ordmax","ordwmax","catdiff"),
-  labels = c("ordmax","ordwmax","catdiff"))
-   simtry$nlevels <- factor(simtry$nlevels)
- levels(simtry$nlevels) <- paste("m=",levels(simtry$nlevels),sep="")
 
 
 library(lattice)
