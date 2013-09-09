@@ -513,7 +513,8 @@ maxlmo <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="maxLMo")
 round(c(wdmo$p.value, maxlmo$p.value), 2)
 @ 
 
-%% TODO Describe graphs
+
+
 
 %% gefp1<gefp(reduced,fit=NULL,order.by=as.numeric(yg$agegroup),
 %%        vcov=info_full,sandwich=FALSE,parm=1:4)
@@ -527,25 +528,19 @@ round(c(wdmo$p.value, maxlmo$p.value), 2)
 
 %Or alternatively, we could use the sctest.lavaan function, but assign ordinal statistics.
 \begin{figure}[H]
-\caption{Get Ordinal Estimate WDMo Alternative Way}
-\label{fig:ord1res}
+\caption{Fluctuation processes for the WDM statistic(left panel) and the maxLM statistic(right panel)}
+\label{fig:ordres}
 \setkeys{Gin}{width=\textwidth}
-<<ord1res, fig=TRUE, height=7, width=7, echo=FALSE>>=
+<<ordres, fig=TRUE, height=3, width=6, echo=FALSE>>=
+par(mfrow = c(1, 2), cex = 0.65)
 WDMo<-sctest(reduced, as.numeric(yg$agegroup),parm=1:4, stat="WDMo", fplot=TRUE)
 #WDMo 
-@
-\end{figure}
-
-\begin{figure}[H]
-\caption{Get Ordinal Estimate maxLMo Alternative Way}
-\label{fig:ord2res}
-\setkeys{Gin}{width=\textwidth}
-<<ord2res, fig=TRUE, height=7, width=7, echo=FALSE>>=
-maxLMo<-sctest(reduced, as.numeric(yg$agegroup),parm=1:4, stat="maxLMo", 
-               fnl=opval1, fplot=TRUE)
+maxLMo<-sctest(reduced, as.numeric(yg$agegroup),parm=1:4, stat="maxLMo", fnl=opval1, fplot=TRUE)
 #maxLMo 
 @
 \end{figure}
+
+
 
 In computing the ordinal test statistics, we
 obtain~$p=\Sexpr{round(wdmo$p.value,2)}$
@@ -556,6 +551,11 @@ This provides evidence that there is no measurement
 invariance violation that is monotonic with age group.  Instead, given
 the large sample size, the likelihood ratio test may be overly
 sensitive to anomalous, non-monotonic violations at one (or a few) age groups.
+
+%% TODO Describe graphs
+%% Is there some argument for fplot=TRUE so user can change  axis-name and critical value line
+Plots representing the statistics' fluctuations across levels of age group are displayed in Figure~\ref{fig:ordres}. The left panel displays the process associated with WDM. The right panel displays the process associated with maxLM. In both cases, the test statistics in the sequence assess a split of the observations up to age group $i$ vs. greater than $i$, and the null hypothesis is rejected if the maximum of the statistics is larger than its 5\% critical value(visualized by the horizontal red line). The final group is not displayed because it encompass all observations and always equals to zero. It is observed that both statistics generally increase with age. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 In the above sections, we have illustrated the score-based tests'
 computation in R.  We suspect that the ordinal tests will be most
@@ -764,9 +764,15 @@ in the same way as they were in Simulation 1.The tested parameters are the same 
 
 \section{General Discussion}
 
-What do the results mean, future studies, etc.
+In this paper, we examined the recently proposed ordinal statistics specificity property and robustness to model specification to study measurement invariance. As demonstrated in the results, the proposed statistics could select the parameter violating measurement invariance even though the model is misspecified in general. However, when an unmodeled parameter is violating measurement invariance, the statistics will demonstrating these variances in the related parameters, for example, associated loading and error terms. 
 
+These ordinal tests are useful in behavioral and social science in general, since the truly continuous auxiliary variable is hard to find in real research context. It is very common to observe several individuals with the same age, IQ, income rank, etc. Therefore, the ordinal tests which dealing with multiple ties in auxiliary variable is more suitable than the continuous test. 
 
+Moreover, even though researchers might be originally interested in comparing categorical differences. For example, researchers might want to test whether there is gender difference or cultural difference for the scale. Using traditional likelihood test or wald test, there might existing some differences regarding to the categorical variable. Then the next natural question would be why there is gender or culture differences? At this point, researchers might need to examine education level, social economic status, etc, which were often recorded in the ordinal format. Thus these test statistics offer an convenient assessing tool to further exploring research hypothesis without making complicated assumptions or fitting multiple different models.
+
+The core of the proposed ordinal test is to get the cumulative score process, which can be applied to any ML estimation functions or functions relating to maximizing or minimizing some statistics quantity.  
+
+   
 
 
 
