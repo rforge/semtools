@@ -121,8 +121,8 @@ associated with the fitted model.  In general, we fit a model that
 restricts parameters to be equal across observations, then carry out a
 posthoc test to examine whether specific parameters vary
 across observations.  This procedure is similar in spirit to the
-calculation of modification indices CITE and to Lagrange multiplier
-tests CITE, and, in fact, those statistics can be viewed as  
+calculation of modification indices \cite{bentler90} and to Lagrange multiplier
+tests \cite{sat89}, and, in fact, those statistics can be viewed as  
 special cases of the family described here.
 
 Following model estimation, the tests primarily work on the {\em
@@ -138,9 +138,7 @@ where $\ell(\theta; x_i)$ is the likelihood associated with individual
 $i$, $\theta$ is a $k$-dimensional parameter vector, and
 $\hat{\theta}$ is the maximum likelihood estimate.  The cross-product
 of these scores forms the ``meat'' for the calculation of robust
-(Huber-White) standard errors. %TODO cite
-\seeme{I don't understand this sentence. cross-product of each individual for each parameter? Why this 
-is the standard error?}
+(Huber-White) standard errors \cite{freed06}. \seeme{not sure about this citation}
 
 To verbally describe the above equation, each
 individual has $k$ scores describing the extent to which the fitted
@@ -266,7 +264,7 @@ In this section, we demonstrate how the above tests can be carried out in~R,
 using the package lavaan \cite{lavaan11} for model estimation and strucchange 
 \cite{ZeiLei02,Zei06} for testing.  We use data from \citeA{FroFan11} concerning 
 the applicability of adult gratitude scales to youth, available in the~R 
-package psychotools CITE.  The data consist of responses to three adult 
+package psychotools \cite{zeilei11}.  The data consist of responses to three adult 
 gratitude scales from $n=1401$ youth aged 10--19 years. The original authors 
 were specifically interested in whether the scales were measurement invariant 
 across age.  Because the sample size at each age was unbalanced, the authors 
