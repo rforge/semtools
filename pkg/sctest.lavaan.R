@@ -28,7 +28,7 @@ sctest.lavaan <- function(x, order.by, parm, stat, fnl = NULL, fplot = FALSE, ..
   
   testres <- sctest(fp, functional = fnl)
 
-  if(fplot) plot(fp, functional = fnl)
+  if(fplot) plot(fp, functional = fnl, ...)
 
   testres
 }
