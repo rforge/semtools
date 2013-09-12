@@ -732,34 +732,131 @@ power and specificity under model misspecification.
 Measurement invariance violations could occur in
 each of the three parameters from Simulation 1 (factor loading,factor covariance,unique
 variance), and they could also occur in the extra, unmodeled loading. 
-Sample size and magnitude of measurementinvariance violation were manipulated 
+Sample size and magnitude of measurement invariance violation were manipulated 
 in the same way as they were in Simulation 1.The tested parameters are the same as Simulation
 1,too.
 
 
 \subsection{Results}
+Results are presented by the parameter that violated measurement invariance.
+Figure~\ref{fig:sim21res} displays results when the unmodeled loading violates 
+measurement invariance. One can generally observe that 
+the first loading and error variance parameter showed high measurement invariance 
+violation simultaneously, while factor covariance did not demonstrate violation.
 
-%<<sim2>>=
-%## seed for replication
-%RNGkind(kind = "default", normal.kind = "default")
-%set.seed(1163)
 
-%if(file.exists("sim2.rda")) {
-%  load("sim2.rda")
-%} else {
-%  sim2 <- simulation(sim="sim2", nobs=480, parms=c("extra","extra+loading","extra+var","extra+error"))
-%  sim2$nlevels <- factor(sim2$nlevels)
-%  levels(sim2$nlevels) <- paste("m=",levels(sim2$nlevels),sep="")
-%  sim2$nobs <- factor(sim2$nobs)
-%  levels(sim2$nobs) <- paste("n=",levels(sim2$nobs),sep="")
-%  levels(sim2$test) <- c("ordmax","ordwmax","catdiff")
-%  save(sim2, file="sim2.rda")
-%}
-%sim2$test <- factor(as.character(sim2$test),
-%  levels = c("ordmax","ordwmax","catdiff"),
-%  labels = c("ordmax","ordwmax","catdiff"))
-%@ 
+Figure~\ref{fig:sim22res} displays results when the loading $\lambda_{11}$ violates
+measurement invariance. Even though lacking one loading associated with the first indicator, 
+statistic showed enough power to detect the first loading violation specifically. 
+Similar pattern of specificity and power were observed when the violation parameter 
+was $\sigma_{12}$ (Figure~\ref{fig:sim23res}) and $\epsilon_{11}$ (Figure~\ref{fig:sim24res}).
 
+In summary, the proposed test statistics appear robust to unmodeled loading parameters,so long
+as the umodeled parameter does not violate measurment invariance. If the unmodeled parameter 
+dose violate measurement invariance, however, then the tests assign this violation to other 
+parameters that do not violate measurement invariance. The impacted parameters include the error
+variance and other loadings associated with the manifest variables that had the unmodeled 
+loading. Thus, prior to testing measurement invariance, it is important to study the extent to
+which the hypothesized model includes all parameters of importance.
+
+
+
+
+
+
+<<sim2>>=
+## seed for replication
+RNGkind(kind = "default", normal.kind = "default")
+set.seed(1163)
+
+if(file.exists("sim2.rda")) {
+  load("sim2.rda")
+} else {
+  sim2 <- simulation(sim="sim2", nobs=480, parms=c("extra","extra+loading","extra+var","extra+error"))
+  sim2$nlevels <- factor(sim2$nlevels)
+  levels(sim2$nlevels) <- paste("m=",levels(sim2$nlevels),sep="")
+  sim2$nobs <- factor(sim2$nobs)
+  levels(sim2$nobs) <- paste("n=",levels(sim2$nobs),sep="")
+  levels(sim2$test) <- c("ordmax","ordwmax","catdiff")
+  save(sim2, file="sim2.rda")
+}
+sim2$test <- factor(as.character(sim2$test),
+  levels = c("ordmax","ordwmax","catdiff"),
+  labels = c("ordmax","ordwmax","catdiff"))
+  levels(sim2$pars) <- c("Loading1","Covariance","Error1","All Loadings","All Errors") 
+@ 
+
+\begin{figure}[H]
+\caption{Simulated power curves for the ordered 
+      $\max\mathit{LM}$ tests, the double-max test and the unordered $\max\mathit{LM}$ across three
+      levels of the ordinal variable $m$, and measurement invariance 
+      violations of 0--4 standard errors (scaled by $\sqrt{n}$). The violation parameter is the lacking loading.}
+\label{fig:sim21res}
+\setkeys{Gin}{width=\textwidth}
+<<sim21res, fig=TRUE, height=7, width=7>>=
+sim2.tmp <- sim2[sim2$test %in% c("ordmax","ordwmax","catdiff")&sim2$parms %in% c("extra"),]
+sim2.tmp$test <- factor(sim2.tmp$test)
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(sim2.tmp$test), points = TRUE, lines = TRUE)
+print(xyplot(power ~ diff | nlevels+pars, group = ~ test, data = sim2.tmp, 
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey))
+@
+
+\end{figure}
+
+\begin{figure}[H]
+\caption{Simulated power curves for the ordered 
+      $\max\mathit{LM}$ tests, the double-max test and the unordered $\max\mathit{LM}$ across three
+      levels of the ordinal variable $m$, and measurement invariance 
+      violations of 0--4 standard errors (scaled by $\sqrt{n}$). The violation parameter is the lacking loading.}
+\label{fig:sim22res}
+\setkeys{Gin}{width=\textwidth}
+<<sim22res, fig=TRUE, height=7, width=7>>=
+sim2.tmp <- sim2[sim2$test %in% c("ordmax","ordwmax","catdiff")&sim2$parms %in% c("extra+loading"),]
+sim2.tmp$test <- factor(sim2.tmp$test)
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(sim2.tmp$test), points = TRUE, lines = TRUE)
+print(xyplot(power ~ diff | nlevels+pars, group = ~ test, data = sim2.tmp, 
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey))
+@
+
+\end{figure}
+
+\begin{figure}[H]
+\caption{Simulated power curves for the ordered 
+      $\max\mathit{LM}$ tests, the double-max test and the unordered $\max\mathit{LM}$ across three
+      levels of the ordinal variable $m$, and measurement invariance 
+      violations of 0--4 standard errors (scaled by $\sqrt{n}$). The violation parameter is the lacking loading.}
+\label{fig:sim23res}
+\setkeys{Gin}{width=\textwidth}
+<<sim23res, fig=TRUE, height=7, width=7>>=
+sim2.tmp <- sim2[sim2$test %in% c("ordmax","ordwmax","catdiff")&sim2$parms %in% c("extra+var"),]
+sim2.tmp$test <- factor(sim2.tmp$test)
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(sim2.tmp$test), points = TRUE, lines = TRUE)
+print(xyplot(power ~ diff | nlevels+pars, group = ~ test, data = sim2.tmp, 
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey))
+@
+
+\end{figure}
+
+\begin{figure}[H]
+\caption{Simulated power curves for the ordered 
+      $\max\mathit{LM}$ tests, the double-max test and the unordered $\max\mathit{LM}$ across three
+      levels of the ordinal variable $m$, and measurement invariance 
+      violations of 0--4 standard errors (scaled by $\sqrt{n}$). The violation parameter is the lacking loading.}
+\label{fig:sim24res}
+\setkeys{Gin}{width=\textwidth}
+<<sim24res, fig=TRUE, height=7, width=7>>=
+sim2.tmp <- sim2[sim2$test %in% c("ordmax","ordwmax","catdiff")&sim2$parms %in% c("extra+error"),]
+sim2.tmp$test <- factor(sim2.tmp$test)
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(sim2.tmp$test), points = TRUE, lines = TRUE)
+print(xyplot(power ~ diff | nlevels+pars, group = ~ test, data = sim2.tmp, 
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey))
+@
+
+\end{figure}
 \section{General Discussion}
 
 In this paper, we examined the recently proposed ordinal statistics specificity property and robustness to model specification to study measurement invariance. As demonstrated in the results, the proposed statistics could select the parameter violating measurement invariance even though the model is misspecified in general. However, when an unmodeled parameter is violating measurement invariance, the statistics will demonstrating these variances in the related parameters, for example, associated loading and error terms. 
