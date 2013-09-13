@@ -255,7 +255,32 @@ This simulation is somewhat computationally intensive and, in practice, takes ab
 as \citeA{MerFanZei} found the performance of the $\max \mathit{LM}_o$ statistic 
 to be considerably better than the $\mathit{WDM}_o$ statistic.
 
+%% TODO Illustrate catL2BB statistic
 
+If $V$ is only nominal/categorical,
+there is not even a partial ordering, i.e., measurement invariance tests should neither
+exploit the ordering of $V$'s levels nor of the observations within the level.
+In this situation, it is possible to obtain a test statistic by first summing scores within
+each of the $m$ levels of the auxiliary variable, then ``summing the sums'' to obtain a test
+statistic \cite{HjoKon02}.  This test statistic can be formally written as
+\begin{equation}
+    \label{eq:lmuo}
+     \mathit{LM}_\mathit{uo} = \sum_{\ell = 1, \dots, m} \sum_{j = 1, \dots, k}
+       \left( {\bm B}(\hat {\bm \theta})_{i_\ell j} - {\bm B}(\hat {\bm \theta})_{i_{\ell - 1}j} \right)^2,
+\end{equation}
+where the first subscript on the two terms in parentheses are $i_\ell$
+and $i_{\ell-1}$, respectively (and where we take $i_0 = 0$, so that
+the cumulative score is ${\bm B}(0, \hat {\bm \theta}) = \bm{0}$).
+Again, tests of subsets of model parameters can be obtained by 
+taking the inner sum over only the $k^* < k$ parameters of interest.
+This test statistic discards the ordinal nature of the auxiliary
+variable, essentially employing the alternative hypothesis
+from~\eqref{eq:h2*}.  A similar issue is observed in testing for
+measurement 
+invariance via multiple groups models and likelihood ratio tests (or,
+equivalently, via Wald tests or Lagrange multiplier tests): we
+can allow $\bm{\theta}$ to be unique at each level of the ordinal
+variable, but the ordinality of the auxiliary variable is lost.
 
 \SweaveOpts{engine = R, eps = FALSE, echo = TRUE, pdf=TRUE}
 \section{Tutorial}
@@ -362,6 +387,13 @@ function, which implies that the GQ-6 violates measurement invariance.
 ## LRT
 anova(full, reduced)
 @
+
+Another similar statistics is unordered $\mathit{LM}_\mathit{uo}$ as shown in Equ. We can obtain this statistic by using the following function. 
+<<Categorical>>=
+## unordered LM
+catdiff <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="range")
+round(c(catdiff$p.value), 2)
+@
 Because our sample size is large, this likelihood ratio test is sensitive to 
 small measurement invariance violations \cite{Ben80}.  Thus, the above test may 
 be significant solely due to the large sample size.  Additionally, the above test 
@@ -374,7 +406,6 @@ differing from every other age group.  We need test statistics that
 are sensitive to measurement invariance violations that are monotonic 
 with age.  The score-based statistics described previously possess this property.
 
-%% TODO Illustrate catL2BB statistic?
 
 \subsection{Continuous Treatment}
 If we are interested in measurement invariance violations that are 
@@ -415,7 +446,6 @@ As demonstrated below, the score computation and testing can be efficiently carr
 dm <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="DM")
 cvm <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="CvM")
 maxlm <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="maxLM")
-
 round(c(dm$p.value, cvm$p.value, maxlm$p.value), 2)
 @
 In the code above, the \verb+parm=1:4+ argument means that 
@@ -506,6 +536,7 @@ maxlmo <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="maxLMo",
 <<ordtest,eval=FALSE>>=
 wdmo <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="WDMo")
 maxlmo <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="maxLMo")
+
 @ 
 <<pvals>>=
 round(c(wdmo$p.value, maxlmo$p.value), 2)
@@ -531,14 +562,15 @@ round(c(wdmo$p.value, maxlmo$p.value), 2)
 \setkeys{Gin}{width=\textwidth}
 <<ordres, fig=TRUE, height=3, width=6, echo=FALSE>>=
 par(mfrow = c(1, 2), cex = 0.65)
-WDMo<-sctest(reduced, as.numeric(yg$agegroup),parm=1:4, stat="WDMo", fplot=TRUE)
+WDMo<-sctest(reduced, as.numeric(yg$agegroup),parm=1:4, stat="WDMo", fplot=TRUE,ylim=c(0,3.5),xlab="Age group",ylab = "Weighted max statistics")
+
 #WDMo 
-maxLMo<-sctest(reduced, as.numeric(yg$agegroup),parm=1:4, stat="maxLMo", fnl=opval1, fplot=TRUE)
+maxLMo<-sctest(reduced,as.numeric(yg$agegroup),parm=1:4, stat="maxLMo", fnl=opval1, fplot=TRUE,ylim=c(0,14),xlab="Age group",ylab = "LM statistics")
 #maxLMo 
 @
 \end{figure}
 
-
+\seeme{can't change age group axis, since order.by argument needs agegroup as numeric}
 
 In computing the ordinal test statistics, we
 obtain~$p=\Sexpr{round(wdmo$p.value,2)}$
@@ -552,7 +584,7 @@ sensitive to anomalous, non-monotonic violations at one (or a few) age groups.
 
 %% TODO Describe graphs
 %% Is there some argument for fplot=TRUE so user can change  axis-name and critical value line
-Plots representing the statistics' fluctuations across levels of age group are displayed in Figure~\ref{fig:ordres}. The left panel displays the process associated with WDM. The right panel displays the process associated with maxLM. In both cases, the test statistics in the sequence assess a split of the observations up to age group $i$ vs. greater than $i$, and the null hypothesis is rejected if the maximum of the statistics is larger than its 5\% critical value(visualized by the horizontal red line). The final group is not displayed because it encompass all observations and always equals to zero. It is observed that both statistics generally increase with age. 
+Plots representing the statistics' fluctuations across levels of age group are displayed in Figure~\ref{fig:ordres}. The left panel displays the process associated with WDM. The right panel displays the process associated with maxLM. In both cases, the test statistics in the sequence assess a split of the observations up to age group $i$ vs. greater than $i$, and the null hypothesis is rejected if the maximum of the statistics is larger than its 5\% critical value(visualized by the horizontal red line). The final group is not displayed because it encompass all observations and always equals to zero. The age group 1:5 in the x-axis corresponds to 10-11, 12-13, 14,15,16 respectively. It is observed that both statistics generally increase with age. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 In the above sections, we have illustrated the score-based tests'
@@ -671,7 +703,7 @@ sim1$test <- factor(as.character(sim1$test),
 \label{fig:sim11res}
 \setkeys{Gin}{width=\textwidth}
 <<sim11res, fig=TRUE, height=7, width=7>>=
-sim1.tmp <- sim1[sim1$test %in% c("ordmax","ordwmax","catdiff")&sim1$parms %in% c("loading"),]
+sim1.tmp <- sim1[sim1$test %in% c("ordmax","ordwmax","catdiff")&sim1$parms %in% c("loading")&sim1$pars %in% c("Loading1","All Loadings","All Errors"),]
 sim1.tmp$test <- factor(sim1.tmp$test)
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim1.tmp$test), points = TRUE, lines = TRUE)
@@ -689,7 +721,7 @@ print(xyplot(power ~ diff | nlevels+pars, group = ~ test, data = sim1.tmp,
 \label{fig:sim12res}
 \setkeys{Gin}{width=\textwidth}
 <<sim12res, fig=TRUE, height=7, width=7>>=
-sim1.tmp <- sim1[sim1$test %in% c("ordmax","ordwmax","catdiff")&sim1$parms %in% c("var"),]
+sim1.tmp <- sim1[sim1$test %in% c("ordmax","ordwmax","catdiff")&sim1$parms %in% c("var") &sim1$pars %in% c("All Loadings", "Covariance","All Errors") ,]
 sim1.tmp$test <- factor(sim1.tmp$test)
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim1.tmp$test), points = TRUE, lines = TRUE)
@@ -707,7 +739,7 @@ print(xyplot(power ~ diff | nlevels+pars, group = ~ test, data = sim1.tmp,
 \label{fig:sim13res}
 \setkeys{Gin}{width=\textwidth}
 <<sim13res, fig=TRUE, height=7, width=7>>=
-sim1.tmp <- sim1[sim1$test %in% c("ordmax","ordwmax","catdiff")&sim1$parms %in% c("error"),]
+sim1.tmp <- sim1[sim1$test %in% c("ordmax","ordwmax","catdiff")&sim1$parms %in% c("error") &sim1$pars %in% c("Error1","All Errors","All Loadings"),]
 sim1.tmp$test <- factor(sim1.tmp$test)
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim1.tmp$test), points = TRUE, lines = TRUE)
@@ -784,6 +816,7 @@ sim2$test <- factor(as.character(sim2$test),
   levels = c("ordmax","ordwmax","catdiff"),
   labels = c("ordmax","ordwmax","catdiff"))
   levels(sim2$pars) <- c("Loading1","Covariance","Error1","All Loadings","All Errors") 
+  levels(sim2$nlevels) <- paste("m=",levels(sim2$nlevels),sep="")
 @ 
 
 \begin{figure}[H]
@@ -794,7 +827,7 @@ sim2$test <- factor(as.character(sim2$test),
 \label{fig:sim21res}
 \setkeys{Gin}{width=\textwidth}
 <<sim21res, fig=TRUE, height=7, width=7>>=
-sim2.tmp <- sim2[sim2$test %in% c("ordmax","ordwmax","catdiff")&sim2$parms %in% c("extra"),]
+sim2.tmp <- sim2[sim2$test %in% c("ordmax","ordwmax","catdiff")&sim2$parms %in% c("extra")&sim2$pars %in% c("Loading1","Error1","Covariance"),]
 sim2.tmp$test <- factor(sim2.tmp$test)
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim2.tmp$test), points = TRUE, lines = TRUE)
@@ -804,6 +837,19 @@ print(xyplot(power ~ diff | nlevels+pars, group = ~ test, data = sim2.tmp,
 
 \end{figure}
 
+
+\section{General Discussion}
+
+In this paper, we examined the recently proposed ordinal statistics specificity property and robustness to model specification to study measurement invariance. As demonstrated in the results, the proposed statistics could select the parameter violating measurement invariance even though the model is misspecified in general. However, when an unmodeled parameter is violating measurement invariance, the statistics will demonstrating these variances in the related parameters, for example, associated loading and error terms. 
+
+These ordinal tests are useful in behavioral and social science in general, since the truly continuous auxiliary variable is hard to find in real research context. It is very common to observe several individuals with the same age, IQ, income rank, etc. Therefore, the ordinal tests which dealing with multiple ties in auxiliary variable is more suitable than the continuous test. 
+
+Moreover, even though researchers might be originally interested in comparing categorical differences. For example, researchers might want to test whether there is gender difference or cultural difference for the scale. Using traditional likelihood test or wald test, there might existing some differences regarding to the categorical variable. Then the next natural question would be why there is gender or culture differences? At this point, researchers might need to examine education level, social economic status, etc, which were often recorded in the ordinal format. Thus these test statistics offer an convenient assessing tool to further exploring research hypothesis without making complicated assumptions or fitting multiple different models.
+
+The core of the proposed ordinal test is to get the cumulative score process, which can be applied to any ML estimation functions or functions relating to maximizing or minimizing some statistics quantity.  
+
+   
+\section{Appendix}
 \begin{figure}[H]
 \caption{Simulated power curves for the ordered 
       $\max\mathit{LM}$ tests, the double-max test and the unordered $\max\mathit{LM}$ across three
@@ -857,18 +903,6 @@ print(xyplot(power ~ diff | nlevels+pars, group = ~ test, data = sim2.tmp,
 @
 
 \end{figure}
-\section{General Discussion}
-
-In this paper, we examined the recently proposed ordinal statistics specificity property and robustness to model specification to study measurement invariance. As demonstrated in the results, the proposed statistics could select the parameter violating measurement invariance even though the model is misspecified in general. However, when an unmodeled parameter is violating measurement invariance, the statistics will demonstrating these variances in the related parameters, for example, associated loading and error terms. 
-
-These ordinal tests are useful in behavioral and social science in general, since the truly continuous auxiliary variable is hard to find in real research context. It is very common to observe several individuals with the same age, IQ, income rank, etc. Therefore, the ordinal tests which dealing with multiple ties in auxiliary variable is more suitable than the continuous test. 
-
-Moreover, even though researchers might be originally interested in comparing categorical differences. For example, researchers might want to test whether there is gender difference or cultural difference for the scale. Using traditional likelihood test or wald test, there might existing some differences regarding to the categorical variable. Then the next natural question would be why there is gender or culture differences? At this point, researchers might need to examine education level, social economic status, etc, which were often recorded in the ordinal format. Thus these test statistics offer an convenient assessing tool to further exploring research hypothesis without making complicated assumptions or fitting multiple different models.
-
-The core of the proposed ordinal test is to get the cumulative score process, which can be applied to any ML estimation functions or functions relating to maximizing or minimizing some statistics quantity.  
-
-   
-
 
 
 
