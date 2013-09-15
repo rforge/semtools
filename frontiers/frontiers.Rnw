@@ -260,27 +260,16 @@ to be considerably better than the $\mathit{WDM}_o$ statistic.
 If $V$ is only nominal/categorical,
 there is not even a partial ordering, i.e., measurement invariance tests should neither
 exploit the ordering of $V$'s levels nor of the observations within the level.
-In this situation, it is possible to obtain a test statistic by first summing scores within
-each of the $m$ levels of the auxiliary variable, then ``summing the sums'' to obtain a test
-statistic \cite{HjoKon02}.  This test statistic can be formally written as
+In this situation, unordered $\mathit{LM}$ is proposed.  This test statistic can be formally written as
 \begin{equation}
     \label{eq:lmuo}
      \mathit{LM}_\mathit{uo} = \sum_{\ell = 1, \dots, m} \sum_{j = 1, \dots, k}
        \left( {\bm B}(\hat {\bm \theta})_{i_\ell j} - {\bm B}(\hat {\bm \theta})_{i_{\ell - 1}j} \right)^2,
 \end{equation}
-where the first subscript on the two terms in parentheses are $i_\ell$
-and $i_{\ell-1}$, respectively (and where we take $i_0 = 0$, so that
-the cumulative score is ${\bm B}(0, \hat {\bm \theta}) = \bm{0}$).
-Again, tests of subsets of model parameters can be obtained by 
-taking the inner sum over only the $k^* < k$ parameters of interest.
 This test statistic discards the ordinal nature of the auxiliary
-variable, essentially employing the alternative hypothesis
-from~\eqref{eq:h2*}.  A similar issue is observed in testing for
-measurement 
-invariance via multiple groups models and likelihood ratio tests (or,
-equivalently, via Wald tests or Lagrange multiplier tests): we
-can allow $\bm{\theta}$ to be unique at each level of the ordinal
-variable, but the ordinality of the auxiliary variable is lost.
+variable, essentially similar to the nature of likelihood ratio tests (or,
+equivalently, via Wald tests or Lagrange multiplier tests): the ordinality of the auxiliary variable is
+ignored. By contrast, this statistics is easier to get compared to likelihood ratio test statistics since it doesn't involve specifying different sets of competitive models. 
 
 \SweaveOpts{engine = R, eps = FALSE, echo = TRUE, pdf=TRUE}
 \section{Tutorial}
@@ -353,8 +342,6 @@ Each of these treatments is described below in a separate section.
 
 \subsection{Categorical Treatment}
 
-\fixme{Need to update the citation below so that the last name is ``van de Schoot''.}
-\seeme{Is it a different paper from vande12?}
 Measurement invariance is most often tested using multiple groups models \cite<see, e.g., >{vande12}.  
 This amounts to assuming that our auxiliary variable is categorical (i.e., unordered), 
 which is not true for the age groups in the data.  However, we demonstrate the procedure for completeness.
@@ -388,12 +375,16 @@ function, which implies that the GQ-6 violates measurement invariance.
 anova(full, reduced)
 @
 
-Another similar statistics is unordered $\mathit{LM}_\mathit{uo}$ as shown in Equ. We can obtain this statistic by using the following function. 
-<<Categorical>>=
+Another similar statistics is $\mathit{LM}_\mathit{uo}$ as shown in Equation~ \eqref{eq:lmuo}. We can obtain this statistic by using the following function. 
+<<LM_UO>>=
 ## unordered LM
-catdiff <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="range")
-round(c(catdiff$p.value), 2)
+lm_u0 <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="range")
+round(c(lm_u0$p.value), 2)
 @
+we wish to test model parameter numbers 1 through 4 (which are the factor loadings), 
+which are supplied by lavaan.  The ordering of parameters can be obtained via the 
+command \verb+coef(reduced)+. 
+
 Because our sample size is large, this likelihood ratio test is sensitive to 
 small measurement invariance violations \cite{Ben80}.  Thus, the above test may 
 be significant solely due to the large sample size.  Additionally, the above test 
@@ -448,10 +439,13 @@ cvm <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="CvM")
 maxlm <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="maxLM")
 round(c(dm$p.value, cvm$p.value, maxlm$p.value), 2)
 @
-In the code above, the \verb+parm=1:4+ argument means that 
-we wish to test model parameter numbers 1 through 4 (which are the factor loadings), 
-which are supplied by lavaan.  The ordering of parameters can be obtained via the 
-command \verb+coef(reduced)+.  We see that two of the three $p$-values output at 
+%% move this code description to the cat2BB part. 
+%In the code above, the \verb+parm=1:4+ argument means that 
+%we wish to test model parameter numbers 1 through 4 (which are the factor loadings), 
+%which are supplied by lavaan.  The ordering of parameters can be obtained via the 
+%command \verb+coef(reduced)+.  
+
+We see that two of the three $p$-values output at 
 the end of the code are larger than that associated with the LRT (with the CvM statistic being non-significant).  
 
 %% TODO Illustrate with graphs?
@@ -542,8 +536,17 @@ maxlmo <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="maxLMo")
 round(c(wdmo$p.value, maxlmo$p.value), 2)
 @ 
 
+In computing the ordinal test statistics, we
+obtain~$p=\Sexpr{round(wdmo$p.value,2)}$
+and~$p=\Sexpr{round(maxlmo$p.value,2)}$, respectively.
+Both $p-$values are clearly larger than that of the 
+likelihood ratio test and neither is significant at $\alpha=0.05$. 
+This provides evidence that there is no measurement
+invariance violation that is monotonic with age group.  Instead, given
+the large sample size, the likelihood ratio test may be overly
+sensitive to anomalous, non-monotonic violations at one (or a few) age groups.
 
-
+Besides, plots can be generated by using \verb+fplot=TRUE+ argument inside of \verb+sctest.lavaan()+ function. Plots representing the statistics' fluctuations across levels of age group are displayed in Figure~\ref{fig:ordres}. The left panel displays the process associated with $\mathit{WDM}$. The right panel displays the process associated with $\mathit{maxLM}$. In both cases, the test statistics in the sequence assess a split of the observations up to age group $i$ vs. greater than $i$, and the null hypothesis is rejected if the maximum of the statistics is larger than its 5\% critical value(visualized by the horizontal red line). The final group is not displayed because it encompass all observations and always equals to zero. The age group 1:5 in the x-axis corresponds to 10-11, 12-13, 14,15,16 respectively. It is observed that both statistics generally increase with age. 
 
 %% gefp1<gefp(reduced,fit=NULL,order.by=as.numeric(yg$agegroup),
 %%        vcov=info_full,sandwich=FALSE,parm=1:4)
@@ -572,19 +575,11 @@ maxLMo<-sctest(reduced,as.numeric(yg$agegroup),parm=1:4, stat="maxLMo", fnl=opva
 
 \seeme{can't change age group axis, since order.by argument needs agegroup as numeric}
 
-In computing the ordinal test statistics, we
-obtain~$p=\Sexpr{round(wdmo$p.value,2)}$
-and~$p=\Sexpr{round(maxlmo$p.value,2)}$, respectively.
-Both $p-$values are clearly larger than that of the 
-likelihood ratio test and neither is significant at $\alpha=0.05$. 
-This provides evidence that there is no measurement
-invariance violation that is monotonic with age group.  Instead, given
-the large sample size, the likelihood ratio test may be overly
-sensitive to anomalous, non-monotonic violations at one (or a few) age groups.
+
 
 %% TODO Describe graphs
 %% Is there some argument for fplot=TRUE so user can change  axis-name and critical value line
-Plots representing the statistics' fluctuations across levels of age group are displayed in Figure~\ref{fig:ordres}. The left panel displays the process associated with WDM. The right panel displays the process associated with maxLM. In both cases, the test statistics in the sequence assess a split of the observations up to age group $i$ vs. greater than $i$, and the null hypothesis is rejected if the maximum of the statistics is larger than its 5\% critical value(visualized by the horizontal red line). The final group is not displayed because it encompass all observations and always equals to zero. The age group 1:5 in the x-axis corresponds to 10-11, 12-13, 14,15,16 respectively. It is observed that both statistics generally increase with age. 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 In the above sections, we have illustrated the score-based tests'
@@ -623,8 +618,15 @@ individual parameters noted above, all six factor loadings $\lambda_{11}--\lambd
 all six unique variances $\epsilon_{11}--\epsilon_{66}$. The path diagram is shown in  
 Figure~\ref{fig:path}.
 
+\begin{figure}[H]
+\caption{Path diagram representing the factor analysis model 
+         used for simulations.}
+\label{fig:path}
+\includegraphics{PathDiagram}
+\end{figure}
+
 Power and Type I error were examined across three sample sizes
-($n=120,480,960$) , three numbers of categories ($m=4,8,12$)and
+($n=120,480,960$), three numbers of categories ($m=4,8,12$) and
 17 magnitudes of invariance violations. 
 The measurement invariance violations began at level $1+m/2$ of $V$
 and were consistent thereafter. These
@@ -685,12 +687,12 @@ if(file.exists("sim1.rda")) {
  
   sim1$nobs <- factor(sim1$nobs)
   levels(sim1$nobs) <- paste("n=",levels(sim1$nobs),sep="")
-  levels(sim1$test) <- c("ordmax","ordwmax","catdiff")
+  levels(sim1$test) <- c("maxLM_O","WDM_O","LM_uO")
   save(sim1, file="sim1.rda")
 }
 sim1$test <- factor(as.character(sim1$test),
   levels = c("ordmax","ordwmax","catdiff"),
-  labels = c("ordmax","ordwmax","catdiff"))
+  labels = c("maxLM_o","WDM_o","LM_uo"))
   levels(sim1$pars) <- c("Loading1","Covariance","Error1","All Loadings","All Errors")  
 
 @ 
@@ -703,7 +705,7 @@ sim1$test <- factor(as.character(sim1$test),
 \label{fig:sim11res}
 \setkeys{Gin}{width=\textwidth}
 <<sim11res, fig=TRUE, height=7, width=7>>=
-sim1.tmp <- sim1[sim1$test %in% c("ordmax","ordwmax","catdiff")&sim1$parms %in% c("loading")&sim1$pars %in% c("Loading1","All Loadings","All Errors"),]
+sim1.tmp <- sim1[sim1$parms %in% c("loading")& sim1$pars %in% c("Loading1","All Loadings","All Errors"),]
 sim1.tmp$test <- factor(sim1.tmp$test)
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim1.tmp$test), points = TRUE, lines = TRUE)
@@ -721,7 +723,7 @@ print(xyplot(power ~ diff | nlevels+pars, group = ~ test, data = sim1.tmp,
 \label{fig:sim12res}
 \setkeys{Gin}{width=\textwidth}
 <<sim12res, fig=TRUE, height=7, width=7>>=
-sim1.tmp <- sim1[sim1$test %in% c("ordmax","ordwmax","catdiff")&sim1$parms %in% c("var") &sim1$pars %in% c("All Loadings", "Covariance","All Errors") ,]
+sim1.tmp <- sim1[sim1$test %in% c("maxLM_o","WDM_o","LM_uo")&sim1$parms %in% c("var") &sim1$pars %in% c("All Loadings", "Covariance","All Errors") ,]
 sim1.tmp$test <- factor(sim1.tmp$test)
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim1.tmp$test), points = TRUE, lines = TRUE)
@@ -739,7 +741,7 @@ print(xyplot(power ~ diff | nlevels+pars, group = ~ test, data = sim1.tmp,
 \label{fig:sim13res}
 \setkeys{Gin}{width=\textwidth}
 <<sim13res, fig=TRUE, height=7, width=7>>=
-sim1.tmp <- sim1[sim1$test %in% c("ordmax","ordwmax","catdiff")&sim1$parms %in% c("error") &sim1$pars %in% c("Error1","All Errors","All Loadings"),]
+sim1.tmp <- sim1[sim1$test %in% c("maxLM_o","WDM_o","LM_uo")&sim1$parms %in% c("error") &sim1$pars %in% c("Error1","All Errors","All Loadings"),]
 sim1.tmp$test <- factor(sim1.tmp$test)
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim1.tmp$test), points = TRUE, lines = TRUE)
@@ -759,7 +761,6 @@ indicator (of the first factor).  The estimated model lacks this extra
 loading, however. The goal of this simulation is to examine the proposed statistics'
 power and specificity under model misspecification.
 
-
 \subsection{Method}
 Measurement invariance violations could occur in
 each of the three parameters from Simulation 1 (factor loading,factor covariance,unique
@@ -767,7 +768,6 @@ variance), and they could also occur in the extra, unmodeled loading.
 Sample size and magnitude of measurement invariance violation were manipulated 
 in the same way as they were in Simulation 1.The tested parameters are the same as Simulation
 1,too.
-
 
 \subsection{Results}
 Results are presented by the parameter that violated measurement invariance.
@@ -777,11 +777,11 @@ the first loading and error variance parameter showed high measurement invarianc
 violation simultaneously, while factor covariance did not demonstrate violation.
 
 
-Figure~\ref{fig:sim22res} displays results when the loading $\lambda_{11}$ violates
-measurement invariance. Even though lacking one loading associated with the first indicator, 
+When the loading $\lambda_{11}$ violates
+measurement invariance, even though lacking one loading associated with the first indicator, 
 statistic showed enough power to detect the first loading violation specifically. 
 Similar pattern of specificity and power were observed when the violation parameter 
-was $\sigma_{12}$ (Figure~\ref{fig:sim23res}) and $\epsilon_{11}$ (Figure~\ref{fig:sim24res}).
+was $\sigma_{12}$ and $\epsilon_{11}$. Figures are shown in Appendix for simplicity.
 
 In summary, the proposed test statistics appear robust to unmodeled loading parameters,so long
 as the umodeled parameter does not violate measurment invariance. If the unmodeled parameter 
@@ -790,11 +790,6 @@ parameters that do not violate measurement invariance. The impacted parameters i
 variance and other loadings associated with the manifest variables that had the unmodeled 
 loading. Thus, prior to testing measurement invariance, it is important to study the extent to
 which the hypothesized model includes all parameters of importance.
-
-
-
-
-
 
 <<sim2>>=
 ## seed for replication
@@ -805,18 +800,18 @@ if(file.exists("sim2.rda")) {
   load("sim2.rda")
 } else {
   sim2 <- simulation(sim="sim2", nobs=480, parms=c("extra","extra+loading","extra+var","extra+error"))
-  sim2$nlevels <- factor(sim2$nlevels)
-  levels(sim2$nlevels) <- paste("m=",levels(sim2$nlevels),sep="")
-  sim2$nobs <- factor(sim2$nobs)
-  levels(sim2$nobs) <- paste("n=",levels(sim2$nobs),sep="")
-  levels(sim2$test) <- c("ordmax","ordwmax","catdiff")
+
   save(sim2, file="sim2.rda")
 }
 sim2$test <- factor(as.character(sim2$test),
   levels = c("ordmax","ordwmax","catdiff"),
-  labels = c("ordmax","ordwmax","catdiff"))
-  levels(sim2$pars) <- c("Loading1","Covariance","Error1","All Loadings","All Errors") 
+  labels = c("maxLM_o","WDM_o","LM_uo"))
+  sim2$nlevels <- factor(sim2$nlevels)
   levels(sim2$nlevels) <- paste("m=",levels(sim2$nlevels),sep="")
+  sim2$nobs <- factor(sim2$nobs)
+  levels(sim2$nobs) <- paste("n=",levels(sim2$nobs),sep="")
+  levels(sim2$pars) <- c("Loading1","Covariance","Error1","All Loadings","All Errors") 
+
 @ 
 
 \begin{figure}[H]
@@ -827,7 +822,7 @@ sim2$test <- factor(as.character(sim2$test),
 \label{fig:sim21res}
 \setkeys{Gin}{width=\textwidth}
 <<sim21res, fig=TRUE, height=7, width=7>>=
-sim2.tmp <- sim2[sim2$test %in% c("ordmax","ordwmax","catdiff")&sim2$parms %in% c("extra")&sim2$pars %in% c("Loading1","Error1","Covariance"),]
+sim2.tmp <- sim2[sim2$test %in% c("maxLM_o","WDM_o","LM_uo")&sim2$parms %in% c("extra")&sim2$pars %in% c("Loading1","Error1","Covariance"),]
 sim2.tmp$test <- factor(sim2.tmp$test)
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim2.tmp$test), points = TRUE, lines = TRUE)
@@ -846,8 +841,10 @@ These ordinal tests are useful in behavioral and social science in general, sinc
 
 Moreover, even though researchers might be originally interested in comparing categorical differences. For example, researchers might want to test whether there is gender difference or cultural difference for the scale. Using traditional likelihood test or wald test, there might existing some differences regarding to the categorical variable. Then the next natural question would be why there is gender or culture differences? At this point, researchers might need to examine education level, social economic status, etc, which were often recorded in the ordinal format. Thus these test statistics offer an convenient assessing tool to further exploring research hypothesis without making complicated assumptions or fitting multiple different models.
 
-The core of the proposed ordinal test is to get the cumulative score process, which can be applied to any ML estimation functions or functions relating to maximizing or minimizing some statistics quantity.  
+We focused on testing for measurement invariance in factor analysis model in this paper, however, the core of the proposed ordinal test is to get the cumulative score process, which can be applied to any ML estimation functions or functions relating to maximizing or minimizing some statistics quantity. For example, studying DIF in IRT is immediate.  
 
+In summary, the ordinal test statistic proposed have relatively-high power for detecting measurement invariance violation parameter specifically that are monotonic with the auxiliary ordinal variable. This
+feature is robust as long as the violation parameter is included in the testing model. Furthermore, as illustrated in tutorial part, the use of these tests is convenient without changing the focal psychometric model. In all, the tests have advantageous properties that should be implemented in practice.
    
 \section{Appendix}
 \begin{figure}[H]
@@ -858,7 +855,7 @@ The core of the proposed ordinal test is to get the cumulative score process, wh
 \label{fig:sim22res}
 \setkeys{Gin}{width=\textwidth}
 <<sim22res, fig=TRUE, height=7, width=7>>=
-sim2.tmp <- sim2[sim2$test %in% c("ordmax","ordwmax","catdiff")&sim2$parms %in% c("extra+loading"),]
+sim2.tmp <- sim2[sim2$test %in% c("maxLM_o","WDM_o","LM_uo")&sim2$parms %in% c("extra+loading"),]
 sim2.tmp$test <- factor(sim2.tmp$test)
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim2.tmp$test), points = TRUE, lines = TRUE)
@@ -876,7 +873,7 @@ print(xyplot(power ~ diff | nlevels+pars, group = ~ test, data = sim2.tmp,
 \label{fig:sim23res}
 \setkeys{Gin}{width=\textwidth}
 <<sim23res, fig=TRUE, height=7, width=7>>=
-sim2.tmp <- sim2[sim2$test %in% c("ordmax","ordwmax","catdiff")&sim2$parms %in% c("extra+var"),]
+sim2.tmp <- sim2[sim2$test %in% c("maxLM_o","WDM_o","LM_uo")&sim2$parms %in% c("extra+var"),]
 sim2.tmp$test <- factor(sim2.tmp$test)
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim2.tmp$test), points = TRUE, lines = TRUE)
@@ -894,7 +891,7 @@ print(xyplot(power ~ diff | nlevels+pars, group = ~ test, data = sim2.tmp,
 \label{fig:sim24res}
 \setkeys{Gin}{width=\textwidth}
 <<sim24res, fig=TRUE, height=7, width=7>>=
-sim2.tmp <- sim2[sim2$test %in% c("ordmax","ordwmax","catdiff")&sim2$parms %in% c("extra+error"),]
+sim2.tmp <- sim2[sim2$test %in% c("maxLM_o","WDM_o","LM_uo")&sim2$parms %in% c("extra+error"),]
 sim2.tmp$test <- factor(sim2.tmp$test)
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim2.tmp$test), points = TRUE, lines = TRUE)

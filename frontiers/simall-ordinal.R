@@ -484,4 +484,6 @@ mykey <- simpleKey(levels(simtry.tmp$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars + parms, group = ~ test, data = simtry.tmp, 
              type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey)
 dev.off()
+
+ 
 }
