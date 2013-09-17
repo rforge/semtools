@@ -20,7 +20,8 @@ sctest.lavaan <- function(x, order.by, parm, stat, fnl = NULL, fplot = FALSE, ..
                   DM = maxBB,
                   CvM = meanL2BB,
                   maxLM = supLM(0.1),
-                  range = rangeBB)
+                  range = rangeBB,
+                  LMuo = catL2BB(fp))
   }
 
   ## If stat argument is messed up

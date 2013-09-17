@@ -21,34 +21,28 @@
 \twoaffiliations{University of Missouri}{Universit\"{a}t Innsbruck}
 
 \abstract{
-We study a family of 
-recently-proposed measurement invariance tests that are derived from
-stochastic processes.  As applied to factor analysis and other
-psychometric models, the tests are advantageous in that (i) they do
-not require advance definition of subgroups of cases that violate
-measurement invariance; (ii) they can potentially identify specific
-model parameters that violate measurement invariance; and (iii) they
-do not require a model of additional complexity to be estimated.  
-Because the tests have been applied to only a small number of
-psychometric examples, we conduct a series of simulation studies that provide
-a detailed examination of test properties.  These studies allow us
-to study (details here).  The studies indicate that.}
+In this paper, we consider a family of 
+recently-proposed measurement invariance tests that are based on the {\em scores} of a fitted model.  This family can be used to test for measurement invariance
+w.r.t.\ a continuous auxiliary variable, without pre-specification of subgroups.
+Moreover, the family can be used when one wishes to test for 
+measurement invariance w.r.t.\ an ordinal auxiliary variable, yielding test
+statistics that are sensitive to violations that are monotonically related to
+the ordinal variable (and less sensitive to non-monotonic violations).  The paper is specifically aimed at potential users of the tests who may wish to know (i) how the tests can be employed for their data, and (ii) whether the tests can accurately identify measurement invariance violations in the presence of model misspecification.  After providing an overview of the tests, we illustrate their general use via the R packages lavaan and strucchange.  We then describe two novel simulations that provide evidence of the tests' practical abilities.  As a whole, the paper provides researchers with the tools and knowledge needed to apply these tests to general measurement invariance scenarios.}
 
 
-\SweaveOpts{engine = R, eps = FALSE, echo = FALSE, pdf=TRUE}
 
 \acknowledgements{This work was supported by National Science
   Foundation grant SES-1061334. 
-  Correspondence to. 
-  Email: }
+  Correspondence to Edgar Merkle. 
+  Email: merklee@missouri.edu.}
 \shorttitle{Measurement invariance test properties}
 \rightheader{Measurement invariance test properties}
 
 \newcommand{\argmax}{\operatorname{argmax}\displaylimits}
 %% for internal use
 \newcommand{\fixme}[1]{\emph{\marginpar{FIXME} (#1)}}
-\newcommand{\readme}[1]{\emph{\marginpar{README} (#1)}}
-\newcommand{\seeme}[1]{\emph{\marginpar{SEEME} (#1)}}
+\newcommand{\readme}[1]{\emph{\marginpar{Ed} (#1)}}
+\newcommand{\seeme}[1]{\emph{\marginpar{Ting} (#1)}}
 
 
 \spacing{1}
@@ -88,6 +82,7 @@ get_boundary <- function(obj, fun, trim = 0) {
 info_full <- function(x, ...) solve(vcov(x) * nobs(x))
 @
 
+\readme{We need a better intro here.  The special topic is about measurement invariance, so most of this paragraph is obvious to everyone.  Maybe start with how so many other papers are about BSEM.}
 Parameter invariance is a fundamental assumption for measurement model in 
 developing psychometric scales. Violation of it could happen in any estimated parameter.  
 In order to fix the psychometric scale, we need to specify the violating parameter.  
@@ -138,7 +133,7 @@ where $\ell(\theta; x_i)$ is the likelihood associated with individual
 $i$, $\theta$ is a $k$-dimensional parameter vector, and
 $\hat{\theta}$ is the maximum likelihood estimate.  The cross-product
 of these scores forms the ``meat'' for the calculation of robust
-(Huber-White) standard errors \cite{freed06}. \seeme{not sure about this citation}
+(Huber-White) standard errors \cite<e.g.,>{zei06b}.
 
 To verbally describe the above equation, each
 individual has $k$ scores describing the extent to which the fitted
@@ -251,27 +246,23 @@ Critical values associated with the $\mathit{WDM}_o$ statistic can be obtained
 directly from a multivariate normal distribution \cite<see>{hotzei08}, while 
 critical values associated with $\max \mathit{LM}_o$ can be obtained via simulation.  
 This simulation is somewhat computationally intensive and, in practice, takes about 
-10 minutes on the authors' computers.  However, the wait appears to be worth it, 
+10 minutes on the authors' computers.  However, the wait is often worth it, 
 as \citeA{MerFanZei} found the performance of the $\max \mathit{LM}_o$ statistic 
 to be considerably better than the $\mathit{WDM}_o$ statistic.
 
 %% TODO Illustrate catL2BB statistic
 
-If $V$ is only nominal/categorical,
-there is not even a partial ordering, i.e., measurement invariance tests should neither
-exploit the ordering of $V$'s levels nor of the observations within the level.
-In this situation, unordered $\mathit{LM}$ is proposed.  This test statistic can be formally written as
+Finally, if $V$ is only nominal/categorical, the cumulative sums of scores can be used to obtain the a Lagrange multiplier statistic.
+This test statistic can be formally written as
 \begin{equation}
     \label{eq:lmuo}
      \mathit{LM}_\mathit{uo} = \sum_{\ell = 1, \dots, m} \sum_{j = 1, \dots, k}
        \left( {\bm B}(\hat {\bm \theta})_{i_\ell j} - {\bm B}(\hat {\bm \theta})_{i_{\ell - 1}j} \right)^2,
 \end{equation}
-This test statistic discards the ordinal nature of the auxiliary
-variable, essentially similar to the nature of likelihood ratio tests (or,
-equivalently, via Wald tests or Lagrange multiplier tests): the ordinality of the auxiliary variable is
-ignored. By contrast, this statistics is easier to get compared to likelihood ratio test statistics since it doesn't involve specifying different sets of competitive models. 
+and it is asymptotically equivalent to the usual, likelihood ratio test statistic.  It is advantageous over the likelihood ratio test because it requires estimation of only one model (the restricted model).  We make use of this advantage in the simulations, described later.
 
-\SweaveOpts{engine = R, eps = FALSE, echo = TRUE, pdf=TRUE}
+
+
 \section{Tutorial}
 
 In this section, we demonstrate how the above tests can be carried out in~R, 
@@ -375,27 +366,25 @@ function, which implies that the GQ-6 violates measurement invariance.
 anova(full, reduced)
 @
 
+\readme{I just added LMuo to the sctest command; the range statistic is different.}
 Another similar statistics is $\mathit{LM}_\mathit{uo}$ as shown in Equation~ \eqref{eq:lmuo}. We can obtain this statistic by using the following function. 
 <<LM_UO>>=
 ## unordered LM
-lm_u0 <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="range")
-round(c(lm_u0$p.value), 2)
+lm_uo <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="LMuo")
+round(lm_uo$p.value, 4)
 @
-we wish to test model parameter numbers 1 through 4 (which are the factor loadings), 
-which are supplied by lavaan.  The ordering of parameters can be obtained via the 
-command \verb+coef(reduced)+. 
+The above command specifies that we wish to test model parameter numbers 1 through 4, which are the factor loadings supplied by lavaan.  The ordering of parameters can be obtained via the command \verb+coef(reduced)+. 
 
-Because our sample size is large, this likelihood ratio test is sensitive to 
-small measurement invariance violations \cite{Ben80}.  Thus, the above test may 
-be significant solely due to the large sample size.  Additionally, the above test 
-is sensitive to small measurement invariance violations that are not likely to be 
+Because our sample size is large, this likelihood ratio test is known to be sensitive to 
+small measurement invariance violations \cite{Ben80}.  That is, the above tests 
+are sensitive to small measurement invariance violations that are not likely to be 
 of interest to researchers.  For example, imagine that the 15-year-olds' 
 parameters are slightly different than the other age groups.  
 The 15-year-olds are in the middle of the age groups, and there 
 is not likely to be any theoretical justification for 15-year-olds 
-differing from every other age group.  We need test statistics that 
-are sensitive to measurement invariance violations that are monotonic 
-with age.  The score-based statistics described previously possess this property.
+differing from every other age group.  One solution to this problem would be the {\em approximate invariance} methods proposed by Muth\'{e}n and others.\readme{Ting: Can you get some approximate invariance references and put them here?}
+Alternatively, we can use the proposed family of score-based statistics to obtain tests that are sensitive to the ordering of age.
+
 
 
 \subsection{Continuous Treatment}
@@ -405,10 +394,10 @@ age groups as continuous.  In doing so, we can use the statistics
 from Equations~\eqref{eq:dmax},~\eqref{eq:cvm}, and~\eqref{eq:maxlm}.  
 That is, we can fit a model whose parameters 
 are restricted to be equal across all individuals and then examine 
-how individuals' scores $s(\hat{theta};x_{i})$ fluctuate with their
+how individuals' scores $s(\hat{\theta};x_{i})$ fluctuate with their
 age (where age ties are broken arbitrarily).
 This is demonstrated below, with similar code being useful when one is 
-testing measurement invariance w.r.t.\ other continuous variables.
+testing measurement invariance w.r.t.\ truly continuous variables.
 
 
 %% The multiple group test performs typically well when the $V$ 
@@ -419,7 +408,7 @@ testing measurement invariance w.r.t.\ other continuous variables.
 %% the Background section.
 
 To proceed, we focus only on the restricted model that was fit in 
-the previous section (the object \verb+reduced+).  We obtain scores 
+the previous section (stored in the object \verb+reduced+).  We obtain scores 
 associated with the factor loadings from this model, then test the 
 fluctuation of these scores across \verb+agegroup+.  
 As demonstrated below, the score computation and testing can be efficiently carried out using \verb+sctest.lavaan()+.
@@ -444,7 +433,6 @@ round(c(dm$p.value, cvm$p.value, maxlm$p.value), 2)
 %we wish to test model parameter numbers 1 through 4 (which are the factor loadings), 
 %which are supplied by lavaan.  The ordering of parameters can be obtained via the 
 %command \verb+coef(reduced)+.  
-
 We see that two of the three $p$-values output at 
 the end of the code are larger than that associated with the LRT (with the CvM statistic being non-significant).  
 
@@ -483,7 +471,7 @@ the strucchange package implicitly assumed an arbitrary ordering of
 individuals who are tied on age.  If we were to change this ordering, 
 the resulting statistics and $p$-values would also change, which is obviously problematic.  
 To accurately account for the multiple observations  
-at the same age level, we must used the ordinal tests from 
+at the same age level, we must use the ordinal tests from 
 Equations~\eqref{eq:wdm} and~\eqref{eq:maxlmo}.  These are described next.
 
 \subsection{Ordinal Treatment}
@@ -494,8 +482,7 @@ Equations~\eqref{eq:wdm} and~\eqref{eq:maxlmo}.  These are described next.
 %% proposed here are similar to those described in Equation 
 %% and above, except that we focus on "bins" of individuals 
 %% at each level of the ordinal variable.  
-
-The difference between the ordinal test statistics and their
+The main difference between the ordinal test statistics and their
 continuous counterparts is that the ordinal statistics do not require
 an ordering of individuals  
 within the same age group.  To compute the test statistics, we allow
@@ -513,8 +500,10 @@ To carry out the tests, we can rely on the same function that we used
 for the continuous test statistics.  As mentioned previously,
 calculation of the ``maxLMo'' statistic (Equation~\eqref{eq:maxlmo})
 can be lengthy from the need to simulate critical values.
-
-<<critvals,echo=FALSE>>=
+%% This is more complicated than necessary, but it is written like
+%% this so that we can load the ordinal critical values behind the
+%% scenes without confusing the reader.
+<<critvals,echo=FALSE,strip.white=all>>=
 if(file.exists("opval1.rda")){
   load("opval1.rda")
 } else {
@@ -526,17 +515,13 @@ wdmo <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="WDMo")
 maxlmo <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="maxLMo",
                  fnl=opval1)
 @ 
-
-<<ordtest,eval=FALSE>>=
+<<ordtest,eval=FALSE,strip.white=all>>=
 wdmo <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="WDMo")
 maxlmo <- sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="maxLMo")
 @ 
-<<pvals>>=
+<<pval,strip.white=all>>=
 round(c(wdmo$p.value, maxlmo$p.value), 2)
 @ 
-
-\seeme{I don't know how to adjust the line interval space for the code part.}
-
 In computing the ordinal test statistics, we
 obtain~$p=\Sexpr{round(wdmo$p.value,2)}$
 and~$p=\Sexpr{round(maxlmo$p.value,2)}$, respectively.
@@ -547,7 +532,11 @@ invariance violation that is monotonic with age group.  Instead, given
 the large sample size, the likelihood ratio test may be overly
 sensitive to anomalous, non-monotonic violations at one (or a few) age groups.
 
-Besides, plots can be generated by using \verb+fplot=TRUE+ argument inside of \verb+sctest.lavaan()+ function. Plots representing the statistics' fluctuations across levels of age group are displayed in Figure~\ref{fig:ordres}. The left panel displays the process associated with $\mathit{WDM}$. The right panel displays the process associated with $\mathit{maxLM}$. In both cases, the test statistics in the sequence assess a split of the observations up to age group $i$ vs. greater than $i$, and the null hypothesis is rejected if the maximum of the statistics is larger than its 5\% critical value(visualized by the horizontal red line). The final group is not displayed because it encompass all observations and always equals to zero. The age group 1:5 in the x-axis corresponds to 10-11, 12-13, 14,15,16 respectively. It is observed that both statistics generally increase with age. 
+In addition to test statistics, ``instability plots'' can be generated by using the \verb+fplot=TRUE+ argument within \verb+sctest.lavaan()+. Plots representing the statistics' fluctuations across levels of age group are displayed in Figure~\ref{fig:ordres}. The left panel displays the process associated with $\mathit{WDM}_o$, and the right panel displays the process associated with $\max\mathit{LM}_o$. 
+%The following sentence is not correct for all statistics.  
+%In both cases, the test statistics in the sequence assess a split of the observations up to age group $i$ vs. greater than $i$, and the null hypothesis is rejected if the maximum of the statistics is larger than its 5\% critical value(visualized by the horizontal red line). 
+These plots display the loadings' fluctuation across age groups, with the x-axis reflecting age group and the y-axis reflecting test statistic values (larger values reflect more instability).  The red lines reflect critical values, so that the hypothesis of measurement invariance is rejected if a black line crosses the red line.  While the measurement invariance tests are non-significant, the plots imply some instability in the older age groups (15 and 16).
+
 
 %% gefp1<gefp(reduced,fit=NULL,order.by=as.numeric(yg$agegroup),
 %%        vcov=info_full,sandwich=FALSE,parm=1:4)
@@ -561,21 +550,24 @@ Besides, plots can be generated by using \verb+fplot=TRUE+ argument inside of \v
 
 %Or alternatively, we could use the sctest.lavaan function, but assign ordinal statistics.
 \begin{figure}[H]
-\caption{Fluctuation processes for the WDM statistic(left panel) and the maxLM statistic(right panel)}
+\caption{Fluctuation processes for the $\mathit{WDM}_o$ statistic (left panel) and the $\max\mathit{LM}_o$ statistic (right panel).}
 \label{fig:ordres}
 \setkeys{Gin}{width=\textwidth}
-<<ordres, fig=TRUE, height=3, width=6, echo=FALSE>>=
+<<ordres, fig=TRUE, height=3, width=6, echo=FALSE, results=hide>>=
 par(mfrow = c(1, 2), cex = 0.65)
-WDMo<-sctest(reduced, as.numeric(yg$agegroup),parm=1:4, stat="WDMo", fplot=TRUE,ylim=c(0,3.5),xlab="Age group",ylab = "Weighted max statistics")
+sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="WDMo", 
+       fplot=TRUE, ylim=c(0,3.5), xlab="Age group",
+       ylab = "Weighted max statistics", axes=FALSE)
+axis(1, at = 1:5, labels = c("10-11", "12-13", "14", "15", "16"))
+box()
 
-#WDMo 
-maxLMo<-sctest(reduced,as.numeric(yg$agegroup),parm=1:4, stat="maxLMo", fnl=opval1, fplot=TRUE,ylim=c(0,14),xlab="Age group",ylab = "LM statistics")
-#maxLMo 
+sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="maxLMo", 
+       fnl=opval1, fplot=TRUE, ylim=c(0,14), xlab="Age group",
+       ylab = "LM statistics", axes = FALSE)
+axis(1, at = 1:5, labels = c("10-11", "12-13", "14", "15", "16"))
+box()
 @
 \end{figure}
-
-\seeme{can't change age group axis, since order.by argument needs agegroup as numeric}
-
 
 
 %% TODO Describe graphs
@@ -594,8 +586,7 @@ ordinal statistics attribute measurement invariance violations to the
 correct parameter(s), and (ii) the extent to which the tests are
 robust to model misspecification.
 
-\SweaveOpts{engine = R, eps = FALSE, echo = FALSE, pdf=TRUE}
-\section{Simulation}
+
 \section{Simulation 1}
 In Simulation 1, we examined the extent to which the proposed tests
 are sensitive to the specific model parameter that violates measurement
@@ -675,7 +666,7 @@ simulation, the model was correctly specified.  In the following
 simulations, we examine the tests' performance when the model is
 misspecified.
 
-<<sim1>>=
+<<sim1,echo=FALSE>>=
 ## seed for replication
 RNGkind(kind = "default", normal.kind = "default")
 set.seed(1163)
@@ -696,7 +687,6 @@ sim1$test <- factor(as.character(sim1$test),
   levels = c("ordmax","ordwmax","catdiff"),
   labels = c("maxLM_o","WDM_o","LM_uo"))
   levels(sim1$pars) <- c("Loading1","Covariance","Error1","All Loadings","All Errors")  
-
 @ 
 
 \begin{figure}[H]
