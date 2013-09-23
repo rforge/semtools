@@ -10,6 +10,7 @@
 \documentclass[doc]{apa}
 \usepackage{graphicx,epsfig,amsmath,alltt,setspace,bm,float}
 \usepackage[english]{babel}
+\usepackage{tikz}
 
 
 
@@ -612,15 +613,85 @@ We then tested for measurement invariance in seven subsets of parameters: the th
 individual parameters noted above, all six factor loadings $\lambda_{11}--\lambda_{62}$, 
 all six unique variances $\epsilon_{11}--\epsilon_{66}$. The path diagram is shown in  
 Figure~\ref{fig:path}.
+\seeme{How to refer this figure?}
 
-\begin{figure}
-\caption{Path diagram representing the factor analysis model 
-         used for simulations.}
-\label{fig:path}
-\includegraphics{PathDiagram}
-\end{figure}
+%\begin{figure}
+%\caption{Path diagram representing the factor analysis model 
+%         used for simulations.}
+%\label{fig:path}
+%\includegraphics{PathDiagram}
+%\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Plot Code
 
-\seeme{When I make the picture bigger, the symbols became blur. I think I might need to work on the plot tex file.}
+\begin{tikzpicture}
+[latent/.style={circle,draw=black!50,fill=white!20,thick,
+                inner sep=0pt, minimum width=20mm, minimum height=10mm},
+ manifest/.style={rectangle,draw=black!50,fill=white!20,thick,
+                inner sep=0pt,minimum width=20mm, minimum height=10mm},
+ error/.style={circle,draw=black!50,fill=white!20,thick,
+                inner sep=0pt, minimum width=10mm},
+ post/.style={->,shorten >=1pt,>=stealth',semithick},
+ sling/.style={<->,shorten >=1pt,>=stealth',shorten <=1pt,>=stealth',auto,distance=20mm,semithick},
+ errorsling/.style={<->,shorten >=1pt,>=stealth',shorten <=1pt,>=stealth',auto,distance=10mm,semithick}]
+
+
+
+%position objects.
+
+\node[latent] (VERBAL) at (0,4) {VERBAL};
+\node[latent] (MATH)   at (0,0) {MATH};
+
+\node[manifest] (SCALE1) at(5,6) {SCALE1};
+\node[manifest] (SCALE2) at (5,4.5) {SCALE2};
+\node[manifest] (SCALE3) at (5,3) {SCALE3};
+\node[manifest] (SCALE4) at(5,1) {SCALE4};
+\node[manifest] (SCALE5) at (5,-0.5) {SCALE5};
+\node[manifest] (SCALE6) at (5,-2) {SCALE6};
+
+\node[error] (E1) at (7,6) {E1};
+\node[error] (E2) at (7,4.5) {E2};
+\node[error] (E3) at (7,3) {E3};
+\node[error] (E4) at (7,1) {E4};
+\node[error] (E5) at (7,-0.5) {E5};
+\node[error] (E6) at (7,-2) {E6};
+
+%arrows, slings and texts
+\node[latent] (VERBAL) at (0,4) {VERBAL}
+   edge [post] node[above=0.01cm,text width=2cm]{\scriptsize{$\lambda_{11}=4.92$}} (SCALE1)
+   edge [post] node[above=0.001mm,text width=2cm]{\scriptsize{$\lambda_{21}=2.96$}} (SCALE2)
+   edge [post] node[above=0.1cm,text width=2cm]{\scriptsize{$\lambda_{31}=5.96$}} (SCALE3)
+   edge [sling,bend right=100] node[auto,swap]{1}(VERBAL.-180)
+   edge [sling,bend right=70] node[auto,swap]{$\phi_{12}=-0.48$}(MATH)  ;
+
+\node[latent] (MATH) at (0,0) {MATH}
+   edge [post] node[above=0.01cm,text width=2cm]{\scriptsize{$\lambda_{42}=3.24$}}(SCALE4)
+   edge [post] node[above=0.01cm,text width=2cm]{\scriptsize{$\lambda_{52}=4.32$}}(SCALE5)
+   edge [post] node[above=0.25cm,text width=2cm]{\scriptsize{$\lambda_{62}=7.21$}}(SCALE6)
+   edge [sling,bend right=100] node[auto,swap]{1}(MATH.270);
+
+\node[error] (E1) at (7,6) {E1}
+   edge [post] node[auto,swap]{\small{1}}(SCALE1)
+   edge [errorsling, bend right=100]node[right=0.1,text width=2cm]{\scriptsize{$\psi_{11}=26.77$}} (E1.45);
+\node[error] (E2) at (7,4.5) {E2}
+   edge [post] node[auto,swap]{\small{1}} (SCALE2)
+   edge [errorsling, bend right=100] node[right=0.1,text width=2cm]{\scriptsize{$\psi_{22}=13.01$}}(E2.45);
+\node[error] (E3) at (7,3) {E3}
+   edge [post] node[auto,swap]{\small{1}}(SCALE3)
+   edge [errorsling, bend right=100] node[right=0.1,text width=2cm]{\scriptsize{$\psi_{33}=30.93$}}(E3.45);
+\node[error] (E4) at (7,1) {E4}
+   edge [post] node[auto,swap]{\small{1}}(SCALE4)
+   edge [errorsling, bend right=100] node[right=0.1,text width=2cm]{\scriptsize{$\psi_{44}=3.17$}}(E4.45);
+\node[error] (E5) at (7,-0.5) {E5}
+   edge [post] node[auto,swap]{\small{1}}(SCALE5)
+   edge [errorsling, bend right=100] node[right=0.1,text width=2cm]{\scriptsize{$\psi_{55}=8.82$}} (E5.45);
+\node[error] (E6) at (7,-2) {E6}
+   edge [post] node[auto,swap]{\small{1}}(SCALE6)
+   edge [errorsling, bend right=100] node[right=0.1,text width=2cm]{\scriptsize{$\psi_{11}=22.5$}}(E6.45);
+
+\end{tikzpicture}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Power and Type I error were examined across three sample sizes
 ($n=120,480,960$), three numbers of categories ($m=4,8,12$) and
 17 magnitudes of invariance violations. 
