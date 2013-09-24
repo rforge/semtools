@@ -12,7 +12,8 @@
 \usepackage[english]{babel}
 \usepackage{tikz}
 
-
+% Seems necessary for texlive 2012?
+\usetikzlibrary{arrows}
 
 
 
@@ -256,7 +257,7 @@ Finally, if $V$ is only nominal/categorical, the cumulative sums of scores can b
 This test statistic can be formally written as
 \begin{equation}
     \label{eq:lmuo}
-     \mathit{LM}_\mathit{uo} = \sum_{\ell = 1, \dots, m} \sum_{j = 1, \dots, k}
+     \mathit{LM}_{uo} = \sum_{\ell = 1, \dots, m} \sum_{j = 1, \dots, k}
        \left( {\bm B}(\hat {\bm \theta})_{i_\ell j} - {\bm B}(\hat {\bm \theta})_{i_{\ell - 1}j} \right)^2,
 \end{equation}
 and it is asymptotically equivalent to the usual, likelihood ratio test statistic.  It is advantageous over the likelihood ratio test because it requires estimation of only one model (the restricted model).  We make use of this advantage in the simulations, described later.
@@ -595,25 +596,25 @@ In Simulation 1, we examined the extent to which the proposed tests
 are sensitive to the specific model parameter that violates measurement
 invariance.  If, say, a factor loading violates measurement
 invariance, it is plausible that this violation impacts other
-parameters such as factor covariances or other loadings 
+parameter estimates, including factor covariances or other loadings 
 associated with the factor in question.  Thus, the goal of the
-simulation was to examine the extent to which the proposed tests
+Simulation 1 is to examine the extent to which the proposed tests
 attribute the measurement invariance violation to the parameters that
 are truly in violation.  
 
 \subsection{Methods}
 
 To examine these specificity issues, we generated data from a
-two-factor model with three indicators each (the same model used in
-Merkle and Zeileis, \citeyearNP{MerZei13}). The measurement invariance
-violation occurred in one of three places: the factor loadings
- $\lambda_{11}--\lambda_{62}$, the unique variance associated
- $\epsilon_{11}--\epsilon_{66}$, or the factor covariance $\sigma_{12}$.  
+two-factor model with three indicators each (see Figure~\ref{fig:path}).
+\readme{Please make sure the text below is correct.  The previous text stated that the violation occurs in all loadings and all unique variances.}
+The measurement invariance
+violation occurred in one of three places: the factor loading associated with Scale 1 
+ ($\lambda_{11}$), the unique variance associated with Scale 1
+ ($\epsilon_{11}$), or the factor covariance $\sigma_{12}$.  
 We then tested for measurement invariance in seven subsets of parameters: the three
-individual parameters noted above, all six factor loadings $\lambda_{11}--\lambda_{62}$, 
-all six unique variances $\epsilon_{11}--\epsilon_{66}$. The path diagram is shown in  
-Figure~\ref{fig:path}.
-\seeme{How to refer this figure?}
+individual parameters noted above, all six factor loadings, % $\lambda_{11}--\lambda_{62}$, and 
+and all six unique variances. % $\epsilon_{11}--\epsilon_{66}$.
+
 
 %\begin{figure}
 %\caption{Path diagram representing the factor analysis model 
@@ -624,6 +625,9 @@ Figure~\ref{fig:path}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Plot Code
 
+\begin{figure}
+    \caption{General model used for the simulations.}
+    \label{fig:path}
 \begin{tikzpicture}
 [latent/.style={circle,draw=black!50,fill=white!20,thick,
                 inner sep=0pt, minimum width=20mm, minimum height=10mm},
@@ -690,6 +694,7 @@ Figure~\ref{fig:path}.
    edge [errorsling, bend right=100] node[right=0.1,text width=2cm]{\scriptsize{$\psi_{11}=22.5$}}(E6.45);
 
 \end{tikzpicture}
+\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Power and Type I error were examined across three sample sizes
@@ -703,13 +708,14 @@ percentile  by $d$ times the parameters' asymptotic standard errors
 (scaled by $\sqrt n$), with $d=0,0,25,0.5,...,4$. 
 For each combination of sample size ($n$) $\times$ violation
 magnitude ($d$) $\times$ violating parameter $\times$ categories $m$, 5000 datasets were
-generated and tested. Four statistics were examined above. In all conditions, we
+generated and tested. Four statistics were examined above. \readme{What four statistics?  Equation numbers would be helpful.} 
+In all conditions, we
 maintained equal sample sizes at each level of the ordinal variable. 
 
 \subsection{Results}
+\readme{When referring to statistics, it would be good to use the notation from Equations 6--8.  For example, instead of ``unordered $\max\mathit{LM}$'', you would have $\max\mathit{LM}_{uo}$.}
 Full simulation results are presented in Figure~\ref{fig:sim11res} to 
-Figure~\ref{fig:sim13res}; all three test statistics exhibited 
-similar results, with unordered  $\max\mathit{LM}$ demonstrated lower powers across all situations. ordered $\max\mathit{LM}$ and double-max exhibited equivalent power curves since there is only one parameter violating measurement invariance. Thus, different ways of aggregating $\bm B(\hat{\theta})$ would be the same.
+Figure~\ref{fig:sim13res}; 
 Figure~\ref{fig:sim11res} displays power curves as a function of 
 violation magnitude for the first
 factor loading $\lambda_{11}$, with panels reflecting the parameters 
@@ -718,6 +724,9 @@ Figures~\ref{fig:sim12res} and Figure~\ref{fig:sim13res} display
 similar power curves when the factor covariance 
 $\phi_{12}$ and error variance $\epsilon_{11}$ violate measurement
 invariance, respectively. 
+All three test statistics exhibited 
+similar results, with unordered  $\max\mathit{LM}$ demonstrated lower powers across all situations. ordered $\max\mathit{LM}$ and double-max exhibited equivalent power curves because, when only one parameter is tested, the statistics are equivalent.
+
 
 From these figures, one generally observe that the tests isolate 
 the parameter violating measurement invariance.  Additionally, the tests 
@@ -730,6 +739,7 @@ testing a subset of parameters (only one of which violates measurement
 invariance), we are effectively dampening the signal of a measurement
 invariance violation.  
 
+\readme{We need to compare the specific tests: the unordered test, which mimics the LRT, has lower power.}
 
 In summary, we found that the proposed tests can attribute
 measurement invariance violations to the correct parameter.  This
@@ -738,7 +748,7 @@ tests' abilities to locate the measurement invariance violation.  Of
 course, this statement is qualified by the fact that, in this
 simulation, the model was correctly specified.  In the following
 simulations, we examine the tests' performance when the model is
-misspecified.
+misspecified. \readme{The plots have too many points; maybe we should only plot  every other diff value.  In the xyplot command, you could add the argument \verb+subset = diff %% .5 == 0+.}
 
 <<sim1,echo=FALSE>>=
 ## seed for replication
@@ -818,37 +828,37 @@ print(xyplot(power ~ diff | nlevels+pars, group = ~ test, data = sim1.tmp,
 \end{figure}
 
 \seeme{I think it might be nicer to keep these plots all have three rows?(Not sure)}
+
+
 \section{Simulation 2}
 In Simulation 2, we examine the extent to which the results of
 Simulation 1 are robust to model misspecification. Specifically, we
 generate data from the factor analysis model used in the previous
-section, but with adding an extra loading from the second factor to the first
-indicator (of the first factor).  The estimated model lacks this extra
-loading, however. The goal of this simulation is to examine the proposed statistics'
-power and specificity under model misspecification.
+section, except that the model contains an extra loading from the second factor to Scale 1.
+The estimated model matches that displayed in Figure~\ref{fig:path}, however, resulting in model misspecification.  The goal of this simulation is to examine the proposed statistics'
+power and specificity under this misspecification.
 
 \subsection{Method}
+\readme{Make sure there is space after each period and comma, the beginning of each sentence is capitalized, etc.}
 Measurement invariance violations could occur in
-each of the three parameters from Simulation 1 (factor loading,factor covariance,unique
-variance), and they could also occur in the extra, unmodeled loading. 
+each of the three parameters from Simulation 1 (factor loading, factor covariance, and unique variance), and they could also occur in the extra, unmodeled loading.  In each condition, a single parameter exhibited the violation.
 Sample size and magnitude of measurement invariance violation were manipulated 
-in the same way as they were in Simulation 1.The tested parameters are the same as Simulation
-1,too.
+in the same way as they were in Simulation 1.The tested parameters were also the same as Simulation
+1.
 
 \subsection{Results}
 Results are presented by the parameter that violated measurement invariance.
-Figure~\ref{fig:sim21res} displays results when the unmodeled loading violates 
+Of primary interest is Figure~\ref{fig:sim21res}, which displays results when the unmodeled loading violates 
 measurement invariance. One can generally observe that 
-the first loading and error variance parameter showed high measurement invariance 
-violation simultaneously, while factor covariance did not demonstrate violation.
+tests of the first loading and error variance parameter exhibited high power, reflecting a high Type I error rate.  Tests associated with the factor covariance did not demonstrate this error, however.
 
+\readme{Need some comparison between the unordered and ordered tests.}
 
-When the loading $\lambda_{11}$ violates
-measurement invariance, even though lacking one loading associated with the first indicator, 
-statistic showed enough power to detect the first loading violation specifically. 
-Similar pattern of specificity and power were observed when the violation parameter 
-was $\sigma_{12}$ and $\epsilon_{11}$. Figures are shown in Appendix for simplicity.
+When the modeled factor loading, $\lambda_{11}$, violated
+measurement invariance, the statistics were generally able to pick up the violation despite the misspecification.
+A similar pattern of specificity and power were observed when the unique variance and factor covariance paraameters violated measurement invariance; the figures associated with these results are shown in the Appendix.
 
+\readme{We should say something about how the unordered test looks better when the unmodeled parameter violates MI.}
 In summary, the proposed test statistics appear robust to unmodeled loading parameters,so long
 as the umodeled parameter does not violate measurment invariance. If the unmodeled parameter 
 dose violate measurement invariance, however, then the tests assign this violation to other 
