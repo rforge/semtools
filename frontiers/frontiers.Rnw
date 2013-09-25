@@ -725,10 +725,10 @@ similar power curves when the factor covariance
 $\phi_{12}$ and error variance $\epsilon_{11}$ violate measurement
 invariance, respectively. 
 All three test statistics exhibited 
-similar results, with unordered  $\max\mathit{LM}$ demonstrated lower powers across all situations. ordered $\max\mathit{LM}$ and double-max exhibited equivalent power curves because, when only one parameter is tested, the statistics are equivalent.
+similar results, with unordered  $\max\mathit{LM}$ demonstrating lower power across all situations. ordered $\max\mathit{LM}$ and double-max exhibited equivalent power curves because, when only one parameter is tested, the statistics are equivalent. \readme{Should say that the unordered statistic is asymptotically equivalent to the LRT.}
 
 
-From these figures, one generally observe that the tests isolate 
+From these figures, one generally observes that the tests isolate 
 the parameter violating measurement invariance.  Additionally, the tests 
 have somewhat-higher power to detect measurement invariance violations 
 in the factor loading and factor covariance parameters, as opposed to the error variance
@@ -739,7 +739,6 @@ testing a subset of parameters (only one of which violates measurement
 invariance), we are effectively dampening the signal of a measurement
 invariance violation.  
 
-\readme{We need to compare the specific tests: the unordered test, which mimics the LRT, has lower power.}
 
 In summary, we found that the proposed tests can attribute
 measurement invariance violations to the correct parameter.  This
@@ -748,7 +747,7 @@ tests' abilities to locate the measurement invariance violation.  Of
 course, this statement is qualified by the fact that, in this
 simulation, the model was correctly specified.  In the following
 simulations, we examine the tests' performance when the model is
-misspecified. \readme{The plots have too many points; maybe we should only plot  every other diff value.  In the xyplot command, you could add the argument \verb+subset = diff %% .5 == 0+.}
+misspecified. \readme{The plots have too many points; maybe we should only plot  every other diff value.  In the xyplot command, you could add the argument ``subset = diff \%\% .5 == 0''.}
 
 <<sim1,echo=FALSE>>=
 ## seed for replication
@@ -770,23 +769,35 @@ if(file.exists("sim1.rda")) {
 sim1$test <- factor(as.character(sim1$test),
   levels = c("ordmax","ordwmax","catdiff"),
   labels = c("maxLM_o","WDM_o","LM_uo"))
+  parlabs <- c(expression(lambda[11]), expression(phi[12]), 
+               expression(psi[11]), expression(lambda[11] - lambda[62]), 
+               expression(psi[11] - psi[66]))
   levels(sim1$pars) <- c("Loading1","Covariance","Error1","All Loadings","All Errors")  
-@ 
+@
 
 \begin{figure}
 \caption{Simulated power curves for the ordered 
-      $\max\mathit{LM}$ tests, the double-max test and the unordered $\max\mathit{LM}$ across three
-      levels of the ordinal variable $m$, and measurement invariance 
-      violations of 0--4 standard errors (scaled by $\sqrt{n}$). The violation parameter is Loading1.}
+      $\max\mathit{LM}$ test, the double-max test, and the unordered $\max\mathit{LM}$ test across three
+      levels of the ordinal variable $m$ and measurement invariance 
+      violations of 0--4 standard errors (scaled by $\sqrt{n}$). The parameter violating measurement invariance is $\lambda_{11}$.}
 \label{fig:sim11res}
 \setkeys{Gin}{width=\textwidth}
 <<sim11res, fig=TRUE, height=7, width=7, echo=FALSE>>=
-sim1.tmp <- sim1[sim1$parms %in% c("loading")& sim1$pars %in% c("Loading1","All Loadings","All Errors"),]
-sim1.tmp$test <- factor(sim1.tmp$test)
+#sim1.tmp <- sim1[sim1$parms %in% c("loading")& sim1$pars %in% c("Loading1","All Loadings","All Errors"),]
+#sim1.tmp$test <- factor(sim1.tmp$test)
 trellis.par.set(theme = canonical.theme(color = FALSE))
-mykey <- simpleKey(levels(sim1.tmp$test), points = TRUE, lines = TRUE)
-print(xyplot(power ~ diff | nlevels+pars, group = ~ test, data = sim1.tmp, 
-             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey))
+mykey <- simpleKey(levels(sim1$test), points = TRUE, lines = TRUE)
+print(xyplot(power ~ diff | nlevels+pars, group = ~ test, data = sim1,
+             subset = (parms=="loading" & 
+                      pars %in% c("Loading1","All Loadings","All Errors")),
+             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey,
+             strip = function(..., which.given, factor.levels){
+                 if(which.given==2){
+                     strip.default(which.given, factor.levels = parlabs[c(1,4:5)], ...)
+                 } else {
+                     strip.default(which.given, factor.levels = factor.levels, ...)
+                 }
+             }))
 @
 
 \end{figure}
