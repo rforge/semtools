@@ -52,6 +52,7 @@ the ordinal variable (and less sensitive to non-monotonic violations).  The pape
 \begin{document}
 \maketitle
 
+\include{Sweave}
 <<preliminaries1,echo=FALSE>>=
 ## packages
 library("lavaan")
@@ -344,7 +345,7 @@ To conduct the analysis, we first load the data and keep only complete cases for
 ## Reading in the data
 data("YouthGratitude",package="psychotools")
 
-## remove cases with 'imputed' values(not in 1,...,9)
+## remove cases with imputed values(not in 1,...,9)
 compcases <- apply(YouthGratitude[,4:28], 1, function(x) all(x %in% 1:9))
 yg <- YouthGratitude[compcases,]
 @
@@ -352,12 +353,12 @@ Next, we fit two models in lavaan: a one-factor model where loadings are restric
 to be equal across age groups, and a one-factor model where loadings are free across age groups.
 <<modest>>=
 ## Restricted model
-reduced <- cfa('f1=~gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5',
+reduced <- cfa("f1=~gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
              data=yg, group="agegroup", meanstructure=TRUE,
              group.equal="loadings")
 
 ## Unrestricted model
-full <- cfa('f1=~gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5',
+full <- cfa("f1=~gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
              data=yg, group="agegroup", meanstructure=TRUE)
 @
 Finally, we can get the results of a likelihood ratio test via the \verb+anova()+ 
@@ -691,7 +692,7 @@ and all six unique variances. % $\epsilon_{11}--\epsilon_{66}$.
    edge [errorsling, bend right=100] node[right=0.1,text width=2cm]{\scriptsize{$\psi_{55}=8.82$}} (E5.45);
 \node[error] (E6) at (7,-2) {E6}
    edge [post] node[auto,swap]{\small{1}}(SCALE6)
-   edge [errorsling, bend right=100] node[right=0.1,text width=2cm]{\scriptsize{$\psi_{11}=22.5$}}(E6.45);
+   edge [errorsling, bend right=100] node[right=0.1,text width=2cm]{\scriptsize{$\psi_{66}=22.5$}}(E6.45);
 
 \end{tikzpicture}
 \end{figure}
