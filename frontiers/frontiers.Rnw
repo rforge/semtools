@@ -813,7 +813,7 @@ print(xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
 \end{figure}
 
 \begin{figure}
-\caption{Simulated power curves for $\max \mathit{LM}_o$ tests, $\mathit{WDM}_o$ test $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$, and measurement invariance violations of 0--4 standard errors (scaled by $\sqrt{n}$). The violation parameter is $\sigma_{12}$}
+\caption{Simulated power curves for $\max \mathit{LM}_o$ tests, $\mathit{WDM}_o$ test $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$, and measurement invariance violations of 0--4 standard errors (scaled by $\sqrt{n}$). The parameter violating measurement invariance is $\sigma_{12}$}
 \label{fig:sim12res}
 \setkeys{Gin}{width=\textwidth}
 <<sim12res, fig=TRUE, height=7, width=7, echo=FALSE>>=
@@ -836,7 +836,7 @@ print(xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
 
 \begin{figure}
 \caption{Simulated power curves for $\max \mathit{LM}_o$ test, $\mathit{WDM}_o$ test, and $\mathit{LM}_{uo}$ test across three levels of the ordinal variable $m$ and measurement invariance 
-violations of 0--4 standard errors (scaled by $\sqrt{n}$). The violation parameter is $\psi{11}$}
+violations of 0--4 standard errors (scaled by $\sqrt{n}$). The parameter violating measurement invariance is $\psi{11}$}
 \label{fig:sim13res}
 \setkeys{Gin}{width=\textwidth}
 <<sim13res, fig=TRUE, height=7, width=7, echo=FALSE>>=
@@ -925,7 +925,7 @@ sim2$test <- factor(as.character(sim2$test),
 
 \begin{figure}
 \caption{Simulated power curves for $\max \mathit{LM}_o$ test, $\mathit{WDM}_o$ test, and $\mathit{LM}_{uo}$ test across three levels of the ordinal variable $m$ and measurement invariance 
-violations of 0--4 standard errors (scaled by $\sqrt{n}$). The violation parameter is the lacking loading.}
+violations of 0--4 standard errors (scaled by $\sqrt{n}$). The parameter violating measurement invariance is the unmodeled loading.}
 \label{fig:sim21res}
 \setkeys{Gin}{width=\textwidth}
 <<sim21res, fig=TRUE, height=7, width=7, echo=FALSE>>=
@@ -949,17 +949,28 @@ print(xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 
 \section{General Discussion}
 
+\readme{First, summarize each step of the paper: In this paper, we first described a novel family of test statistics for measurement invariance and illustrated their use via the R package lavaan.  Next, we examined these statistics' ability to -.  We found -.}
 In this paper, we examined the recently proposed ordinal statistics specificity property and robustness to model specification to study measurement invariance. As demonstrated in the results, the proposed statistics could select the modeled parameter violating measurement invariance even though the model is misspecified in general.  
 
-\subsection{Application}
-These ordinal tests are useful in behavioral and social science in general, since the truly continuous auxiliary variable is hard to find in real research context. It is very common to observe several individuals with the same age, IQ, income rank, etc. Therefore, the ordinal tests which dealing with multiple ties in auxiliary variable is more suitable than the continuous test. 
+\readme{Now we need another short paragraph here describing what we will say in the sections below.}
 
-Moreover, even though researchers might be originally interested in comparing categorical differences. For example, researchers might want to test whether there is gender difference or cultural difference for the scale. Using traditional likelihood test or wald test, there might existing some differences regarding to the categorical variable. Then the next natural question would be why there is gender or culture differences? At this point, researchers might need to examine education level, social economic status, etc, which were often recorded in the ordinal format. Thus these test statistics offer an convenient assessing tool to further exploring research hypothesis without making complicated assumptions or fitting multiple different models.
+\subsection{Applications}
+
+Many of the applications in this volume, along with many applications in general, focus on testing for measurement invariance across unordered categories such as nations or gender.  As discussed earlier in this paper, the score-based tests for unordered categories are essentially equivalent to the usual likelihood ratio test.  Given a measurement invariance violation across these unordered categories, however, researchers typically wish to know why the violation occurred.  At this point, researchers may examine education level, socioeconomic status, income levels, and so on across the unordered categories.  These variables are often ordinal or continuous in nature, so that the family of tests described in this paper are applicable.  This is a first step towards describing why measurement invariance violations occur, as opposed to simply detecting measurement invariance violations. \readme{In the frontiers abstracts, one paper was proposed along these lines.  I will get a draft of that paper and then we can cite it here.}
+The tests are convenient for this purpose, as they do not require a new model to be estimated for each ordinal variable.  Instead, each ordinal variable defines an ordering of observations, which in turn yields a test statistic that is specific to that ordinal variable.
+
+%% I'm not sure we want to make a big deal of this.  If there are only a small number of ties, we are probably better off with the continuous tests:
+%These ordinal tests are useful in behavioral and social science in general, since the truly continuous auxiliary variable is hard to find in real research context. It is very common to observe several individuals with the same age, IQ, income rank, etc. Therefore, the ordinal tests which dealing with multiple ties in auxiliary variable is more suitable than the continuous test. 
+
+%Moreover, even though researchers might be originally interested in comparing categorical differences. For example, researchers might want to test whether there is gender difference or cultural difference for the scale. Using traditional likelihood test or wald test, there might existing some differences regarding to the categorical variable. Then the next natural question would be why there is gender or culture differences? . Thus these test statistics offer an convenient assessing tool to further exploring research hypothesis without making complicated assumptions or fitting multiple different models.
 
 \subsection{Extension}
-We focused on testing for measurement invariance in factor analysis model in this paper, however, the core of the proposed ordinal test is to get the cumulative score process, which can be applied to any ML estimation functions or functions relating to maximizing or minimizing some statistics quantity. For example, studying DIF in IRT is immediate.  
+In this paper, We focused on testing for measurement invariance in factor analysis models that assume multivariate normality and that are estimated via ML.  The family of tests described here generally apply to estimation methods that maximize/minimize a fit function, however \cite<see>{zeihor07}, so they are potentially applicable to alternative SEM discrepancy functions such as Weighted Least Squares CITE.  Score calculation for these alternative discrepancy functions has not been implemented (to our knowledge), though the calculation certainly could be implemented.  Test statistic calculation and inference would then proceed in exactly the same manner as the calculation and inference illustrated in this paper.
+
+In addition to alternative fit functions, the tests can be extended to other models estimated via ML.  Of primary interest to the topic of measurement invariance, the tests can be extended to item response models to examine differential item functioning.  In particular, \citeA{strkop13} studied application of these tests to the Rasch model, using them as the basis of a recursive partioning procedure that segments subgroups of individuals who exhibit DIF.  Further study and extension of these tests for IRT seem warranted.
 
 \subsection{Conclusion}
+\readme{Not sure whether we need this paragraph, but I still need to think about it.}
 In summary, the ordinal test statistic proposed have relatively-high power for detecting measurement invariance violation parameter specifically that are monotonic with the auxiliary ordinal variable. This
 feature is robust as long as the violation parameter is included in the testing model. Furthermore, as illustrated in tutorial part, the use of these tests is convenient without changing the focal psychometric model. In all, the tests have advantageous properties that should be implemented in practice.
    
@@ -986,7 +997,7 @@ available at \url{http://semtools.R-Forge.R-project.org/}.
 
 \section{Appendix}
 
-This Appendix demonstrated the results for Simulation 2 when there exists model misspecification (lacking one path from Scale 1 to Math). Figure ~\ref{fig:sim22res} to Figure ~\ref{fig:sim24res} showed the violation parameter is first loading $\lambda_{11}$, covariance $\sigma{12}$ and 
+This Appendix demonstrated the results for Simulation 2 when there exists model misspecification (lacking one path from Scale 1 to Math). Figure ~\ref{fig:sim22res} to Figure ~\ref{fig:sim24res} showed the violation parameter is first loading $\lambda_{11}$, covariance $\sigma_{12}$ and 
 first error term $\psi_{11}$, respectively. 
 
 \begin{figure}
