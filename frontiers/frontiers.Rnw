@@ -396,7 +396,7 @@ of interest to researchers.  For example, imagine that the 15-year-olds'
 parameters are slightly different than the other age groups.  
 The 15-year-olds are in the middle of the age groups, and there 
 is not likely to be any theoretical justification for 15-year-olds 
-differing from every other age group.  One solution to this problem would be the {\em approximate invariance} methods proposed by Muth\'{e}n \cite{muthen13}\seeme{How to handle muthen's name in refs.bib file?}.
+differing from every other age group.  One solution to this problem would be the {\em approximate invariance} methods proposed by Muth\'{e}n \cite{muthen13}.
 Alternatively, we can use the proposed family of score-based statistics to obtain tests that are sensitive to the ordering of age.
 
 
@@ -949,10 +949,11 @@ print(xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 
 \section{General Discussion}
 
-\readme{First, summarize each step of the paper: In this paper, we first described a novel family of test statistics for measurement invariance and illustrated their use via the R package lavaan.  Next, we examined these statistics' ability to -.  We found -.}
-In this paper, we examined the recently proposed ordinal statistics specificity property and robustness to model specification to study measurement invariance. As demonstrated in the results, the proposed statistics could select the modeled parameter violating measurement invariance even though the model is misspecified in general.  
 
-\readme{Now we need another short paragraph here describing what we will say in the sections below.}
+In this paper, we first described a novel family of test statistics for measurement invariance and illustrated their use via the R package lavaan. Next, we examined these statistics' ability to specifically pick up the violation parameter and specificity robustness to model specification. We found the proposed statistics could select the modeled parameter violating measurement invariance even though the model is misspecified in general. 
+
+In the reminder of the paper, we will first consider the applicability of these tests in exploring the reason of measurement invariance. Next, the extension of these tests to other fit functions and more specialized models will be discussed. 
+\seeme{Are these two paragraphs OK?}
 
 \subsection{Applications}
 
@@ -965,7 +966,7 @@ The tests are convenient for this purpose, as they do not require a new model to
 %Moreover, even though researchers might be originally interested in comparing categorical differences. For example, researchers might want to test whether there is gender difference or cultural difference for the scale. Using traditional likelihood test or wald test, there might existing some differences regarding to the categorical variable. Then the next natural question would be why there is gender or culture differences? . Thus these test statistics offer an convenient assessing tool to further exploring research hypothesis without making complicated assumptions or fitting multiple different models.
 
 \subsection{Extension}
-In this paper, We focused on testing for measurement invariance in factor analysis models that assume multivariate normality and that are estimated via ML.  The family of tests described here generally apply to estimation methods that maximize/minimize a fit function, however \cite<see>{zeihor07}, so they are potentially applicable to alternative SEM discrepancy functions such as Weighted Least Squares CITE.  Score calculation for these alternative discrepancy functions has not been implemented (to our knowledge), though the calculation certainly could be implemented.  Test statistic calculation and inference would then proceed in exactly the same manner as the calculation and inference illustrated in this paper.
+In this paper, We focused on testing for measurement invariance in factor analysis models that assume multivariate normality and that are estimated via ML.  The family of tests described here generally apply to estimation methods that maximize/minimize a fit function, however \cite<see>{zeihor07}, so they are potentially applicable to alternative SEM discrepancy functions such as Weighted Least Squares \cite{bollen98}.  Score calculation for these alternative discrepancy functions has not been implemented (to our knowledge), though the calculation certainly could be implemented.  Test statistic calculation and inference would then proceed in exactly the same manner as the calculation and inference illustrated in this paper.
 
 In addition to alternative fit functions, the tests can be extended to other models estimated via ML.  Of primary interest to the topic of measurement invariance, the tests can be extended to item response models to examine differential item functioning.  In particular, \citeA{strkop13} studied application of these tests to the Rasch model, using them as the basis of a recursive partioning procedure that segments subgroups of individuals who exhibit DIF.  Further study and extension of these tests for IRT seem warranted.
 
