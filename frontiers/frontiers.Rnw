@@ -15,23 +15,18 @@
 % Seems necessary for texlive 2012?
 \usetikzlibrary{arrows}
 
-
-
-
 \title{Score-based tests of measurement invariance: Use in practice}
 \twoauthors{Ting Wang and Edgar C.\ Merkle}{Achim Zeileis}
 \twoaffiliations{University of Missouri}{Universit\"{a}t Innsbruck}
 
 \abstract{
 In this paper, we consider a family of 
-recently-proposed measurement invariance tests that are based on the {\em scores} of a fitted model.  This family can be used to test for measurement invariance
+recently-proposed measurement invariance tests that are based on the scores of a fitted model.  This family can be used to test for measurement invariance
 w.r.t.\ a continuous auxiliary variable, without pre-specification of subgroups.
 Moreover, the family can be used when one wishes to test for 
 measurement invariance w.r.t.\ an ordinal auxiliary variable, yielding test
 statistics that are sensitive to violations that are monotonically related to
 the ordinal variable (and less sensitive to non-monotonic violations).  The paper is specifically aimed at potential users of the tests who may wish to know (i) how the tests can be employed for their data, and (ii) whether the tests can accurately identify measurement invariance violations in the presence of model misspecification.  After providing an overview of the tests, we illustrate their general use via the R packages lavaan and strucchange.  We then describe two novel simulations that provide evidence of the tests' practical abilities.  As a whole, the paper provides researchers with the tools and knowledge needed to apply these tests to general measurement invariance scenarios.}
-
-
 
 \acknowledgements{This work was supported by National Science
   Foundation grant SES-1061334. 
@@ -85,22 +80,11 @@ get_boundary <- function(obj, fun, trim = 0) {
 info_full <- function(x, ...) solve(vcov(x) * nobs(x))
 @
 
+Many of the papers in this special issue focus on the topic of approximate measurement invariance: we know that strict hypotheses of measurement invariance do not hold exactly across different groups, and this should be reflected in tests of measurement invariance.  BSEM
+(Bayesian Structural Equation Modeling) generally handles these ideas by replacing across-group equality constraints with informative prior distributions.  In this paper, we describe an alternative approach: the development of test statistics that are sensitive to invariance violations of interest and insensitive to ``anomalous'' invariance violations.  The test statistics are specifically applicable to situations where one wishes to test for measurement invariance with respect to an ordinal variable, and they are special cases of a family of tests that may generally be used to study measurement invariance w.r.t.\ continuous, categorical, and ordinal variables.
 
-Parameter invariance is a fundamental assumption for measurement model in 
-developing psychometric scales. Violation of it could happen in any degree. 
-Generally, researchers want to ignore minor violation parameters, e.g. random 
-normally distributed deviations from a parameter value across groups. BSEM
-(Bayesian Structural Equation Modelling) is proposed not to pick up this kind of 
-violating parameters but only "real" violating ones by assigning priors instead of strictly 
-constraining equality across groups. After identifying the violation parameters, 
-those non-invariant parameters are freely estimated to ensure final correct estimation.
-
-Instead of using this two-step Bayesian analysis procedure, we are applying a family of tests derived
-from stochastic process. These tests have been recently proposed to identify specific parameters impacted by measurement invariance. However, they have only been used to a limited type of parameter violation. It is this paper's intent to provide a detailed examination 
-of the tests' performance under practical research scenarios. Specifically, we will examine these tests
-specificity in identifying the violation parameter without giving false positive results. Moreover, in practice model misspecification is an inevitable issue to a certain extent, we will demonstrate these tests
-results under model misspecification condition. 
-\seeme{What about this intro? too much BSEM?}
+The family of tests described in this paper have recently been studied in the context of measurement invariance \cite{MerZei13,MerFanZei}, though their practical application has been limited to a small set of simulations and datasets.  In this paper, we provide a detailed illustration of the tests' use in practice and a detailed examination 
+of the tests' performance under scenarios likely to be encountered in practice. 
 %In order to fix the psychometric scale, we need to specify the violating parameter.  
 %Moreover, in practice model misspecification is an inevitable issue to a certain extent 
 %and may interfere with parameter invariance specificity. A family of tests derived from 
@@ -108,13 +92,11 @@ results under model misspecification condition.
 %by measurement invariance violation. However, these tests have only been used to a limited 
 %type of parameter violation. It is this paper's intent to provide a detailed examination 
 %of the tests' performance under practical research scenarios. 
-
 In the following section, we first briefly review the 
-theoretical framework of proposed statistical tests and
+theoretical framework of the proposed tests and
 provide a short tutorial illustrating the use of the tests in R.
-Next, we study the tests'
-ability through simulations that mimic practical research. 
-Finally, some suggestion on the tests' use in practice is provided.  
+Next, we study the tests' performance in simulations that mimic practical research scenarios. 
+Finally, we provide some further discussion on the tests' use in practice.  
 
 \section{Background}
 This section contains background and discussion of the 
@@ -216,7 +198,7 @@ of interest and take the maximum or the average across individuals, resulting in
 
 \begin{eqnarray}
     \label{eq:dmax}
-    \mathit{DM} & = & \max_{i = 1,\dots, n} \max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} \\
+    \mathit{DM} & = & \max_{i = 1,\dots, n} \max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} | \\
         \label{eq:cvm}
     \mathit{CvM}     & = & n^{-1} \sum_{i = 1,\dots, n} \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2, \\
     \label{eq:maxlm}
@@ -358,7 +340,7 @@ To conduct the analysis, we first load the data and keep only complete cases for
 ## Reading in the data
 data("YouthGratitude",package="psychotools")
 
-## remove cases with imputed values(not in 1,...,9)
+## Remove cases with imputed values (not in 1,...,9)
 compcases <- apply(YouthGratitude[,4:28], 1, function(x) all(x %in% 1:9))
 yg <- YouthGratitude[compcases,]
 @
@@ -381,15 +363,15 @@ function, which implies that the GQ-6 violates measurement invariance.
 anova(full, reduced)
 @
 
-Another similar statistics is $\mathit{LM}_\mathit{uo}$ as shown in Equation~ \eqref{eq:lmuo}. We can obtain this statistic by using the following function. 
+To obtain the asymptotically equivalent $\mathit{LM}_\mathit{uo}$ (Equation~\eqref{eq:lmuo}), we can use the following command.
 <<LM_UO>>=
 ## unordered LM
 lm_uo <- sctest(reduced, as.numeric(yg$agegroup), parm = 1:4, stat = "LMuo")
 round(lm_uo$p.value, 4)
 @
-The above command specifies that we wish to test model parameter numbers 1 through 4, which are the factor loadings supplied by lavaan.  The ordering of parameters can be obtained via the command \verb+coef(reduced)+. 
+This command specifies that we wish to test model parameter numbers 1 through 4, which are the factor loadings supplied by lavaan.  The ordering of parameters can be obtained via the command \verb+coef(reduced)+. 
 
-Because our sample size is large, this likelihood ratio test is known to be sensitive to 
+Because our sample size is large, the likelihood ratio test is known to be sensitive to 
 small measurement invariance violations \cite{Ben80}.  That is, the above tests 
 are sensitive to small measurement invariance violations that are not likely to be 
 of interest to researchers.  For example, imagine that the 15-year-olds' 
@@ -411,7 +393,7 @@ are restricted to be equal across all individuals and then examine
 how individuals' scores $s(\hat{\theta};x_{i})$ fluctuate with their
 age (where age ties are broken arbitrarily).
 This is demonstrated below, with similar code being useful when one is 
-testing measurement invariance w.r.t.\ truly continuous variables.
+testing for measurement invariance w.r.t.\ truly continuous variables.
 
 
 %% The multiple group test performs typically well when the $V$ 
@@ -512,7 +494,7 @@ measurement invariance violations that are monotonic with age group.
 
 To carry out the tests, we can rely on the same function that we used
 for the continuous test statistics.  As mentioned previously,
-calculation of the ``maxLMo'' statistic (Equation~\eqref{eq:maxlmo})
+calculation of the $\max\mathit{LM}_o$ statistic (Equation~\eqref{eq:maxlmo})
 can be lengthy from the need to simulate critical values.
 %% This is more complicated than necessary, but it is written like
 %% this so that we can load the ordinal critical values behind the
@@ -595,7 +577,7 @@ In the above sections, we have illustrated the score-based tests'
 computation in R.  We suspect that the ordinal tests will be most
 popular with users, because measurement invariance tests are typically
 carried out across categories (ordered or not), as opposed to
-continuous variables.  Thus, in the sections below, we report
+continuous variables.  Thus, in the sections below, we conduct
 novel simulations to study the ordinal statistics' expected behavior
 in practice.  In particular, we wish to study (i) the extent to which the
 ordinal statistics attribute measurement invariance violations to the
@@ -622,8 +604,9 @@ two-factor model with three indicators each (see Figure~\ref{fig:path}).
 The measurement invariance
 violation occurred in one of three places: the factor loading associated with Scale 1 
  ($\lambda_{11}$), the unique variance associated with Scale 1
- ($\epsilon_{11}$), or the factor covariance $\sigma_{12}$.  
-We then tested for measurement invariance in seven subsets of parameters: the three
+ ($\psi_{11}$), or the factor covariance $\sigma_{12}$.  
+\readme{Isn't this five subsets of parameters, not seven?}
+ We then tested for measurement invariance in seven subsets of parameters: the three
 individual parameters noted above, all six factor loadings, % $\lambda_{11}--\lambda_{62}$, and 
 and all six unique variances. % $\epsilon_{11}--\epsilon_{66}$.
 
@@ -713,8 +696,7 @@ Power and Type I error were examined across three sample sizes
 ($n=120,480,960$), three numbers of categories ($m=4,8,12$) and
 17 magnitudes of invariance violations. 
 The measurement invariance violations began at level $1+m/2$ of $V$
-and were consistent thereafter. These
-violations were based on the auxiliary variable $V$: individuals below
+and were consistent thereafter: individuals below
 the $1+m/2$ percentile of $V$ deviated from individuals above the $1+m/2$ 
 percentile  by $d$ times the parameters' asymptotic standard errors
 (scaled by $\sqrt n$), with $d=0,0,25,0.5,...,4$. 
@@ -737,8 +719,8 @@ similar power curves when the factor covariance
 $\phi_{12}$ and error variance $\epsilon_{11}$ violate measurement
 invariance, respectively. 
 All three test statistics exhibited 
-similar results, with $\max\mathit{LM}_{uo}$ demonstrating lower power across all situations. This statistic 
-is asymptotically equivalent to the LRT as what we describe in introduction. $\mathit{WDM}_o$  and $\max \mathit{LM}_o$ exhibited equivalent power curves because, when only one parameter is tested, the statistics are equivalent. 
+similar results, with $\max\mathit{LM}_{uo}$ demonstrating lower power across all situations. As described earlier, this statistic 
+is asymptotically equivalent to the LRT. $\mathit{WDM}_o$  and $\max \mathit{LM}_o$ exhibited equivalent power curves because, when only one parameter is tested, the statistics are equivalent. 
 
 
 From these figures, one generally observes that the tests isolate 
@@ -759,7 +741,7 @@ provides evidence that, in practice, one can have confidence in the
 tests' abilities to locate the measurement invariance violation.  Of
 course, this statement is qualified by the fact that, in this
 simulation, the model was correctly specified.  In the following
-simulations, we examine the tests' performance when the model is
+simulation, we examine the tests' performance when the model is
 misspecified. 
 
 <<sim1,echo=FALSE>>=
@@ -879,19 +861,19 @@ in the same way as they were in Simulation 1. The tested parameters were also th
 Results are presented by the parameter that violated measurement invariance.
 Of primary interest is Figure~\ref{fig:sim21res}, which displays results when the unmodeled loading violates 
 measurement invariance. One can generally observe that 
-tests of the first loading and error variance parameter exhibited high power, reflecting a high Type I error rate.  Tests associated with the factor covariance did not demonstrate this error, however. In terms of specific statistic performance, $\max \mathit{LM}_o$ test and $\mathit{WDM}_o$ test demonstrated higher power than $\mathit{LM}_{uo}$ in each panel, especially with increasing levels. It is indicating ordered statistics is more inclined to pick up the unmodelled parameter violation in the manifest variables' associated loading and error terms. 
-\seeme{Is this sentence enough to compare ordered and unordered statistics?}
+tests of the first loading and error variance parameter exhibited high power, reflecting a high Type I error rate.  Tests associated with the factor covariance did not demonstrate this error, however. In terms of specific statistic performance, $\max \mathit{LM}_o$ test and $\mathit{WDM}_o$ test demonstrated higher Type I error than $\mathit{LM}_{uo}$ in each panel, especially with increasing levels.  This is likely because the unmodeled loading's noninvariance was monotonic with $V$; if it were not monotonic, we would expect $\mathit{LM}_{uo}$ to have higher Type I error. 
 
 When the modeled factor loading, $\lambda_{11}$, violated
 measurement invariance, the statistics were generally able to pick up the violation despite the misspecification.
-A similar pattern of specificity and power were observed when the unique variance and factor covariance parameters violated measurement invariance; the figures associated with these results are shown in the Appendix. Also, the power of ordered statistics $\max \mathit{LM}_o$ test and $\mathit{WDM}_o$ test showed higher power than unordered $\mathit{LM}_{uo}$ in each panel. 
+A similar pattern of specificity and power were observed when the unique variance and factor covariance parameters violated measurement invariance; the figures associated with these results are shown in the Appendix. Also, the power of ordered statistics $\max \mathit{LM}_o$ test and $\mathit{WDM}_o$ test showed higher power than unordered $\mathit{LM}_{uo}$ in each of these panels. 
 
+\readme{Make sure there is a space after each comma and period:}
 In summary, the proposed test statistics appear robust to unmodeled loading parameters,so long
 as the umodeled parameter does not violate measurement invariance. If the unmodeled parameter 
 dose violate measurement invariance, however, then the tests assign this violation to other 
 parameters that do not violate measurement invariance. The impacted parameters include the error
 variance and other loadings associated with the manifest variables that had the unmodeled 
-loading. Thus, prior to testing measurement invariance, it is important to study the extent to
+loading. Thus, as it is with other tests of measurement invariance, it is important to study the extent to
 which the hypothesized model includes all parameters of importance.
 
 <<sim2,echo=FALSE>>=
@@ -950,10 +932,10 @@ print(xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 \section{General Discussion}
 
 
-In this paper, we first described a novel family of test statistics for measurement invariance and illustrated their use via the R package lavaan. Next, we examined these statistics' ability to specifically pick up the violation parameter and specificity robustness to model specification. We found the proposed statistics could select the modeled parameter violating measurement invariance even though the model is misspecified in general. 
+In this paper, we first described a novel family of test statistics for measurement invariance and illustrated their use via the R package lavaan. Next, we examined these statistics' abilities to identify the parameter violating measurement invariance under well-specified and misspecified models. We found the proposed statistics could generally isolate the model parameter violating measurement invariance, so long as the violating parameter is included in the model.
 
-In the reminder of the paper, we will first consider the applicability of these tests in exploring the reason of measurement invariance. Next, the extension of these tests to other fit functions and more specialized models will be discussed. 
-\seeme{Are these two paragraphs OK?}
+In the reminder of the paper, we will first consider the applicability of these tests as compared to traditional tests. Next, we discuss test extension to other fit functions and to other specialized models.
+
 
 \subsection{Applications}
 
@@ -966,14 +948,15 @@ The tests are convenient for this purpose, as they do not require a new model to
 %Moreover, even though researchers might be originally interested in comparing categorical differences. For example, researchers might want to test whether there is gender difference or cultural difference for the scale. Using traditional likelihood test or wald test, there might existing some differences regarding to the categorical variable. Then the next natural question would be why there is gender or culture differences? . Thus these test statistics offer an convenient assessing tool to further exploring research hypothesis without making complicated assumptions or fitting multiple different models.
 
 \subsection{Extension}
-In this paper, We focused on testing for measurement invariance in factor analysis models that assume multivariate normality and that are estimated via ML.  The family of tests described here generally apply to estimation methods that maximize/minimize a fit function, however \cite<see>{zeihor07}, so they are potentially applicable to alternative SEM discrepancy functions such as Weighted Least Squares \cite{bollen98}.  Score calculation for these alternative discrepancy functions has not been implemented (to our knowledge), though the calculation certainly could be implemented.  Test statistic calculation and inference would then proceed in exactly the same manner as the calculation and inference illustrated in this paper.
+In this paper, We focused on testing for measurement invariance in factor analysis models that assume multivariate normality and that are estimated via ML.  The family of tests described here generally apply to estimation methods that maximize/minimize a fit function, however \cite<see>{zeihor07}, so they are potentially applicable to alternative SEM discrepancy functions such as Weighted Least Squares \cite<e.g.,>{broarm95}.  Score calculation for these alternative discrepancy functions has not been implemented (to our knowledge), though the calculation certainly could be implemented.  Test statistic calculation and inference would then proceed in exactly the same manner as the calculation and inference illustrated in this paper.
 
 In addition to alternative fit functions, the tests can be extended to other models estimated via ML.  Of primary interest to the topic of measurement invariance, the tests can be extended to item response models to examine differential item functioning.  In particular, \citeA{strkop13} studied application of these tests to the Rasch model, using them as the basis of a recursive partioning procedure that segments subgroups of individuals who exhibit DIF.  Further study and extension of these tests for IRT seem warranted.
 
-\subsection{Conclusion}
-\readme{Not sure whether we need this paragraph, but I still need to think about it.}
-In summary, the ordinal test statistic proposed have relatively-high power for detecting measurement invariance violation parameter specifically that are monotonic with the auxiliary ordinal variable. This
-feature is robust as long as the violation parameter is included in the testing model. Furthermore, as illustrated in tutorial part, the use of these tests is convenient without changing the focal psychometric model. In all, the tests have advantageous properties that should be implemented in practice.
+% Removed for now:
+%% \subsection{Conclusion}
+%% \readme{Not sure whether we need this paragraph, but I still need to think about it.}
+%% In summary, the ordinal test statistic proposed have relatively-high power for detecting measurement invariance violation parameter specifically that are monotonic with the auxiliary ordinal variable. This
+%% feature is robust as long as the violation parameter is included in the testing model. Furthermore, as illustrated in tutorial part, the use of these tests is convenient without changing the focal psychometric model. In all, the tests have advantageous properties that should be implemented in practice.
    
 
 
@@ -998,8 +981,8 @@ available at \url{http://semtools.R-Forge.R-project.org/}.
 
 \section{Appendix}
 
-This Appendix demonstrated the results for Simulation 2 when there exists model misspecification (lacking one path from Scale 1 to Math). Figure ~\ref{fig:sim22res} to Figure ~\ref{fig:sim24res} showed the violation parameter is first loading $\lambda_{11}$, covariance $\sigma_{12}$ and 
-first error term $\psi_{11}$, respectively. 
+This Appendix includes the results for Simulation 2 when there exists model misspecification (lacking one path from Scale 1 to Math). Figure~\ref{fig:sim22res} to Figure~\ref{fig:sim24res} display results when the loading $\lambda_{11}$, covariance $\sigma_{12}$, and 
+error term $\psi_{11}$ violate invariance, respectively. 
 
 \begin{figure}
 \caption{Simulated power curves for $\max \mathit{LM}_o$ test, $\mathit{WDM}_o$ test, and $\mathit{LM}_{uo}$ test across three levels of the ordinal variable $m$ and measurement invariance 
