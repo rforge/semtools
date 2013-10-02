@@ -387,7 +387,7 @@ Alternatively, we can use the proposed family of score-based statistics to obtai
 If we are interested in measurement invariance violations that are 
 monotonic with the age groups, it is perhaps simplest to treat the 
 age groups as continuous.  In doing so, we can use the statistics 
-from Equations~\eqref{eq:dmax},~\eqref{eq:cvm}, and~\eqref{eq:maxlm}.  
+from Equations~\eqref{eq:dmax}, ~\eqref{eq:cvm} and~\eqref{eq:maxlm}.  
 That is, we can fit a model whose parameters 
 are restricted to be equal across all individuals and then examine 
 how individuals' scores $s(\hat{\theta};x_{i})$ fluctuate with their
@@ -701,9 +701,7 @@ percentile  by $d$ times the parameters' asymptotic standard errors
 (scaled by $\sqrt n$), with $d=0,0,25,0.5,...,4$. 
 For each combination of sample size ($n$) $\times$ violation
 magnitude ($d$) $\times$ violating parameter $\times$ categories $m$, 5000 datasets were
-generated and tested.  Statistics from Equations~\eqref{eq:wdm}, ~\eqref{eq:maxlmo} and~\eqref{eq:lmuo} were examined. 
-In all conditions, we
-maintained equal sample sizes at each level of the ordinal variable. 
+generated and tested.  Statistics from Equations~\eqref{eq:wdm}, ~\eqref{eq:maxlmo} and~\eqref{eq:lmuo} were examined. In all conditions, we maintained equal sample sizes at each level of the ordinal variable. 
 
 \subsection{Results}
 
@@ -930,7 +928,7 @@ print(xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 \section{General Discussion}
 
 
-In this paper, we first described a novel family of test statistics for measurement invariance and illustrated their use via the R package lavaan.  Next, we examined these statistics' abilities to identify the parameter violating measurement invariance under well-specified and misspecified models. We found the proposed statistics could generally isolate the model parameter violating measurement invariance, so long as the violating parameter is included in the model.
+In this paper, we first described a novel family of test statistics for measurement invariance and illustrated their use via the R package lavaan.  Next, we examined these statistics' abilities to identify the parameter violating measurement invariance under well-specified and misspecified models.  We found the proposed statistics could generally isolate the model parameter violating measurement invariance, so long as the violating parameter is included in the model.
 
 In the reminder of the paper, we will first consider the applicability of these tests as compared to traditional tests.  Next, we discuss test extension to other fit functions and to other specialized models.
 
