@@ -32,8 +32,8 @@ the ordinal variable (and less sensitive to non-monotonic violations).  The pape
   Foundation grant SES-1061334. 
   Correspondence to Edgar Merkle. 
   Email: merklee@missouri.edu.}
-\shorttitle{Measurement invariance test properties}
-\rightheader{Measurement invariance test properties}
+\shorttitle{Score-based tests in practice}
+\rightheader{Score-based tests in practice}
 
 \newcommand{\argmax}{\operatorname{argmax}\displaylimits}
 %% for internal use
@@ -80,7 +80,7 @@ get_boundary <- function(obj, fun, trim = 0) {
 info_full <- function(x, ...) solve(vcov(x) * nobs(x))
 @
 
-Many of the papers in this special issue focus on the topic of approximate measurement invariance: we know that strict hypotheses of measurement invariance do not hold exactly across different groups, and this should be reflected in tests of measurement invariance.  BSEM
+Many of the papers in this special issue focus on the topic of approximate measurement invariance: we know that strict hypotheses of measurement invariance do not hold exactly across different groups, and this should be reflected in corresponding tests of measurement invariance.  BSEM
 (Bayesian Structural Equation Modeling) generally handles these ideas by replacing across-group equality constraints with informative prior distributions.  In this paper, we describe an alternative approach: the development of test statistics that are sensitive to invariance violations of interest and insensitive to ``anomalous'' invariance violations.  The test statistics are specifically applicable to situations where one wishes to test for measurement invariance with respect to an ordinal variable, and they are special cases of a family of tests that may generally be used to study measurement invariance w.r.t.\ continuous, categorical, and ordinal variables.
 
 The family of tests described in this paper have recently been studied in the context of measurement invariance \cite{MerZei13,MerFanZei}, though their practical application has been limited to a small set of simulations and datasets.  In this paper, we provide a detailed illustration of the tests' use in practice and a detailed examination 
@@ -92,7 +92,7 @@ of the tests' performance under scenarios likely to be encountered in practice.
 %by measurement invariance violation. However, these tests have only been used to a limited 
 %type of parameter violation. It is this paper's intent to provide a detailed examination 
 %of the tests' performance under practical research scenarios. 
-In the following section, we first briefly review the 
+In the following sections, we first briefly review the 
 theoretical framework of the proposed tests and
 provide a short tutorial illustrating the use of the tests in R.
 Next, we study the tests' performance in simulations that mimic practical research scenarios. 
@@ -418,7 +418,7 @@ As demonstrated below, the score computation and testing can be efficiently carr
 %%@
 
 
-<<Get Estimate>>=
+<<getestimate>>=
 dm <- sctest(reduced, as.numeric(yg$agegroup), parm = 1:4, stat = "DM")
 cvm <- sctest(reduced, as.numeric(yg$agegroup), parm = 1:4, stat = "CvM")
 maxlm <- sctest(reduced, as.numeric(yg$agegroup), parm = 1:4, stat = "maxLM")
@@ -935,7 +935,7 @@ In the reminder of the paper, we will first consider the applicability of these 
 
 \subsection{Applications}
 
-Many of the applications in this volume, along with many applications in general, focus on testing for measurement invariance across unordered categories such as nations or gender.  As discussed earlier in this paper, the score-based tests for unordered categories are essentially equivalent to the usual likelihood ratio test.  Given a measurement invariance violation across these unordered categories, however, researchers typically wish to know why the violation occurred.  At this point, researchers may examine education level, socioeconomic status, income levels, and so on across the unordered categories.  These variables are often ordinal or continuous in nature, so that the family of tests described in this paper are applicable.  This is a first step towards describing why measurement invariance violations occur, as opposed to simply detecting measurement invariance violations. \readme{In the frontiers abstracts, one paper was proposed along these lines.  I will get a draft of that paper and then we can cite it here.}
+Many of the applications in this volume, along with many applications in general, focus on testing for measurement invariance across unordered categories such as nations or gender.  As discussed earlier in this paper, the score-based tests for unordered categories are essentially equivalent to the usual likelihood ratio test.  Given a measurement invariance violation across these unordered categories, however, researchers typically wish to know why the violation occurred.  At this point, researchers may examine education level, socioeconomic status, income levels, and so on across the unordered categories.  These variables are often ordinal or continuous in nature, so that the family of tests described in this paper are applicable.  This is a first step towards describing why measurement invariance violations occur, as opposed to simply detecting measurement invariance violations. \readme{In the abstracts for the special issue (which the special editors sent us), one paper was proposed along these lines.  I will get a draft of that paper and then we can cite it here.}
 The tests are convenient for this purpose, as they do not require a new model to be estimated for each ordinal variable.  Instead, each ordinal variable defines an ordering of observations, which in turn yields a test statistic that is specific to that ordinal variable.
 
 %% I'm not sure we want to make a big deal of this.  If there are only a small number of ties, we are probably better off with the continuous tests:
