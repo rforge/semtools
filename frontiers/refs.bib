@@ -94,7 +94,7 @@
 
 @Article{	  zeilei02,
   author	= {A. Zeileis and F. Leisch and K. Hornik and C. Kleiber},
-  title		= {{strucchange}: An {R} Package for Testing Structural
+  title		= {\pkg{strucchange}: An \proglang{R} Package for Testing Structural
 		  Change in Linear Regression Models},
   journal	= {Journal of Statistical Software},
   year		= {2002},
@@ -105,7 +105,7 @@
 
 @Article{	lavaan11,
   author        = {Yves Rosseel},
-  title         = {{lavaan}: An {R} Package for Structural Equation Modeling},
+  title         = {\pkg{lavaan}: An \proglang{R} Package for Structural Equation Modeling},
   journal       = {Journal of Statistical Software},
   year          = {2012},
   volume        = {48},
@@ -115,13 +115,13 @@
 }
 
 @Manual{	r11,
-  title		= {{R}: {A} Language and Environment for Statistical Computing},
-  author	= {{R Development Core Team}},
-  organization	= {{R} Foundation for Statistical Computing},
+  title		= {\proglang{R}: {A} Language and Environment for
+		   Statistical Computing},
+  author	= {{\proglang{R} Core Team}},
+  organization	= {\proglang{R} Foundation for Statistical Computing},
   address	= {Vienna, Austria},
   year		= {2013},
-  note          = {{ISBN} 3-900051-07-0},
-  howpublished	= {URL \url{http://www.R-project.org/}}
+  url		= {http://www.R-project.org/}
 }
 
 @Article{	  zei06,
@@ -136,10 +136,11 @@
 }
 
 @Manual{	mvtnorm,
-  title		= {{mvtnorm}: Multivariate Normal and $t$~Distributions},
-  author	= {Alan Genz and Frank Bretz and Tetsuhisa Miwa and Xuefei Mi and Friedrich Leisch and Fabian Scheipl and Torsten Hothorn},
-  year		= {2012},
-  note		= {R~package version~0.9-9992},
+  title		= {\pkg{mvtnorm}: Multivariate Normal and $t$~Distributions},
+  author	= {Alan Genz and Frank Bretz and Tetsuhisa Miwa and Xuefei Mi and Friedrich Leisch and Fabian Scheipl
+  		   and Bj\"orn Bornkampand Torsten Hothorn},
+  year		= {2013},
+  note		= {R~package version~0.9-9996},
   url		= {http://CRAN.R-project.org/package=mvtnorm},
 }
 
@@ -233,45 +234,47 @@
 
 @INCOLLECTION{BroCud93,
   author	= {M. W. Browne and R. Cudeck},
-  title		= {Alternative ways of assessing model fit},
-  booktitle	= {Testing structural equation models},
+  title		= {Alternative Ways of Assessing Model Fit},
+  booktitle	= {Testing Structural Equation Models},
   year		= {1993},
-  publisher	= {Newbury Park, CA:\ Sage},
+  publisher	= {Sage},
+  address	= {Newbury Park},
   pages		= {136--162},
   editor        = {K. A. Bollen and J. S. Long}
 }
 
 @ARTICLE{MerZei13,
-  author = {Merkle, Edgar C. and Zeileis, Achim},
-  title	= {Tests of Measurement Invariance Without Subgroups: A Generalization of Classical Methods},
+  author	= {Merkle, Edgar C. and Zeileis, Achim},
+  title		= {Tests of Measurement Invariance without Subgroups: A Generalization of Classical Methods},
   journal	= {Psychometrika},
   year		= {2013},
   volume	= {78},
+  number	= {1},
   pages		= {59--82}
 } 
 
 @ARTICLE{MerFanZei,
-  author = {E. C. Merkle and J. Fan and A. Zeileis},
-  title = {Testing for measurement invariance with respect to an ordinal variable},
-  journal = {Psychometrika},
-  year = {in press}
+  author	= {E. C. Merkle and J. Fan and A. Zeileis},
+  title		= {Testing for Measurement Invariance with Respect to an Ordinal Variable},
+  journal	= {Psychometrika},
+  year		= {in press}
 }
 
 @Book{bollen98,
-	title = {Structural equation models},
-	publisher = {Wiley Online Library},
-	author = {Bollen, Kenneth A.},
-	year = {1998}
+  title		= {Structural Equation Models},
+  publisher	= {John Wiley \& Sons},
+  author	= {Bollen, Kenneth A.},
+  year		= {1998}
 }
 
 @ARTICLE{vande12,
-	title = {A checklist for testing measurement invariance},
-	volume = {9},
-	number = {4},
-	journal = {European Journal of Developmental Psychology},
-	author = {{van de Schoot}, Rens and Lugtig, Peter and Hox, Joop},
-	year = {2012},
-	pages = {486-492}
+  title		= {A Checklist for Testing Measurement Invariance},
+  volume	= {9},
+  number	= {4},
+  journal	= {European Journal of Developmental Psychology},
+  author	= {{van de Schoot}, Rens and Lugtig, Peter and Hox, Joop},
+  year		= {2012},
+  pages		= {486--492}
 }
 
 @Article{	  han97,
@@ -285,56 +288,59 @@
 
 
 @article{bentler90,
-	title = {Comparative fit indexes in structural models.},
-	volume = {107},
-	journal = {Psychological bulletin},
-	author = {Bentler, Peter M.},
-	year = {1990},
-	pages = {238--246}
+  title		= {Comparative Fit Indexes in Structural Models},
+  volume	= {107},
+  journal	= {Psychological Bulletin},
+  author	= {Bentler, Peter M.},
+  year		= {1990},
+  pages		= {238--246}
 }
 
 @ARTICLE{zei06b,
-  author = {A. Zeileis},
-  title = {Object-oriented computation of sandwich estimators},
-  journal = {Journal of Statistical Software},
-  year = {2006},
-  volume = {16},
-  pages = {1--16}
+  author	= {A. Zeileis},
+  title		= {Object-Oriented Computation of Sandwich Estimators},
+  year		= {2006},
+  journal	= {Journal of Statistical Software},
+  volume	= {16},
+  number	= {9},
+  pages		= {1--16},
+  url		= {http://www.jstatsoft.org/v16/i09/}
 }
 
 
 @article{freed06,
-	title = {On the so-called {“Huber} sandwich estimator” and “robust standard errors”},
-	volume = {60},
-	number = {4},
-	urldate = {2013-09-10},
-	journal = {The American Statistician},
-	author = {Freedman, David A.},
-	year = {2006}
+  title		= {On the So-Called ``{H}uber Sandwich Estimator'' and ``Robust Standard Errors''},
+  volume	= {60},
+  number	= {4},
+  journal	= {The American Statistician},
+  author	= {Freedman, David A.},
+  year		= {2006},
+  pages		= {299-302}
 }
 
-@Article{zeilei12,
-  author	= {A. Zeileis and C. Strobl and F. Wickelmaier},
-  title	= {{psychotools}: Infrastructure for Pscchometric Modeling},
-  pages	= {0.1--4},
-  year = {2012},
-  howpublished	= {URL \url{http://cran.r-project.org/web/packages/psychotools/index.html}}
+@Manual{zeilei12,
+  title		= {\pkg{psychotools}: Infrastructure for Psychometric Modeling},
+  author	= {Achim Zeileis and Carolin Strobl and Florian Wickelmaier},
+  year		= {2013},
+  note		= {\proglang{R}~package version~0.1-5},
+  howpublished	= {URL \url{http://CRAN.R-project.org/package=psychotools}},
 }
 
 @TECHREPORT{muthen13,
-	title = {{BSEM} Measurement Invariance Analysis},
-	institution = {Mplus Web Note 17},
-	author = {Muth\'{e}n , Bengt and Asparouhov, Tihomir},
-	year = {2013},
-	howpublished	= {URL \url{ http://www.statmodel.com/examples/webnotes/webnote17.pdf}}
+  title		= {{BSEM} Measurement Invariance Analysis},
+  institution	= {Mplus Web Note 17},
+  author	= {Muth\'{e}n , Bengt and Asparouhov, Tihomir},
+  year		= {2013},
+  howpublished	= {URL \url{ http://www.statmodel.com/examples/webnotes/webnote17.pdf}}
 }
 
 @INCOLLECTION{broarm95,
-  author = {M. W. Browne and G. Arminger},
-  title = {Specification and estimation of mean- and covariance-structure models},
-  booktitle = {Handbook of Statistical Modeling for the Social and Behavioral Sciences},
-  publisher = {New York:\ Plenum Press},
-  year = {1995},
-  editor = {G. Arminger and C. C. Clogg and M. E. Sobel},
-  pages = {185--249}
+  author	= {M. W. Browne and G. Arminger},
+  title		= {Specification and Estimation of Mean- and Covariance-Structure Models},
+  booktitle	= {Handbook of Statistical Modeling for the Social and Behavioral Sciences},
+  publisher	= {Plenum Press},
+  address	= {New York},
+  year		= {1995},
+  editor	= {G. Arminger and C. C. Clogg and M. E. Sobel},
+  pages		= {185--249}
 }
