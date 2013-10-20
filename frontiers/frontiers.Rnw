@@ -20,13 +20,23 @@
 \twoaffiliations{University of Missouri}{Universit\"{a}t Innsbruck}
 
 \abstract{
-In this paper, we consider a family of 
-recently-proposed measurement invariance tests that are based on the scores of a fitted model.  This family can be used to test for measurement invariance
-w.r.t.\ a continuous auxiliary variable, without pre-specification of subgroups.
-Moreover, the family can be used when one wishes to test for 
-measurement invariance w.r.t.\ an ordinal auxiliary variable, yielding test
-statistics that are sensitive to violations that are monotonically related to
-the ordinal variable (and less sensitive to non-monotonic violations).  The paper is specifically aimed at potential users of the tests who may wish to know (i) how the tests can be employed for their data, and (ii) whether the tests can accurately identify measurement invariance violations in the presence of model misspecification.  After providing an overview of the tests, we illustrate their general use via the R packages lavaan and strucchange.  We then describe two novel simulations that provide evidence of the tests' practical abilities.  As a whole, the paper provides researchers with the tools and knowledge needed to apply these tests to general measurement invariance scenarios.}
+In this paper, we consider a family of  recently-proposed measurement invariance
+tests that are based on the scores of a fitted model.  This family can be used
+to test for measurement invariance w.r.t.\ a continuous auxiliary variable,
+without pre-specification of subgroups. Moreover, the family can be used when
+one wishes to test for  measurement invariance w.r.t.\ an ordinal auxiliary
+variable, yielding test statistics that are sensitive to violations that are
+monotonically related to the ordinal variable (and less sensitive to
+non-monotonic violations).  The paper is specifically aimed at potential users
+of the tests who may wish to know (i) how the tests can be employed for their
+data, and (ii) whether the tests can accurately identify measurement invariance
+violations in the presence of model misspecification.  After providing an
+overview of the tests, we illustrate their general use via the \proglang{R} packages \pkg{lavaan}
+and \pkg{strucchange}.  We then describe two novel simulations that provide evidence
+of the tests' practical abilities.  As a whole, the paper provides researchers
+with the tools and knowledge needed to apply these tests to general measurement
+invariance scenarios.
+}
 
 \acknowledgements{This work was supported by National Science
   Foundation grant SES-1061334. 
@@ -36,6 +46,10 @@ the ordinal variable (and less sensitive to non-monotonic violations).  The pape
 \rightheader{Score-based tests in practice}
 
 \newcommand{\argmax}{\operatorname{argmax}\displaylimits}
+\let\proglang=\textsf
+\let\pkg=\emph
+\let\code=\texttt
+
 %% for internal use
 \newcommand{\fixme}[1]{\emph{\marginpar{FIXME} (#1)}}
 \newcommand{\readme}[1]{\emph{\marginpar{Ed} (#1)}}
@@ -48,43 +62,44 @@ the ordinal variable (and less sensitive to non-monotonic violations).  The pape
 \maketitle
 
 \include{Sweave}
-<<preliminaries1,echo=FALSE>>=
+\setkeys{Gin}{width=\textwidth}
+<<preliminaries, echo=FALSE>>=
 ## packages
 library("lavaan")
-library("strucchange")
+library("strucchange") ## at least 1.5-0
 library("mvtnorm")
 library("lattice")
 
 ## auxiliary code
 source("simall-ordinal.R")
 source("mz.R")
-source("../www/efpFunctional-cat.R")
-source("../pkg/sctest.lavaan.R")
 source("../www/mz-ordinal.R")
-source("../www/estfun-lavaan.R")
 
-
-## turn off stars
-options(show.signif.stars = FALSE)
-
-## convenience function for plotting boundaries without color
-get_boundary <- function(obj, fun, trim = 0) {
-  bound <- fun$boundary(0:obj$nobs/obj$nobs)
-  bound <- fun$computeCritval(0.05, ncol(obj$process)) * bound
-  bound <- zoo(bound, time(obj$process))
-  if(trim > 0) bound <- head(tail(bound, - floor(trim * obj$nobs)), - floor(trim * obj$nobs))
-  return(bound)
-}
-
-## convenience function for applying tests to real data
-info_full <- function(x, ...) solve(vcov(x) * nobs(x))
+## some options
+options(prompt = "R> ", continue = "+  ", digits = 3,
+  useFancyQuotes = FALSE, show.signif.stars = FALSE)
 @
 
-Many of the papers in this special issue focus on the topic of approximate measurement invariance: we know that strict hypotheses of measurement invariance do not hold exactly across different groups, and this should be reflected in corresponding tests of measurement invariance.  BSEM
-(Bayesian Structural Equation Modeling) generally handles these ideas by replacing across-group equality constraints with informative prior distributions.  In this paper, we describe an alternative approach: the development of test statistics that are sensitive to invariance violations of interest and insensitive to ``anomalous'' invariance violations.  The test statistics are specifically applicable to situations where one wishes to test for measurement invariance with respect to an ordinal variable, and they are special cases of a family of tests that may generally be used to study measurement invariance w.r.t.\ continuous, categorical, and ordinal variables.
+Many of the papers in this special issue focus on the topic of approximate
+measurement invariance: we know that strict hypotheses of measurement invariance
+do not hold exactly across different groups, and this should be reflected in
+corresponding tests of measurement invariance.  BSEM (Bayesian structural
+equation modeling) generally handles these ideas by replacing across-group
+equality constraints with informative prior distributions.  In this paper, we
+describe an alternative approach: the development of test statistics that are
+sensitive to invariance violations of interest and insensitive to ``anomalous''
+invariance violations.  The test statistics are specifically applicable to
+situations where one wishes to test for measurement invariance with respect to
+an ordinal variable, and they are special cases of a family of tests that may
+generally be used to study measurement invariance w.r.t.\ continuous,
+categorical, and ordinal variables.
 
-The family of tests described in this paper have recently been studied in the context of measurement invariance \cite{MerZei13,MerFanZei}, though their practical application has been limited to a small set of simulations and datasets.  In this paper, we provide a detailed illustration of the tests' use in practice and a detailed examination 
-of the tests' performance under scenarios likely to be encountered in practice. 
+The family of tests described in this paper have recently been studied in the
+context of measurement invariance \cite{MerZei13,MerFanZei}, though their
+practical application has been limited to a small set of simulations and
+datasets.  In this paper, we provide a detailed illustration of the tests' use
+in practice and a detailed examination  of the tests' performance under
+scenarios likely to be encountered in practice. 
 %In order to fix the psychometric scale, we need to specify the violating parameter.  
 %Moreover, in practice model misspecification is an inevitable issue to a certain extent 
 %and may interfere with parameter invariance specificity. A family of tests derived from 
@@ -92,18 +107,19 @@ of the tests' performance under scenarios likely to be encountered in practice.
 %by measurement invariance violation. However, these tests have only been used to a limited 
 %type of parameter violation. It is this paper's intent to provide a detailed examination 
 %of the tests' performance under practical research scenarios. 
-In the following sections, we first briefly review the 
-theoretical framework of the proposed tests and
-provide a short tutorial illustrating the use of the tests in R.
-Next, we study the tests' performance in simulations that mimic practical research scenarios. 
-Finally, we provide some further discussion on the tests' use in practice.  
+In the following sections, we first briefly review the  theoretical framework of
+the proposed tests and provide a short tutorial illustrating the use of the
+tests in \proglang{R} \cite{R11}. Next, we study the tests' performance in simulations that mimic
+practical research scenarios.  Finally, we provide some further discussion on
+the tests' use in practice.  
+
 
 \section{Background}
-This section contains background and discussion of the 
-proposed statistics as applied to SEM; for a more detailed account, see
-\citeA{MerZei13} and \citeA{MerFanZei}.  For details on the
-statistics' application to general statistical models, see
-\citeA{zeihor07}.
+
+This section contains background and discussion of the  proposed statistics as
+applied to SEM; for a more detailed account, see \citeA{MerZei13} and
+\citeA{MerFanZei}.  For details on the statistics' application to general
+statistical models, see \citeA{zeihor07}.
 
 As currently implemented for SEM, the statistical tests described in
 this paper can be applied to models that are estimated via a
@@ -118,18 +134,19 @@ calculation of modification indices \cite{bentler90} and to Lagrange multiplier
 tests \cite{sat89}, and, in fact, those statistics can be viewed as  
 special cases of the family described here.
 
-Following model estimation, the tests primarily work on the {\em
-  scores} of the fitted model; these are defined as
+Following model estimation, the tests primarily work on the \emph{scores}
+of the fitted model; these are defined as
 %% TODO indicate that this is evaluated at theta hat
 \begin{equation}
 \label{eq:score}
-s(\hat{\theta};x_{i}) = \left ( \frac{\partial
-      \ell(\theta;x_{i})}{\partial(\theta_{1})},...,\frac{\partial
-      \ell(\theta;x_{i})}{\partial(\theta_{k})} \right )^{T},
+s(\theta;x_{i}) = \left (
+  \frac{\partial \ell(\theta;x_{i})}{\partial \theta_{1}}, \dots,
+  \frac{\partial \ell(\theta;x_{i})}{\partial \theta_{k}} \right )^\top,
 \end{equation} 
 where $\ell(\theta; x_i)$ is the likelihood associated with individual
-$i$, $\theta$ is a $k$-dimensional parameter vector, and
-$\hat{\theta}$ is the maximum likelihood estimate.  The cross-product
+$i$, $\theta$ is a $k$-dimensional parameter vector. The corresponding
+maximum likelihood estimate $\hat{\theta}$ solves the first order condition:
+$\sum_{i = 1}^n s(\hat \theta;x_{i}) = 0$. The cross-product
 of these scores forms the ``meat'' for the calculation of robust
 (Huber-White) standard errors \cite<e.g.,>{zei06b}.
 
@@ -154,28 +171,28 @@ scores may be greater than zero and old individuals' scores
 less than zero (though the sign of the scores will depend on whether a
 function is being minimized or maximized).  Conversely, if measurement
 invariance holds, then all 
-individuals' scores will fluctuate around zero.
+individuals' scores will fluctuate randomly around zero.
 
-To formalize the ideas in the previous paragraph, we define a cumulative
-sum of the ordered scores.  This cumulative sum may be written as
+To formalize the ideas in the previous paragraph, we define a
+suitably scaled cumulative sum of the ordered scores.  This may be written as
 \begin{equation} 
     \label{eq:cumscore}
-  {\bm B}(t; \hat {\bm \theta}) ~=~ %\hat {\bm I}^{-1/2} n^{-1/2}
+  {\bm B}(t; \hat {\bm \theta}) ~=~ \hat {\bm I}^{-1/2} n^{-1/2}
     \sum_{i = 1}^{\lfloor n \cdot t \rfloor} {\bm s}(\hat {\bm \theta}; x_{(i)})
   \qquad (0 \le t \le 1)
 \end{equation}
 where $\lfloor nt \rfloor$ is the integer part of $nt$ (i.e., a floor
 operator) and $x_{(i)}$ reflects the individual with the
-$i^{\text{th}}$-smallest value of the auxiliary variable.
+$i$-th smallest value of the auxiliary variable.
 We specifically focus on how the
-cumulative sum fluctuates as more individuals' scores are added to it,
+cumulative sum fluctuates as more individuals' scores are added to it, e.g.,
 starting with the youngest and ending with the oldest individual
-(assuming that age is the auxiliary variable of interest).  
-The summation is also typically premultiplied by the inverse square
+if age is the auxiliary variable of interest.
+The summation is premultiplied by an estimate of the inverse square
 root of the information matrix, which serves to decorrelate the
-fluctuation processes associated with individual model parameters 
-(i.e., the process associated with one parameter is not correlated 
-with the processes associated with other parameters).
+fluctuation processes associated with individual model parameters.
+Thus, the process associated with one parameter is not correlated 
+with the processes associated with other parameters.
 
 Under the
 hypothesis of measurement invariance, a central limit theorem can be
@@ -193,9 +210,8 @@ parameter of interest, resulting in a {\em double max} statistic
 (the maximum is taken across parameters and individuals).
 Alternatively, one could sum the (squared) cumulative sum across parameters
 of interest and take the maximum or the average across individuals, resulting in a 
-{\em maximum Lagrange multiplier} statistic and Cram\'{e}r-von Mises statistic, respectively 
+{\em maximum Lagrange multiplier} statistic and \emph{Cram\'{e}r-von Mises} statistic, respectively 
 \cite<see>[for further discussion]{MerZei13}.  These statistics are given by
-
 \begin{eqnarray}
     \label{eq:dmax}
     \mathit{DM} & = & \max_{i = 1,\dots, n} \max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} | \\
@@ -206,12 +222,11 @@ of interest and take the maximum or the average across individuals, resulting in
       \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1}
       \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2.
 \end{eqnarray}
-
 Critical values associated with $\mathit{DM}$ can be obtained analytically, 
 while critical values associated with the other statistics can be obtained 
 from direct simulation \cite{Zei06} or from more refined techniques \cite{han97}.  
 This issue should not be important to the user, as critical values are obtained 
-directly from the R implementation described later.
+directly from the \proglang{R} implementation described later.
 
 
 Importantly, the above statistics were derived for situations where
@@ -244,29 +259,32 @@ Critical values associated with the $\mathit{WDM}_o$ statistic can be obtained
 directly from a multivariate normal distribution \cite<see>{hotzei08}, while 
 critical values associated with $\max \mathit{LM}_o$ can be obtained via simulation.  
 This simulation is somewhat computationally intensive and, in practice, takes about 
-10 minutes on the authors' computers.  However, the wait is often worth it, 
+10 minutes on the authors' computers when 50,000 replications are sampled from the 
+approximate asymptotic distribution.  However, the wait is often worth it, 
 as \citeA{MerFanZei} found the performance of the $\max \mathit{LM}_o$ statistic 
 to be considerably better than the $\mathit{WDM}_o$ statistic.
 
-
-Finally, if $V$ is only nominal/categorical, the cumulative sums of scores can be used to obtain the a Lagrange multiplier statistic.
+Finally, if $V$ is only nominal/categorical, the cumulative sums of scores can be used to obtain a Lagrange multiplier statistic.
 This test statistic can be formally written as
 \begin{equation}
     \label{eq:lmuo}
      \mathit{LM}_{uo} = \sum_{\ell = 1, \dots, m} \sum_{j = 1, \dots, k}
        \left( {\bm B}(\hat {\bm \theta})_{i_\ell j} - {\bm B}(\hat {\bm \theta})_{i_{\ell - 1}j} \right)^2,
 \end{equation}
-and it is asymptotically equivalent to the usual, likelihood ratio test statistic.  It is advantageous over the likelihood ratio test because it requires estimation of only one model (the restricted model).  We make use of this advantage in the simulations, described later.
+and it is asymptotically equivalent to the usual, likelihood ratio test statistic.
+It is advantageous over the likelihood ratio test because it requires estimation of
+only one model (the restricted model).  We make use of this advantage in the
+simulations, described later.
 
 
 
 \section{Tutorial}
 
 In this section, we demonstrate how the above tests can be carried out in~R, 
-using the package lavaan \cite{lavaan11} for model estimation and strucchange 
+using the package \pkg{lavaan} \cite{lavaan11} for model estimation and \pkg{strucchange} 
 \cite{ZeiLei02,Zei06} for testing.  We use data from \citeA{FroFan11} concerning 
-the applicability of adult gratitude scales to youth, available in the~R 
-package psychotools \cite{zeilei12}.  The data consist of responses to three adult 
+the applicability of adult gratitude scales to youth, available in the~\proglang{R} 
+package \emph{psychotools} \cite{zeilei12}.  The data consist of responses to three adult 
 gratitude scales from $n=1401$ youth aged 10--19 years. The original authors 
 were specifically interested in whether the scales were measurement invariant 
 across age.  Because the sample size at each age was unbalanced, the authors 
@@ -336,40 +354,41 @@ which is not true for the age groups in the data.  However, we demonstrate the p
 
 To conduct the analysis, we first load the data and keep only complete cases for simplicity 
 (though the tests can be applied to incomplete data).
+%
 <<data>>=
-## Reading in the data
-data("YouthGratitude",package="psychotools")
-
-## Remove cases with imputed values (not in 1,...,9)
-compcases <- apply(YouthGratitude[,4:28], 1, function(x) all(x %in% 1:9))
-yg <- YouthGratitude[compcases,]
+data("YouthGratitude", package = "psychotools")
+compcases <- apply(YouthGratitude[, 4:28], 1, function(x) all(x %in% 1:9))
+yg <- YouthGratitude[compcases, ]
 @
-Next, we fit two models in lavaan: a one-factor model where loadings are restricted 
+%
+Next, we fit two models in \pkg{lavaan}: a one-factor model where loadings are restricted 
 to be equal across age groups, and a one-factor model where loadings are free across age groups.
-<<modest>>=
-## Restricted model
-reduced <- cfa("f1 = ~gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
-             data = yg, group = "agegroup", meanstructure = TRUE,
-             group.equal = "loadings")
-
-## Unrestricted model
+%
+<<models>>=
+restr <- cfa("f1 = ~gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
+  data = yg, group = "agegroup", meanstructure = TRUE,
+  group.equal = "loadings")
 full <- cfa("f1= ~gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
-             data = yg, group = "agegroup", meanstructure = TRUE)
+  data = yg, group = "agegroup", meanstructure = TRUE)
 @
-Finally, we can get the results of a likelihood ratio test via the \verb+anova()+ 
+%
+Finally, we can get the results of a likelihood ratio test via the \code{anova()}
 function, which implies that the GQ-6 violates measurement invariance.
 <<LRT>>=
-## LRT
-anova(full, reduced)
+anova(full, restr)
 @
-
-To obtain the asymptotically equivalent $\mathit{LM}_\mathit{uo}$ (Equation~\eqref{eq:lmuo}), we can use the following command.
+To obtain the asymptotically equivalent $\mathit{LM}_\mathit{uo}$ (Equation~\eqref{eq:lmuo}), we
+can use the \code{sctest()} function from \pkg{strucchange}:
 <<LM_UO>>=
-## unordered LM
-lm_uo <- sctest(reduced, as.numeric(yg$agegroup), parm = 1:4, stat = "LMuo")
-round(lm_uo$p.value, 4)
+sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
+  functional = "LMuo")
 @
-This command specifies that we wish to test model parameter numbers 1 through 4, which are the factor loadings supplied by lavaan.  The ordering of parameters can be obtained via the command \verb+coef(reduced)+. 
+This command specifies that we assess the parameter 1--4 of
+model \code{restr} after ordering the observations along the \code{agegroup} and
+the observed information matrix is used as the variance-covariance matrix. Note
+that the model parameters 1--4 are the factor loadings supplied by \pkg{lavaan}
+as can be seen by inspecting \code{coef(restr)}. This also leads to somewhat
+smaller test statistics that is very close to being significant at the 5\% level.
 
 Because our sample size is large, the likelihood ratio test is known to be sensitive to 
 small measurement invariance violations \cite{Ben80}.  That is, the above tests 
@@ -378,12 +397,15 @@ of interest to researchers.  For example, imagine that the 15-year-olds'
 parameters are slightly different than the other age groups.  
 The 15-year-olds are in the middle of the age groups, and there 
 is not likely to be any theoretical justification for 15-year-olds 
-differing from every other age group.  One solution to this problem would be the {\em approximate invariance} methods proposed by Muth\'{e}n \cite{muthen13}.
-Alternatively, we can use the proposed family of score-based statistics to obtain tests that are sensitive to the ordering of age.
+differing from every other age group.  One solution to this problem would be the
+\emph{approximate invariance} methods proposed by Muth\'{e}n \cite{muthen13}.
+Alternatively, we can use the proposed family of score-based statistics to obtain
+tests that are sensitive to the ordering of age.
 
 
 
 \subsection{Continuous Treatment}
+
 If we are interested in measurement invariance violations that are 
 monotonic with the age groups, it is perhaps simplest to treat the 
 age groups as continuous.  In doing so, we can use the statistics 
@@ -391,7 +413,8 @@ from Equations~\eqref{eq:dmax}, ~\eqref{eq:cvm} and~\eqref{eq:maxlm}.
 That is, we can fit a model whose parameters 
 are restricted to be equal across all individuals and then examine 
 how individuals' scores $s(\hat{\theta};x_{i})$ fluctuate with their
-age (where age ties are broken arbitrarily).
+age where age ties are broken arbitrarily (using the original order
+of the observations within each age group).
 This is demonstrated below, with similar code being useful when one is 
 testing for measurement invariance w.r.t.\ truly continuous variables.
 
@@ -403,69 +426,29 @@ testing for measurement invariance w.r.t.\ truly continuous variables.
 %% no existing groups. Instead, we can follow the procedure described in
 %% the Background section.
 
-To proceed, we focus only on the restricted model that was fit in 
-the previous section (stored in the object \verb+reduced+).  We obtain scores 
-associated with the factor loadings from this model, then test the 
-fluctuation of these scores across \verb+agegroup+.  
-As demonstrated below, the score computation and testing can be efficiently carried out using \verb+sctest.lavaan()+.
-%% Ting: I removed this because the model was already fit in the
-%%       previous section
-%%<<theta estimate>>=
-%%theta<-cfa(
-%%  'f1=~gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5',
-%%  data=yg,group="agegroup",meanstructure=TRUE,
-%%  group.equal="loadings")
-%%@
-
-
-<<getestimate>>=
-dm <- sctest(reduced, as.numeric(yg$agegroup), parm = 1:4, stat = "DM")
-cvm <- sctest(reduced, as.numeric(yg$agegroup), parm = 1:4, stat = "CvM")
-maxlm <- sctest(reduced, as.numeric(yg$agegroup), parm = 1:4, stat = "maxLM")
-round(c(dm$p.value, cvm$p.value, maxlm$p.value), 2)
+Again, we employ the \code{sctest()} function to assess the parameters~1--4
+from the restricted model \code{restr} after ordering w.r.t.\ \code{agegroup}:
+%
+<<sctest-cont>>=
+dm <- sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
+  functional = "DM")
+cvm <- sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
+  functional = "CvM")
+maxlm <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
+  vcov = "info", functional = "maxLM")
+c(dm$p.value, cvm$p.value, maxlm$p.value)
 @
-%% move this code description to the cat2BB part. 
-%In the code above, the \verb+parm=1:4+ argument means that 
-%we wish to test model parameter numbers 1 through 4 (which are the factor loadings), 
-%which are supplied by lavaan.  The ordering of parameters can be obtained via the 
-%command \verb+coef(reduced)+.  
-We see that two of the three $p$-values output at 
-the end of the code are larger than that associated with the LRT (with the CvM statistic being non-significant).  
+%
+We see that two of the three $p$-values output at the end of the code are
+larger than that associated with the LRT (with the CvM statistic being non-significant).  
 
-%% TODO Illustrate with graphs?
-
-
-%% THE FOLLOWING HAS BEEN MOVED
-%% \begin{figure}
-%% \caption{Get Continuous Estimate DM Alternative Way}
-%% \label{fig:conti1res}
-%% \setkeys{Gin}{width=\textwidth}
-%% <<conti1res, fig=TRUE, height=7, width=7>>=
-%% DM<-sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="DM", fplot=TRUE) 
-%% DM
-%% @
-%% \end{figure}
-
-%% \begin{figure}
-%% \caption{Get Continuous Estimate CvM Alternative Way}
-%% \label{fig:conti2res}
-%% \setkeys{Gin}{width=\textwidth}
-%% <<conti2res, fig=TRUE, height=7, width=7>>=
-%% CvM<-sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="CvM", fplot=TRUE) 
-%% CvM
-%% @
-%% \end{figure}
-
-
-%% <<conti3resmaxLM>>=
-%% maxLM<-sctest(reduced, as.numeric(yg$agegroup), parm=1:4, stat="maxLM", fplot=FALSE) 
-%% maxLM
-%% @
 The tests carried out here assume a unique ordering of individuals by age, but 
 this is obviously not the case.  To compute the statistics and $p$-values, 
-the strucchange package implicitly assumed an arbitrary ordering of 
+the \pkg{strucchange} package implicitly employed the (arbitrary) ordering of 
 individuals who are tied on age.  If we were to change this ordering, 
-the resulting statistics and $p$-values would also change, which is obviously problematic.  
+the resulting statistics and $p$-values would also change, potentially
+switching significant results to being non-significant and vice versa.
+Clearly, this is problematic.  
 To accurately account for the multiple observations  
 at the same age level, we must use the ordinal tests from 
 Equations~\eqref{eq:wdm} and~\eqref{eq:maxlmo}.  These are described next.
@@ -479,13 +462,12 @@ Equations~\eqref{eq:wdm} and~\eqref{eq:maxlmo}.  These are described next.
 %% and above, except that we focus on "bins" of individuals 
 %% at each level of the ordinal variable.  
 The main difference between the ordinal test statistics and their
-continuous counterparts is that the ordinal statistics do not require
-an ordering of individuals  
-within the same age group.  To compute the test statistics, we allow
+continuous counterparts is that the ordinal statistics are unchanged
+when re-ordering individuals within the same age group.  To compute the test statistics, we allow
 the scores of all tied individuals to enter the cumulative sum
 (Equation~\eqref{eq:cumscore}) simultaneously.  This results in
 modified critical values and test statistics that are sensitive to
-measurement invariance violations that are monotonic with age group.
+measurement invariance violations that are monotonic w.r.t.\ age group.
 %% Therefore, this ordinal test should 
 %% reflect more real status of the data. In terms of code, we still need the gefp 
 %% function to get the B estimate. After that, we can use different 
@@ -499,30 +481,36 @@ can be lengthy from the need to simulate critical values.
 %% This is more complicated than necessary, but it is written like
 %% this so that we can load the ordinal critical values behind the
 %% scenes without confusing the reader.
-<<critvals,echo=FALSE,strip.white=all>>=
-if(file.exists("opval1.rda")){
-  load("opval1.rda")
+<<sctest-ord1, echo=FALSE, results=hide>>=
+set.seed(1090)
+wdmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
+  vcov = "info", functional = "WDMo")
+
+if(file.exists("maxLMo.rda")){
+  load("maxLMo.rda")
 } else {
-  gefp1 <- gefp(reduced, fit = NULL, order.by = as.numeric(yg$agegroup),
-                vcov = info_full, sandwich = FALSE, parm = 1:4)
-  opval1 <- ordL2BB(gefp1)
-  save(opval1, file="opval1.rda")
+  RNGkind(kind = "default", normal.kind = "default")
+  set.seed(1090)
+  maxLMo <- ordL2BB(yg$agegroup, nproc = 4)
+  save(maxLMo, file = "maxLMo.rda")
 }
-## Get test statistics using fnl=opval1 without showing it in the paper
-wdmo <- sctest(reduced, as.numeric(yg$agegroup), parm = 1:4, stat = "WDMo")
-maxlmo <- sctest(reduced, as.numeric(yg$agegroup), parm = 1:4, stat = "maxLMo",
-                 fnl = opval1)
+maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
+  vcov = "info", functional = maxLMo)
 @ 
-<<ordtest,eval=FALSE,strip.white=all>>=
-wdmo <- sctest(reduced, as.numeric(yg$agegroup), parm = 1:4, stat = "WDMo")
-maxlmo <- sctest(reduced, as.numeric(yg$agegroup), parm = 1:4, stat = "maxLMo")
+<<sctest-ord2, eval=FALSE,strip.white=all>>=
+wdmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
+  functional = "WDMo")
+maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
+  vcov = "info", functional = "maxLMo")
 @ 
-<<pval,strip.white=all>>=
-round(c(wdmo$p.value, maxlmo$p.value), 2)
+<<sctest-ord3,strip.white=all>>=
+c(wdmo$p.value, maxlmo$p.value)
 @ 
 In computing the ordinal test statistics, we
-obtain~$p=\Sexpr{round(wdmo$p.value,2)}$
-and~$p=\Sexpr{round(maxlmo$p.value,2)}$, respectively.
+obtain~$p=\Sexpr{round(wdmo$p.value, 3)}$
+and~$p=\Sexpr{round(maxlmo$p.value, 3)}$, respectively.\footnote{To replicate
+both $p$-values exactly, the \proglang{R}'s random seed needs to be
+set by \code{set.seed(1090)} prior to each \code{sctest()} call.}
 Both $p$-values are clearly larger than that of the 
 likelihood ratio test and neither is significant at $\alpha=0.05$. 
 This provides evidence that there is no measurement
@@ -530,51 +518,39 @@ invariance violation that is monotonic with age group.  Instead, given
 the large sample size, the likelihood ratio test may be overly
 sensitive to anomalous, non-monotonic violations at one (or a few) age groups.
 
-In addition to test statistics, ``instability plots'' can be generated by using the \verb+fplot=TRUE+ argument within \verb+sctest.lavaan()+. Plots representing the statistics' fluctuations across levels of age group are displayed in Figure~\ref{fig:ordres}.  The left panel displays the process associated with $\mathit{WDM}_o$, and the right panel displays the process associated with $\max\mathit{LM}_o$. 
-%The following sentence is not correct for all statistics:  
-%In both cases, the test statistics in the sequence assess a split of the observations up to age group $i$ vs. greater than $i$, and the null hypothesis is rejected if the maximum of the statistics is larger than its 5\% critical value(visualized by the horizontal red line). 
-These plots display the loadings' fluctuation across age groups, with the x-axis reflecting age group and the y-axis reflecting test statistic values (larger values reflect more instability).  The red lines reflect critical values, so that the hypothesis of measurement invariance is rejected if a black line crosses the red line.  While the measurement invariance tests are non-significant, the plots imply some instability in the older age groups (15 and 16).
+In addition to test statistics, ``instability plots'' can be generated by additionaly setting
+\code{plot = TRUE} in the \code{sctest()} calls above. The resulting plots representing
+the statistics' fluctuations across levels of age group are displayed in
+Figure~\ref{fig:ordres}.
+These plots display the loadings' fluctuation across age groups, with the x-axis
+reflecting age group and the y-axis reflecting test statistic values (larger
+values reflect more instability).  The dashed horizontal lines reflect critical values, so
+that the hypothesis of measurement invariance is rejected if the sequence of
+test statistics crosses the critical value.  While the measurement invariance tests are
+non-significant, the plots imply some instability in the older age groups (15 and 16).
 
-
-%% gefp1<gefp(reduced,fit=NULL,order.by=as.numeric(yg$agegroup),
-%%        vcov=info_full,sandwich=FALSE,parm=1:4)
-%% pval.ord=rep(NA,2)
-%% pval.ord[1]<-sctest(gefp1,functional=ordwmax(gefp1))$p.value
-
-
-%%pval.ord[2]<-sctest(gefp1, functional=opval1)$p.value
-%% pval.ord
-%% @
-
-%Or alternatively, we could use the sctest.lavaan function, but assign ordinal statistics.
 \begin{figure}
 \caption{Fluctuation processes for the $\mathit{WDM}_o$ statistic (left panel) and the $\max\mathit{LM}_o$ statistic (right panel).}
 \label{fig:ordres}
-\setkeys{Gin}{width=\textwidth}
-<<ordres, fig=TRUE, height=3, width=6, echo=FALSE, results=hide>>=
-par(mfrow = c(1, 2), cex = 0.65)
-sctest(reduced, as.numeric(yg$agegroup), parm = 1:4, stat = "WDMo", 
-       fplot = TRUE, ylim = c(0,3.5), xlab = "Age group",
-       ylab = "Weighted max statistics", axes = FALSE)
-axis(1, at = 1:5, labels = c("10-11", "12-13", "14", "15", "16"))
-box()
-
-sctest(reduced, as.numeric(yg$agegroup), parm = 1:4, stat = "maxLMo", 
-       fnl = opval1, fplot = TRUE, ylim = c(0,14), xlab = "Age group",
-       ylab = "LM statistics", axes = FALSE)
-axis(1, at = 1:5, labels = c("10-11", "12-13", "14", "15", "16"))
-box()
+<<sctest-ord-graphics, fig=TRUE, height=4.5, width=9, echo=FALSE, results=hide>>=
+par(mfrow = c(1, 2))
+set.seed(1090)
+sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
+  functional = "WDMo", plot = TRUE, ylim = c(0, 3.2),
+  xlab = "Age group", ylab = "Weighted max statistics",
+  main = expression(WDM[o]), boundary = list(col = 1, lty = 2))
+sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
+  functional = maxLMo, plot = TRUE, ylim = c(0, 14),
+  xlab = "Age group", ylab = "LM statistics",
+  main = expression(maxLM[o]), boundary = list(col = 1, lty = 2))
 @
 \end{figure}
 
 
-%% TODO Describe graphs
-%% Is there some argument for fplot=TRUE so user can change  axis-name and critical value line
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 In the above sections, we have illustrated the score-based tests'
-computation in R.  We suspect that the ordinal tests will be most
+computation in \proglang{R}.  We suspect that the ordinal tests will be most
 popular with users, because measurement invariance tests are typically
 carried out across categories (ordered or not), as opposed to
 continuous variables.  Thus, in the sections below, we conduct
@@ -772,21 +748,20 @@ sim1$test <- factor(as.character(sim1$test),
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The parameter violating measurement 
 invariance is $\lambda_{11}$.}
 \label{fig:sim11res}
-\setkeys{Gin}{width=\textwidth}
-<<sim11res, fig=TRUE, height=7, width=7, echo=FALSE>>=
+<<sim11res, fig=TRUE, height=9, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim1$test), points = TRUE, lines = TRUE)
-print(xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
-             subset = (parms == "loading" & 
-                       pars %in% c("Loading1", "All Loadings", "All Errors") & diff %% 0.5 == 0),
-             type = "b", xlab = "Violation Magnitude", ylab = "Power", key=mykey,
-             strip = function(..., which.given, factor.levels){
-                 if(which.given == 2){
-                     strip.default(which.given, factor.levels = parlabs[c(1, 4:5)], ...)
-                 } else {
-                     strip.default(which.given, factor.levels = factor.levels, ...)
-                 }
-             }))
+xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
+       subset = (parms == "loading" & 
+		 pars %in% c("Loading1", "All Loadings", "All Errors") & diff %% 0.5 == 0),
+       type = "b", xlab = "Violation Magnitude", ylab = "Power", key=mykey,
+       strip = function(..., which.given, factor.levels){
+	   if(which.given == 2){
+	       strip.default(which.given, factor.levels = parlabs[c(1, 4:5)], ...)
+	   } else {
+	       strip.default(which.given, factor.levels = factor.levels, ...)
+	   }
+       })
 @
 
 \end{figure}
@@ -794,21 +769,20 @@ print(xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
 \begin{figure}
 \caption{Simulated power curves for $\max \mathit{LM}_o$ tests, $\mathit{WDM}_o$ test $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$, and measurement invariance violations of 0--4 standard errors (scaled by $\sqrt{n}$). The parameter violating measurement invariance is $\sigma_{12}$}
 \label{fig:sim12res}
-\setkeys{Gin}{width=\textwidth}
-<<sim12res, fig=TRUE, height=7, width=7, echo=FALSE>>=
+<<sim12res, fig=TRUE, height=9, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim1$test), points = TRUE, lines = TRUE)
-print(xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
-             subset = (parms == "var" & 
-                       pars %in% c("Covariance", "All Loadings", "All Errors") & diff %% 0.5 == 0),
-             type = "b", xlab = "Violation Magnitude", ylab="Power", key = mykey,
-             strip = function(..., which.given, factor.levels){
-                 if(which.given == 2){
-                     strip.default(which.given, factor.levels = parlabs[c(2, 4:5)], ...)
-                 } else {
-                     strip.default(which.given, factor.levels = factor.levels, ...)
-                 }
-             }))
+xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
+       subset = (parms == "var" & 
+		 pars %in% c("Covariance", "All Loadings", "All Errors") & diff %% 0.5 == 0),
+       type = "b", xlab = "Violation Magnitude", ylab="Power", key = mykey,
+       strip = function(..., which.given, factor.levels){
+	   if(which.given == 2){
+	       strip.default(which.given, factor.levels = parlabs[c(2, 4:5)], ...)
+	   } else {
+	       strip.default(which.given, factor.levels = factor.levels, ...)
+	   }
+       })
 @
 
 \end{figure}
@@ -817,21 +791,20 @@ print(xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
 \caption{Simulated power curves for $\max \mathit{LM}_o$ test, $\mathit{WDM}_o$ test, and $\mathit{LM}_{uo}$ test across three levels of the ordinal variable $m$ and measurement invariance 
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The parameter violating measurement invariance is $\psi{11}$}
 \label{fig:sim13res}
-\setkeys{Gin}{width=\textwidth}
-<<sim13res, fig=TRUE, height=7, width=7, echo=FALSE>>=
+<<sim13res, fig=TRUE, height=9, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim1$test), points = TRUE, lines = TRUE)
-print(xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
-             subset = (parms == "error" & 
-                       pars %in% c("Error1", "All Loadings", "All Errors") & diff %% 0.5 == 0),
-             type = "b", xlab = "Violation Magnitude", ylab = "Power", key = mykey,
-             strip = function(..., which.given, factor.levels){
-                 if(which.given == 2){
-                     strip.default(which.given, factor.levels = parlabs[c(3,4:5)], ...)
-                 } else {
-                     strip.default(which.given, factor.levels = factor.levels, ...)
-                 }
-             }))
+xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
+       subset = (parms == "error" & 
+		 pars %in% c("Error1", "All Loadings", "All Errors") & diff %% 0.5 == 0),
+       type = "b", xlab = "Violation Magnitude", ylab = "Power", key = mykey,
+       strip = function(..., which.given, factor.levels){
+	   if(which.given == 2){
+	       strip.default(which.given, factor.levels = parlabs[c(3,4:5)], ...)
+	   } else {
+	       strip.default(which.given, factor.levels = factor.levels, ...)
+	   }
+       })
 @
 
 \end{figure}
@@ -905,21 +878,20 @@ sim2$test <- factor(as.character(sim2$test),
 \caption{Simulated power curves for $\max \mathit{LM}_o$ test, $\mathit{WDM}_o$ test, and $\mathit{LM}_{uo}$ test across three levels of the ordinal variable $m$ and measurement invariance 
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The parameter violating measurement invariance is the unmodeled loading.}
 \label{fig:sim21res}
-\setkeys{Gin}{width=\textwidth}
-<<sim21res, fig=TRUE, height=7, width=7, echo=FALSE>>=
+<<sim21res, fig=TRUE, height=9, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
-print(xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
-             subset = (parms == "extra" & 
-                       pars %in% c("Loading1", "Error1", "Covariance") & diff %% 0.5 == 0),
-             type = "b", xlab = "Violation Magnitude", ylab = "Power", key = mykey,
-             strip = function(..., which.given, factor.levels){
-                 if(which.given == 2){
-                     strip.default(which.given, factor.levels = parlabs[c(1, 2:3)], ...)
-                 } else {
-                     strip.default(which.given, factor.levels = factor.levels, ...)
-                 }
-             }))
+xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
+       subset = (parms == "extra" & 
+		 pars %in% c("Loading1", "Error1", "Covariance") & diff %% 0.5 == 0),
+       type = "b", xlab = "Violation Magnitude", ylab = "Power", key = mykey,
+       strip = function(..., which.given, factor.levels){
+	   if(which.given == 2){
+	       strip.default(which.given, factor.levels = parlabs[c(1, 2:3)], ...)
+	   } else {
+	       strip.default(which.given, factor.levels = factor.levels, ...)
+	   }
+       })
 @
 
 \end{figure}
@@ -928,7 +900,7 @@ print(xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 \section{General Discussion}
 
 
-In this paper, we first described a novel family of test statistics for measurement invariance and illustrated their use via the R package lavaan.  Next, we examined these statistics' abilities to identify the parameter violating measurement invariance under well-specified and misspecified models.  We found the proposed statistics could generally isolate the model parameter violating measurement invariance, so long as the violating parameter is included in the model.
+In this paper, we first described a novel family of test statistics for measurement invariance and illustrated their use via the \proglang{R} package \pkg{lavaan}.  Next, we examined these statistics' abilities to identify the parameter violating measurement invariance under well-specified and misspecified models.  We found the proposed statistics could generally isolate the model parameter violating measurement invariance, so long as the violating parameter is included in the model.
 
 In the reminder of the paper, we will first consider the applicability of these tests as compared to traditional tests.  Next, we discuss test extension to other fit functions and to other specialized models.
 
@@ -960,16 +932,16 @@ In addition to alternative fit functions, the tests can be extended to other mod
 
 \section*{Computational Details}
 
-All results were obtained using the {R}~system for statistical computing \cite{R11},
+All results were obtained using the \proglang{R}~system for statistical computing \cite{R11},
 version~\Sexpr{paste(R.Version()[6:7], collapse = ".")}, employing the add-on package
-{lavaan}~\Sexpr{packageDescription("lavaan")["Version"]} \cite{lavaan11} for fitting 
+\pkg{lavaan}~\Sexpr{packageDescription("lavaan")["Version"]} \cite{lavaan11} for fitting 
 of the factor analysis models and
-{strucchange}~\Sexpr{packageDescription("strucchange")["Version"]} \cite{ZeiLei02,Zei06}
-for evaluating the parameter instability tests. {R}~and the packages {lavaan} and 
-{strucchange} are
+\pkg{strucchange}~\Sexpr{packageDescription("strucchange")["Version"]} \cite{ZeiLei02,Zei06}
+for evaluating the parameter instability tests. {R}~and the packages \pkg{lavaan} and 
+\pkg{strucchange} are
 freely available under the General Public License~2 from the
-Comprehensive {R} Archive Network at \url{http://CRAN.R-project.org/}.
-{R}~code for replication of our results is
+Comprehensive \proglang{R} Archive Network at \url{http://CRAN.R-project.org/}.
+\proglang{R}~code for replication of our results is
 available at \url{http://semtools.R-Forge.R-project.org/}.
 
 
@@ -984,21 +956,20 @@ error term $\psi_{11}$ violate invariance, respectively.
 \caption{Simulated power curves for $\max \mathit{LM}_o$ test, $\mathit{WDM}_o$ test, and $\mathit{LM}_{uo}$ test across three levels of the ordinal variable $m$ and measurement invariance 
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The violation parameter is $\lambda_{11}$.}
 \label{fig:sim22res}
-\setkeys{Gin}{width=\textwidth}
-<<sim22res, fig=TRUE, height=7, width=7, echo=FALSE>>=
+<<sim22res, fig=TRUE, height=9, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
-print(xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
-             subset = (parms=="extra+loading" & 
-                       pars %in% c("Loading1", "All Loadings", "All Errors") & diff %% 0.5 == 0),
-             type = "b", xlab = "Violation Magnitude", ylab = "Power", key = mykey,
-             strip = function(..., which.given, factor.levels){
-                 if(which.given == 2){
-                     strip.default(which.given, factor.levels = parlabs[c(1, 4:5)], ...)
-                 } else {
-                     strip.default(which.given, factor.levels = factor.levels, ...)
-                 }
-             }))
+xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
+       subset = (parms=="extra+loading" & 
+		 pars %in% c("Loading1", "All Loadings", "All Errors") & diff %% 0.5 == 0),
+       type = "b", xlab = "Violation Magnitude", ylab = "Power", key = mykey,
+       strip = function(..., which.given, factor.levels){
+	   if(which.given == 2){
+	       strip.default(which.given, factor.levels = parlabs[c(1, 4:5)], ...)
+	   } else {
+	       strip.default(which.given, factor.levels = factor.levels, ...)
+	   }
+       })
 @
 
 \end{figure}
@@ -1007,21 +978,20 @@ print(xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 \caption{Simulated power curves for $\max \mathit{LM}_o$ test, $\mathit{WDM}_o$ test, and $\mathit{LM}_{uo}$ test across three levels of the ordinal variable $m$ and measurement invariance 
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The violation parameter is $\sigma_{12}$.}
 \label{fig:sim23res}
-\setkeys{Gin}{width=\textwidth}
-<<sim23res, fig=TRUE, height=7, width=7, echo=FALSE>>=
+<<sim23res, fig=TRUE, height=9, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
-print(xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
-             subset = (parms=="extra+var" & 
-                       pars %in% c("Covariance", "All Loadings", "All Errors") & diff %% 0.5 == 0),
-             type = "b", xlab = "Violation Magnitude", ylab = "Power", key = mykey,
-             strip = function(..., which.given, factor.levels){
-                 if(which.given == 2){
-                     strip.default(which.given, factor.levels = parlabs[c(2, 4:5)], ...)
-                 } else {
-                     strip.default(which.given, factor.levels = factor.levels, ...)
-                 }
-             }))
+xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
+       subset = (parms=="extra+var" & 
+		 pars %in% c("Covariance", "All Loadings", "All Errors") & diff %% 0.5 == 0),
+       type = "b", xlab = "Violation Magnitude", ylab = "Power", key = mykey,
+       strip = function(..., which.given, factor.levels){
+	   if(which.given == 2){
+	       strip.default(which.given, factor.levels = parlabs[c(2, 4:5)], ...)
+	   } else {
+	       strip.default(which.given, factor.levels = factor.levels, ...)
+	   }
+       })
 @
 
 \end{figure}
@@ -1030,21 +1000,20 @@ print(xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 \caption{Simulated power curves for $\max \mathit{LM}_o$ test, $\mathit{WDM}_o$ test, and $\mathit{LM}_{uo}$ test across three levels of the ordinal variable $m$ and measurement invariance 
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The violation parameter is $\psi_{11}$.}
 \label{fig:sim24res}
-\setkeys{Gin}{width=\textwidth}
-<<sim24res, fig=TRUE, height=7, width=7, echo=FALSE>>=
+<<sim24res, fig=TRUE, height=9, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
-print(xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
-             subset = (parms == "extra" & 
-                       pars %in% c("Error1", "All Errors", "All Loadings") & diff %% 0.5 == 0),
-             type = "b", xlab = "Violation Magnitude", ylab = "Power", key = mykey,
-             strip = function(..., which.given, factor.levels){
-                 if(which.given == 2){
-                     strip.default(which.given, factor.levels = parlabs[c(3, 4:5)], ...)
-                 } else {
-                     strip.default(which.given, factor.levels = factor.levels, ...)
-                 }
-             }))
+xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
+       subset = (parms == "extra" & 
+		 pars %in% c("Error1", "All Errors", "All Loadings") & diff %% 0.5 == 0),
+       type = "b", xlab = "Violation Magnitude", ylab = "Power", key = mykey,
+       strip = function(..., which.given, factor.levels){
+	   if(which.given == 2){
+	       strip.default(which.given, factor.levels = parlabs[c(3, 4:5)], ...)
+	   } else {
+	       strip.default(which.given, factor.levels = factor.levels, ...)
+	   }
+       })
 @
 
 \end{figure}
