@@ -581,7 +581,7 @@ two-factor model with three indicators each (see Figure~\ref{fig:path}).
 The measurement invariance
 violation occurred in one of three places: the factor loading associated with Scale 1 
  ($\lambda_{11}$), the unique variance associated with Scale 1
- ($\psi_{11}$), or the factor covariance $\sigma_{12}$.  
+ ($\psi_{11}$), or the factor covariance $\phi_{12}$.  
  We then tested for measurement invariance in five subsets of parameters: the three
 individual parameters noted above, all six factor loadings, % $\lambda_{11}--\lambda_{62}$, and 
 and all six unique variances. % $\epsilon_{11}--\epsilon_{66}$.
@@ -689,7 +689,7 @@ Figure~\ref{fig:sim13res};
 Figure~\ref{fig:sim11res} displays power curves as a function of 
 violation magnitude for the first
 factor loading $\lambda_{11}$, with panels reflecting the parameters 
-being tested and lines reflecting $n$.
+being tested and lines reflecting different statistics.
 Figures~\ref{fig:sim12res} and Figure~\ref{fig:sim13res} display 
 similar power curves when the factor covariance 
 $\phi_{12}$ and error variance $\epsilon_{11}$ violate measurement
@@ -774,7 +774,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
 \caption{Simulated power curves for $\max \mathit{LM}_o$ test, $\mathit{WDM}_o$ test, and
 $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$, and measurement invariance
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The parameter violating measurement
-invariance is $\sigma_{12}$.}
+invariance is $\phi_{12}$.}
 \label{fig:sim12res}
 <<sim12res, fig=TRUE, height=9, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
@@ -997,7 +997,7 @@ available at \url{http://semtools.R-Forge.R-project.org/}.
 
 \section{Appendix}
 
-This Appendix includes the results for Simulation 2 when there exists model misspecification (lacking one path from Scale 1 to Math). Figure~\ref{fig:sim22res} to Figure~\ref{fig:sim24res} display results when the loading $\lambda_{11}$, covariance $\sigma_{12}$, and 
+This Appendix includes the results for Simulation 2 when there exists model misspecification (lacking one path from Scale 1 to Math). Figure~\ref{fig:sim22res} to Figure~\ref{fig:sim24res} display results when the loading $\lambda_{11}$, covariance $\phi_{12}$, and 
 error term $\psi_{11}$ violate invariance, respectively. 
 
 \begin{figure}
@@ -1024,7 +1024,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 
 \begin{figure}
 \caption{Simulated power curves for $\max \mathit{LM}_o$ test, $\mathit{WDM}_o$ test, and $\mathit{LM}_{uo}$ test across three levels of the ordinal variable $m$ and measurement invariance 
-violations of 0--4 standard errors (scaled by $\sqrt{n}$). The violation parameter is $\sigma_{12}$.}
+violations of 0--4 standard errors (scaled by $\sqrt{n}$). The violation parameter is $\phi_{12}$.}
 \label{fig:sim23res}
 <<sim23res, fig=TRUE, height=9, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))

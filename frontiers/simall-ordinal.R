@@ -234,6 +234,8 @@ dgp2 <-function(nobs = 240, diff = 1.5, nlevels = 3, gradual=FALSE, anomaly=FALS
   cbind(as.data.frame(datmat), age)
 }
 
+
+
 ## Evaluate power simulation on a single dgp() scenario
 testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, parnum = parnum, test = test,
                       sim="sim1",verbose = TRUE, ...)
@@ -271,6 +273,8 @@ testpower <- function(nrep = 5000, size = 0.05, ordfun = NULL, parnum = parnum, 
   return(rval)
 }
 
+
+
 ## Loop over scenarios
 simulation <- function(diff = seq(0, 4, by = 0.25),parms=c("error","loading","var"),
   nobs = c(120, 480, 960), nlevels = c(4, 8, 12), gradual = FALSE,
@@ -298,8 +302,8 @@ simulation <- function(diff = seq(0, 4, by = 0.25),parms=c("error","loading","va
   cval.conds <- as.numeric(names(cval))
 
   pow <- matrix(rep(NA,ntest*nprs),ncol=ntest)
-  do.parallel <-require("parallel")
-  #do.parallel=FALSE
+#  do.parallel <-require("parallel")
+  do.parallel=FALSE
   if (do.parallel){
     pow <- mclapply(1:nprs, function(i){
       testpower(diff = prs$diff[i], nobs = prs$nobs[i],
@@ -365,6 +369,7 @@ source("../www/estfun-lavaan.R")
 source("../www/efpFunctional-cat.R")
 source("simall-ordinal.R")
 
+
 ## seed for replication
   RNGkind(kind = "default", normal.kind = "default")
   set.seed(1090)
@@ -372,16 +377,18 @@ source("simall-ordinal.R")
 
   
 ## To get a shorter version (say, 20 minutes)to see what's going on, you could do:
-simtry <- simulation(sim=c("sim1"),nobs=c(480),nrep=300, diff=seq(0, 4, by = 1),
-                     parms=c("loading","error","var"))
-simtry <- simulation(sim=c("sim2"), nobs=c(480),nrep=300, diff=seq(0, 4, by = 1),
-                     parms=c("extra","extra+loading","extra+var","extra+error"))
+simtry <- simulation(sim = c("sim1"), nobs = c(480),nrep = 300, diff = seq(0, 4, by = 1),
+                     parms = c("loading", "error", "var"))
+simtry <- simulation(sim = c("sim2"), nobs = c(480),nrep=300, diff = seq(0, 4, by = 1),
+                     parms = c("extra", "extra+loading", "extra+var", "extra+error"))
+
 save(simtry,file ="simtry.rda")
 
 ## run full simulation
 sim1 <- simulation(sim=c("sim1"), nobs=c(480),parms=c("loading","error","var"))
 sim2 <- simulation(sim=c("sim2"), nobs=c(480),
                    parms=c("extra","extra+loading","extra+var","extra+error"))
+
 
 #load data file and give names for different levels in each variable.
 if(file.exists("simtry.rda")) {
