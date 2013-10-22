@@ -563,8 +563,8 @@ robust to model misspecification.
 
 
 \section{Simulation 1}
-
-In Simulation 1, we examined the extent to which the proposed tests
+Factor analysis models(and SEMs) are usually the first step for social scientists to determine the latent construct. These models are fairly complex with many inter-related parameters. Previous applications of the proposed tests have typically involved simpler models. In this paper we intended to study whether the tests can still identify the specific parameters that violate measurement invariance when parameter correlation is present in the model. \seeme{the above part is added motivation. Please check.} Particularly, 
+in Simulation 1, we examined the extent to which the proposed tests
 are sensitive to the specific model parameter that violates measurement
 invariance.  If, say, a factor loading violates measurement
 invariance, it is plausible that this violation impacts other
@@ -693,7 +693,7 @@ being tested and lines reflecting different statistics.
 Figures~\ref{fig:sim12res} and Figure~\ref{fig:sim13res} display 
 similar power curves when the factor covariance 
 $\phi_{12}$ and error variance $\epsilon_{11}$ violate measurement
-invariance, respectively. 
+invariance, respectively. In those Figures, we only show test parameters demonstrating non-zero powers for clarity. \seeme{Add this sentence to explaining there is no zero power curves.}
 All three test statistics exhibit
 similar results, with $\max\mathit{LM}_{uo}$ demonstrating lower power across all situations.  As described earlier, this statistic 
 is asymptotically equivalent to the LRT.  $\mathit{WDM}_o$  and $\max \mathit{LM}_o$ exhibited equivalent power curves because, when only one parameter is tested, the statistics are equivalent. 
@@ -708,8 +708,7 @@ parameters result in decreased power, as compared to the situation
 where one tests only the violating parameter.  This occurs because, in
 testing a subset of parameters (only one of which violates measurement
 invariance), we are effectively dampening the signal of a measurement
-invariance violation.  
-
+invariance violation. This ''dampening'' effect is more apparent for $\max \mathit{LM}_o$ statistic, because it sums across all parameters tested and then take the maximum. Whereas $\mathit{WDM}_o$ takes the maximum over parameters being tested directly.\seeme{Add from ''This'' to ''directly''.Please check.} 
 
 In summary, we found that the proposed tests can attribute
 measurement invariance violations to the correct parameter.  This
@@ -757,11 +756,11 @@ trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim1$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
        subset = (parms == "loading" & 
-		 pars %in% c("Loading1", "All Loadings", "All Errors") & diff %% 0.5 == 0),
+		 pars %in% c("Loading1", "All Loadings") & diff %% 0.5 == 0),
        type = "b", xlab = "Violation Magnitude", ylab = "Power", key = mykey, as.table = TRUE,
        strip = function(..., which.given, factor.levels){
 	   if(which.given == 2){
-	       strip.default(which.given, factor.levels = parlabs[c(1, 4:5)], ...)
+	       strip.default(which.given, factor.levels = parlabs[c(1, 4)], ...)
 	   } else {
 	       strip.default(which.given, factor.levels = factor.levels, ...)
 	   }
@@ -781,11 +780,11 @@ trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim1$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
        subset = (parms == "var" & 
-		 pars %in% c("Covariance", "All Loadings", "All Errors") & diff %% 0.5 == 0),
+		 pars %in% c("Covariance") & diff %% 0.5 == 0),
        type = "b", xlab = "Violation Magnitude", ylab="Power", key = mykey, as.table = TRUE,
        strip = function(..., which.given, factor.levels){
 	   if(which.given == 2){
-	       strip.default(which.given, factor.levels = parlabs[c(2, 4:5)], ...)
+	       strip.default(which.given, factor.levels = parlabs[c(2)], ...)
 	   } else {
 	       strip.default(which.given, factor.levels = factor.levels, ...)
 	   }
@@ -803,11 +802,11 @@ trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim1$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
        subset = (parms == "error" & 
-		 pars %in% c("Error1", "All Loadings", "All Errors") & diff %% 0.5 == 0),
+		 pars %in% c("Error1", "All Errors") & diff %% 0.5 == 0),
        type = "b", xlab = "Violation Magnitude", ylab = "Power", key = mykey, as.table = TRUE,
        strip = function(..., which.given, factor.levels){
 	   if(which.given == 2){
-	       strip.default(which.given, factor.levels = parlabs[c(3,4:5)], ...)
+	       strip.default(which.given, factor.levels = parlabs[c(3,5)], ...)
 	   } else {
 	       strip.default(which.given, factor.levels = factor.levels, ...)
 	   }
@@ -902,7 +901,7 @@ trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
        subset = (parms == "extra" & 
-		 pars %in% c("Loading1", "Error1", "Covariance") & diff %% 0.5 == 0),
+		 pars %in% c("Loading1", "Error1") & diff %% 0.5 == 0),
        type = "b", xlab = "Violation Magnitude", ylab = "Power", key = mykey, as.table = TRUE,
        strip = function(..., which.given, factor.levels){
 	   if(which.given == 2){
