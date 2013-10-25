@@ -82,9 +82,10 @@ options(prompt = "R> ", continue = "+  ", digits = 3,
 Many of the papers in this special issue focus on the topic of approximate
 measurement invariance: we know that strict hypotheses of measurement invariance
 do not hold exactly across different groups, and this should be reflected in
-corresponding tests of measurement invariance.  BSEM (Bayesian structural
-equation modeling) generally handles these ideas by replacing across-group
-equality constraints with informative prior distributions \cite<e.g.,>{muthen13}.  In this paper, we
+corresponding tests of measurement invariance.  Under a Bayesian
+approach, we may utilize the idea of approximate invariance
+\cite<e.g.,>{muthen13}, whereby across-group equality constraints on
+parameters are replaced with informative prior distributions.  In this paper, we
 describe an alternative approach: the development of test statistics that are
 sensitive to invariance violations of interest and insensitive to ``anomalous''
 invariance violations.  The test statistics are specifically applicable to
@@ -271,15 +272,17 @@ violation is monotonic with the ordinal variable.
 Finally, if the auxiliary variable $V$ is only nominal/categorical, the cumulative
 sums of scores can be used to obtain a Lagrange multiplier statistic.
 This test statistic can be formally written as
-\readme{Achim: Should $\ell$ be summed from 2 to $m$?  The second term
-  in parentheses is undefined for $\ell=1$.}
 \begin{equation}
     \label{eq:lmuo}
      \mathit{LM}_{uo} = \sum_{\ell = 1, \dots, m} \sum_{j = 1, \dots, k}
        \left( {\bm B}(\hat {\bm \theta})_{i_\ell j} - {\bm B}(\hat {\bm \theta})_{i_{\ell - 1}j} \right)^2,
 \end{equation}
-and it is asymptotically equivalent to the usual, likelihood ratio test statistic.
-It is advantageous over the likelihood ratio test because it requires estimation of
+where ${\bm B}(\hat {\bm \theta})_{i_{0}j} = 0$ for all $j$.
+\readme{Achim: I added a definition of ${\bm B}(\hat {\bm
+    \theta})_{i_{0}j}$.  Please double-check.} 
+This statistic is asymptotically equivalent to the usual, likelihood
+ratio test statistic, and it is advantageous over the likelihood ratio
+test because it requires estimation of 
 only one model (the restricted model).  We make use of this advantage in the
 simulations, described later.
 
@@ -407,7 +410,7 @@ parameters are slightly different than the other age groups.
 The 15-year-olds are in the middle of the age groups, and there 
 is not likely to be any theoretical justification for 15-year-olds 
 differing from every other age group.  One solution to this problem would be the
-Bayesian, \emph{approximate invariance} methods described in the
+Bayesian, approximate invariance methods described in the
 introduction \cite{muthen13}.
 Alternatively, we can use the proposed family of score-based statistics to obtain
 tests that are sensitive to the ordering of age.
@@ -822,7 +825,7 @@ being tested (top) and levels of the ordinal variable $m$ (bottom).}
 <<sim12res, fig=TRUE, height=4, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim1$test), points = TRUE, lines = TRUE)
-xyplot(power ~ diff | nlevels, group = ~ test, data = sim1,
+xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
        subset = (parms == "var" & 
 		 pars %in% c("Covariance") & diff %% 0.5 == 0),
        type = "b", xlab = "Violation Magnitude", ylab="Power", key = mykey, as.table = TRUE,
@@ -890,9 +893,11 @@ were also the same as Simulation 1.
 \subsection{Results}
 Results of
 primary interest are conditions where the unmodeled loading violates
-measurement invariance.  These results are displayed in Figure~\ref{fig:sim21res}.  One can generally observe
+measurement invariance.  A subset of results is displayed in Figure~\ref{fig:sim21res}.  One can generally observe
 that tests of the first loading and unique variance exhibited high
-``power,'' which is actually a high Type I error rate here.  This Type I error also demonstrated when testing all loadings and all unique variances.  The result is shown in Appendix.\seeme{From ''This type I'' to ''Appendix'' are added to refer to the added Appendix Figure. }  Tests
+``power,'' which is actually a high Type I error rate here.  This Type
+I error also demonstrated when testing all loadings and all unique
+variances, as shown in the Appendix.  Tests
 associated with the factor 
 covariance (not shown) did not demonstrate this error, however. In
 terms of specific 
@@ -991,8 +996,8 @@ proposed statistics could generally isolate the model parameter
 violating measurement invariance, so long as the violating parameter
 is included in the model. 
 
-In the reminder of the paper, we will first compare
-these tests to traditional tests of measurement invariance.  We also
+In the reminder of the paper, we first compare
+these tests to traditional tests of measurement invariance.  We then 
 discuss test extension to other fit functions and to other specialized
 models. 
 
@@ -1016,7 +1021,8 @@ detecting measurement invariance violations.
 %\readme{In the abstracts for the
 %special issue (which the special editors sent us), one paper was proposed along
 %these lines.  I will get a draft of that paper and then we can cite it here.}
-The tests are convenient for this purpose, as they do not require a new model to
+The tests described here are convenient for this purpose, as they do
+not require a new model to 
 be estimated for each ordinal variable.  Instead, each ordinal variable defines
 an ordering of observations, which in turn yields a test statistic that is
 specific to that ordinal variable.
@@ -1062,8 +1068,8 @@ version~\Sexpr{paste(R.Version()[6:7], collapse = ".")}, employing the add-on pa
 \pkg{lavaan}~\Sexpr{packageDescription("lavaan")["Version"]} \cite{lavaan11} for fitting 
 of the factor analysis models and
 \pkg{strucchange}~\Sexpr{packageDescription("strucchange")["Version"]} \cite{ZeiLei02,Zei06}
-for evaluating the parameter instability tests. {R}~and the packages \pkg{lavaan} and 
-\pkg{strucchange} are
+for evaluating the parameter instability tests. \proglang{R}~and the
+packages \pkg{lavaan} and \pkg{strucchange} are
 freely available under the General Public License~2 from the
 Comprehensive \proglang{R} Archive Network at \url{http://CRAN.R-project.org/}.
 \proglang{R}~code for replication of our results is
@@ -1074,11 +1080,14 @@ available at \url{http://semtools.R-Forge.R-project.org/}.
 
 \section{Appendix}
 
-This Appendix contains results for Simulation 2, where there existed
+This Appendix contains additional results from Simulation 2, where there existed
 model misspecification (lacking one loading from Scale 1 to
 Math). Figure~\ref{fig:sim22res} to Figure~\ref{fig:sim25res} display
-results when the unmodeled loading\seeme{add this to refer to the added figure}, loading $\lambda_{11}$, covariance $\phi_{12}$, and  
-error term $\psi_{11}$ violate invariance, respectively. 
+results when the unmodeled loading, the loading $\lambda_{11}$, the
+covariance $\phi_{12}$, and the error term $\psi_{11}$ violate
+invariance, respectively.  Results are only shown for simulation
+conditions exhibiting power curves that increased from zero.  These
+results were generally the same as the Simulation 1 results.
 
 \begin{figure}
 \caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
@@ -1134,13 +1143,13 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 \caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
 parameter violating measurement invariance is $\phi_{12}$.  Panel
-labels denote the parameter(s)  
+labels denote the parameter  
 being tested (top) and levels of the ordinal variable $m$ (bottom).}
 \label{fig:sim24res}
 <<sim24res, fig=TRUE, height=4, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
-xyplot(power ~ diff | nlevels, group = ~ test, data = sim2,
+xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
        subset = (parms=="extra+var" & 
 		 pars %in% c("Covariance") & diff %% 0.5 == 0),
        type = "b", xlab = "Violation Magnitude", ylab = "Power", key = mykey, as.table = TRUE,
