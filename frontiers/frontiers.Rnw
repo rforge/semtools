@@ -815,7 +815,9 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
 $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$,
   and measurement invariance 
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
-parameter violating measurement invariance is $\phi_{12}$.}
+parameter violating measurement invariance is $\phi_{12}$. Panel
+labels denote the parameter(s)  
+being tested (top) and levels of the ordinal variable $m$ (bottom).}
 \label{fig:sim12res}
 <<sim12res, fig=TRUE, height=4, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
@@ -890,7 +892,7 @@ Results of
 primary interest are conditions where the unmodeled loading violates
 measurement invariance.  These results are displayed in Figure~\ref{fig:sim21res}.  One can generally observe
 that tests of the first loading and unique variance exhibited high
-``power,'' which is actually a high Type I error rate here.  Tests
+``power,'' which is actually a high Type I error rate here.  This Type I error also demonstrated when testing all loadings and all unique variances.  The result is shown in Appendix.\seeme{From ''This type I'' to ''Appendix'' are added to refer to the added Appendix Figure. }  Tests
 associated with the factor 
 covariance (not shown) did not demonstrate this error, however. In
 terms of specific 
@@ -1074,9 +1076,34 @@ available at \url{http://semtools.R-Forge.R-project.org/}.
 
 This Appendix contains results for Simulation 2, where there existed
 model misspecification (lacking one loading from Scale 1 to
-Math). Figure~\ref{fig:sim22res} to Figure~\ref{fig:sim24res} display
-results when the loading $\lambda_{11}$, covariance $\phi_{12}$, and  
+Math). Figure~\ref{fig:sim22res} to Figure~\ref{fig:sim25res} display
+results when the unmodeled loading\seeme{add this to refer to the added figure}, loading $\lambda_{11}$, covariance $\phi_{12}$, and  
 error term $\psi_{11}$ violate invariance, respectively. 
+
+\begin{figure}
+\caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
+violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
+parameter violating measurement invariance is the unmodeled
+loading. Panel labels denote the parameter(s) 
+being tested (top) and levels of the ordinal variable $m$ (bottom).}
+\label{fig:sim22res}
+<<sim22res, fig=TRUE, height=7, width=9, echo=FALSE>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
+xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
+       subset = (parms == "extra" & 
+		 pars %in% c("All Loadings", "All Errors") & diff %% 0.5 == 0),
+       type = "b", xlab = "Violation Magnitude", ylab = "Power", key = mykey, as.table = TRUE,
+       strip = function(..., which.given, factor.levels){
+	   if(which.given == 2){
+	       strip.default(which.given, factor.levels = parlabs[c(4, 5)], ...)
+	   } else {
+	       strip.default(which.given, factor.levels = factor.levels, ...)
+	   }
+       })
+@
+
+\end{figure}
 
 \begin{figure}
 \caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
@@ -1084,8 +1111,8 @@ violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
 parameter violating measurement invariance is $\lambda_{11}$.  Panel
 labels denote the parameter(s)  
 being tested (top) and levels of the ordinal variable $m$ (bottom).}
-\label{fig:sim22res}
-<<sim22res, fig=TRUE, height=7, width=9, echo=FALSE>>=
+\label{fig:sim23res}
+<<sim23res, fig=TRUE, height=7, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
@@ -1109,8 +1136,8 @@ violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
 parameter violating measurement invariance is $\phi_{12}$.  Panel
 labels denote the parameter(s)  
 being tested (top) and levels of the ordinal variable $m$ (bottom).}
-\label{fig:sim23res}
-<<sim23res, fig=TRUE, height=4, width=9, echo=FALSE>>=
+\label{fig:sim24res}
+<<sim24res, fig=TRUE, height=4, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels, group = ~ test, data = sim2,
@@ -1134,17 +1161,17 @@ violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
 parameter violating measurement invariance is $\psi_{11}$.  Panel
 labels denote the parameter(s)  
 being tested (top) and levels of the ordinal variable $m$ (bottom).}
-\label{fig:sim24res}
-<<sim24res, fig=TRUE, height=9, width=9, echo=FALSE>>=
+\label{fig:sim25res}
+<<sim25res, fig=TRUE, height=7, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
-       subset = (parms == "extra" & 
-		 pars %in% c("Error1", "All Errors", "All Loadings") & diff %% 0.5 == 0),
+       subset = (parms == "extra+error" & 
+		 pars %in% c("Error1", "All Errors") & diff %% 0.5 == 0),
        type = "b", xlab = "Violation Magnitude", ylab = "Power", key = mykey, as.table = TRUE,
        strip = function(..., which.given, factor.levels){
 	   if(which.given == 2){
-	       strip.default(which.given, factor.levels = parlabs[c(3, 4:5)], ...)
+	       strip.default(which.given, factor.levels = parlabs[c(3,5)], ...)
 	   } else {
 	       strip.default(which.given, factor.levels = factor.levels, ...)
 	   }
