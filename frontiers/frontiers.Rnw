@@ -278,8 +278,6 @@ This test statistic can be formally written as
        \left( {\bm B}(\hat {\bm \theta})_{i_\ell j} - {\bm B}(\hat {\bm \theta})_{i_{\ell - 1}j} \right)^2,
 \end{equation}
 where ${\bm B}(\hat {\bm \theta})_{i_{0}j} = 0$ for all $j$.
-\readme{Achim: I added a definition of ${\bm B}(\hat {\bm
-    \theta})_{i_{0}j}$.  Please double-check.} 
 This statistic is asymptotically equivalent to the usual, likelihood
 ratio test statistic, and it is advantageous over the likelihood ratio
 test because it requires estimation of 
@@ -603,7 +601,7 @@ The measurement invariance
 violation occurred in one of three places: the factor loading associated with Scale 1 
  ($\lambda_{11}$), the unique variance associated with Scale 1
  ($\psi_{11}$), or the factor covariance $\phi_{12}$.  
- We then tested for measurement invariance in five subsets of parameters: the three
+ We then tested for measurement invariance in five subsets of parameters: each of the three
 individual parameters noted above, all six factor loadings, % $\lambda_{11}--\lambda_{62}$, and 
 and all six unique variances. % $\epsilon_{11}--\epsilon_{66}$.
 
@@ -698,12 +696,12 @@ level $1+m/2$ of $V$ deviated from individuals at or above level $1+m/2$
 by $d$ times the parameters' asymptotic standard errors
 (scaled by $\sqrt n$), with $d=0,0,25,0.5,...,4$. 
 For each combination of sample size ($n$) $\times$ violation
-magnitude ($d$) $\times$ violating parameter $\times$ categories $m$, 5000 datasets were
+magnitude ($d$) $\times$ violating parameter $\times$ categories ($m$), 5000 datasets were
 generated and tested.  Statistics from Equations~\eqref{eq:wdm}, ~\eqref{eq:maxlmo}
 and~\eqref{eq:lmuo} were examined. As mentioned previously,
 ~\eqref{eq:lmuo} is asymptotically equivalent to the usual likelihood
 ratio test.  Thus, this statistic provides information about the
-relative performance of the ordinal statistics vs the LRT.  
+relative performance of the ordinal statistics vs.\ the LRT.  
 
 In all conditions, we maintained equal sample 
 sizes in each subgroup of the ordinal variable. 
@@ -783,8 +781,9 @@ sim1$test <- factor(as.character(sim1$test),
   levels = c("ordmax", "ordwmax", "catdiff"),
   labels = c("maxLM_o", "WDM_o", "LM_uo"))
   parlabs <- c(expression(lambda[11]), expression(phi[12]), 
-               expression(psi[11]), expression(lambda[11] - lambda[62]), 
-               expression(psi[11] - psi[66]))
+               expression(psi[11]),
+	       expression(list(lambda[11], ldots, lambda[62])), 
+               expression(list(psi[11], ldots, psi[66])))
   levels(sim1$pars) <- c("Loading1", "Covariance", "Error1", "All Loadings", "All Errors")  
 @
 
@@ -793,7 +792,7 @@ sim1$test <- factor(as.character(sim1$test),
 $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The parameter violating measurement 
 invariance is $\lambda_{11}$.  Panel labels denote the parameter(s)
-being tested (top) and levels of the ordinal variable $m$ (bottom).}
+being tested (top) and the number of levels of the ordinal variable $m$ (bottom).}
 \label{fig:sim11res}
 <<sim11res, fig=TRUE, height=7, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
@@ -801,7 +800,8 @@ mykey <- simpleKey(levels(sim1$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
        subset = (parms == "loading" & 
 		 pars %in% c("Loading1", "All Loadings") & diff %% 0.5 == 0),
-       type = "b", xlab = "Violation Magnitude", ylab = "Power", key = mykey, as.table = TRUE,
+       type = "b", xlab = expression(paste("Violation Magnitude (", lambda[11], ")")),
+       ylab = "Power", key = mykey, as.table = TRUE,
        strip = function(..., which.given, factor.levels){
 	   if(which.given == 2){
 	       strip.default(which.given, factor.levels = parlabs[c(1, 4)], ...)
@@ -820,7 +820,7 @@ $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$,
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
 parameter violating measurement invariance is $\phi_{12}$. Panel
 labels denote the parameter(s)  
-being tested (top) and levels of the ordinal variable $m$ (bottom).}
+being tested (top) and the number of levels of the ordinal variable $m$ (bottom).}
 \label{fig:sim12res}
 <<sim12res, fig=TRUE, height=4, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
@@ -828,7 +828,8 @@ mykey <- simpleKey(levels(sim1$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
        subset = (parms == "var" & 
 		 pars %in% c("Covariance") & diff %% 0.5 == 0),
-       type = "b", xlab = "Violation Magnitude", ylab="Power", key = mykey, as.table = TRUE,
+       type = "b", xlab = expression(paste("Violation Magnitude (", phi[12], ")")),
+       ylab="Power", key = mykey, as.table = TRUE,
        strip = function(..., which.given, factor.levels){
 	   if(which.given == 2){
 	       strip.default(which.given, factor.levels = parlabs[c(2)],...)
@@ -845,7 +846,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
 parameter violating measurement invariance is $\psi_{11}$. Panel labels
 denote the parameter(s) 
-being tested (top) and levels of the ordinal variable $m$ (bottom).}
+being tested (top) and the number of levels of the ordinal variable $m$ (bottom).}
 \label{fig:sim13res}
 <<sim13res, fig=TRUE, height=7, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
@@ -853,7 +854,8 @@ mykey <- simpleKey(levels(sim1$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
        subset = (parms == "error" & 
 		 pars %in% c("Error1", "All Errors") & diff %% 0.5 == 0),
-       type = "b", xlab = "Violation Magnitude", ylab = "Power", key = mykey, as.table = TRUE,
+       type = "b", xlab = expression(paste("Violation Magnitude (", psi[11], ")")),
+       ylab = "Power", key = mykey, as.table = TRUE,
        strip = function(..., which.given, factor.levels){
 	   if(which.given == 2){
 	       strip.default(which.given, factor.levels = parlabs[c(3,5)], ...)
@@ -949,8 +951,9 @@ sim2$test <- factor(as.character(sim2$test),
   sim2$nobs <- factor(sim2$nobs)
   levels(sim2$nobs) <- paste("n=", levels(sim2$nobs), sep="")
   parlabs <- c(expression(lambda[11]), expression(phi[12]), 
-               expression(psi[11]), expression(lambda[11] - lambda[62]), 
-               expression(psi[11] - psi[66]))
+               expression(psi[11]),
+	       expression(list(lambda[11], ldots, lambda[62])), 
+               expression(list(psi[11], ldots, psi[66])))
   levels(sim2$pars) <- c("Loading1", "Covariance", "Error1", "All Loadings", "All Errors") 
 
 @ 
@@ -962,7 +965,7 @@ sim2$test <- factor(as.character(sim2$test),
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
 parameter violating measurement invariance is the unmodeled
 loading. Panel labels denote the parameter(s) 
-being tested (top) and levels of the ordinal variable $m$ (bottom).}
+being tested (top) and the number of levels of the ordinal variable $m$ (bottom).}
 \label{fig:sim21res}
 <<sim21res, fig=TRUE, height=7, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
@@ -970,7 +973,8 @@ mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
        subset = (parms == "extra" & 
 		 pars %in% c("Loading1", "Error1") & diff %% 0.5 == 0),
-       type = "b", xlab = "Violation Magnitude", ylab = "Power", key = mykey, as.table = TRUE,
+       type = "b", xlab = "Violation Magnitude (Unmodeled Loading)",
+       ylab = "Power", key = mykey, as.table = TRUE,
        strip = function(..., which.given, factor.levels){
 	   if(which.given == 2){
 	       strip.default(which.given, factor.levels = parlabs[c(1, 3)], ...)
@@ -1094,7 +1098,7 @@ results were generally the same as the Simulation 1 results.
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
 parameter violating measurement invariance is the unmodeled
 loading. Panel labels denote the parameter(s) 
-being tested (top) and levels of the ordinal variable $m$ (bottom).}
+being tested (top) and the number of levels of the ordinal variable $m$ (bottom).}
 \label{fig:sim22res}
 <<sim22res, fig=TRUE, height=7, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
@@ -1102,7 +1106,7 @@ mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
        subset = (parms == "extra" & 
 		 pars %in% c("All Loadings", "All Errors") & diff %% 0.5 == 0),
-       type = "b", xlab = "Violation Magnitude", ylab = "Power", key = mykey, as.table = TRUE,
+       type = "b", xlab = "Violation Magnitude (Unmodeled Loading)", ylab = "Power", key = mykey, as.table = TRUE,
        strip = function(..., which.given, factor.levels){
 	   if(which.given == 2){
 	       strip.default(which.given, factor.levels = parlabs[c(4, 5)], ...)
@@ -1119,7 +1123,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
 parameter violating measurement invariance is $\lambda_{11}$.  Panel
 labels denote the parameter(s)  
-being tested (top) and levels of the ordinal variable $m$ (bottom).}
+being tested (top) and the number of levels of the ordinal variable $m$ (bottom).}
 \label{fig:sim23res}
 <<sim23res, fig=TRUE, height=7, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
@@ -1127,7 +1131,7 @@ mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
        subset = (parms=="extra+loading" & 
 		 pars %in% c("Loading1", "All Loadings") & diff %% 0.5 == 0),
-       type = "b", xlab = "Violation Magnitude", ylab = "Power", key = mykey, as.table = TRUE,
+       type = "b", xlab = expression(paste("Violation Magnitude (", lambda[11], ")")), ylab = "Power", key = mykey, as.table = TRUE,
        strip = function(..., which.given, factor.levels){
 	   if(which.given == 2){
 	       strip.default(which.given, factor.levels = parlabs[c(1, 4)], ...)
@@ -1144,7 +1148,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
 parameter violating measurement invariance is $\phi_{12}$.  Panel
 labels denote the parameter  
-being tested (top) and levels of the ordinal variable $m$ (bottom).}
+being tested (top) and the number of levels of the ordinal variable $m$ (bottom).}
 \label{fig:sim24res}
 <<sim24res, fig=TRUE, height=4, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
@@ -1152,7 +1156,8 @@ mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
        subset = (parms=="extra+var" & 
 		 pars %in% c("Covariance") & diff %% 0.5 == 0),
-       type = "b", xlab = "Violation Magnitude", ylab = "Power", key = mykey, as.table = TRUE,
+       type = "b", xlab = expression(paste("Violation Magnitude (", phi[12], ")")),
+       ylab = "Power", key = mykey, as.table = TRUE,
        strip = function(..., which.given, factor.levels){
 	   if(which.given == 2){
 	       strip.default(which.given, factor.levels = parlabs[c(2, 4:5)], ...)
@@ -1169,7 +1174,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
 parameter violating measurement invariance is $\psi_{11}$.  Panel
 labels denote the parameter(s)  
-being tested (top) and levels of the ordinal variable $m$ (bottom).}
+being tested (top) and the number of levels of the ordinal variable $m$ (bottom).}
 \label{fig:sim25res}
 <<sim25res, fig=TRUE, height=7, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
@@ -1177,7 +1182,8 @@ mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
        subset = (parms == "extra+error" & 
 		 pars %in% c("Error1", "All Errors") & diff %% 0.5 == 0),
-       type = "b", xlab = "Violation Magnitude", ylab = "Power", key = mykey, as.table = TRUE,
+       type = "b", xlab = expression(paste("Violation Magnitude (", psi[11], ")")),
+       ylab = "Power", key = mykey, as.table = TRUE,
        strip = function(..., which.given, factor.levels){
 	   if(which.given == 2){
 	       strip.default(which.given, factor.levels = parlabs[c(3,5)], ...)
