@@ -21,7 +21,7 @@
 
 \abstract{
 In this paper, we consider a family of  recently-proposed measurement invariance
-tests that are based on the scores of a fitted model.  This family can be used
+tests that are based on the {\em scores} of a fitted model.  This family can be used
 to test for measurement invariance w.r.t.\ a continuous auxiliary variable,
 without pre-specification of subgroups. Moreover, the family can be used when
 one wishes to test for  measurement invariance w.r.t.\ an ordinal auxiliary
@@ -29,8 +29,7 @@ variable, yielding test statistics that are sensitive to violations that are
 monotonically related to the ordinal variable (and less sensitive to
 non-monotonic violations).  The paper is specifically aimed at potential users
 of the tests who may wish to know (i) how the tests can be employed for their
-data, and (ii) whether the tests can accurately identify measurement invariance
-violations in the presence of model misspecification.  After providing an
+data, and (ii) whether the tests can accurately identify specific models parameters that violate measurement invariance (possibly in the presence of model misspecification).  After providing an
 overview of the tests, we illustrate their general use via the \proglang{R} packages \pkg{lavaan}
 and \pkg{strucchange}.  We then describe two novel simulations that provide evidence
 of the tests' practical abilities.  As a whole, the paper provides researchers
@@ -85,20 +84,20 @@ measurement invariance: we know that strict hypotheses of measurement invariance
 do not hold exactly across different groups, and this should be reflected in
 corresponding tests of measurement invariance.  BSEM (Bayesian structural
 equation modeling) generally handles these ideas by replacing across-group
-equality constraints with informative prior distributions.  In this paper, we
+equality constraints with informative prior distributions \cite<e.g.,>{muthen13}.  In this paper, we
 describe an alternative approach: the development of test statistics that are
 sensitive to invariance violations of interest and insensitive to ``anomalous''
 invariance violations.  The test statistics are specifically applicable to
 situations where one wishes to test for measurement invariance with respect to
 an ordinal variable, and they are special cases of a family of tests that may
-generally be used to study measurement invariance w.r.t.\ continuous,
+be used to study measurement invariance w.r.t.\ continuous,
 categorical, and ordinal variables.
 
-The family of tests described in this paper have recently been studied in the
-context of measurement invariance \cite{MerZei13,MerFanZei}, though their
+The family of tests described in this paper have recently been applied
+to the study of measurement invariance \cite{MerZei13,MerFanZei}, though their
 practical application has been limited to a small set of simulations and
 datasets.  In this paper, we provide a detailed illustration of the tests' use
-in practice and a detailed examination  of the tests' performance under
+and performance under
 scenarios likely to be encountered in practice. 
 %In order to fix the psychometric scale, we need to specify the violating parameter.  
 %Moreover, in practice model misspecification is an inevitable issue to a certain extent 
@@ -141,10 +140,11 @@ of the fitted model; these are defined as
 \label{eq:score}
 s(\theta;x_{i}) = \left (
   \frac{\partial \ell(\theta;x_{i})}{\partial \theta_{1}}, \dots,
-  \frac{\partial \ell(\theta;x_{i})}{\partial \theta_{k}} \right )^\top,
+  \frac{\partial \ell(\theta;x_{i})}{\partial \theta_{k}} \right
+  )^\top,\ i=1,\ldots,n,
 \end{equation} 
 where $\ell(\theta; x_i)$ is the likelihood associated with individual
-$i$, $\theta$ is a $k$-dimensional parameter vector. The corresponding
+$i$ and $\theta$ is a $k$-dimensional parameter vector. The corresponding
 maximum likelihood estimate $\hat{\theta}$ solves the first order condition:
 $\sum_{i = 1}^n s(\hat \theta;x_{i}) = 0$. The cross-product
 of these scores forms the ``meat'' for the calculation of robust
@@ -173,7 +173,7 @@ function is being minimized or maximized).  Conversely, if measurement
 invariance holds, then all 
 individuals' scores will fluctuate randomly around zero.
 
-To formalize the ideas in the previous paragraph, we define a
+To formalize these ideas, we define a
 suitably scaled cumulative sum of the ordered scores.  This may be written as
 \begin{equation} 
     \label{eq:cumscore}
@@ -181,8 +181,10 @@ suitably scaled cumulative sum of the ordered scores.  This may be written as
     \sum_{i = 1}^{\lfloor n \cdot t \rfloor} {\bm s}(\hat {\bm \theta}; x_{(i)})
   \qquad (0 \le t \le 1)
 \end{equation}
-where $\lfloor nt \rfloor$ is the integer part of $nt$ (i.e., a floor
-operator) and $x_{(i)}$ reflects the individual with the
+where $\hat{\bm I}$ is an estimate of the information matrix, $\lfloor
+nt \rfloor$ is 
+the integer part of $nt$ (i.e., a floor 
+operator), and $x_{(i)}$ reflects the individual with the
 $i$-th smallest value of the auxiliary variable $V$.
 We specifically focus on how the
 cumulative sum fluctuates as more individuals' scores are added to it, e.g.,
@@ -262,11 +264,15 @@ This simulation is somewhat computationally intensive and, in practice, takes ab
 10 minutes on the authors' computers when 50,000 replications are sampled from the 
 approximate asymptotic distribution.  However, the wait is often worth it, 
 as \citeA{MerFanZei} found the performance of the $\max \mathit{LM}_o$ statistic 
-to be considerably better than the $\mathit{WDM}_o$ statistic.
+to have more power than the $\mathit{WDM}_o$ statistic and the traditional
+likelihood ratio test statistic when the measurement invariance
+violation is monotonic with the ordinal variable.
 
 Finally, if the auxiliary variable $V$ is only nominal/categorical, the cumulative
 sums of scores can be used to obtain a Lagrange multiplier statistic.
 This test statistic can be formally written as
+\readme{Achim: Should $\ell$ be summed from 2 to $m$?  The second term
+  in parentheses is undefined for $\ell=1$.}
 \begin{equation}
     \label{eq:lmuo}
      \mathit{LM}_{uo} = \sum_{\ell = 1, \dots, m} \sum_{j = 1, \dots, k}
@@ -385,11 +391,13 @@ sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
   functional = "LMuo")
 @
 This command specifies that we assess the parameter 1--4 of
-model \code{restr} after ordering the observations along the \code{agegroup} and
+model \code{restr} after ordering the observations according to
+\code{agegroup}.  Additionally, 
 the observed information matrix is used as the variance-covariance matrix. Note
-that the model parameters 1--4 are the factor loadings supplied by \pkg{lavaan}
-as can be seen by inspecting \code{coef(restr)}. This also leads to somewhat
-smaller test statistics that is very close to being significant at the 5\% level.
+that the model parameters 1--4 are the factor loadings supplied by
+\pkg{lavaan}, which can be seen by inspecting \code{coef(restr)}. This
+also leads to somewhat 
+smaller test statistics that are very close to being significant at the 5\% level.
 
 Because our sample size is large, the likelihood ratio test is known to be sensitive to 
 small measurement invariance violations \cite{Ben80}.  That is, the above tests 
@@ -399,7 +407,8 @@ parameters are slightly different than the other age groups.
 The 15-year-olds are in the middle of the age groups, and there 
 is not likely to be any theoretical justification for 15-year-olds 
 differing from every other age group.  One solution to this problem would be the
-\emph{approximate invariance} methods proposed by Muth\'{e}n \cite{muthen13}.
+Bayesian, \emph{approximate invariance} methods described in the
+introduction \cite{muthen13}.
 Alternatively, we can use the proposed family of score-based statistics to obtain
 tests that are sensitive to the ordering of age.
 
@@ -410,11 +419,11 @@ tests that are sensitive to the ordering of age.
 If we are interested in measurement invariance violations that are 
 monotonic with the age groups, it is perhaps simplest to treat the 
 age groups as continuous.  In doing so, we can use the statistics 
-from Equations~\eqref{eq:dmax}, ~\eqref{eq:cvm} and~\eqref{eq:maxlm}.  
+from Equations~\eqref{eq:dmax}, ~\eqref{eq:cvm}, and~\eqref{eq:maxlm}.  
 That is, we can fit a model whose parameters 
 are restricted to be equal across all individuals and then examine 
 how individuals' scores $s(\hat{\theta};x_{i})$ fluctuate with their
-age where age ties are broken arbitrarily (using the original order
+age (where age ties are broken arbitrarily, using the original order
 of the observations within each age group).
 This is demonstrated below, with similar code being useful when one is 
 testing for measurement invariance w.r.t.\ truly continuous variables.
@@ -427,7 +436,7 @@ testing for measurement invariance w.r.t.\ truly continuous variables.
 %% no existing groups. Instead, we can follow the procedure described in
 %% the Background section.
 
-Again, we employ the \code{sctest()} function to assess the parameters~1--4
+Again, we employ the \code{sctest()} function to assess parameters~1--4
 from the restricted model \code{restr} after ordering w.r.t.\ \code{agegroup}:
 %
 <<sctest-cont>>=
@@ -510,7 +519,7 @@ c(wdmo$p.value, maxlmo$p.value)
 In computing the ordinal test statistics, we
 obtain~$p=\Sexpr{round(wdmo$p.value, 3)}$
 and~$p=\Sexpr{round(maxlmo$p.value, 3)}$, respectively.\footnote{To replicate
-both $p$-values exactly, the \proglang{R}'s random seed needs to be
+both $p$-values exactly, \proglang{R}'s random seed needs to be
 set by \code{set.seed(1090)} prior to each \code{sctest()} call.}
 Both $p$-values are clearly larger than that of the 
 likelihood ratio test and neither is significant at $\alpha=0.05$. 
@@ -519,9 +528,10 @@ invariance violation that is monotonic with age group.  Instead, given
 the large sample size, the likelihood ratio test may be overly
 sensitive to anomalous, non-monotonic violations at one (or a few) age groups.
 
-In addition to test statistics, ``instability plots'' can be generated by additionaly setting
+In addition to test statistics, ``instability plots'' can be generated
+by setting 
 \code{plot = TRUE} in the \code{sctest()} calls above. The resulting plots representing
-the statistics' fluctuations across levels of age group are displayed in
+the ordinal statistics' fluctuations across levels of age group are displayed in
 Figure~\ref{fig:ordres}.
 These plots display the loadings' fluctuation across age groups, with the x-axis
 reflecting age group and the y-axis reflecting test statistic values (larger
@@ -556,20 +566,28 @@ popular with users, because measurement invariance tests are typically
 carried out across categories (ordered or not), as opposed to
 continuous variables.  Thus, in the sections below, we conduct
 novel simulations to study the ordinal statistics' expected behavior
-in practice.  In particular, we wish to study (i) the extent to which the
+in practice. 
+In particular, we wish to study (i) the extent to which the
 ordinal statistics attribute measurement invariance violations to the
 correct parameter(s), and (ii) the extent to which the tests are
-robust to model misspecification.
+robust to model misspecification.  These issues are especially
+important to examine because SEMs are typically complex, with many
+inter-related parameters that may exhibit measurement invariance.
+Previous applications of score-based tests have typically focused on
+regression-like models with only a small number of parameters that
+may exhibit instability \cite<e.g.,>{zeihor07}.  Thus, the simulations
+here provide general evidence about the extent to which the tests accurately
+capture instabilities in complex models.
+
 
 
 \section{Simulation 1}
-Factor analysis models(and SEMs) are usually the first step for social scientists to determine the latent construct. These models are fairly complex with many inter-related parameters. Previous applications of the proposed tests have typically involved simpler models. In this paper we intended to study whether the tests can still identify the specific parameters that violate measurement invariance when parameter correlation is present in the model. \seeme{the above part is added motivation. Please check.} Particularly, 
-in Simulation 1, we examined the extent to which the proposed tests
+In Simulation 1, we examined the extent to which the proposed tests
 are sensitive to the specific model parameter that violates measurement
 invariance.  If, say, a factor loading violates measurement
 invariance, it is plausible that this violation impacts other
-parameter estimates, including factor covariances or other loadings 
-associated with the factor in question.  Thus, the goal of the
+parameter estimates, including factor covariances or the unique variance
+associated with the manifest variable in question.  Thus, the goal of the
 Simulation 1 is to examine the extent to which the proposed tests
 attribute the measurement invariance violation to the parameters that
 are truly in violation.  
@@ -669,17 +687,22 @@ and all six unique variances. % $\epsilon_{11}--\epsilon_{66}$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Power and Type I error were examined across three sample sizes
-($n=120,480,960$), three numbers of categories ($m=4,8,12$) and
-17 magnitudes of invariance violations. 
+($n=120,480,960$), three numbers of categories ($m=4,8,12$), and
+17 magnitudes of invariance violations (described in the following sentences). 
 The measurement invariance violations began at level $1+m/2$ of the
 auxiliary variable $V$ and were consistent thereafter: individuals below
-the $1+m/2$ percentile of $V$ deviated from individuals above the $1+m/2$ 
-percentile  by $d$ times the parameters' asymptotic standard errors
+level $1+m/2$ of $V$ deviated from individuals at or above level $1+m/2$ 
+by $d$ times the parameters' asymptotic standard errors
 (scaled by $\sqrt n$), with $d=0,0,25,0.5,...,4$. 
 For each combination of sample size ($n$) $\times$ violation
 magnitude ($d$) $\times$ violating parameter $\times$ categories $m$, 5000 datasets were
 generated and tested.  Statistics from Equations~\eqref{eq:wdm}, ~\eqref{eq:maxlmo}
-and~\eqref{eq:lmuo} were examined. In all conditions, we maintained equal sample
+and~\eqref{eq:lmuo} were examined. As mentioned previously,
+~\eqref{eq:lmuo} is asymptotically equivalent to the usual likelihood
+ratio test.  Thus, this statistic provides information about the
+relative performance of the ordinal statistics vs the LRT.  
+
+In all conditions, we maintained equal sample 
 sizes in each subgroup of the ordinal variable. 
 
 \subsection{Results}
@@ -687,16 +710,28 @@ sizes in each subgroup of the ordinal variable.
 Full simulation results are presented in Figure~\ref{fig:sim11res} to 
 Figure~\ref{fig:sim13res}; 
 Figure~\ref{fig:sim11res} displays power curves as a function of 
-violation magnitude for the first
+violation magnitude in the 
 factor loading $\lambda_{11}$, with panels reflecting the parameters 
-being tested and lines reflecting different statistics.
+being tested and $m$ and lines reflecting different statistics.
 Figures~\ref{fig:sim12res} and Figure~\ref{fig:sim13res} display 
 similar power curves when the factor covariance 
 $\phi_{12}$ and error variance $\epsilon_{11}$ violate measurement
-invariance, respectively. In those Figures, we only show test parameters demonstrating non-zero powers for clarity. \seeme{Add this sentence to explaining there is no zero power curves.}
-All three test statistics exhibit
-similar results, with $\max\mathit{LM}_{uo}$ demonstrating lower power across all situations.  As described earlier, this statistic 
-is asymptotically equivalent to the LRT.  $\mathit{WDM}_o$  and $\max \mathit{LM}_o$ exhibited equivalent power curves because, when only one parameter is tested, the statistics are equivalent. 
+invariance, respectively. In these figures, we only show tests
+associated with parameters that exhibited nonzero power curves.  For
+example, in Figure~\ref{fig:sim11res}, we do not show tests associated
+with unique variance parameters or the factor covariance.  This is
+because these tests exhibited near-zero power for all values of $d$.
+
+Within each panel of Figure~\ref{fig:sim11res} to 
+Figure~\ref{fig:sim13res}, the three lines reflect the three test
+statistics.  It is seen that the two ordinal statistics exhibit 
+similar results, with $\max\mathit{LM}_{uo}$ demonstrating lower power
+across all situations.  This demonstrates the sensitivity of the
+ordinal statistics to invariance violations that are monotonic with
+$V$.  In situations where only one parameter is tested,
+$\mathit{WDM}_o$  and $\max \mathit{LM}_o$ exhibit equivalent power
+curves.  This is because, when only one parameter is tested, the
+statistics are equivalent. 
 
 
 From these figures, one generally observes that the tests isolate 
@@ -708,7 +743,12 @@ parameters result in decreased power, as compared to the situation
 where one tests only the violating parameter.  This occurs because, in
 testing a subset of parameters (only one of which violates measurement
 invariance), we are effectively dampening the signal of a measurement
-invariance violation. This ''dampening'' effect is more apparent for $\max \mathit{LM}_o$ statistic, because it sums across all parameters tested and then take the maximum. Whereas $\mathit{WDM}_o$ takes the maximum over parameters being tested directly.\seeme{Add from ''This'' to ''directly''.Please check.} 
+invariance violation. This ``dampening'' effect is more apparent for
+the $\max \mathit{LM}_o$ statistic, because it involves a sum across
+all tested parameters (see Equation~\eqref{eq:maxlmo}).
+Conversely, $\mathit{WDM}_o$ takes the maximum over parameters
+(Equation~\eqref{eq:wdm}), so that invariant parameters have no
+impact on this statistic.
 
 In summary, we found that the proposed tests can attribute
 measurement invariance violations to the correct parameter.  This
@@ -716,8 +756,8 @@ provides evidence that, in practice, one can have confidence in the
 tests' abilities to locate the measurement invariance violation.  Of
 course, this statement is qualified by the fact that, in this
 simulation, the model was correctly specified.  In the following
-simulation, we examine the tests' performance when the model is
-misspecified. 
+simulation, we examine the tests' performance in the likely situation
+of model misspecification.
 
 <<sim1,echo=FALSE>>=
 ## seed for replication
@@ -746,12 +786,13 @@ sim1$test <- factor(as.character(sim1$test),
 @
 
 \begin{figure}
-\caption{Simulated power curves for $\max \mathit{LM}_o$ test, $\mathit{WDM}_o$ test, and
-$\mathit{LM}_{uo}$ test across three levels of the ordinal variable $m$ and measurement invariance 
+\caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and
+$\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The parameter violating measurement 
-invariance is $\lambda_{11}$.}
+invariance is $\lambda_{11}$.  Panel labels denote the parameter(s)
+being tested (top) and levels of the ordinal variable $m$ (bottom).}
 \label{fig:sim11res}
-<<sim11res, fig=TRUE, height=9, width=9, echo=FALSE>>=
+<<sim11res, fig=TRUE, height=7, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim1$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
@@ -770,12 +811,13 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
 \end{figure}
 
 \begin{figure}
-\caption{Simulated power curves for $\max \mathit{LM}_o$ test, $\mathit{WDM}_o$ test, and
-$\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$, and measurement invariance
-violations of 0--4 standard errors (scaled by $\sqrt{n}$). The parameter violating measurement
-invariance is $\phi_{12}$.}
+\caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and
+$\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$,
+  and measurement invariance 
+violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
+parameter violating measurement invariance is $\phi_{12}$.}
 \label{fig:sim12res}
-<<sim12res, fig=TRUE, height=5.5, width=9, echo=FALSE>>=
+<<sim12res, fig=TRUE, height=4, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim1$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels, group = ~ test, data = sim1,
@@ -794,10 +836,13 @@ xyplot(power ~ diff | nlevels, group = ~ test, data = sim1,
 \end{figure}
 
 \begin{figure}
-\caption{Simulated power curves for $\max \mathit{LM}_o$ test, $\mathit{WDM}_o$ test, and $\mathit{LM}_{uo}$ test across three levels of the ordinal variable $m$ and measurement invariance 
-violations of 0--4 standard errors (scaled by $\sqrt{n}$). The parameter violating measurement invariance is $\psi{11}$}
+\caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
+violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
+parameter violating measurement invariance is $\psi_{11}$. Panel labels
+denote the parameter(s) 
+being tested (top) and levels of the ordinal variable $m$ (bottom).}
 \label{fig:sim13res}
-<<sim13res, fig=TRUE, height=9, width=9, echo=FALSE>>=
+<<sim13res, fig=TRUE, height=7, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim1$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
@@ -822,36 +867,48 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
 In Simulation 2, we examine the extent to which the results of
 Simulation 1 are robust to model misspecification.  Specifically, we
 generate data from the factor analysis model used in the previous
-section, except that the model contains an extra loading from the second factor to Scale 1.
-The estimated model matches that displayed in Figure~\ref{fig:path}, however, resulting in model misspecification.  The goal of this simulation is to examine the proposed statistics'
-power and specificity under this misspecification.
+section, except that the model contains an extra loading from the
+second factor to Scale 1.
+The estimated model matches that displayed in Figure~\ref{fig:path},
+however, resulting in model misspecification.  The goal of this
+simulation is to examine the proposed statistics' 
+power to detect measurement invariance violations (and to attribute
+the violation to the correct parameter) under this misspecification.
 
 \subsection{Method}
-Measurement invariance violations could occur in
-each of the three parameters from Simulation 1 (factor loading, factor covariance, and unique variance), and they could also occur in the extra, unmodeled loading. In each condition, a single parameter exhibited the violation.
+A measurement invariance violation could occur in
+each of the three parameters from Simulation 1 (factor loading, factor
+covariance, and unique variance), and a violation could also occur in
+the extra, unmodeled loading. In each condition, a single parameter
+exhibited the violation. 
 Sample size and magnitude of measurement invariance violation were manipulated 
-in the same way as they were in Simulation 1.  The tested parameters were also the same as Simulation
-1.
+in the same way as they were in Simulation 1.  The tested parameters
+were also the same as Simulation 1.
 
 \subsection{Results}
-Results are presented by the parameter that violated measurement invariance. Of
-primary interest is Figure~\ref{fig:sim21res}, which displays results when the
-unmodeled loading violates  measurement invariance.  One can generally observe
-that  tests of the first loading and error variance parameter exhibited high
-power, reflecting a high Type I error rate.  Tests associated with the factor
-covariance did not demonstrate this error, however. In terms of specific
-statistic performance, $\max \mathit{LM}_o$ test and $\mathit{WDM}_o$ test
+Results of
+primary interest are conditions where the unmodeled loading violates
+measurement invariance.  These results are displayed in Figure~\ref{fig:sim21res}.  One can generally observe
+that tests of the first loading and unique variance exhibited high
+``power,'' which is actually a high Type I error rate here.  Tests
+associated with the factor 
+covariance (not shown) did not demonstrate this error, however. In
+terms of specific 
+statistic performance, $\max \mathit{LM}_o$ and $\mathit{WDM}_o$ 
 demonstrated higher Type I error than $\mathit{LM}_{uo}$ in each panel,
 especially with increasing levels.  This is likely because the unmodeled
 loading's non-invariance was monotonic with $V$; if it were not monotonic, we
 would expect $\mathit{LM}_{uo}$ to have higher Type I error. 
 
+
+When the parameter violating measurement invariance was modeled,
+results were generally the same as Simulation 1.  
 When the modeled factor loading, $\lambda_{11}$, violated measurement
 invariance, the statistics were generally able to pick up the violation despite
-the misspecification. A similar pattern of specificity and power were observed
+the misspecification. Similar results were observed
 when the unique variance and factor covariance parameters violated measurement
-invariance; the figures associated with these results are shown in the Appendix.
-Also, the power of ordered statistics $\max \mathit{LM}_o$ test and
+invariance; these results are all shown in the Appendix.
+In particular, the power of ordered statistics $\max \mathit{LM}_o$ test and
 $\mathit{WDM}_o$ test showed higher power than unordered $\mathit{LM}_{uo}$ in
 each of these panels. 
 
@@ -859,8 +916,9 @@ In summary, the proposed test statistics appear robust to unmodeled loading para
 as the umodeled parameter does not violate measurement invariance.  If the unmodeled parameter 
 dose violate measurement invariance, however, then the tests assign this violation to other 
 parameters that do not violate measurement invariance.  The impacted parameters include the error
-variance and other loadings associated with the manifest variables that had the unmodeled 
-loading.  Thus, as it is with other tests of measurement invariance, it is important to study the extent to
+variance and other loadings associated with the manifest variable
+associated with the unmodeled 
+loading.  Thus, as for other tests of measurement invariance, it is important to study the extent to
 which the hypothesized model includes all parameters of importance.
 
 <<sim2,echo=FALSE>>=
@@ -893,10 +951,13 @@ sim2$test <- factor(as.character(sim2$test),
 
 
 \begin{figure}
-\caption{Simulated power curves for $\max \mathit{LM}_o$ test, $\mathit{WDM}_o$ test, and $\mathit{LM}_{uo}$ test across three levels of the ordinal variable $m$ and measurement invariance 
-violations of 0--4 standard errors (scaled by $\sqrt{n}$). The parameter violating measurement invariance is the unmodeled loading.}
+\caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
+violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
+parameter violating measurement invariance is the unmodeled
+loading. Panel labels denote the parameter(s) 
+being tested (top) and levels of the ordinal variable $m$ (bottom).}
 \label{fig:sim21res}
-<<sim21res, fig=TRUE, height=9, width=9, echo=FALSE>>=
+<<sim21res, fig=TRUE, height=7, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
@@ -918,15 +979,27 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 \section{General Discussion}
 
 
-In this paper, we first described a novel family of test statistics for measurement invariance and illustrated their use via the \proglang{R} package \pkg{lavaan}.  Next, we examined these statistics' abilities to identify the parameter violating measurement invariance under well-specified and misspecified models.  We found the proposed statistics could generally isolate the model parameter violating measurement invariance, so long as the violating parameter is included in the model.
+In this paper, we first described a novel family of test statistics
+for measurement invariance and illustrated their use via the
+\proglang{R} package \pkg{lavaan}.  Next, we examined these
+statistics' abilities to identify the parameter violating measurement
+invariance under well-specified and misspecified models.  We found
+that the
+proposed statistics could generally isolate the model parameter
+violating measurement invariance, so long as the violating parameter
+is included in the model. 
 
-In the reminder of the paper, we will first consider the applicability of these tests as compared to traditional tests.  Next, we discuss test extension to other fit functions and to other specialized models.
+In the reminder of the paper, we will first compare
+these tests to traditional tests of measurement invariance.  We also
+discuss test extension to other fit functions and to other specialized
+models. 
 
 
 \subsection{Applications}
 
-Many of the applications in this volume, along with many applications in
-general, focus on testing for measurement invariance across unordered categories
+Many of the applications in this volume, along with many measurement
+invariance applications in
+general, focus on testing across unordered categories
 such as nations or gender.  As discussed earlier in this paper, the score-based
 tests for unordered categories are essentially equivalent to the usual
 likelihood ratio test.  Given a measurement invariance violation across these
@@ -936,9 +1009,11 @@ socioeconomic status, income levels, and so on across the unordered categories.
 These variables are often ordinal or continuous in nature, so that the family of
 tests described in this paper are applicable.  This is a first step towards
 describing why measurement invariance violations occur, as opposed to simply
-detecting measurement invariance violations. \readme{In the abstracts for the
-special issue (which the special editors sent us), one paper was proposed along
-these lines.  I will get a draft of that paper and then we can cite it here.}
+detecting measurement invariance violations. 
+%% TODO!!
+%\readme{In the abstracts for the
+%special issue (which the special editors sent us), one paper was proposed along
+%these lines.  I will get a draft of that paper and then we can cite it here.}
 The tests are convenient for this purpose, as they do not require a new model to
 be estimated for each ordinal variable.  Instead, each ordinal variable defines
 an ordering of observations, which in turn yields a test statistic that is
@@ -951,14 +1026,15 @@ specific to that ordinal variable.
 
 \subsection{Extension}
 
-In this paper, We focused on testing for measurement invariance in factor
+In this paper, we focused on testing for measurement invariance in factor
 analysis models that assume multivariate normality and that are estimated via
 maximum likelihood (ML).  The family of tests described here generally apply to estimation methods
 that maximize/minimize a fit function, however \cite<see>{zeihor07}, so they are
-potentially applicable to alternative SEM discrepancy functions such as weighted
+potentially applicable to alternative SEM discrepancy functions such
+as generalized 
 least squares \cite<e.g.,>{broarm95}.  Score calculation for these alternative
 discrepancy functions has not been implemented (to our knowledge), though the
-calculation certainly could be implemented.  Test statistic calculation and
+calculation could be implemented.  Test statistic calculation and
 inference would then proceed in exactly the same manner as the calculation and
 inference illustrated in this paper.
 
@@ -996,14 +1072,20 @@ available at \url{http://semtools.R-Forge.R-project.org/}.
 
 \section{Appendix}
 
-This Appendix includes the results for Simulation 2 when there exists model misspecification (lacking one path from Scale 1 to Math). Figure~\ref{fig:sim22res} to Figure~\ref{fig:sim24res} display results when the loading $\lambda_{11}$, covariance $\phi_{12}$, and 
+This Appendix contains results for Simulation 2, where there existed
+model misspecification (lacking one loading from Scale 1 to
+Math). Figure~\ref{fig:sim22res} to Figure~\ref{fig:sim24res} display
+results when the loading $\lambda_{11}$, covariance $\phi_{12}$, and  
 error term $\psi_{11}$ violate invariance, respectively. 
 
 \begin{figure}
-\caption{Simulated power curves for $\max \mathit{LM}_o$ test, $\mathit{WDM}_o$ test, and $\mathit{LM}_{uo}$ test across three levels of the ordinal variable $m$ and measurement invariance 
-violations of 0--4 standard errors (scaled by $\sqrt{n}$). The violation parameter is $\lambda_{11}$.}
+\caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
+violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
+parameter violating measurement invariance is $\lambda_{11}$.  Panel
+labels denote the parameter(s)  
+being tested (top) and levels of the ordinal variable $m$ (bottom).}
 \label{fig:sim22res}
-<<sim22res, fig=TRUE, height=9, width=9, echo=FALSE>>=
+<<sim22res, fig=TRUE, height=7, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
@@ -1022,10 +1104,13 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 \end{figure}
 
 \begin{figure}
-\caption{Simulated power curves for $\max \mathit{LM}_o$ test, $\mathit{WDM}_o$ test, and $\mathit{LM}_{uo}$ test across three levels of the ordinal variable $m$ and measurement invariance 
-violations of 0--4 standard errors (scaled by $\sqrt{n}$). The violation parameter is $\phi_{12}$.}
+\caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
+violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
+parameter violating measurement invariance is $\phi_{12}$.  Panel
+labels denote the parameter(s)  
+being tested (top) and levels of the ordinal variable $m$ (bottom).}
 \label{fig:sim23res}
-<<sim23res, fig=TRUE, height=5.5, width=9, echo=FALSE>>=
+<<sim23res, fig=TRUE, height=4, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels, group = ~ test, data = sim2,
@@ -1044,8 +1129,11 @@ xyplot(power ~ diff | nlevels, group = ~ test, data = sim2,
 \end{figure}
 
 \begin{figure}
-\caption{Simulated power curves for $\max \mathit{LM}_o$ test, $\mathit{WDM}_o$ test, and $\mathit{LM}_{uo}$ test across three levels of the ordinal variable $m$ and measurement invariance 
-violations of 0--4 standard errors (scaled by $\sqrt{n}$). The violation parameter is $\psi_{11}$.}
+\caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
+violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
+parameter violating measurement invariance is $\psi_{11}$.  Panel
+labels denote the parameter(s)  
+being tested (top) and levels of the ordinal variable $m$ (bottom).}
 \label{fig:sim24res}
 <<sim24res, fig=TRUE, height=9, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
