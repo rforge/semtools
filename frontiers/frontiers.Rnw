@@ -539,7 +539,7 @@ reflecting age group and the y-axis reflecting test statistic values (larger
 values reflect more instability).  The dashed horizontal lines reflect critical values, so
 that the hypothesis of measurement invariance is rejected if the sequence of
 test statistics crosses the critical value.  While the measurement invariance tests are
-non-significant, the plots imply some instability in the older age groups (15 and 16).
+non-significant, the plots imply some instability in the older age groups (15 and~16).
 
 \begin{figure}
 \caption{Fluctuation processes for the $\mathit{WDM}_o$ statistic (left panel) and the $\max\mathit{LM}_o$ statistic (right panel).}
@@ -549,7 +549,7 @@ par(mfrow = c(1, 2))
 set.seed(1090)
 sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
   functional = "WDMo", plot = TRUE, ylim = c(0, 3.2),
-  xlab = "Age group", ylab = "Weighted max statistics",
+  xlab = "Age group", ylab = "Weighted test statistics",
   main = expression(WDM[o]), boundary = list(col = 1, lty = 2))
 sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
   functional = maxLMo, plot = TRUE, ylim = c(0, 14),
@@ -711,9 +711,10 @@ sizes in each subgroup of the ordinal variable.
 Full simulation results are presented in Figure~\ref{fig:sim11res} to 
 Figure~\ref{fig:sim13res}; 
 Figure~\ref{fig:sim11res} displays power curves as a function of 
-violation magnitude in the 
-factor loading $\lambda_{11}$, with panels reflecting the parameters 
-being tested and $m$ and lines reflecting different statistics.
+violation magnitude in the factor loading $\lambda_{11}$,
+with the parameters being tested changing across rows,
+the number of levels $m$ of the ordinal variable $V$ across columns,
+and lines reflecting different test statistics.
 Figures~\ref{fig:sim12res} and Figure~\ref{fig:sim13res} display 
 similar power curves when the factor covariance 
 $\phi_{12}$ and error variance $\epsilon_{11}$ violate measurement
@@ -792,7 +793,7 @@ sim1$test <- factor(as.character(sim1$test),
 $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The parameter violating measurement 
 invariance is $\lambda_{11}$.  Panel labels denote the parameter(s)
-being tested (top) and the number of levels of the ordinal variable $m$ (bottom).}
+being tested and the number of levels of the ordinal variable $m$.}
 \label{fig:sim11res}
 <<sim11res, fig=TRUE, height=7, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
@@ -820,9 +821,9 @@ $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$,
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
 parameter violating measurement invariance is $\phi_{12}$. Panel
 labels denote the parameter(s)  
-being tested (top) and the number of levels of the ordinal variable $m$ (bottom).}
+being tested and the number of levels of the ordinal variable $m$.}
 \label{fig:sim12res}
-<<sim12res, fig=TRUE, height=4, width=9, echo=FALSE>>=
+<<sim12res, fig=TRUE, height=4.5, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim1$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
@@ -846,7 +847,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
 parameter violating measurement invariance is $\psi_{11}$. Panel labels
 denote the parameter(s) 
-being tested (top) and the number of levels of the ordinal variable $m$ (bottom).}
+being tested and the number of levels of the ordinal variable $m$.}
 \label{fig:sim13res}
 <<sim13res, fig=TRUE, height=7, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
@@ -899,7 +900,7 @@ measurement invariance.  A subset of results is displayed in Figure~\ref{fig:sim
 that tests of the first loading and unique variance exhibited high
 ``power,'' which is actually a high Type I error rate here.  This Type
 I error also demonstrated when testing all loadings and all unique
-variances, as shown in the Appendix.  Tests
+variances, as shown in the appendix.  Tests
 associated with the factor 
 covariance (not shown) did not demonstrate this error, however. In
 terms of specific 
@@ -965,7 +966,7 @@ sim2$test <- factor(as.character(sim2$test),
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
 parameter violating measurement invariance is the unmodeled
 loading. Panel labels denote the parameter(s) 
-being tested (top) and the number of levels of the ordinal variable $m$ (bottom).}
+being tested and the number of levels of the ordinal variable $m$.}
 \label{fig:sim21res}
 <<sim21res, fig=TRUE, height=7, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
@@ -992,7 +993,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 
 In this paper, we first described a novel family of test statistics
 for measurement invariance and illustrated their use via the
-\proglang{R} package \pkg{lavaan}.  Next, we examined these
+\proglang{R} packages \pkg{lavaan} and \pkg{strucchange}.  Next, we examined these
 statistics' abilities to identify the parameter violating measurement
 invariance under well-specified and misspecified models.  We found
 that the
@@ -1072,9 +1073,8 @@ version~\Sexpr{paste(R.Version()[6:7], collapse = ".")}, employing the add-on pa
 \pkg{lavaan}~\Sexpr{packageDescription("lavaan")["Version"]} \cite{lavaan11} for fitting 
 of the factor analysis models and
 \pkg{strucchange}~\Sexpr{packageDescription("strucchange")["Version"]} \cite{ZeiLei02,Zei06}
-for evaluating the parameter instability tests. \proglang{R}~and the
-packages \pkg{lavaan} and \pkg{strucchange} are
-freely available under the General Public License~2 from the
+for evaluating the parameter instability tests. \proglang{R}~and both
+packages are freely available under the General Public License~2 from the
 Comprehensive \proglang{R} Archive Network at \url{http://CRAN.R-project.org/}.
 \proglang{R}~code for replication of our results is
 available at \url{http://semtools.R-Forge.R-project.org/}.
@@ -1098,7 +1098,7 @@ results were generally the same as the Simulation 1 results.
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
 parameter violating measurement invariance is the unmodeled
 loading. Panel labels denote the parameter(s) 
-being tested (top) and the number of levels of the ordinal variable $m$ (bottom).}
+being tested and the number of levels of the ordinal variable $m$.}
 \label{fig:sim22res}
 <<sim22res, fig=TRUE, height=7, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
@@ -1123,7 +1123,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
 parameter violating measurement invariance is $\lambda_{11}$.  Panel
 labels denote the parameter(s)  
-being tested (top) and the number of levels of the ordinal variable $m$ (bottom).}
+being tested and the number of levels of the ordinal variable $m$.}
 \label{fig:sim23res}
 <<sim23res, fig=TRUE, height=7, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
@@ -1148,9 +1148,9 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
 parameter violating measurement invariance is $\phi_{12}$.  Panel
 labels denote the parameter  
-being tested (top) and the number of levels of the ordinal variable $m$ (bottom).}
+being tested and the number of levels of the ordinal variable $m$.}
 \label{fig:sim24res}
-<<sim24res, fig=TRUE, height=4, width=9, echo=FALSE>>=
+<<sim24res, fig=TRUE, height=4.5, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
@@ -1174,7 +1174,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
 parameter violating measurement invariance is $\psi_{11}$.  Panel
 labels denote the parameter(s)  
-being tested (top) and the number of levels of the ordinal variable $m$ (bottom).}
+being tested and the number of levels of the ordinal variable $m$.}
 \label{fig:sim25res}
 <<sim25res, fig=TRUE, height=7, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
