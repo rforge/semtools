@@ -902,7 +902,7 @@ that tests of the first loading and unique variance exhibited high
 I error also demonstrated when testing all loadings and all unique
 variances, as shown in the appendix.  Tests
 associated with the factor 
-covariance (not shown) did not demonstrate this error, however. In
+covariance \seeme{delete the ''not shown''} did not demonstrate this error, however.  In
 terms of specific 
 statistic performance, $\max \mathit{LM}_o$ and $\mathit{WDM}_o$ 
 demonstrated higher Type I error than $\mathit{LM}_{uo}$ in each panel,
@@ -924,12 +924,12 @@ each of these panels.
 
 In summary, the proposed test statistics appear robust to unmodeled loading parameters, so long
 as the umodeled parameter does not violate measurement invariance.  If the unmodeled parameter 
-dose violate measurement invariance, however, then the tests assign this violation to other 
-parameters that do not violate measurement invariance.  The impacted parameters include the error
+dose violate measurement invariance, however, the test could detect there existing measurement invariance in the model but assign this violation to other 
+parameters that do not violate measurement invariance.  \seeme{add the point that the tests could detect measurement invariance}.  The impacted parameters include the error
 variance and other loadings associated with the manifest variable
 associated with the unmodeled 
 loading.  Thus, as for other tests of measurement invariance, it is important to study the extent to
-which the hypothesized model includes all parameters of importance.
+which the hypothesized model includes all parameters of importance.  The tests are model-based and could not inform the researcher model misspecification. \seeme{The last sentence.}
 
 <<sim2,echo=FALSE>>=
 ## seed for replication
@@ -968,17 +968,17 @@ parameter violating measurement invariance is the unmodeled
 loading. Panel labels denote the parameter(s) 
 being tested and the number of levels of the ordinal variable $m$.}
 \label{fig:sim21res}
-<<sim21res, fig=TRUE, height=7, width=9, echo=FALSE>>=
+<<sim21res, fig=TRUE, height=9, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
        subset = (parms == "extra" & 
-		 pars %in% c("Loading1", "Error1") & diff %% 0.5 == 0),
+		 pars %in% c("Loading1", "Covariance", "Error1") & diff %% 0.5 == 0),
        type = "b", xlab = "Violation Magnitude (Unmodeled Loading)",
        ylab = "Power", key = mykey, as.table = TRUE,
        strip = function(..., which.given, factor.levels){
 	   if(which.given == 2){
-	       strip.default(which.given, factor.levels = parlabs[c(1, 3)], ...)
+	       strip.default(which.given, factor.levels = parlabs[c(1, 2, 3)], ...)
 	   } else {
 	       strip.default(which.given, factor.levels = factor.levels, ...)
 	   }
