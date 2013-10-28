@@ -488,7 +488,8 @@ measurement invariance violations that are monotonic w.r.t.\ age group.
 To carry out the tests, we can rely on the same function that we used
 for the continuous test statistics.  As mentioned previously,
 calculation of the $\max\mathit{LM}_o$ statistic (Equation~\eqref{eq:maxlmo})
-can be lengthy from the need to simulate critical values.
+can be lengthy from the need to simulate critical values (though see
+the end of this section, which provides a partial speed-up).
 %% This is more complicated than necessary, but it is written like
 %% this so that we can load the ordinal critical values behind the
 %% scenes without confusing the reader.
@@ -558,6 +559,26 @@ sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
 @
 \end{figure}
 
+Finally, if the user anticipates multiple calculations of the
+$\max\mathit{LM}_o$ statistic for a specific dataset, it is possible
+to save time by simulating critical values once and re-using them for
+multiple tests.  We can use the \code{ordL2BB()} command to generate
+critical values, then obtain the test statistic in the usual manner.
+<<ordsave, eval=FALSE>>=
+## Simulate critical values
+mLMo <- ordL2BB(yg$agegroup)
+## Use these critical values for the test
+maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
+  vcov = "info", functional = mLMo)
+@ 
+The \code{ordL2BB()} command automatically generates critical values
+for testing 1 to 20 parameters at a time, with critical values for
+greater numbers of parameters being obtained through the optional
+argument \code{nproc}.  One can re-use \code{mLMo} in this manner for
+further tests of the youth gratitude data.  Critical values must be
+resimulated for new data, however, because they depend on the
+proportion of individuals observed at each level of the ordinal
+variable (see~\eqref{eq:maxlmo}).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -595,7 +616,7 @@ are truly in violation.
 
 \subsection{Methods}
 
-To examine these specificity issues, we generated data from a
+To examine these issues, we generated data from a
 two-factor model with three indicators each (see Figure~\ref{fig:path}).
 The measurement invariance
 violation occurred in one of three places: the factor loading associated with Scale 1 
@@ -694,7 +715,7 @@ The measurement invariance violations began at level $1+m/2$ of the
 auxiliary variable $V$ and were consistent thereafter: individuals below
 level $1+m/2$ of $V$ deviated from individuals at or above level $1+m/2$ 
 by $d$ times the parameters' asymptotic standard errors
-(scaled by $\sqrt n$), with $d=0,0,25,0.5,...,4$. 
+(scaled by $\sqrt n$), with $d=0,0.25,0.5,...,4$. 
 For each combination of sample size ($n$) $\times$ violation
 magnitude ($d$) $\times$ violating parameter $\times$ categories ($m$), 5000 datasets were
 generated and tested.  Statistics from Equations~\eqref{eq:wdm}, ~\eqref{eq:maxlmo}
@@ -708,8 +729,8 @@ sizes in each subgroup of the ordinal variable.
 
 \subsection{Results}
 
-Full simulation results are presented in Figure~\ref{fig:sim11res} to 
-Figure~\ref{fig:sim13res}; 
+Full simulation results are presented in Figures~\ref{fig:sim11res}
+to~\ref{fig:sim13res}.
 Figure~\ref{fig:sim11res} displays power curves as a function of 
 violation magnitude in the factor loading $\lambda_{11}$,
 with the parameters being tested changing across rows,
@@ -718,11 +739,12 @@ and lines reflecting different test statistics.
 Figures~\ref{fig:sim12res} and Figure~\ref{fig:sim13res} display 
 similar power curves when the factor covariance 
 $\phi_{12}$ and error variance $\epsilon_{11}$ violate measurement
-invariance, respectively. In these figures, we only show tests
+invariance, respectively. In these figures, we generally show tests
 associated with parameters that exhibited nonzero power curves.  For
-example, in Figure~\ref{fig:sim11res}, we do not show tests associated
-with unique variance parameters or the factor covariance.  This is
-because these tests exhibited near-zero power for all values of $d$.
+example, in Figure~\ref{fig:sim11res}, the middle row shows that power
+for tests of $\psi_{11}$ stays near zero for all values of $m$ and $d$.
+Similar rows have been omitted from this figure and other figures.
+
 
 Within each panel of Figure~\ref{fig:sim11res} to 
 Figure~\ref{fig:sim13res}, the three lines reflect the three test
@@ -791,7 +813,7 @@ sim1$test <- factor(as.character(sim1$test),
 \begin{figure}
 \caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and
 $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
-violations of 0--4 standard errors (scaled by $\sqrt{n}$). The parameter violating measurement 
+violations of 0--4 standard errors (scaled by $\sqrt{n}$), Simulation 1. The parameter violating measurement 
 invariance is $\lambda_{11}$.  Panel labels denote the parameter(s)
 being tested and the number of levels of the ordinal variable $m$.}
 \label{fig:sim11res}
@@ -800,12 +822,12 @@ trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim1$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
        subset = (parms == "loading" & 
-		 pars %in% c("Loading1", "All Loadings") & diff %% 0.5 == 0),
+		 pars %in% c("Loading1", "Error1", "All Loadings") & diff %% 0.5 == 0),
        type = "b", xlab = expression(paste("Violation Magnitude (", lambda[11], ")")),
        ylab = "Power", key = mykey, as.table = TRUE,
        strip = function(..., which.given, factor.levels){
-	   if(which.given == 2){
-	       strip.default(which.given, factor.levels = parlabs[c(1, 4)], ...)
+           if(which.given == 2){
+             strip.default(which.given, factor.levels = parlabs[c(1, 3, 4)], ...)
 	   } else {
 	       strip.default(which.given, factor.levels = factor.levels, ...)
 	   }
@@ -818,7 +840,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
 \caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and
 $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$,
   and measurement invariance 
-violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
+violations of 0--4 standard errors (scaled by $\sqrt{n}$), Simulation 1. The
 parameter violating measurement invariance is $\phi_{12}$. Panel
 labels denote the parameter(s)  
 being tested and the number of levels of the ordinal variable $m$.}
@@ -844,7 +866,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
 
 \begin{figure}
 \caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
-violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
+violations of 0--4 standard errors (scaled by $\sqrt{n}$), Simulation 1. The
 parameter violating measurement invariance is $\psi_{11}$. Panel labels
 denote the parameter(s) 
 being tested and the number of levels of the ordinal variable $m$.}
@@ -902,7 +924,7 @@ that tests of the first loading and unique variance exhibited high
 I error also demonstrated when testing all loadings and all unique
 variances, as shown in the appendix.  Tests
 associated with the factor 
-covariance \seeme{delete the ''not shown''} did not demonstrate this error, however.  In
+covariance did not demonstrate this error, however.  In
 terms of specific 
 statistic performance, $\max \mathit{LM}_o$ and $\mathit{WDM}_o$ 
 demonstrated higher Type I error than $\mathit{LM}_{uo}$ in each panel,
@@ -922,14 +944,21 @@ In particular, the power of ordered statistics $\max \mathit{LM}_o$ test and
 $\mathit{WDM}_o$ test showed higher power than unordered $\mathit{LM}_{uo}$ in
 each of these panels. 
 
-In summary, the proposed test statistics appear robust to unmodeled loading parameters, so long
-as the umodeled parameter does not violate measurement invariance.  If the unmodeled parameter 
-dose violate measurement invariance, however, the test could detect there existing measurement invariance in the model but assign this violation to other 
-parameters that do not violate measurement invariance.  \seeme{add the point that the tests could detect measurement invariance}.  The impacted parameters include the error
-variance and other loadings associated with the manifest variable
-associated with the unmodeled 
-loading.  Thus, as for other tests of measurement invariance, it is important to study the extent to
-which the hypothesized model includes all parameters of importance.  The tests are model-based and could not inform the researcher model misspecification. \seeme{The last sentence.}
+In summary, the proposed test statistics appear robust to unmodeled
+loading parameters, so long 
+as the unmodeled loading does not violate measurement invariance.  If
+the unmodeled loading  
+does violate measurement invariance, the tests can still detect
+measurement invariance violations.  The violations are assigned to 
+modeled parameters that do not violate measurement invariance, however.
+The impacted parameters include the error 
+variance and other loadings associated with the manifest variable that
+has an unmodeled loading.
+Thus, as for other tests of measurement invariance, it is important to
+study the extent to 
+which the hypothesized model includes all parameters of importance.
+None of these tests (score-based or otherwise) inform the researcher of
+model misspecification.
 
 <<sim2,echo=FALSE>>=
 ## seed for replication
@@ -963,7 +992,7 @@ sim2$test <- factor(as.character(sim2$test),
 
 \begin{figure}
 \caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
-violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
+violations of 0--4 standard errors (scaled by $\sqrt{n}$), Simulation 2. The
 parameter violating measurement invariance is the unmodeled
 loading. Panel labels denote the parameter(s) 
 being tested and the number of levels of the ordinal variable $m$.}
@@ -1095,7 +1124,7 @@ results were generally the same as the Simulation 1 results.
 
 \begin{figure}
 \caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
-violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
+violations of 0--4 standard errors (scaled by $\sqrt{n}$), Simulation 2. The
 parameter violating measurement invariance is the unmodeled
 loading. Panel labels denote the parameter(s) 
 being tested and the number of levels of the ordinal variable $m$.}
@@ -1120,7 +1149,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 
 \begin{figure}
 \caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
-violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
+violations of 0--4 standard errors (scaled by $\sqrt{n}$), Simulation 2. The
 parameter violating measurement invariance is $\lambda_{11}$.  Panel
 labels denote the parameter(s)  
 being tested and the number of levels of the ordinal variable $m$.}
@@ -1145,7 +1174,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 
 \begin{figure}
 \caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
-violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
+violations of 0--4 standard errors (scaled by $\sqrt{n}$), Simulation 2. The
 parameter violating measurement invariance is $\phi_{12}$.  Panel
 labels denote the parameter  
 being tested and the number of levels of the ordinal variable $m$.}
@@ -1171,7 +1200,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 
 \begin{figure}
 \caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
-violations of 0--4 standard errors (scaled by $\sqrt{n}$). The
+violations of 0--4 standard errors (scaled by $\sqrt{n}$), Simulation 2. The
 parameter violating measurement invariance is $\psi_{11}$.  Panel
 labels denote the parameter(s)  
 being tested and the number of levels of the ordinal variable $m$.}
