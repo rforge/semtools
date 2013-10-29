@@ -563,22 +563,23 @@ Finally, if the user anticipates multiple calculations of the
 $\max\mathit{LM}_o$ statistic for a specific dataset, it is possible
 to save time by simulating critical values once and re-using them for
 multiple tests.  We can use the \code{ordL2BB()} command to generate
-critical values, then obtain the test statistic in the usual manner.
+critical values and store them in an object \code{mLMo}, say.
+Then, this object can be employed to obtain the test statistic in the usual manner.
 <<ordsave, eval=FALSE>>=
-## Simulate critical values
 mLMo <- ordL2BB(yg$agegroup)
-## Use these critical values for the test
 maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
   vcov = "info", functional = mLMo)
 @ 
 The \code{ordL2BB()} command automatically generates critical values
-for testing 1 to 20 parameters at a time, with critical values for
-greater numbers of parameters being obtained through the optional
-argument \code{nproc}.  One can re-use \code{mLMo} in this manner for
-further tests of the youth gratitude data.  Critical values must be
-resimulated for new data, however, because they depend on the
+for testing 1 to 20 parameters at a time. If only a smaller number
+of parameters (e.g., only up to 6) is to be tested, some computation time can be
+saved by setting the \code{nproc} argument accordingly (e.g., \code{nproc = 1:6}).
+In the same way, \code{nproc} can be employed to simulate higher-dimensional
+fluctuation processes suitable for testing more parameters. One can re-use
+\code{mLMo} in this manner for further tests of the youth gratitude data.
+Critical values must be resimulated for new data, however, because they depend on the
 proportion of individuals observed at each level of the ordinal
-variable (see~\eqref{eq:maxlmo}).
+variable (denoted $t_\ell$ for Equation~\eqref{eq:maxlmo}).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
