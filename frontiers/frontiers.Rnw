@@ -562,7 +562,7 @@ sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
 Finally, if the user anticipates multiple calculations of the
 $\max\mathit{LM}_o$ statistic for a specific dataset, it is possible
 to save time by simulating critical values once and re-using them for
-multiple tests.  We can use the \code{ordL2BB()} command to generate
+multiple tests.  We can use the \code{ordL2BB()} function to generate
 critical values and store them in an object \code{mLMo}, say.
 Then, this object can be employed to obtain the test statistic in the usual manner.
 <<ordsave, eval=FALSE>>=
