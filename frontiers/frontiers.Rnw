@@ -70,9 +70,8 @@ library("mvtnorm")
 library("lattice")
 
 ## auxiliary code
-source("simall-ordinal.R")
-source("mz.R")
-source("../www/mz-ordinal.R")
+source("../www/sim-frontiers.R")
+source("../www/mz-frontiers.R")
 
 ## some options
 options(prompt = "R> ", continue = "+  ", digits = 3,

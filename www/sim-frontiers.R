@@ -1,6 +1,5 @@
 
 ## Data-generating process
-set.seed=1090
 dgp1 <- function(nobs = 240, diff = 1.5, nlevels = 3, gradual=FALSE, anomaly=FALSE, parms="loadings")
 {
   ## Generates data from a factor analysis model that violates
@@ -357,7 +356,7 @@ critvals <- function(nlevels = c(4, 8, 12), verbose = TRUE, ...)
 
 
 
-
+## Examples of running the simulation
 if(FALSE){
 
 library("lavaan")
@@ -377,120 +376,14 @@ source("simall-ordinal.R")
 
   
 ## To get a shorter version (say, 20 minutes)to see what's going on, you could do:
-simtry <- simulation(sim = c("sim1"), nobs = c(480),nrep = 300, diff = seq(0, 4, by = 1),
+simtry <- simulation(sim = c("sim1"), nobs = c(480), nrep = 300,
+                     diff = seq(0, 4, by = 1), 
                      parms = c("loading", "error", "var"))
-simtry <- simulation(sim = c("sim2"), nobs = c(480),nrep=300, diff = seq(0, 4, by = 1),
-                     parms = c("extra", "extra+loading", "extra+var", "extra+error"))
+simtry <- simulation(sim = c("sim2"), nobs = c(480), nrep=300,
+                     diff = seq(0, 4, by = 1),
+                     parms = c("extra", "extra+loading", "extra+var",
+                       "extra+error"))
 
 save(simtry,file ="simtry.rda")
-
-## run full simulation
-sim1 <- simulation(sim=c("sim1"), nobs=c(480),parms=c("loading","error","var"))
-sim2 <- simulation(sim=c("sim2"), nobs=c(480),
-                   parms=c("extra","extra+loading","extra+var","extra+error"))
-
-
-#load data file and give names for different levels in each variable.
-if(file.exists("simtry.rda")) {
-  load("simtry.rda")
-} else {
-  simtry <- simulation()
-  simtry$nlevels <- factor(simtry$nlevels)
-  levels(simtry$nlevels) <- paste("m=",levels(simtry$nlevels),sep="")
-  simtry$nobs <- factor(simtry$nobs)
-  levels(simtry$nobs) <- paste("n=",levels(simtry$nobs),sep="")
-  levels(simtry$test) <- c("ordmax","ordwmax","catdiff")
-  save(simtry, file="simtry.rda")
-}
-simtry$test <- factor(as.character(simtry$test),
-  levels = c("ordmax","ordwmax","catdiff"),
-  labels = c("ordmax","ordwmax","catdiff"))
-   simtry$nlevels <- factor(simtry$nlevels)
- levels(simtry$nlevels) <- paste("m=",levels(simtry$nlevels),sep="")
-
-library(lattice)
-#parm=loading
-postscript("loading.pdf")
-simtry.tmp <- simtry[simtry$test %in% c("ordmax","ordwmax","catdiff")& simtry$nobs %in%
-                     c(480)&simtry$parms %in% c("loading"),]
-simtry.tmp$test <- factor(simtry.tmp$test)
-trellis.par.set(theme = canonical.theme(color = FALSE))
-mykey <- simpleKey(levels(simtry.tmp$test), points = TRUE, lines = TRUE)
-xyplot(power ~ diff | nlevels + pars + parms, group = ~ test, data = simtry.tmp, 
-             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey)
-dev.off()
-
-
-#parm=var
-postscript("var.pdf")
-simtry.tmp <- simtry[simtry$test %in% c("ordmax","ordwmax","catdiff")& simtry$nobs %in%
-                     c(480)&simtry$parms %in% c("var"),]
-simtry.tmp$test <- factor(simtry.tmp$test)
-trellis.par.set(theme = canonical.theme(color = FALSE))
-mykey <- simpleKey(levels(simtry.tmp$test), points = TRUE, lines = TRUE)
-xyplot(power ~ diff | nlevels + pars + parms, group = ~ test, data = simtry.tmp, 
-             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey)
-dev.off()
-
-#parm=error
-postscript("error.pdf")
-simtry.tmp <- simtry[simtry$test %in% c("ordmax","ordwmax","catdiff")& simtry$nobs %in%
-                     c(480)&simtry$parms %in% c("error"),]
-simtry.tmp$test <- factor(simtry.tmp$test)
-trellis.par.set(theme = canonical.theme(color = FALSE))
-mykey <- simpleKey(levels(simtry.tmp$test), points = TRUE, lines = TRUE)
-xyplot(power ~ diff | nlevels + pars + parms, group = ~ test, data = simtry.tmp, 
-             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey)
-dev.off()
-
-
-
-
-library(lattice)
-#parm=loading
-postscript("extra.pdf")
-simtry.tmp <- simtry[simtry$test %in% c("ordmax","ordwmax","catdiff")& simtry$nobs %in%
-                     c(480)&simtry$parms %in% c("extra"),]
-simtry.tmp$test <- factor(simtry.tmp$test)
-trellis.par.set(theme = canonical.theme(color = FALSE))
-mykey <- simpleKey(levels(simtry.tmp$test), points = TRUE, lines = TRUE)
-xyplot(power ~ diff | nlevels + pars + parms, group = ~ test, data = simtry.tmp, 
-             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey)
-dev.off()
-
-
-#parm=var
-postscript("extra+loading.pdf")
-simtry.tmp <- simtry[simtry$test %in% c("ordmax","ordwmax","catdiff")& simtry$nobs %in%
-                     c(480)&simtry$parms %in% c("extra+loading"),]
-simtry.tmp$test <- factor(simtry.tmp$test)
-trellis.par.set(theme = canonical.theme(color = FALSE))
-mykey <- simpleKey(levels(simtry.tmp$test), points = TRUE, lines = TRUE)
-xyplot(power ~ diff | nlevels + pars + parms, group = ~ test, data = simtry.tmp, 
-             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey)
-dev.off()
-
-#parm=error
-postscript("extra+var.pdf")
-simtry.tmp <- simtry[simtry$test %in% c("ordmax","ordwmax","catdiff")& simtry$nobs %in%
-                     c(480)&simtry$parms %in% c("extra+var"),]
-simtry.tmp$test <- factor(simtry.tmp$test)
-trellis.par.set(theme = canonical.theme(color = FALSE))
-mykey <- simpleKey(levels(simtry.tmp$test), points = TRUE, lines = TRUE)
-xyplot(power ~ diff | nlevels + pars + parms, group = ~ test, data = simtry.tmp, 
-             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey)
-dev.off()
-
-#parm=error
-postscript("extra+error.pdf")
-simtry.tmp <- simtry[simtry$test %in% c("ordmax","ordwmax","catdiff")& simtry$nobs %in%
-                     c(480)&simtry$parms %in% c("extra+error"),]
-simtry.tmp$test <- factor(simtry.tmp$test)
-trellis.par.set(theme = canonical.theme(color = FALSE))
-mykey <- simpleKey(levels(simtry.tmp$test), points = TRUE, lines = TRUE)
-xyplot(power ~ diff | nlevels + pars + parms, group = ~ test, data = simtry.tmp, 
-             type = "b", xlab="Violation Magnitude", ylab="Power", key=mykey)
-dev.off()
-
  
 }

@@ -35,20 +35,17 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 
 <h2>semtools: Methods for Testing Measurement Invariance in Structural Equation Models</h2>
 
-<h3>Tests of measurement invariance without subgroups: A generalization of classical methods</h3>
+<h3>Score-based tests of measurement invariance: Use in practice</h3>
 
 <ul>
-  <li>Manuscript published in <a href="http://dx.doi.org/10.1007/S11336-012-9302-4">Psychometrika 78(1), 58-82</a>.</em></li>
-  <li><a href="http://www.psychoco.org/2012/slides/Merkle.pdf">Psychoco 2012 presentation</a></li>
+  <li>Working paper</li>
   <li>Replication materials:<ul>
-    <li><a href="estfun-lavaan.R">lavaan extensions</a> containing <tt>estfun()</tt> method for lavaan objects.</li>
-    <li><a href="mz.R">Artificial example functions</a> for lavaan or OpenMx model estimation, along with score extraction.</li>
-    <li><a href="sim.R">Simulation functions</a> for data generation, power evaluation, and power summaries.</li>
-    <li><a href="replication.R">Replication script</a> containing code to run and summarize the examples and simulations, using the above files.</li>
+    <li>Simulation functions for data generation, power evaluation, and power summaries.</li>
+    <li>Replication script containing code to run and summarize the examples and simulations, using the above files. (Note: strucchange 1.5-0 and lavaan 0.5-14 contain code necessary to carry out the tests for general SEMs.)</li>
   </ul></li>
-</ul>
+</ul>  
 
-<h3>Testing for measurement invariance with respect to an ordinal variable</h2>
+<h3>Testing for measurement invariance with respect to an ordinal variable</h3>
 
 <ul>
   <li>Manuscript accepted for publication in Psychometrika.</li>
@@ -63,7 +60,22 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 </ul>
 
 
-<h3>Acknowledgments</h2>
+<h3>Tests of measurement invariance without subgroups: A generalization of classical methods</h3>
+
+<ul>
+  <li>Manuscript published in <a href="http://dx.doi.org/10.1007/S11336-012-9302-4">Psychometrika 78(1), 58-82</a>.</em></li>
+  <li><a href="http://www.psychoco.org/2012/slides/Merkle.pdf">Psychoco 2012 presentation</a></li>
+  <li>Replication materials:<ul>
+    <li><a href="estfun-lavaan.R">lavaan extensions</a> containing <tt>estfun()</tt> method for lavaan objects.</li>
+    <li><a href="mz.R">Artificial example functions</a> for lavaan or OpenMx model estimation, along with score extraction.</li>
+    <li><a href="sim.R">Simulation functions</a> for data generation, power evaluation, and power summaries.</li>
+    <li><a href="replication.R">Replication script</a> containing code to run and summarize the examples and simulations, using the above files.</li>
+  </ul></li>
+</ul>
+
+
+
+<h3>Acknowledgments</h3>
 
 <p> This material is based upon work supported by the U.S. National Science Foundation under Grant No. SES-1061334.  Any opinions, findings and conclusions or recommendations expressed in this material are those of the authors and do not necessarily reflect the views of the National Science Foundation (NSF). </p>
 
