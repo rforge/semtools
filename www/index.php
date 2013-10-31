@@ -40,8 +40,9 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <ul>
   <li>Working paper</li>
   <li>Replication materials:<ul>
-    <li>Simulation functions for data generation, power evaluation, and power summaries.</li>
-    <li>Replication script containing code to run and summarize the examples and simulations, using the above files. (Note: strucchange 1.5-0 and lavaan 0.5-14 contain code necessary to carry out the tests for general SEMs.)</li>
+    <li><a href="mz-frontiers.R">Model estimation functions</a> for simulations.</li>
+    <li><a href="sim-frontiers.R">Simulation functions</a> for data generation, power evaluation, and power summaries.</li>
+    <li><a href="replication-frontiers.R">Replication script</a> containing code to run and summarize the tutorial and simulations, using the above files. (Note: strucchange 1.5-0 and lavaan 0.5-14 contain code necessary to carry out the tests for general SEMs.)</li>
   </ul></li>
 </ul>  
 
