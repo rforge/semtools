@@ -797,17 +797,14 @@ if(file.exists("sim1.rda")) {
  
   sim1$nobs <- factor(sim1$nobs)
   levels(sim1$nobs) <- paste("n=", levels(sim1$nobs), sep="")
-  levels(sim1$test) <- c("maxLM_O", "WDM_O", "LM_uO")
   save(sim1, file="sim1.rda")
 }
-sim1$test <- factor(as.character(sim1$test),
-  levels = c("ordmax", "ordwmax", "catdiff"),
-  labels = c("maxLM_o", "WDM_o", "LM_uo"))
-  parlabs <- c(expression(lambda[11]), expression(phi[12]), 
-               expression(psi[11]),
-	       expression(list(lambda[11], ldots, lambda[62])), 
-               expression(list(psi[11], ldots, psi[66])))
-  levels(sim1$pars) <- c("Loading1", "Covariance", "Error1", "All Loadings", "All Errors")  
+sim1$test <- factor(as.character(sim1$test), levels = c("ordmax","ordwmax","catdiff"),
+                    labels = c("maxLM_o", "WDM_o", "LM_uo"))
+parlabs <- c(expression(lambda[11]), expression(phi[12]), 
+             expression(psi[11]), expression(list(lambda[11], ldots, lambda[62])), 
+             expression(list(psi[11], ldots, psi[66])))
+levels(sim1$pars) <- c("Loading1", "Covariance", "Error1", "All Loadings", "All Errors")  
 @
 
 \begin{figure}
