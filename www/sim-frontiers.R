@@ -361,11 +361,8 @@ if(FALSE){
 library("lavaan")
 library("strucchange")
 library("mvtnorm")
-#source("../www/mz-ordinal.R")
-source("mz-ordinal-proptest.R")
-source("../www/estfun-lavaan.R")
-source("../www/efpFunctional-cat.R")
-source("simall-ordinal.R")
+source("sim-frontiers.R")
+source("mz-frontiers.R")
 
 
 ## seed for replication
@@ -374,15 +371,18 @@ source("simall-ordinal.R")
   
 
   
-## To get a shorter version (say, 20 minutes)to see what's going on, you could do:
-simtry <- simulation(sim = c("sim1"), nobs = c(480), nrep = 300,
+## Short versions:
+## Simulation 1:
+simtry <- simulation(sim = "sim1", nobs = 480, nrep = 300,
                      diff = seq(0, 4, by = 1), 
                      parms = c("loading", "error", "var"))
-simtry <- simulation(sim = c("sim2"), nobs = c(480), nrep=300,
+## Simulation 2:
+simtry <- simulation(sim = "sim2", nobs = 480, nrep=300,
                      diff = seq(0, 4, by = 1),
                      parms = c("extra", "extra+loading", "extra+var",
-                       "extra+error"))
+                               "extra+error"))
 
+## Save some results to file
 save(simtry,file ="simtry.rda")
  
 }
