@@ -293,7 +293,8 @@ simulation <- function(diff = seq(0, 4, by = 0.25),
     ## rerun critvals.
     if (!all(nlevels %in% as.numeric(names(cval)))) critvals(nlevels)
   } else {
-    critvals(nlevels)
+    cval <- critvals(nlevels)
+    save(cval, file="critvals.rda")
   }
   cval.conds <- as.numeric(names(cval))
 
