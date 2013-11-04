@@ -38,7 +38,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <h3>Score-based tests of measurement invariance: Use in practice</h3>
 
 <ul>
-  <!-- <li>Working paper</li> -->
+  <li><a href="http://econpapers.repec.org/paper/innwpaper/2013-33.htm">Working paper</a></li>
   <li>Replication materials:<ul>
     <li><a href="mz-frontiers.R">Model estimation functions</a> for simulations.</li>
     <li><a href="sim-frontiers.R">Simulation functions</a> for data generation, power evaluation, and power summaries.</li>
