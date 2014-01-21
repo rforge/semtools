@@ -1,0 +1,50 @@
+Reviewer 1
+
+Nice paper, very interesting. This is cased on, and so disseminates, excellent recent work (the Merkle papers). R implementation are a great contribution in addition to the theoretical work. I have some comments, which the authors may wish to consider. 
+
+comments 
+
+The exact contribution could be made clearer. I understand that the method has already been developed and implemented and applied to real data and in simulation. In the present paper, the method is explained and applied to real data and in simulation. Do the simulations results add to the existing results? This the application new? As mentioned, I do not think that the explanation of the method per se is particularly tutorial in nature. If the R worked example is the main message, please state this. 
+
+p. 2 " the development of test statistics that are sensitive to invariance violations of interest and insensitive to "anomalous" invariance violations". 
+
+Quite unclear. Restate for clarity. I mean: from the preceding single sentence "anomalous" is not clear. You mean that the tests are sensitive to the violations of interest and insensitive to violations not of interest? 
+
+p.2 "The test statistics are speci_cally applicable to situations where one wishes to test for measurement invariance with respect to an ordinal variable, and they are special cases of a family of tests that may be used to study measurement invariance w.r.t. continuous, categorical, and ordinal variables" 
+
+The reader may know MI w.r.t. nominal variables (e.g., sex), but not w.r.t continuous variables, which is more complicated. Please add references, and perhaps elaborate a little on the framework? 
+
+p.2-3. "The cross-product of these scores forms the "meat" for the calculation of robust (Huber-White) standard errors (e.g., Zeileis, 2006b)." That is true, but why is this mentioned? This paper is not about robust standard errors. 
+
+p.3. "To verbally describe the above equation, each individual has k scores describing the extent to which the _tted model describes that particular individual. Scores close to zero indicate a \good" description, and scores far from zero indicate a \bad" description". Strange to my ears: the score varies naturally in a correctly specified model applied to a finite sample, representative of the population of interest. If each person's observed scores are realizations of the process of interest, how does in this situation the score count as an measure of individual goodness of fit? The parameters in the model pertain to covariance matrices or mean vectors (aspects of distributions). Below we read: "Conversely, if measurement invariance holds, then all individuals' scores will uctuate randomly around zero". So here the fluctuation is consistent with well fitting model? 
+
+p.3 "If the manifest variables violate measurement invariance here,…" As "a test is MI w.r.t a variable", or "MI w.r.t. a variable may be violated", this is a strange personification of "manifest variables", do they do the violating? 
+
+p.3. eq. 2. Hard to follow. Does one choose increasing values of t? If so, how (given that t varies continuously between 0 and 1)? "Thus, the process associated with one parameter is not correlated with the processes associated with other parameters". This transform the scores to uncorrelated standardized variables, right? Following this transformation, how can I relate the fluctuation in a component of B(t,theta) to the original parameter? 
+
+p.3. Under the hypothesis of measurement invariance, a central limit theorem can be used to show that the fuctuation of the above cumulative sum follows a Brownian bridge." Perhaps add ref for Brownian bridge? Or can we assume that the readership is familiar with this?
+
+p.5. "We focus on measurement invariance of the factor loadings associated with the GQ-6 scale, using a one-factor model". Now many items? 5 I gather later on. How scaled? By fixing 1 factor loading to 1 (I assume?). The latent variance varies over group? It would be useful to state explicitly the exact model which provides the scores. The full MI includes equality of factor loadings, intercepts and residual variances, but not common factor means (alpha_i) or common factor (co)variances (Phi_i), where i is group in the standard multivariate case (but continuous here). In applying this method with continuously varying age in mind, how does one fit the MI model given that the grouping variable is continuous and alpha_i and Phi_i are free to vary conditional on the grouping variable? Does the R cfa restr <- cfa("f1 = ~gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5", data = yg, group = "agegroup", meanstructure = TRUE, group.equal = "loadings") only include equal loadings? Does one implement this method in the full MI model, or partial MI model? This should be made clear as it is important. 
+
+p. 9. "The measurement invariance violation occurred in one of three places: the factor loading associated with Scale 1 (lambda11), the unique variance associated with Scale 1 (psi11), or the factor covariance phi12." I do not understand that phi12 can be the locus of a violation of MI, as the definition of MI does not include any constraints on the common factor covariance matrix. It would make more sense to consider an intercept. 
+
+
+Reviewer 2
+
+This paper appears to aim for an audience of practitioners, who want to know how score-based testing can be implemented and what could be obtained from it. The explanation of the use of R-routines is particularly helpful, although I am a bit skeptical as to its use in large covariance structure analyses (LISREL type). 
+
+Your exposition of the logic of the approach may be too short for your intended audience, your other papers are much more informative. But if the paper is part of a special issue where other authors also deal with the same issues, a further elaboration is perhaps not needed(?). 
+
+For expository purposes, making it more concrete, it might be helpful though to specify how it would work for GLS: the cumulative sum would be some matrix, with a probability limit, times terms containing the cross-products of individual observation vectors minus sigma (the same under the null hypothesis). 
+
+Some additional comments: 
+
+1. I find your reference to the Huber-White robust standard errors a bit 'cavalier'. Are you referring to the situation where the model specifies a covariance structure, say, but is otherwise agnostic about the distribution, and “i.i.d.” can be maintained as a null hypothesis? For more general cases, with varying exogenous variables .e.g. the case for Huber-White is much less clearcut. See e.g. Chapter 17, 'On the so-called 'Huber Sandwich Estimator' and 'Robust Standard Errors'', in 'Statistical Models and Causal Inference by David Freedman (2010). 
+
+2.The last paragraph on p.6 starting with 'Because' is not clear to me. You point out essentially that with a fixed p-value the LRT will eventually pick up even very small and inconsequential deviations from the null-hypothesis, and you offer the family of score-based testing as an alternative. So do they have less power? But you also claim somewhere that (8) is (asymptotically) equivalent to the LRT. 
+
+3. P-values are very prominent in this paper, and 5% is close to sacred (this may be your perception of what practitioners think, which is a fair assumption in my experience, but may not be representative of what you personally believe, I for one fail to understand how this level has become so decisive). Nevertheless, I am concerned that the use of many statistics, each judged with respect to p=5%, makes it very hard to control the overall-level. The p-values are also not independent, so an aggregation using the log of the p-values (Fisher), will not be appropriate. In addition, you advocate the use of pictures and diagrams in testing the null-hypothesis. The end result will be a model that is random as well (a new sample could with the same approach easily lead to another model), based on an informal procedure that would not allow of a structured Monte Carlo type of sensitivity analysis. It appears that the statistical inference problems as induced by modeling and testing on the same data are unsurmountable: see e.g. H. Leeb and B.M. Poetscher (2005), 'Model selection and inference: facts and fiction', Econometric Theory, 21, 21-59. So I would emphasize that the end-result of the excercise is tentative, that the whole excercise is best seen as exploratory only, and that new data are needed for further testing and confirmation. 
+
+4. On the last lines on p. 13, just above the General Discussion, you point out that it is 'important to study to what extent the hypothesized model includes all parameters of importance, and that none of the tests inform about model misspecification'. The first statement imposes a rather daunting task, and will amplify the 'dangers' alluded to in 3. A pragmatic approach would be to use GLS as well: if the model is wrong, ML and GLS should not produce the same estimates, since they project the data along different angles on the model space. But at the end of the day the necessity to cross-validate on new data will still be paramount. 
+
+Finally, to avoid possible misunderstandings: I am not one of those reviewers who expects to find every scrap of his presumed “wisdom” to be reflected in the new version, if any, of the paper. My comments are meant to be helpful, and if ignored, my ego will survive. 
