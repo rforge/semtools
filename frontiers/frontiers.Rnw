@@ -419,7 +419,7 @@ also leads to somewhat
 smaller test statistics that are very close to being significant at the 5\% level.
 
 Because our sample size is large, the likelihood ratio test is known to be sensitive to 
-small measurement invariance violations \cite{Ben80}.  That is, the above tests 
+small measurement invariance violations \cite{Ben80}.  That is, the above tests (LRT and  $\mathit{LM}_\mathit{uo}$ test) \seeme{add the LRT to test content}
 are sensitive to small measurement invariance violations that are not likely to be 
 of interest to researchers.  For example, imagine that the 15-year-olds' 
 parameters are slightly different than the other age groups.  

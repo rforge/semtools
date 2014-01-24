@@ -57,25 +57,48 @@ p. 9. "The measurement invariance violation occurred in one of three places: the
 
 R: We choose these parameters because they are the "locus" parameters for any factor analysis. phi12 is one of them. The MI definition mentioned by the reviewer is one realization of the general measurement invariance definition proposed by Mellenbergh, 1989. The intercepts' measurement invariance violation can't be detected by this method. 
 
-Ed: I remember the intercepts simulation power are always near zero, regardless of the magnitude. But how to explain why intercepts' measurement invariance violation can't be detected? The time series work never considers this problem. 
+Ed: I remember the intercepts simulation power are always near zero, regardless of the magnitude. But my question is also why intercepts' measurement invariance violation can't be detected? Do you think we should run the simulation to verify that? (The code is easy to adapt, time is probably the issue.)
 
 
 Reviewer 2
 
 This paper appears to aim for an audience of practitioners, who want to know how score-based testing can be implemented and what could be obtained from it. The explanation of the use of R-routines is particularly helpful, although I am a bit skeptical as to its use in large covariance structure analyses (LISREL type). 
 
+R: As we replied to Reviewer 1, as long as there existes Maximum Likelihood estimation. Model complexity should not be the issue for the proposed tests. 
+ 
 Your exposition of the logic of the approach may be too short for your intended audience, your other papers are much more informative. But if the paper is part of a special issue where other authors also deal with the same issues, a further elaboration is perhaps not needed(?). 
 
+R: The length of this paper is constrained by the special issue's recommendation. For readers who are interested in the theoretical background of those tests, they can refer to Merkle and Zeileis, 2013.  
+
 For expository purposes, making it more concrete, it might be helpful though to specify how it would work for GLS: the cumulative sum would be some matrix, with a probability limit, times terms containing the cross-products of individual observation vectors minus sigma (the same under the null hypothesis). 
+
+R: Thanks for the suggestion. Reviewer 1 also mentioned about this. We added illustration to the cumulative sum score matrix. 
+
+Ed: I think this point is the same as reviewer 1 wanted to some illustration for eq 2. 
 
 Some additional comments: 
 
 1. I find your reference to the Huber-White robust standard errors a bit 'cavalier'. Are you referring to the situation where the model specifies a covariance structure, say, but is otherwise agnostic about the distribution, and “i.i.d.” can be maintained as a null hypothesis? For more general cases, with varying exogenous variables .e.g. the case for Huber-White is much less clearcut. See e.g. Chapter 17, 'On the so-called 'Huber Sandwich Estimator' and 'Robust Standard Errors'', in 'Statistical Models and Causal Inference by David Freedman (2010). 
 
+R: Thanks for the suggestion. As Reviewer 1 pointed out, this sentence is not closely related to the context here. So we deleted this sentence. 
+
+Ed: I don't know how to answer the question. Which situation are we referring to?
+
 2.The last paragraph on p.6 starting with 'Because' is not clear to me. You point out essentially that with a fixed p-value the LRT will eventually pick up even very small and inconsequential deviations from the null-hypothesis, and you offer the family of score-based testing as an alternative. So do they have less power? But you also claim somewhere that (8) is (asymptotically) equivalent to the LRT. 
+
+R: Thanks for the suggestion. Here the "above tests" refers to the "above LRT and LMuo test(asymptotically equivalent to LRT)". We add that for clearification. These two tests are too sensitive to large sample size, meaning they will always give significant results when sample size is large. 
 
 3. P-values are very prominent in this paper, and 5% is close to sacred (this may be your perception of what practitioners think, which is a fair assumption in my experience, but may not be representative of what you personally believe, I for one fail to understand how this level has become so decisive). Nevertheless, I am concerned that the use of many statistics, each judged with respect to p=5%, makes it very hard to control the overall-level. The p-values are also not independent, so an aggregation using the log of the p-values (Fisher), will not be appropriate. In addition, you advocate the use of pictures and diagrams in testing the null-hypothesis. The end result will be a model that is random as well (a new sample could with the same approach easily lead to another model), based on an informal procedure that would not allow of a structured Monte Carlo type of sensitivity analysis. It appears that the statistical inference problems as induced by modeling and testing on the same data are unsurmountable: see e.g. H. Leeb and B.M. Poetscher (2005), 'Model selection and inference: facts and fiction', Econometric Theory, 21, 21-59. So I would emphasize that the end-result of the excercise is tentative, that the whole excercise is best seen as exploratory only, and that new data are needed for further testing and confirmation. 
 
+R: The p value is based on the data. The critical value can be got for any designated criteria, e.g. alpha=0.1 or 0.01. The traditional problem of testing inflating type I error does not apply in this context. The reason is that there is one hypothesis when we test multiple parameters. It is not the case that we test single parameters for multiple times. The plots are visual demonstration of the tests, so reflecting if the p value is larger or smaller than alpha. The test is not about replication. It is just based on the data at hand. 
+ 
+
 4. On the last lines on p. 13, just above the General Discussion, you point out that it is 'important to study to what extent the hypothesized model includes all parameters of importance, and that none of the tests inform about model misspecification'. The first statement imposes a rather daunting task, and will amplify the 'dangers' alluded to in 3. A pragmatic approach would be to use GLS as well: if the model is wrong, ML and GLS should not produce the same estimates, since they project the data along different angles on the model space. But at the end of the day the necessity to cross-validate on new data will still be paramount. 
 
+R: The proposed tests aim to detect measurement invariance w.r.t. an auxilliary variable. Detecting model misspecification is not the purpose. Moreover, model misspecification won't be detected by different estimation method, either. 
+
+Ed: I don't think there is difference in producing the score matrix and estimates. Is it true?  
+
 Finally, to avoid possible misunderstandings: I am not one of those reviewers who expects to find every scrap of his presumed “wisdom” to be reflected in the new version, if any, of the paper. My comments are meant to be helpful, and if ignored, my ego will survive. 
+
+R: Thanks for the comments and suggestions. They helped to make the paper better. 
