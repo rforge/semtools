@@ -6,27 +6,58 @@ comments
 
 The exact contribution could be made clearer. I understand that the method has already been developed and implemented and applied to real data and in simulation. In the present paper, the method is explained and applied to real data and in simulation. Do the simulations results add to the existing results? This the application new? As mentioned, I do not think that the explanation of the method per se is particularly tutorial in nature. If the R worked example is the main message, please state this. 
 
+R: This paper in general serves to be a guidance to the proposed tests' use in practice. The tutorial part is supposed to show researchers how to implement the tests in R; The simulations results demonstrats the tests' two properties, which are of vital interest for application. Simulation 1 aims to show the specificity of the tests. Simulation 2 explores the robustness of tests to model misspecification. So to answer the reviwer's question, the simulations results have their own contributions and add to the existing literature.  
+
+Ed: I don't know how to make changes in the paper for this point. What I responded above is already in the paper.
+
 p. 2 " the development of test statistics that are sensitive to invariance violations of interest and insensitive to "anomalous" invariance violations". 
 
 Quite unclear. Restate for clarity. I mean: from the preceding single sentence "anomalous" is not clear. You mean that the tests are sensitive to the violations of interest and insensitive to violations not of interest? 
 
-p.2 "The test statistics are speci_cally applicable to situations where one wishes to test for measurement invariance with respect to an ordinal variable, and they are special cases of a family of tests that may be used to study measurement invariance w.r.t. continuous, categorical, and ordinal variables" 
+R: Thanks for the suggestion. We changed that sentence to "the development of test statistics that are sensitive to monotonic w.r.t. ordinal variables of interest and less sensitive to non-monotonic violations."
+
+p.2 "The test statistics are specifically applicable to situations where one wishes to test for measurement invariance with respect to an ordinal variable, and they are special cases of a family of tests that may be used to study measurement invariance w.r.t. continuous, categorical, and ordinal variables" 
 
 The reader may know MI w.r.t. nominal variables (e.g., sex), but not w.r.t continuous variables, which is more complicated. Please add references, and perhaps elaborate a little on the framework? 
 
+R: We add references of Meredith, 1993; Dolan & van der Maas, 1998; Lubke & Muth ́en, 2005. Readers who want to know more about the framework could refer to the reference. Elaboration at this part might divert readers from the core of this paper.  
+
+Ed: I am not sure about these references.
+
 p.2-3. "The cross-product of these scores forms the "meat" for the calculation of robust (Huber-White) standard errors (e.g., Zeileis, 2006b)." That is true, but why is this mentioned? This paper is not about robust standard errors. 
 
-p.3. "To verbally describe the above equation, each individual has k scores describing the extent to which the _tted model describes that particular individual. Scores close to zero indicate a \good" description, and scores far from zero indicate a \bad" description". Strange to my ears: the score varies naturally in a correctly specified model applied to a finite sample, representative of the population of interest. If each person's observed scores are realizations of the process of interest, how does in this situation the score count as an measure of individual goodness of fit? The parameters in the model pertain to covariance matrices or mean vectors (aspects of distributions). Below we read: "Conversely, if measurement invariance holds, then all individuals' scores will uctuate randomly around zero". So here the fluctuation is consistent with well fitting model? 
+R: We agree. This sentence is deleted. 
+
+p.3. "To verbally describe the above equation, each individual has k scores describing the extent to which the fitted model describes that particular individual. Scores close to zero indicate a \good" description, and scores far from zero indicate a \bad" description". Strange to my ears: the score varies naturally in a correctly specified model applied to a finite sample, representative of the population of interest. If each person's observed scores are realizations of the process of interest, how does in this situation the score count as an measure of individual goodness of fit? The parameters in the model pertain to covariance matrices or mean vectors (aspects of distributions). Below we read: "Conversely, if measurement invariance holds, then all individuals' scores will fluctuate randomly around zero". So here the fluctuation is consistent with well fitting model? 
+
+R: If the parameter fits the individual well, the individual's score will be close to zero(no individual's score will be exactly zero, the score does naturally fluctuate.). The key word here is "close to zero", which indicates good description. On the other hand, if the individual's score is far from zero, which indicates bad description. The key word here is "far from". Below the sentence describes equation 2. Fluctuation randomly around zero is consistent with well fitting model. The key word is "around zero". 
+
+Ed: I think the reviewer's question is that he missed the point of "around zero". Is it polite to say above responses? 
 
 p.3 "If the manifest variables violate measurement invariance here,…" As "a test is MI w.r.t a variable", or "MI w.r.t. a variable may be violated", this is a strange personification of "manifest variables", do they do the violating? 
 
+R:  Thanks for the suggestion. We changed that sentence part to "If there exists measurement invariance w.r.t. age". 
+
 p.3. eq. 2. Hard to follow. Does one choose increasing values of t? If so, how (given that t varies continuously between 0 and 1)? "Thus, the process associated with one parameter is not correlated with the processes associated with other parameters". This transform the scores to uncorrelated standardized variables, right? Following this transformation, how can I relate the fluctuation in a component of B(t,theta) to the original parameter? 
 
+R:  Because we take integer part of nt,  t can be interpreted as in the form of 1/n, 2/n, 3/n,...n/n. The decorrelation is done by \hat{I}^{-1/2}. This "transformation" didn't change the dimension of original score matrix. We just replace the scores by cumulative scores (ordering by auxillary variable V). We add some illustration to the paper. 
+
+ 
 p.3. Under the hypothesis of measurement invariance, a central limit theorem can be used to show that the fuctuation of the above cumulative sum follows a Brownian bridge." Perhaps add ref for Brownian bridge? Or can we assume that the readership is familiar with this?
+
+R: Thanks for the suggetion. We add reference (Hjort & Koning, 2002). 
 
 p.5. "We focus on measurement invariance of the factor loadings associated with the GQ-6 scale, using a one-factor model". Now many items? 5 I gather later on. How scaled? By fixing 1 factor loading to 1 (I assume?). The latent variance varies over group? It would be useful to state explicitly the exact model which provides the scores. The full MI includes equality of factor loadings, intercepts and residual variances, but not common factor means (alpha_i) or common factor (co)variances (Phi_i), where i is group in the standard multivariate case (but continuous here). In applying this method with continuously varying age in mind, how does one fit the MI model given that the grouping variable is continuous and alpha_i and Phi_i are free to vary conditional on the grouping variable? Does the R cfa restr <- cfa("f1 = ~gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5", data = yg, group = "agegroup", meanstructure = TRUE, group.equal = "loadings") only include equal loadings? Does one implement this method in the full MI model, or partial MI model? This should be made clear as it is important. 
 
+R: The scale is 1 to 9(We add that description to the paper). By fixing the first factor loading to 1(lavaan default setting). The latent variance varies over group(lavaan default setting). The full MI model described by the reviewer could be done by setting equal.group=c("loading", "intercepts", "residuals"). The R command for restr model shown in the paper only include equal loadings. The partial MI model could be done by argument group.partial=c("gq6_2~1") (the value in c() is an example, user can put any parameter they want to control). These are important to understand/specify the model , but not important for the proposed tests, for the reason that the tests only work on the cumulative score matrix.  As long as the model could get Maximum Likelihood estimation, the tests could be implemented. We add reference for researcher who wants to know more about model specification. 
+
+Ed: I add the scale 1 to 9 to the paper. But I don't think it is a good idea to get down to the model specification part. I just add some sentence to direct readers to Yves' references.  
+
 p. 9. "The measurement invariance violation occurred in one of three places: the factor loading associated with Scale 1 (lambda11), the unique variance associated with Scale 1 (psi11), or the factor covariance phi12." I do not understand that phi12 can be the locus of a violation of MI, as the definition of MI does not include any constraints on the common factor covariance matrix. It would make more sense to consider an intercept. 
+
+R: We choose these parameters because they are the "locus" parameters for any factor analysis. phi12 is one of them. The MI definition mentioned by the reviewer is one realization of the general measurement invariance definition proposed by Mellenbergh, 1989. The intercepts' measurement invariance violation can't be detected by this method. 
+
+Ed: I remember the intercepts simulation power are always near zero, regardless of the magnitude. But how to explain why intercepts' measurement invariance violation can't be detected? The time series work never considers this problem. 
 
 
 Reviewer 2

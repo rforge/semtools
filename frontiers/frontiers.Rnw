@@ -85,13 +85,16 @@ corresponding tests of measurement invariance.  Under a Bayesian
 approach, we may utilize the idea of approximate invariance
 \cite<e.g.,>{muthen13}, whereby across-group equality constraints on
 parameters are replaced with informative prior distributions.  In this paper, we
-describe an alternative approach: the development of test statistics that are
-sensitive to invariance violations of interest and insensitive to ``anomalous''
-invariance violations.  The test statistics are specifically applicable to
-situations where one wishes to test for measurement invariance with respect to
-an ordinal variable, and they are special cases of a family of tests that may
-be used to study measurement invariance w.r.t.\ continuous,
-categorical, and ordinal variables.
+describe an alternative approach: the development of test statistics that 
+are sensitive to monotonic w.r.t. variable of research interest and 
+less sensitive to non-monotonic violations\seeme{original sentence:
+the development of test statistics that are sensitive to invariance 
+violations of interest and insensitive to "anomalous" invariance violations}.  
+The test statistics are specifically applicable to situations where one 
+wishes to test for measurement invariance with respect to an ordinal variable, 
+and they are special cases of a family of tests that may be used to study 
+measurement invariance w.r.t.\ continuous, categorical, and ordinal variables
+\cite{mer93,DolMaa98,lubmut05}\seeme{add these three refs.}.
 
 The family of tests described in this paper have recently been applied
 to the study of measurement invariance \cite{MerZei13,MerFanZei}, though their
@@ -146,9 +149,10 @@ s(\theta;x_{i}) = \left (
 where $\ell(\theta; x_i)$ is the likelihood associated with individual
 $i$ and $\theta$ is a $k$-dimensional parameter vector. The corresponding
 maximum likelihood estimate $\hat{\theta}$ solves the first order condition:
-$\sum_{i = 1}^n s(\hat \theta;x_{i}) = 0$. The cross-product
+$\sum_{i = 1}^n s(\hat \theta;x_{i}) = 0$. \seeme{delete this
+sentence: The cross-product
 of these scores forms the ``meat'' for the calculation of robust
-(Huber-White) standard errors \cite<e.g.,>{zei06b}.
+(Huber-White) standard errors \cite<e.g.,>{zei06b}}.
 
 To verbally describe the above equation, each
 individual has $k$ scores describing the extent to which the fitted
@@ -163,8 +167,10 @@ an auxiliary variable $V$ (the variable against which we are testing
 measurement invariance) and look for ``trends'' in the
 scores.  For example, imagine that we are testing
 for measurement 
-invariance w.r.t.\ age.  If the manifest variables violate measurement
-invariance here, then some parameter estimates may be too large for
+invariance w.r.t.\ age.  If there exists measurement invariance w.r.t. age
+\seeme{original sentence:
+If the manifest variables violate measurement
+invariance here}, then some parameter estimates may be too large for
 young individuals and too small for old individuals (say).  This
 result would be reflected in the scores, where young individuals'
 scores may be greater than zero and old individuals' scores 
@@ -184,8 +190,13 @@ suitably scaled cumulative sum of the ordered scores.  This may be written as
 where $\hat{\bm I}$ is an estimate of the information matrix, $\lfloor
 nt \rfloor$ is 
 the integer part of $nt$ (i.e., a floor 
-operator), and $x_{(i)}$ reflects the individual with the
-$i$-th smallest value of the auxiliary variable $V$.
+operator), thus t could be interpreted as $1/n$, $2/n$, $3/n$, ...$n/n$.
+\seeme{add from thus to n/n}. 
+$x_{(i)}$ reflects the individual with the $i$-th smallest value of the 
+auxiliary variable $V$.  So we replace the score component shown in 
+Equation~\eqref{eq:score} by cumulative score component shown in 
+Equation~\eqref{eq:cumscore} without changing dimension
+\seeme{add from So to dimension}. 
 We specifically focus on how the
 cumulative sum fluctuates as more individuals' scores are added to it, e.g.,
 starting with the youngest and ending with the oldest individual
@@ -199,7 +210,8 @@ with the processes associated with other parameters.
 Under the
 hypothesis of measurement invariance, a central limit theorem can be
 used to show that the fluctuation of the above cumulative sum follows a
-Brownian bridge.  This result allows us to calculate $p$-values and
+Brownian bridge \cite{hjokon02}\seeme{add this ref}.  
+This result allows us to calculate $p$-values and
 critical values for test statistics under the hypothesis of
 measurement invariance.  We can obtain test statistics associated with
 all model parameters and with subsets of model parameters.
@@ -292,7 +304,9 @@ using the package \pkg{lavaan} \cite{lavaan11} for model estimation and \pkg{str
 \cite{ZeiLei02,Zei06} for testing.  We use data from \citeA{FroFan11} concerning 
 the applicability of adult gratitude scales to youth, available in the~\proglang{R} 
 package \pkg{psychotools} \cite{zeilei12}.  The data consist of responses to three adult 
-gratitude scales from $n=1401$ youth aged 10--19 years. The original authors 
+gratitude scales from $n=1401$ youth aged 10--19 years. 
+The response scale is 1 to 9 \seeme{add the scale}. 
+The original authors 
 were specifically interested in whether the scales were measurement invariant 
 across age.  Because the sample size at each age was unbalanced, the authors 
 created age groups of approximately equal sample size.  In the examples below, 
@@ -368,8 +382,13 @@ compcases <- apply(YouthGratitude[, 4:28], 1, function(x) all(x %in% 1:9))
 yg <- YouthGratitude[compcases, ]
 @
 %
-Next, we fit two models in \pkg{lavaan}: a one-factor model where loadings are restricted 
-to be equal across age groups, and a one-factor model where loadings are free across age groups.
+Next, we fit two models in \pkg{lavaan}: a one-factor model 
+where loadings are restricted to be equal across age groups, 
+and a one-factor model where loadings are free across age groups
+(Note, the researcher could fit any kind of reduced model, 
+e.g. restrict the residuals to be equal.  For model 
+specification code, please refer to \pkg{lavaan} package)
+\seeme{Add this note}.
 %
 <<models>>=
 restr <- cfa("f1 = ~gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
