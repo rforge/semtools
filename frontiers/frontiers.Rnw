@@ -86,15 +86,20 @@ approach, we may utilize the idea of approximate invariance
 \cite<e.g.,>{muthen13}, whereby across-group equality constraints on
 parameters are replaced with informative prior distributions.  In this paper, we
 describe an alternative approach: the development of test statistics that 
-are sensitive to monotonic w.r.t. variable of research interest and 
-less sensitive to non-monotonic violations\seeme{original sentence:
-the development of test statistics that are sensitive to invariance 
-violations of interest and insensitive to "anomalous" invariance violations}.  
-The test statistics are specifically applicable to situations where one 
+are especially sensitive to violations that are monotonic w.r.t. the
+variable of interest (and 
+less sensitive to violations that are non monotonic w.r.t. the
+variable of interest).  Because monotonic violations are more likely to be
+interpretable and interesting to the researcher, we can gain more
+power to detect these violations by de-emphasizing other types of violations.
+The resulting test statistics are specifically applicable to
+situations where one  
 wishes to test for measurement invariance with respect to an ordinal variable, 
 and they are special cases of a family of tests that may be used to study 
 measurement invariance w.r.t.\ continuous, categorical, and ordinal variables
-\cite{mer93,DolMaa98,lubmut05}\seeme{add these three refs.}.
+\cite{mer93,DolMaa98,lubmut05}\readme{The new references do not work
+  here (because they are unrelated to tests based on stochastic
+  processes).  I will work on these references.}.
 
 The family of tests described in this paper have recently been applied
 to the study of measurement invariance \cite{MerZei13,MerFanZei}, though their
@@ -149,28 +154,26 @@ s(\theta;x_{i}) = \left (
 where $\ell(\theta; x_i)$ is the likelihood associated with individual
 $i$ and $\theta$ is a $k$-dimensional parameter vector. The corresponding
 maximum likelihood estimate $\hat{\theta}$ solves the first order condition:
-$\sum_{i = 1}^n s(\hat \theta;x_{i}) = 0$. \seeme{delete this
-sentence: The cross-product
-of these scores forms the ``meat'' for the calculation of robust
-(Huber-White) standard errors \cite<e.g.,>{zei06b}}.
+$\sum_{i = 1}^n s(\hat \theta;x_{i}) = 0$.
 
 To verbally describe the above equation, each
 individual has $k$ scores describing the extent to which the fitted
-model describes that particular individual.  Scores close to zero
-indicate a ``good'' description, and scores far from zero indicate a
-``bad'' description.  Each of an individual's $k$ scores represent one
-model parameter, so that the scores provide specific information about
-each parameter's fit to each individual.
+model describes that particular individual.  We can roughly interpret
+scores near zero as providing a ``good'' description of an individual,
+with scores far from zero providing a ``bad'' description of an
+individual.  This is only a rough interpretation as, even when measurement
+invariance holds, some individuals' scores will be further from zero
+than others.  Each of the $k$ scores represents one model parameter,
+which, as further described below, allows us to test subsets of model
+parameters for invariance. 
 
-To use these scores for testing, we order individuals according to
+To use the scores for testing, we order individuals according to
 an auxiliary variable $V$ (the variable against which we are testing 
 measurement invariance) and look for ``trends'' in the
 scores.  For example, imagine that we are testing
 for measurement 
-invariance w.r.t.\ age.  If there exists measurement invariance w.r.t. age
-\seeme{original sentence:
-If the manifest variables violate measurement
-invariance here}, then some parameter estimates may be too large for
+invariance w.r.t.\ age.  If there exists measurement invariance
+w.r.t. age, then some parameter estimates may be too large for 
 young individuals and too small for old individuals (say).  This
 result would be reflected in the scores, where young individuals'
 scores may be greater than zero and old individuals' scores 
@@ -190,27 +193,25 @@ suitably scaled cumulative sum of the ordered scores.  This may be written as
 where $\hat{\bm I}$ is an estimate of the information matrix, $\lfloor
 nt \rfloor$ is 
 the integer part of $nt$ (i.e., a floor 
-operator), thus t could be interpreted as $1/n$, $2/n$, $3/n$, ...$n/n$.
-\seeme{add from thus to n/n}. 
-$x_{(i)}$ reflects the individual with the $i$-th smallest value of the 
-auxiliary variable $V$.  So we replace the score component shown in 
-Equation~\eqref{eq:score} by cumulative score component shown in 
-Equation~\eqref{eq:cumscore} without changing dimension
-\seeme{add from So to dimension}. 
-We specifically focus on how the
+operator), and $x_{(i)}$ reflects the individual with the $i$-th
+smallest value of the auxiliary variable $V$.  While the above
+equation is written in general form, we can
+restrict the value of $t$ in finite samples to the set $\{0,
+1/n, 2/n, 3/n, \ldots, n/n\}$.
+We focus on how the
 cumulative sum fluctuates as more individuals' scores are added to it, e.g.,
 starting with the youngest and ending with the oldest individual
 if age is the auxiliary variable of interest.
 The summation is premultiplied by an estimate of the inverse square
 root of the information matrix, which serves to decorrelate the
-fluctuation processes associated with individual model parameters.
-Thus, the process associated with one parameter is not correlated 
-with the processes associated with other parameters.
+fluctuation processes associated with individual model parameters
+while preserving the behavior of individual parameters' fluctuations..
+
 
 Under the
 hypothesis of measurement invariance, a central limit theorem can be
 used to show that the fluctuation of the above cumulative sum follows a
-Brownian bridge \cite{hjokon02}\seeme{add this ref}.  
+Brownian bridge \cite{hjokon02}.  % TODO add ref to Brownian bridge  
 This result allows us to calculate $p$-values and
 critical values for test statistics under the hypothesis of
 measurement invariance.  We can obtain test statistics associated with
@@ -305,7 +306,6 @@ using the package \pkg{lavaan} \cite{lavaan11} for model estimation and \pkg{str
 the applicability of adult gratitude scales to youth, available in the~\proglang{R} 
 package \pkg{psychotools} \cite{zeilei12}.  The data consist of responses to three adult 
 gratitude scales from $n=1401$ youth aged 10--19 years. 
-The response scale is 1 to 9 \seeme{add the scale}. 
 The original authors 
 were specifically interested in whether the scales were measurement invariant 
 across age.  Because the sample size at each age was unbalanced, the authors 
@@ -313,7 +313,8 @@ created age groups of approximately equal sample size.  In the examples below,
 we test for measurement invariance across these age groups.
 
 We focus on measurement invariance of the factor loadings associated with 
-the GQ-6 scale, using a one-factor model. While the ``age group'' variable against 
+the GQ-6 scale, using a one-factor model.  This scale consists of five
+items scored from 1--9.  While the ``age group'' variable against 
 which we are testing measurement invariance is best considered ordinal, 
 for demonstration we consider its treatment as categorical, continuous, and ordinal.  
 Each of these treatments is described below in a separate section.
@@ -384,17 +385,20 @@ yg <- YouthGratitude[compcases, ]
 %
 Next, we fit two models in \pkg{lavaan}: a one-factor model 
 where loadings are restricted to be equal across age groups, 
-and a one-factor model where loadings are free across age groups
-(Note, the researcher could fit any kind of reduced model, 
-e.g. restrict the residuals to be equal.  For model 
-specification code, please refer to \pkg{lavaan} package)
-\seeme{Add this note}.
+and a one-factor model where loadings are free across age groups.
+This allows us to test a hypothesis of partial measurement invariance
+that was of interest to the original researchers (though, for ordinal
+variables, all types of
+measurement invariance can be examined via the tests described
+previously).
+By default, the code below sets the scale by fixing the first loading
+to 1.
 %
 <<models>>=
-restr <- cfa("f1 = ~gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
+restr <- cfa("f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
   data = yg, group = "agegroup", meanstructure = TRUE,
   group.equal = "loadings")
-full <- cfa("f1= ~gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
+full <- cfa("f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
   data = yg, group = "agegroup", meanstructure = TRUE)
 @
 %
@@ -419,8 +423,10 @@ also leads to somewhat
 smaller test statistics that are very close to being significant at the 5\% level.
 
 Because our sample size is large, the likelihood ratio test is known to be sensitive to 
-small measurement invariance violations \cite{Ben80}.  That is, the above tests (LRT and  $\mathit{LM}_\mathit{uo}$ test) \seeme{add the LRT to test content}
-are sensitive to small measurement invariance violations that are not likely to be 
+small measurement invariance violations \cite{Ben80}.  That is, the
+LRT and  $\mathit{LM}_\mathit{uo}$ test from~\eqref{eq:lmuo}
+are sensitive to small measurement invariance violations that are not
+likely to be  
 of interest to researchers.  For example, imagine that the 15-year-olds' 
 parameters are slightly different than the other age groups.  
 The 15-year-olds are in the middle of the age groups, and there 
@@ -428,7 +434,8 @@ is not likely to be any theoretical justification for 15-year-olds
 differing from every other age group.  One solution to this problem would be the
 Bayesian, approximate invariance methods described in the
 introduction \cite{muthen13}.
-Alternatively, we can use the proposed family of score-based statistics to obtain
+Alternatively, we can use the ``ordinal'' score-based
+statistics (from~\eqref{eq:wdm} and~\eqref{eq:maxlmo}) to obtain 
 tests that are sensitive to the ordering of age.
 
 
@@ -640,8 +647,12 @@ two-factor model with three indicators each (see Figure~\ref{fig:path}).
 The measurement invariance
 violation occurred in one of three places: the factor loading associated with Scale 1 
  ($\lambda_{11}$), the unique variance associated with Scale 1
- ($\psi_{11}$), or the factor covariance $\phi_{12}$.  
- We then tested for measurement invariance in five subsets of parameters: each of the three
+ ($\psi_{11}$), or the factor covariance $\phi_{12}$.  Note that the
+ latter violation is not necessarily a measurement invariance
+ violation, but it is still a parameter instability that can occur in
+ this type of model.
+ We then tested for measurement invariance (parameter instability) in
+ five subsets of parameters: each of the three 
 individual parameters noted above, all six factor loadings, % $\lambda_{11}--\lambda_{62}$, and 
 and all six unique variances. % $\epsilon_{11}--\epsilon_{66}$.
 
