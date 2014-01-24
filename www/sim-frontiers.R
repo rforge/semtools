@@ -26,7 +26,8 @@ dgp1 <- function(nobs = 240, diff = 1.5, nlevels = 3, gradual=FALSE, anomaly=FAL
   half.level <- ifelse(nlevels %% 2 == 1, (nlevels %/% 2)+1, nlevels/2)
   
   # Define parameter vectors/matrices:
-  theta<-c(4.92,2.96,5.96,3.24,4.32,7.21,26.77,13.01,30.93,3.17,8.82,22.5, -0.48,
+  theta<-c(4.92,2.96,5.96,3.24,4.32,7.21,26.77,13.01,30.93,3.17,8.82,22.5,
+           -0.48,
            29.32,24.70,14.84,10.59,19.30,18.01)
   asym<-c(7.565818,4.951599,8.644422,3.093014,4.499676,7.368059,
            62.1,26.6,82.1,9.05,19.35,51.59,
@@ -71,6 +72,7 @@ dgp1 <- function(nobs = 240, diff = 1.5, nlevels = 3, gradual=FALSE, anomaly=FAL
     if (parms=="loading"){parmsvector=c(1,rep(0,18))}
     if (parms=="var"){parmsvector=c(rep(0,12),1,rep(0,6))}
     if (parms=="error"){parmsvector=c(rep(0,6),1,rep(0,5),rep(0,7))}
+    if (parms=="intercept"){parmsvector=c(rep(0,13),1,rep(0,5))}
    
     mult <- ses
     if (anomaly) mult <- ifelse(i==(half.level+1), ses, 0)
@@ -91,6 +93,9 @@ dgp1 <- function(nobs = 240, diff = 1.5, nlevels = 3, gradual=FALSE, anomaly=FAL
     # variances
     tmp.psi <- matrix(0,6,6)
     diag(tmp.psi) <- theta.tmp[7:12]
+
+    # intercepts
+    tmp.mu <- theta.tmp[14:19]
     } else {
     theta.tmp <- theta + (mult*asym*parmsvector/sqrt(tmp.n))
     # Loadings:
@@ -105,11 +110,14 @@ dgp1 <- function(nobs = 240, diff = 1.5, nlevels = 3, gradual=FALSE, anomaly=FAL
     tmp.psi <- matrix(0,6,6)
     diag(tmp.psi) <- theta.tmp[7:12]  
     }
+
+    # intercepts
+    tmp.mu <- theta.tmp[14:19]
     
     u.tmp <- t(rmvnorm(tmp.n,rep(0,6),tmp.psi))
     z.tmp <- t(rmvnorm(tmp.n,rep(0,2),tmp.phi))
     for (j in 1:tmp.n){
-      datmat[tmp.ind[j],] <- mu + tmp.lambda%*%z.tmp[,j] + u.tmp[,j]
+      datmat[tmp.ind[j],] <- tmp.mu + tmp.lambda%*%z.tmp[,j] + u.tmp[,j]
     }
   }
   
@@ -187,7 +195,11 @@ dgp2 <-function(nobs = 240, diff = 1.5, nlevels = 3, gradual=FALSE,
   if(parms=="extra"){parmsvector=c(rep(0,3),1,rep(0,3),rep(0,6),0,rep(0,6))}
   if(parms=="extra+loading"){parmsvector=c(1,rep(0,2),0,rep(0,3),rep(0,6),0,rep(0,6))}
   if(parms=="extra+var"){parmsvector=c(rep(0,3),0,rep(0,3),rep(0,6),1,rep(0,6))}
-  if(parms=="extra+error"){parmsvector=c(rep(0,3),0,rep(0,3),1,rep(0,5),0,rep(0,6))}
+  if(parms=="extra+error"){parmsvector=c(rep(0,3),0,rep(0,3),1,rep(0,5),0,
+                               rep(0,6))}
+  if(parms=="extra+intercept"){parmsvector=c(rep(0,14),
+                                   1, rep(0,5))}
+ 
    
     mult <- ses
     if (anomaly) mult <- ifelse(i==(half.level+1), ses, 0)
@@ -208,6 +220,9 @@ dgp2 <-function(nobs = 240, diff = 1.5, nlevels = 3, gradual=FALSE,
     # variances
     tmp.psi <- matrix(0,6,6)
     diag(tmp.psi) <- theta.tmp[8:13]
+
+    # intercepts:
+    tmp.mu <- theta.tmp[15:20]
     } else {
     theta.tmp <- theta + (mult*asym*parmsvector/sqrt(tmp.n))
     # Loadings:
@@ -222,11 +237,14 @@ dgp2 <-function(nobs = 240, diff = 1.5, nlevels = 3, gradual=FALSE,
     tmp.psi <- matrix(0,6,6)
     diag(tmp.psi) <- theta.tmp[8:13]  
     }
+
+    # intercepts:
+    tmp.mu <- theta.tmp[15:20]
     
     u.tmp <- t(rmvnorm(tmp.n,rep(0,6),tmp.psi))
     z.tmp <- t(rmvnorm(tmp.n,rep(0,2),tmp.phi))
     for (j in 1:tmp.n){
-      datmat[tmp.ind[j],] <- mu + tmp.lambda%*%z.tmp[,j] + u.tmp[,j]
+      datmat[tmp.ind[j],] <- tmp.mu + tmp.lambda%*%z.tmp[,j] + u.tmp[,j]
     }
   }
   
@@ -279,7 +297,7 @@ simulation <- function(diff = seq(0, 4, by = 0.25),
   prs <- expand.grid(diff = diff, nlevels = nlevels, nobs = nobs, parms = parms)
   nprs <- nrow(prs)
 
-  parnum <- c(1,13,7,"1:6","7:12")
+  parnum <- c(1,13,7,14,"1:6","7:12", "14:19")
 
   tname <- c("ordmax","ordwmax","catdiff") # had suplm here
   
@@ -375,13 +393,12 @@ source("mz-frontiers.R")
 ## Short versions:
 ## Simulation 1:
 simtry <- simulation(sim = "sim1", nobs = 480, nrep = 300,
-                     diff = seq(0, 4, by = 1), 
-                     parms = c("loading", "error", "var"))
+                     diff = c(1, 4), nlevels = 8,
+                     parms = "intercept")
 ## Simulation 2:
 simtry <- simulation(sim = "sim2", nobs = 480, nrep=300,
-                     diff = seq(0, 4, by = 1),
-                     parms = c("extra", "extra+loading", "extra+var",
-                               "extra+error"))
+                     diff = c(1, 4), nlevels = 8,
+                     parms = "extra", "extra+intercept")
 
 ## Save some results to file
 save(simtry,file ="simtry.rda")
