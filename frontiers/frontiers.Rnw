@@ -397,7 +397,8 @@ to 1.
 <<models>>=
 restr <- cfa("f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
   data = yg, group = "agegroup", meanstructure = TRUE,
-  group.equal = "loadings")
+  group.equal = "intercepts")
+
 full <- cfa("f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
   data = yg, group = "agegroup", meanstructure = TRUE)
 @
@@ -634,27 +635,28 @@ In Simulation 1, we examined the extent to which the proposed tests
 are sensitive to the specific model parameter that violates measurement
 invariance.  If, say, a factor loading violates measurement
 invariance, it is plausible that this violation impacts other
-parameter estimates, including factor covariances or the unique variance
-associated with the manifest variable in question.  Thus, the goal of the
-Simulation 1 is to examine the extent to which the proposed tests
-attribute the measurement invariance violation to the parameters that
-are truly in violation.  
+parameter estimates, including factor covariances, intercepts or 
+the unique variance associated with the manifest variable in question.  
+Thus, the goal of the Simulation 1 is to examine the extent to which 
+the proposed tests attribute the measurement invariance violation 
+to the parameters that are truly in violation.  
 
 \subsection{Methods}
 
 To examine these issues, we generated data from a
 two-factor model with three indicators each (see Figure~\ref{fig:path}).
 The measurement invariance
-violation occurred in one of three places: the factor loading associated with Scale 1 
- ($\lambda_{11}$), the unique variance associated with Scale 1
- ($\psi_{11}$), or the factor covariance $\phi_{12}$.  Note that the
+violation occurred in one of four places: the factor loading associated with Scale 1 
+ ($\lambda_{11}$), the unique variance  ($\psi_{11}$)
+ or intercept associated with Scale 1 ($\mu_{11}$)
+, the factor covariance ($\phi_{12}$).  Note that the
  latter violation is not necessarily a measurement invariance
  violation, but it is still a parameter instability that can occur in
  this type of model.
  We then tested for measurement invariance (parameter instability) in
- five subsets of parameters: each of the three 
+ seven subsets of parameters: each of the four
 individual parameters noted above, all six factor loadings, % $\lambda_{11}--\lambda_{62}$, and 
-and all six unique variances. % $\epsilon_{11}--\epsilon_{66}$.
+all six unique variances and all six intercepts. % $\epsilon_{11}--\epsilon_{66}$.
 
 
 %\begin{figure}
@@ -760,15 +762,17 @@ sizes in each subgroup of the ordinal variable.
 \subsection{Results}
 
 Full simulation results are presented in Figures~\ref{fig:sim11res}
-to~\ref{fig:sim13res}.
+to~\ref{fig:sim14res}.
 Figure~\ref{fig:sim11res} displays power curves as a function of 
 violation magnitude in the factor loading $\lambda_{11}$,
 with the parameters being tested changing across rows,
 the number of levels $m$ of the ordinal variable $V$ across columns,
 and lines reflecting different test statistics.
-Figures~\ref{fig:sim12res} and Figure~\ref{fig:sim13res} display 
+Figure~\ref{fig:sim12res}, Figure~\ref{fig:sim13res} and 
+Figure~\ref{fig:sim14res} display 
 similar power curves when the factor covariance 
-$\phi_{12}$ and error variance $\epsilon_{11}$ violate measurement
+$\phi_{12}$, error variance $\epsilon_{11}$ and intercept
+$\mu_{11}$ violate measurement
 invariance, respectively. In these figures, we generally show tests
 associated with parameters that exhibited nonzero power curves.  For
 example, in Figure~\ref{fig:sim11res}, the middle row shows that power
@@ -777,7 +781,7 @@ Similar rows have been omitted from this figure and other figures.
 
 
 Within each panel of Figure~\ref{fig:sim11res} to 
-Figure~\ref{fig:sim13res}, the three lines reflect the three test
+Figure~\ref{fig:sim14res}, the three lines reflect the three test
 statistics.  It is seen that the two ordinal statistics exhibit 
 similar results, with $\max\mathit{LM}_{uo}$ demonstrating lower power
 across all situations.  This demonstrates the sensitivity of the
@@ -792,8 +796,9 @@ From these figures, one generally observes that the tests isolate
 the parameter violating measurement invariance.  Additionally, the tests 
 have somewhat higher power to detect measurement invariance violations 
 in the factor loading and factor covariance parameters, as opposed to the error variance
-parameter.  Finally, simultaneous tests of all factor loadings or all error
-parameters result in decreased power, as compared to the situation
+parameter\seeme{TODO:intercept discription}.  
+Finally, simultaneous tests of all factor loadings, all intercepts or 
+all error parameters result in decreased power, as compared to the situation
 where one tests only the violating parameter.  This occurs because, in
 testing a subset of parameters (only one of which violates measurement
 invariance), we are effectively dampening the signal of a measurement
@@ -821,7 +826,7 @@ set.seed(1163)
 if(file.exists("sim1.rda")) {
   load("sim1.rda")
 } else {
-  sim1 <- simulation(sim = "sim1", nobs = 480, parms = c("loading", "error", "var"))
+  sim1 <- simulation(sim = "sim1", nobs = 480, parms = c("loading", "error", "var", "intercept"))
   sim1$nlevels <- factor(sim1$nlevels)
   levels(sim1$nlevels) <- paste("m=", levels(sim1$nlevels), sep="")
  
@@ -832,9 +837,11 @@ if(file.exists("sim1.rda")) {
 sim1$test <- factor(as.character(sim1$test), levels = c("ordmax","ordwmax","catdiff"),
                     labels = c("maxLM_o", "WDM_o", "LM_uo"))
 parlabs <- c(expression(lambda[11]), expression(phi[12]), 
-             expression(psi[11]), expression(list(lambda[11], ldots, lambda[62])), 
-             expression(list(psi[11], ldots, psi[66])))
-levels(sim1$pars) <- c("Loading1", "Covariance", "Error1", "All Loadings", "All Errors")  
+             expression(psi[11]), expression(mu[11]), expression(list(lambda[11], ldots, lambda[62])), 
+             expression(list(psi[11], ldots, psi[66])), 
+             expression(list(mu[11], ldots, mu[66])))
+levels(sim1$pars) <- c("Loading1", "Covariance", "Error1", "Intercept1", 
+                       "All Loadings", "All Errors", "All Intercepts")  
 @
 
 \begin{figure}
@@ -854,7 +861,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
        ylab = "Power", key = mykey, as.table = TRUE,
        strip = function(..., which.given, factor.levels){
            if(which.given == 2){
-             strip.default(which.given, factor.levels = parlabs[c(1, 3, 4)], ...)
+             strip.default(which.given, factor.levels = parlabs[c(1, 3, 5)], ...)
 	   } else {
 	       strip.default(which.given, factor.levels = factor.levels, ...)
 	   }
@@ -908,7 +915,33 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
        ylab = "Power", key = mykey, as.table = TRUE,
        strip = function(..., which.given, factor.levels){
 	   if(which.given == 2){
-	       strip.default(which.given, factor.levels = parlabs[c(3,5)], ...)
+	       strip.default(which.given, factor.levels = parlabs[c(3,6)], ...)
+	   } else {
+	       strip.default(which.given, factor.levels = factor.levels, ...)
+	   }
+       })
+@
+
+\end{figure}
+
+\begin{figure}
+\caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
+violations of 0--4 standard errors (scaled by $\sqrt{n}$), Simulation 1. The
+parameter violating measurement invariance is $\mu_{11}$. Panel labels
+denote the parameter(s) 
+being tested and the number of levels of the ordinal variable $m$.}
+\label{fig:sim14res}
+<<sim14res, fig=TRUE, height=7, width=9, echo=FALSE>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(sim1$test), points = TRUE, lines = TRUE)
+xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
+       subset = (parms == "intercept" & 
+		 pars %in% c("Intercept1", "All Intercepts") & diff %% 0.5 == 0),
+       type = "b", xlab = expression(paste("Violation Magnitude (", mu[11], ")")),
+       ylab = "Power", key = mykey, as.table = TRUE,
+       strip = function(..., which.given, factor.levels){
+	   if(which.given == 2){
+	       strip.default(which.given, factor.levels = parlabs[c(4,7)], ...)
 	   } else {
 	       strip.default(which.given, factor.levels = factor.levels, ...)
 	   }
@@ -934,8 +967,8 @@ the violation to the correct parameter) under this misspecification.
 
 \subsection{Method}
 A measurement invariance violation could occur in
-each of the three parameters from Simulation 1 (factor loading, factor
-covariance, and unique variance), and a violation could also occur in
+each of the four parameters from Simulation 1 (factor loading, factor
+covariance, unique variance and intercept), and a violation could also occur in
 the extra, unmodeled loading. In each condition, a single parameter
 exhibited the violation. 
 Sample size and magnitude of measurement invariance violation were manipulated 
@@ -951,7 +984,7 @@ that tests of the first loading and unique variance exhibited high
 I error also demonstrated when testing all loadings and all unique
 variances, as shown in the appendix.  Tests
 associated with the factor 
-covariance did not demonstrate this error, however.  In
+covariance did not demonstrate this error, however\seeme(TODO:intercepts descrip).  In
 terms of specific 
 statistic performance, $\max \mathit{LM}_o$ and $\mathit{WDM}_o$ 
 demonstrated higher Type I error than $\mathit{LM}_{uo}$ in each panel,
@@ -965,7 +998,7 @@ results were generally the same as Simulation 1.
 When the modeled factor loading, $\lambda_{11}$, violated measurement
 invariance, the statistics were generally able to pick up the violation despite
 the misspecification. Similar results were observed
-when the unique variance and factor covariance parameters violated measurement
+when the unique variance, intercept and factor covariance parameters violated measurement
 invariance; these results are all shown in the Appendix.
 In particular, the power of ordered statistics $\max \mathit{LM}_o$ test and
 $\mathit{WDM}_o$ test showed higher power than unordered $\mathit{LM}_{uo}$ in
@@ -996,7 +1029,7 @@ if(file.exists("sim2.rda")) {
   load("sim2.rda")
 } else {
   sim2 <- simulation(sim = "sim2", nobs = 480, 
-  parms = c("extra", "extra+loading", "extra+var", "extra+error"))
+  parms = c("extra", "extra+loading", "extra+var", "extra+error", "extra+intercept"))
 
   save(sim2, file="sim2.rda")
 }
@@ -1008,10 +1041,12 @@ sim2$test <- factor(as.character(sim2$test),
   sim2$nobs <- factor(sim2$nobs)
   levels(sim2$nobs) <- paste("n=", levels(sim2$nobs), sep="")
   parlabs <- c(expression(lambda[11]), expression(phi[12]), 
-               expression(psi[11]),
+               expression(psi[11]), expression(mu[11]),
 	       expression(list(lambda[11], ldots, lambda[62])), 
-               expression(list(psi[11], ldots, psi[66])))
-  levels(sim2$pars) <- c("Loading1", "Covariance", "Error1", "All Loadings", "All Errors") 
+               expression(list(psi[11], ldots, psi[66])),
+               expression(list(mu[11], ldots, mu[66])))
+  levels(sim2$pars) <- c("Loading1", "Covariance", "Error1", "Intercept1", 
+                         "All Loadings", "All Errors", "All Intercepts") 
 
 @ 
 
@@ -1029,12 +1064,12 @@ trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
        subset = (parms == "extra" & 
-		 pars %in% c("Loading1", "Covariance", "Error1") & diff %% 0.5 == 0),
+		 pars %in% c("Loading1", "Covariance", "Error1", "Intercept1") & diff %% 0.5 == 0),
        type = "b", xlab = "Violation Magnitude (Unmodeled Loading)",
        ylab = "Power", key = mykey, as.table = TRUE,
        strip = function(..., which.given, factor.levels){
 	   if(which.given == 2){
-	       strip.default(which.given, factor.levels = parlabs[c(1, 2, 3)], ...)
+	       strip.default(which.given, factor.levels = parlabs[c(1, 2, 3, 4)], ...)
 	   } else {
 	       strip.default(which.given, factor.levels = factor.levels, ...)
 	   }
@@ -1142,10 +1177,10 @@ available at \url{http://semtools.R-Forge.R-project.org/}.
 
 This Appendix contains additional results from Simulation 2, where there existed
 model misspecification (lacking one loading from Scale 1 to
-Math). Figure~\ref{fig:sim22res} to Figure~\ref{fig:sim25res} display
+Math). Figure~\ref{fig:sim22res} to Figure~\ref{fig:sim26res} display
 results when the unmodeled loading, the loading $\lambda_{11}$, the
-covariance $\phi_{12}$, and the error term $\psi_{11}$ violate
-invariance, respectively.  Results are only shown for simulation
+covariance $\phi_{12}$, the error term $\psi_{11}$ and intercept $\mu_{11}$
+violate invariance, respectively.  Results are only shown for simulation
 conditions exhibiting power curves that increased from zero.  These
 results were generally the same as the Simulation 1 results.
 
@@ -1161,11 +1196,11 @@ trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
        subset = (parms == "extra" & 
-		 pars %in% c("All Loadings", "All Errors") & diff %% 0.5 == 0),
+		 pars %in% c("All Loadings", "All Errors", "All Intercepts") & diff %% 0.5 == 0),
        type = "b", xlab = "Violation Magnitude (Unmodeled Loading)", ylab = "Power", key = mykey, as.table = TRUE,
        strip = function(..., which.given, factor.levels){
 	   if(which.given == 2){
-	       strip.default(which.given, factor.levels = parlabs[c(4, 5)], ...)
+	       strip.default(which.given, factor.levels = parlabs[c(5, 6, 7)], ...)
 	   } else {
 	       strip.default(which.given, factor.levels = factor.levels, ...)
 	   }
@@ -1190,7 +1225,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
        type = "b", xlab = expression(paste("Violation Magnitude (", lambda[11], ")")), ylab = "Power", key = mykey, as.table = TRUE,
        strip = function(..., which.given, factor.levels){
 	   if(which.given == 2){
-	       strip.default(which.given, factor.levels = parlabs[c(1, 4)], ...)
+	       strip.default(which.given, factor.levels = parlabs[c(1, 5)], ...)
 	   } else {
 	       strip.default(which.given, factor.levels = factor.levels, ...)
 	   }
@@ -1242,7 +1277,33 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
        ylab = "Power", key = mykey, as.table = TRUE,
        strip = function(..., which.given, factor.levels){
 	   if(which.given == 2){
-	       strip.default(which.given, factor.levels = parlabs[c(3,5)], ...)
+	       strip.default(which.given, factor.levels = parlabs[c(3,6)], ...)
+	   } else {
+	       strip.default(which.given, factor.levels = factor.levels, ...)
+	   }
+       })
+@
+
+\end{figure}
+
+\begin{figure}
+\caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
+violations of 0--4 standard errors (scaled by $\sqrt{n}$), Simulation 2. The
+parameter violating measurement invariance is $\mu_{11}$.  Panel
+labels denote the parameter(s)  
+being tested and the number of levels of the ordinal variable $m$.}
+\label{fig:sim26res}
+<<sim26res, fig=TRUE, height=7, width=9, echo=FALSE>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
+xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
+       subset = (parms == "extra+intercept" & 
+		 pars %in% c("Intercept1", "All Intercepts") & diff %% 0.5 == 0),
+       type = "b", xlab = expression(paste("Violation Magnitude (", mu[11], ")")),
+       ylab = "Power", key = mykey, as.table = TRUE,
+       strip = function(..., which.given, factor.levels){
+	   if(which.given == 2){
+	       strip.default(which.given, factor.levels = parlabs[c(4,7)], ...)
 	   } else {
 	       strip.default(which.given, factor.levels = factor.levels, ...)
 	   }
