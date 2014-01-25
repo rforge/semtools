@@ -397,7 +397,7 @@ to 1.
 <<models>>=
 restr <- cfa("f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
   data = yg, group = "agegroup", meanstructure = TRUE,
-  group.equal = "intercepts")
+  group.equal = "loadings")
 
 full <- cfa("f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
   data = yg, group = "agegroup", meanstructure = TRUE)
@@ -795,8 +795,8 @@ statistics are equivalent.
 From these figures, one generally observes that the tests isolate 
 the parameter violating measurement invariance.  Additionally, the tests 
 have somewhat higher power to detect measurement invariance violations 
-in the factor loading and factor covariance parameters, as opposed to the error variance
-parameter\seeme{TODO:intercept discription}.  
+in the factor loading, factor covariance and intercept parameters, 
+as opposed to the error variance parameter.  
 Finally, simultaneous tests of all factor loadings, all intercepts or 
 all error parameters result in decreased power, as compared to the situation
 where one tests only the violating parameter.  This occurs because, in
@@ -984,7 +984,7 @@ that tests of the first loading and unique variance exhibited high
 I error also demonstrated when testing all loadings and all unique
 variances, as shown in the appendix.  Tests
 associated with the factor 
-covariance did not demonstrate this error, however\seeme(TODO:intercepts descrip).  In
+covariance and intercept did not demonstrate this error, however.  In
 terms of specific 
 statistic performance, $\max \mathit{LM}_o$ and $\mathit{WDM}_o$ 
 demonstrated higher Type I error than $\mathit{LM}_{uo}$ in each panel,
