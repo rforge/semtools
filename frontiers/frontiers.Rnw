@@ -106,7 +106,9 @@ to the study of measurement invariance \cite{MerZei13,MerFanZei}, though their
 practical application has been limited to a small set of simulations and
 datasets.  In this paper, we provide a detailed illustration of the tests' use
 and performance under
-scenarios likely to be encountered in practice. 
+scenarios likely to be encountered in practice.  To our knowledge, this 
+is the first detailed examination of the tests' properties. \seeme{add
+this sentence to point the unique contribution.}
 %In order to fix the psychometric scale, we need to specify the violating parameter.  
 %Moreover, in practice model misspecification is an inevitable issue to a certain extent 
 %and may interfere with parameter invariance specificity. A family of tests derived from 
@@ -386,7 +388,8 @@ yg <- YouthGratitude[compcases, ]
 Next, we fit two models in \pkg{lavaan}: a one-factor model 
 where loadings are restricted to be equal across age groups, 
 and a one-factor model where loadings are free across age groups.
-This allows us to test a hypothesis of partial measurement invariance
+This allows us to test a hypothesis of partial\seeme{I
+think partial should be weak} measurement invariance
 that was of interest to the original researchers (though, for ordinal
 variables, all types of
 measurement invariance can be examined via the tests described

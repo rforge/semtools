@@ -8,8 +8,6 @@ Comment 1.1. The exact contribution could be made clearer. I understand that the
 
 Response 1.1. We intended the "tutorial" part to include the method overview (less technical than previous papers) and the R examples.  The simulations that follow the tutorial are novel, in the sense that they examine test properties that were not examined in previous simulations.  In general, we see the paper as being useful for applied researchers who are mainly interested in the method's practical use.  We have added some detail on this to the introduction.
 
-Ting: In the paragraph before "Background", you can add some small details to emphasize the unique contributions of this paper.
-
 
 Comment 1.2. p. 2 " the development of test statistics that are sensitive to invariance violations of interest and insensitive to "anomalous" invariance violations". 
 
@@ -60,14 +58,10 @@ Response 1.9. We have added model details to the paper.  In particular, we set t
 
 The "continuous V" situation is somewhat different: here, we have no ties along V, and we cannot fit a model where the factor mean varies for every individual in the sample.  If the model is sufficiently identified, we can at least test whether an estimated factor mean fluctuates with V (the data example of Merkle & Zeileis, 2013 contains one example).  If the factor mean does not fluctuate with V, then we can continue with further tests of other model parameters.
 
-Ting: There is a subtle issue for continuous V, and I added that detail to this response..
-
 
 Comment 1.10. p. 9. "The measurement invariance violation occurred in one of three places: the factor loading associated with Scale 1 (lambda11), the unique variance associated with Scale 1 (psi11), or the factor covariance phi12." I do not understand that phi12 can be the locus of a violation of MI, as the definition of MI does not include any constraints on the common factor covariance matrix. It would make more sense to consider an intercept. 
 
 Response 1.10. Correct, the condition with phi12 is not "measurement invariance" per se, but it is still an instability that could occur in the model.  We have added more detail here and also added a condition for the intercept.
-
-Ed: I remember the intercepts simulation power are always near zero, regardless of the magnitude. But my question is also why intercepts' measurement invariance violation can't be detected? Do you think we should run the simulation to verify that? (The code is easy to adapt, time is probably the issue.)
 
 
 Thanks; we appreciate the feedback.
@@ -88,11 +82,7 @@ Response 2.2. We agree that there is some missing technical detail, and we are a
 
 Comment 2.3. For expository purposes, making it more concrete, it might be helpful though to specify how it would work for GLS: the cumulative sum would be some matrix, with a probability limit, times terms containing the cross-products of individual observation vectors minus sigma (the same under the null hypothesis). 
 
-Response 2.3. Thanks for the suggestion. Reviewer 1 also mentioned about this. We added illustration to the cumulative sum score matrix. 
-
-Ed: I think this point is the same as reviewer 1 wanted to some illustration for eq 2. 
-
-Ting: I'm not sure what he means by "GLS": is he talking about regression or SEM?  I guess regression?
+R: Thanks for the suggestion. Reviewer 1 also mentioned about this. We added illustration to the cumulative sum score matrix. Right now the tests are implemented in ML framework. We have not done in GLS. But it is possible in the future.  
 
 
 Some additional comments: 
@@ -109,18 +99,13 @@ Response 2.5. The test from (6) has less power to pick out inconsequential devia
 
 Comment 2.6. P-values are very prominent in this paper, and 5% is close to sacred (this may be your perception of what practitioners think, which is a fair assumption in my experience, but may not be representative of what you personally believe, I for one fail to understand how this level has become so decisive). Nevertheless, I am concerned that the use of many statistics, each judged with respect to p=5%, makes it very hard to control the overall-level. The p-values are also not independent, so an aggregation using the log of the p-values (Fisher), will not be appropriate. In addition, you advocate the use of pictures and diagrams in testing the null-hypothesis. The end result will be a model that is random as well (a new sample could with the same approach easily lead to another model), based on an informal procedure that would not allow of a structured Monte Carlo type of sensitivity analysis. It appears that the statistical inference problems as induced by modeling and testing on the same data are unsurmountable: see e.g. H. Leeb and B.M. Poetscher (2005), 'Model selection and inference: facts and fiction', Econometric Theory, 21, 21-59. So I would emphasize that the end-result of the excercise is tentative, that the whole excercise is best seen as exploratory only, and that new data are needed for further testing and confirmation. 
 
-Response 2.6. The p value is based on the data. The critical value can be got for any designated criteria, e.g. alpha=0.1 or 0.01. The traditional problem of testing inflating type I error does not apply in this context. The reason is that there is one hypothesis when we test multiple parameters. It is not the case that we test single parameters for multiple times. The plots are visual demonstration of the tests, so reflecting if the p value is larger or smaller than alpha. The test is not about replication. It is just based on the data at hand. 
-
-Ting: I think we will want to modify this comment.  We can have multiple tests: say, we test 6 loadings then test 1 loading then test 6 error variances, etc.  So we can have inflated Type I error.  I think the best thing to do is add a sentence acknowledging the shortcomings of p-values and frequentist statistics.  Additionally, we can do Monte Carlo on the pictures/diagrams by identifying the peaks and seeing how often the peaks are in the right place (as we do in the next paper).
+R:. Yes, there can be inflated Type I error when multiple tests were conducted. To avoid this issue in practice, researchers can test multiple parameters of interest in one hypotheses. We also agree that significance does not mean replication, we are doing Monte Carlo studies to examine this property of the tests in another paper. 
 
 
 Comment 2.7. On the last lines on p. 13, just above the General Discussion, you point out that it is 'important to study to what extent the hypothesized model includes all parameters of importance, and that none of the tests inform about model misspecification'. The first statement imposes a rather daunting task, and will amplify the 'dangers' alluded to in 2.6. A pragmatic approach would be to use GLS as well: if the model is wrong, ML and GLS should not produce the same estimates, since they project the data along different angles on the model space. But at the end of the day the necessity to cross-validate on new data will still be paramount. 
 
-R: The proposed tests aim to detect measurement invariance w.r.t. an auxilliary variable. Detecting model misspecification is not the purpose. Moreover, model misspecification won't be detected by different estimation method, either. 
+R: Yes, the proposed tests can't detect model misspecification. Practioner still need to be cautious when they build their models. Based on our simulation 2 result, we recommend that when multiple parameters showing measurement invariance violation, it is better to examine the model first. ML and GLS could give different parameter estimation in small sample size, but they asymptotically produce the same estimates. We have not implemented the proposed tests to GLS, but it is possible since both of them minimizing a fit function.   
 
-Ed: I don't think there is difference in producing the score matrix and estimates. Is it true?
-
-Ting: I think this is another one where we acknowledge shortcomings of the approach.  Also, it appears that "GLS" means "fitting an SEM by generalized least squares".
 
 
 Thanks for the comments and suggestions. They helped to make the paper better. 
