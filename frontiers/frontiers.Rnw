@@ -654,7 +654,7 @@ violation occurred in one of four places: the factor loading associated with Sca
  or intercept associated with Scale 1 ($\mu_{11}$)
 , the factor covariance ($\phi_{12}$).  Note that the
  latter violation is not necessarily a measurement invariance
- violation, but it is still a parameter instability that can occur in
+ violation\seeme{need Meridith reference?}, but it is still a parameter instability that can occur in
  this type of model.
  We then tested for measurement invariance (parameter instability) in
  seven subsets of parameters: each of the four
