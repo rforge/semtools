@@ -96,19 +96,25 @@ The resulting test statistics are specifically applicable to
 situations where one  
 wishes to test for measurement invariance with respect to an ordinal variable, 
 and they are special cases of a family of tests that may be used to study 
-measurement invariance w.r.t.\ continuous, categorical, and ordinal variables
-\cite{mer93,DolMaa98,lubmut05}\readme{The new references do not work
-  here (because they are unrelated to tests based on stochastic
-  processes).  I will work on these references.}.
+measurement invariance w.r.t.\ continuous, categorical, and ordinal
+variables.  Other methods for studying measurement
+invariance w.r.t.\ continuous variables include moderated factor
+models \cite{bauhus09,moldol10,pur02} and factor mixture models
+\cite{dolmaa98,lubmut05}.  These methods require a model of greater
+complexity to be estimated, while the tests described here work solely
+on the output of a traditional factor model.  See \citeA{MerZei13} for
+further comparison of these methods.
 
 The family of tests described in this paper have recently been applied
 to the study of measurement invariance \cite{MerZei13,MerFanZei}, though their
 practical application has been limited to a small set of simulations and
 datasets.  In this paper, we provide a detailed illustration of the tests' use
 and performance under
-scenarios likely to be encountered in practice.  To our knowledge, this 
-is the first detailed examination of the tests' properties. \seeme{add
-this sentence to point the unique contribution.}
+scenarios likely to be encountered in practice.  While the previous
+papers have described and studied the tests under ideal conditions, we
+focus here on two topics of interest to the applied researcher:
+software considerations for carrying out the tests, and test
+performance under model misspecification.
 %In order to fix the psychometric scale, we need to specify the violating parameter.  
 %Moreover, in practice model misspecification is an inevitable issue to a certain extent 
 %and may interfere with parameter invariance specificity. A family of tests derived from 
@@ -165,7 +171,10 @@ scores near zero as providing a ``good'' description of an individual,
 with scores far from zero providing a ``bad'' description of an
 individual.  This is only a rough interpretation as, even when measurement
 invariance holds, some individuals' scores will be further from zero
-than others.  Each of the $k$ scores represents one model parameter,
+than others.  However, under measurement noninvariance, the scores
+will differ for different subgroups of individuals (say, scores in
+subgroup A tend to be negative and scores in subgroup B tend to be
+positive).  Each of the $k$ scores represents one model parameter,
 which, as further described below, allows us to test subsets of model
 parameters for invariance. 
 
@@ -207,7 +216,7 @@ if age is the auxiliary variable of interest.
 The summation is premultiplied by an estimate of the inverse square
 root of the information matrix, which serves to decorrelate the
 fluctuation processes associated with individual model parameters
-while preserving the behavior of individual parameters' fluctuations..
+while preserving the behavior of individual parameters' fluctuations.
 
 
 Under the
@@ -388,8 +397,7 @@ yg <- YouthGratitude[compcases, ]
 Next, we fit two models in \pkg{lavaan}: a one-factor model 
 where loadings are restricted to be equal across age groups, 
 and a one-factor model where loadings are free across age groups.
-This allows us to test a hypothesis of partial\seeme{I
-think partial should be weak} measurement invariance
+This allows us to test a hypothesis of weak measurement invariance
 that was of interest to the original researchers (though, for ordinal
 variables, all types of
 measurement invariance can be examined via the tests described
@@ -654,7 +662,7 @@ violation occurred in one of four places: the factor loading associated with Sca
  or intercept associated with Scale 1 ($\mu_{11}$)
 , the factor covariance ($\phi_{12}$).  Note that the
  latter violation is not necessarily a measurement invariance
- violation\seeme{need Meridith reference?}, but it is still a parameter instability that can occur in
+ \cite<e.g.,>{mer93}, but it is still a parameter instability that can occur in
  this type of model.
  We then tested for measurement invariance (parameter instability) in
  seven subsets of parameters: each of the four
