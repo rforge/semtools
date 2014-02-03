@@ -69,7 +69,7 @@ Reviewer 2
 Comment 2.1. This paper appears to aim for an audience of practitioners, who want to know how score-based testing can be implemented and what could be obtained from it. The explanation of the use of R-routines is particularly helpful, although I am a bit skeptical as to its use in large covariance structure analyses (LISREL type). 
 
 Response 2.1. The theory underlying these tests implies that they are applicable to general models fit via ML.  We have not examined models that are more complex than those in the paper, though our R implementation would make this easy to do so in the future.
- 
+
 
 Comment 2.2. Your exposition of the logic of the approach may be too short for your intended audience, your other papers are much more informative. But if the paper is part of a special issue where other authors also deal with the same issues, a further elaboration is perhaps not needed(?). 
 
@@ -78,7 +78,7 @@ Response 2.2. We agree that there is some missing technical detail, and we are a
 
 Comment 2.3. For expository purposes, making it more concrete, it might be helpful though to specify how it would work for GLS: the cumulative sum would be some matrix, with a probability limit, times terms containing the cross-products of individual observation vectors minus sigma (the same under the null hypothesis). 
 
-R: Thanks for the suggestion. Reviewer 1 also mentioned about this. We added illustration to the cumulative sum score matrix. Right now the tests are implemented in ML framework. We have not done in GLS. But it is possible in the future.  
+Response 2.3. We have added some brief detail on score calculation when scores are first introduced (around Eq (1)).  We feel that explicit detail of score calculation under various discrepancy functions will be more distracting than enlightening.  
 
 
 Some additional comments: 
@@ -90,17 +90,21 @@ Response 2.4. Because this sentence is not relevant to the current paper (and bo
 
 Comment 2.5. The last paragraph on p.6 starting with 'Because' is not clear to me. You point out essentially that with a fixed p-value the LRT will eventually pick up even very small and inconsequential deviations from the null-hypothesis, and you offer the family of score-based testing as an alternative. So do they have less power? But you also claim somewhere that (8) is (asymptotically) equivalent to the LRT. 
 
-R: The test from (6) has less power to pick out inconsequential deviations than does the test from (8) or the LRT.  The LRT and test from (8) are asymptotically equivalent, but not the test from (6).  We have added this detail in the paper. Moreover, the asymptotic equivalent statistic for (6) is maxLR_o. (We didn't show it in the paper, but it can be derived.) 
+Resposne 2.5. The test from (6) has less power to pick out inconsequential deviations than does the test from (8) or the LRT.  The LRT and test from (8) are asymptotically equivalent, but not the test from (6).  We have added this detail in the paper.  Further, one could derive a LRT that is asymptotically equivalent to (6) (something like maxLR_o).
 
 
 Comment 2.6. P-values are very prominent in this paper, and 5% is close to sacred (this may be your perception of what practitioners think, which is a fair assumption in my experience, but may not be representative of what you personally believe, I for one fail to understand how this level has become so decisive). Nevertheless, I am concerned that the use of many statistics, each judged with respect to p=5%, makes it very hard to control the overall-level. The p-values are also not independent, so an aggregation using the log of the p-values (Fisher), will not be appropriate. In addition, you advocate the use of pictures and diagrams in testing the null-hypothesis. The end result will be a model that is random as well (a new sample could with the same approach easily lead to another model), based on an informal procedure that would not allow of a structured Monte Carlo type of sensitivity analysis. It appears that the statistical inference problems as induced by modeling and testing on the same data are unsurmountable: see e.g. H. Leeb and B.M. Poetscher (2005), 'Model selection and inference: facts and fiction', Econometric Theory, 21, 21-59. So I would emphasize that the end-result of the excercise is tentative, that the whole excercise is best seen as exploratory only, and that new data are needed for further testing and confirmation. 
 
-R:. Yes, there can be inflated Type I error when multiple tests were conducted. To avoid this issue in practice, researchers can test multiple parameters of interest in one hypotheses. We also agree that significance does not mean replication, we are doing Monte Carlo studies to examine this property of the tests in another paper. 
+Response 2.6. We agree that there are problems with p-values and have added a disclaimer near the beginning of the paper.
+
+The pictures/diagrams that we use are more amenable to Monte Carlo analyses than they may appear: given a model, we can assess the proportion of time the statistic achieves its maximum in the correct location, the variability in the maximum, and so on.  However, it is correct that the diagrams do not attempt to convey sampling variability in the maximum.
+
+Finally, we agree that it is problematic to test models and do inference on the same data (as Leeb and Poetscher discuss).  The measurement invariance issues studied here are primarily based on model testing, however: two models are tested against one another via, say, a LRT, and no inference is made about parameters within the models.  The diagrams (e.g., Figure 1) provide information about why one model was preferred over the other, but, as mentioned above, no explicit inference is made on the basis of this diagram.
 
 
 Comment 2.7. On the last lines on p. 13, just above the General Discussion, you point out that it is 'important to study to what extent the hypothesized model includes all parameters of importance, and that none of the tests inform about model misspecification'. The first statement imposes a rather daunting task, and will amplify the 'dangers' alluded to in 2.6. A pragmatic approach would be to use GLS as well: if the model is wrong, ML and GLS should not produce the same estimates, since they project the data along different angles on the model space. But at the end of the day the necessity to cross-validate on new data will still be paramount. 
 
-R: Yes, the proposed tests can't detect model misspecification. Practioner still need to be cautious when they build their models. Based on our simulation 2 result, we recommend that when multiple parameters showing measurement invariance violation, it is better to examine the model first. ML and GLS could give different parameter estimation in small sample size, but they asymptotically produce the same estimates. We have not implemented the proposed tests to GLS, but it is possible since both of them minimizing a fit function.   
+Response 2.7. We have added some detail on these issues: comparing estimates from different discrepancy functions and validating results with new data.
 
 
 

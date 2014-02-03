@@ -88,7 +88,7 @@ parameters are replaced with informative prior distributions.  In this paper, we
 describe an alternative approach: the development of test statistics that 
 are especially sensitive to violations that are monotonic w.r.t. the
 variable of interest (and 
-less sensitive to violations that are non monotonic w.r.t. the
+less sensitive to violations that are non-monotonic w.r.t. the
 variable of interest).  Because monotonic violations are more likely to be
 interpretable and interesting to the researcher, we can gain more
 power to detect these violations by de-emphasizing other types of violations.
@@ -97,19 +97,26 @@ situations where one
 wishes to test for measurement invariance with respect to an ordinal variable, 
 and they are special cases of a family of tests that may be used to study 
 measurement invariance w.r.t.\ continuous, categorical, and ordinal
-variables.  Other methods for studying measurement
-invariance w.r.t.\ continuous variables include moderated factor
-models \cite{bauhus09,moldol10,pur02} and factor mixture models
-\cite{dolmaa98,lubmut05}.  These methods require a model of greater
-complexity to be estimated, while the tests described here work solely
-on the output of a traditional factor model.  See \citeA{MerZei13} for
-further comparison of these methods.
+variables.  
 
-The family of tests described in this paper have recently been applied
+The study of measurement invariance w.r.t.\ categorical auxiliary 
+variables (via, e.g., likelihood ratio tests) is popular and well
+known, and ordinal auxiliary variables are typically treated as
+categorical in measurement invariance contexts.
+The study of measurement invariance w.r.t.\ continuous
+variables is newer and less known: along with the family
+described here, other methods include moderated factor
+models \cite{bauhus09,moldol10,pur02} and factor mixture models
+\cite{dolmaa98,lubmut05}.  These methods require estimation of a model
+of greater complexity, while the tests described in this paper work solely
+on the output of a traditional factor model \cite<see>[for
+further comparison of these methods]{MerZei13}.
+
+The family of tests described here have recently been applied
 to the study of measurement invariance \cite{MerZei13,MerFanZei}, though their
 practical application has been limited to a small set of simulations and
-datasets.  In this paper, we provide a detailed illustration of the tests' use
-and performance under
+data examples.  In this paper, we provide a detailed illustration of
+the tests' use and performance under
 scenarios likely to be encountered in practice.  While the previous
 papers have described and studied the tests under ideal conditions, we
 focus here on two topics of interest to the applied researcher:
@@ -126,7 +133,10 @@ In the following sections, we first briefly review the  theoretical framework of
 the proposed tests and provide a short tutorial illustrating the use of the
 tests in \proglang{R} \cite{R11}. Next, we study the tests' performance in simulations that mimic
 practical research scenarios.  Finally, we provide some further discussion on
-the tests' use in practice.  
+the tests' use in practice.  We acknowledge 
+problems associated with $p$-values (e.g., corrections for multiple
+tests, researcher degrees of freedom, interpretations, etc) but
+ignore them throughout the paper for expository purposes.
 
 
 \section{Background}
@@ -162,9 +172,9 @@ s(\theta;x_{i}) = \left (
 where $\ell(\theta; x_i)$ is the likelihood associated with individual
 $i$ and $\theta$ is a $k$-dimensional parameter vector. The corresponding
 maximum likelihood estimate $\hat{\theta}$ solves the first order condition:
-$\sum_{i = 1}^n s(\hat \theta;x_{i}) = 0$.
+$\sum_{i = 1}^n s(\hat \theta;x_{i}) = 0$.  
 
-To verbally describe the above equation, each
+To verbally describe Equation~\eqref{eq:score}, each
 individual has $k$ scores describing the extent to which the fitted
 model describes that particular individual.  We can roughly interpret
 scores near zero as providing a ``good'' description of an individual,
@@ -176,14 +186,17 @@ will differ for different subgroups of individuals (say, scores in
 subgroup A tend to be negative and scores in subgroup B tend to be
 positive).  Each of the $k$ scores represents one model parameter,
 which, as further described below, allows us to test subsets of model
-parameters for invariance. 
+parameters for invariance.  While scores can be obtained
+under the multivariate normal likelihood (discrepancy) function and
+alternatives such as generalized least squares, most SEM software
+fails to supply the scores to the user.
 
 To use the scores for testing, we order individuals according to
 an auxiliary variable $V$ (the variable against which we are testing 
 measurement invariance) and look for ``trends'' in the
 scores.  For example, imagine that we are testing
 for measurement 
-invariance w.r.t.\ age.  If there exists measurement invariance
+invariance w.r.t.\ age.  If there exists measurement non-invariance
 w.r.t. age, then some parameter estimates may be too large for 
 young individuals and too small for old individuals (say).  This
 result would be reflected in the scores, where young individuals'
@@ -569,13 +582,14 @@ sensitive to anomalous, non-monotonic violations at one (or a few) age groups.
 
 In addition to test statistics, ``instability plots'' can be generated
 by setting 
-\code{plot = TRUE} in the \code{sctest()} calls above. The resulting plots representing
-the ordinal statistics' fluctuations across levels of age group are displayed in
-Figure~\ref{fig:ordres}.
-These plots display the loadings' fluctuation across age groups, with the x-axis
-reflecting age group and the y-axis reflecting test statistic values (larger
-values reflect more instability).  The dashed horizontal lines reflect critical values, so
-that the hypothesis of measurement invariance is rejected if the sequence of
+\code{plot = TRUE} in the \code{sctest()} calls
+above. Figure~\ref{fig:ordres} displays the resulting plots, which represent
+the ordinal statistics' fluctuations across levels of age group.
+The x-axis
+reflects age group and the y-axis reflects test statistic values (larger
+values reflect more instability), with the dashed horizontal lines
+reflecting critical values.  The
+hypothesis of measurement invariance is rejected if the sequence of
 test statistics crosses the critical value.  While the measurement invariance tests are
 non-significant, the plots imply some instability in the older age groups (15 and~16).
 
@@ -643,8 +657,8 @@ capture instabilities in complex models.
 
 \section{Simulation 1}
 In Simulation 1, we examined the extent to which the proposed tests
-are sensitive to the specific model parameter that violates measurement
-invariance.  If, say, a factor loading violates measurement
+can ``localize'' a measurement invariance violation.
+If, say, a factor loading violates measurement
 invariance, it is plausible that this violation impacts other
 parameter estimates, including factor covariances, intercepts or 
 the unique variance associated with the manifest variable in question.  
@@ -658,9 +672,9 @@ To examine these issues, we generated data from a
 two-factor model with three indicators each (see Figure~\ref{fig:path}).
 The measurement invariance
 violation occurred in one of four places: the factor loading associated with Scale 1 
- ($\lambda_{11}$), the unique variance  ($\psi_{11}$)
- or intercept associated with Scale 1 ($\mu_{11}$)
-, the factor covariance ($\phi_{12}$).  Note that the
+ ($\lambda_{11}$), the intercept ($\mu_{11}$),
+ the unique variance  ($\psi_{11}$), or the factor covariance
+ ($\phi_{12}$).  Note that the 
  latter violation is not necessarily a measurement invariance
  \cite<e.g.,>{mer93}, but it is still a parameter instability that can occur in
  this type of model.
@@ -779,10 +793,10 @@ violation magnitude in the factor loading $\lambda_{11}$,
 with the parameters being tested changing across rows,
 the number of levels $m$ of the ordinal variable $V$ across columns,
 and lines reflecting different test statistics.
-Figure~\ref{fig:sim12res}, Figure~\ref{fig:sim13res} and 
+Figure~\ref{fig:sim12res}, Figure~\ref{fig:sim13res}, and 
 Figure~\ref{fig:sim14res} display 
 similar power curves when the factor covariance 
-$\phi_{12}$, error variance $\epsilon_{11}$ and intercept
+$\phi_{12}$, error variance $\epsilon_{11}$, and intercept
 $\mu_{11}$ violate measurement
 invariance, respectively. In these figures, we generally show tests
 associated with parameters that exhibited nonzero power curves.  For
@@ -806,13 +820,13 @@ statistics are equivalent.
 From these figures, one generally observes that the tests isolate 
 the parameter violating measurement invariance.  Additionally, the tests 
 have somewhat higher power to detect measurement invariance violations 
-in the factor loading, factor covariance and intercept parameters, 
+in the factor loading, factor covariance, and intercept parameters, 
 as opposed to the error variance parameter.  
-Finally, simultaneous tests of all factor loadings, all intercepts or 
+Finally, simultaneous tests of all factor loadings, all intercepts, or 
 all error parameters result in decreased power, as compared to the situation
 where one tests only the violating parameter.  This occurs because, in
 testing a subset of parameters (only one of which violates measurement
-invariance), we are effectively dampening the signal of a measurement
+invariance), we are dampening the signal of a measurement
 invariance violation. This ``dampening'' effect is more apparent for
 the $\max \mathit{LM}_o$ statistic, because it involves a sum across
 all tested parameters (see Equation~\eqref{eq:maxlmo}).
@@ -979,7 +993,7 @@ the violation to the correct parameter) under this misspecification.
 \subsection{Method}
 A measurement invariance violation could occur in
 each of the four parameters from Simulation 1 (factor loading, factor
-covariance, unique variance and intercept), and a violation could also occur in
+covariance, unique variance, and intercept), and a violation could also occur in
 the extra, unmodeled loading. In each condition, a single parameter
 exhibited the violation. 
 Sample size and magnitude of measurement invariance violation were manipulated 
@@ -992,8 +1006,8 @@ primary interest are conditions where the unmodeled loading violates
 measurement invariance.  A subset of results is displayed in Figure~\ref{fig:sim21res}.  One can generally observe
 that tests of the first loading and unique variance exhibited high
 ``power,'' which is actually a high Type I error rate here.  This Type
-I error also demonstrated when testing all loadings and all unique
-variances, as shown in the appendix.  Tests
+I error is also observed when testing all loadings and all unique
+variances (see the Appendix).  Tests
 associated with the factor 
 covariance and intercept did not demonstrate this error, however.  In
 terms of specific 
@@ -1011,9 +1025,9 @@ invariance, the statistics were generally able to pick up the violation despite
 the misspecification. Similar results were observed
 when the unique variance, intercept and factor covariance parameters violated measurement
 invariance; these results are all shown in the Appendix.
-In particular, the power of ordered statistics $\max \mathit{LM}_o$ test and
-$\mathit{WDM}_o$ test showed higher power than unordered $\mathit{LM}_{uo}$ in
-each of these panels. 
+In particular, power of the ordered statistics was higher than power
+of the unordered statistic in 
+each panel. 
 
 In summary, the proposed test statistics appear robust to unmodeled
 loading parameters, so long 
@@ -1027,9 +1041,17 @@ variance and other loadings associated with the manifest variable that
 has an unmodeled loading.
 Thus, as for other tests of measurement invariance, it is important to
 study the extent to 
-which the hypothesized model includes all parameters of importance.
-None of these tests (score-based or otherwise) inform the researcher of
-model misspecification.
+which the hypothesized model includes all parameters of importance
+(i.e., the extent to which the model is well specified).
+
+One could begin to study model misspecification by fitting models with
+different discrepancy functions (say, a multivariate normal function and a
+generalized least squares function).  If parameter estimates differ
+greatly across the functions, then this implies model
+misspecification.  Additionally, if one has a large sample size, one
+could split the data into subgroups and examine consistency of results
+across subgroups.  These issues are important for all the tests
+discussed here (score-based or otherwise).
 
 <<sim2,echo=FALSE>>=
 ## seed for replication
@@ -1103,8 +1125,8 @@ proposed statistics could generally isolate the model parameter
 violating measurement invariance, so long as the violating parameter
 is included in the model. 
 
-In the remainder of the paper, we first compare
-these tests to traditional tests of measurement invariance.  We then 
+In the remainder of the paper, we first compare the use
+these tests to the use of traditional tests in practice.  We then 
 discuss test extension to other fit functions and to other specialized
 models. 
 
@@ -1115,7 +1137,7 @@ Many of the applications in this volume, along with many measurement
 invariance applications in
 general, focus on testing across unordered categories
 such as nations or gender.  As discussed earlier in this paper, the score-based
-tests for unordered categories are essentially equivalent to the usual
+tests for unordered categories are equivalent to the usual
 likelihood ratio test.  Given a measurement invariance violation across these
 unordered categories, however, researchers typically wish to know why the
 violation occurred.  At this point, researchers may examine education level,
@@ -1158,8 +1180,8 @@ models estimated via ML.  Of primary interest to the topic of measurement
 invariance, the tests can be extended to item response models to examine
 differential item functioning.  In particular, \citeA{strkop13} studied
 application of these tests to the Rasch model, using them as the basis of a
-recursive partioning procedure that segments subgroups of individuals who
-exhibit DIF.  Further study and extension of these tests for IRT seem warranted.
+recursive partitioning procedure that segments subgroups of individuals who
+exhibit DIF.  Further study and extension of these tests for IRT are warranted.
 
 % Removed for now:
 %% \subsection{Conclusion}
@@ -1188,9 +1210,9 @@ available at \url{http://semtools.R-Forge.R-project.org/}.
 
 This Appendix contains additional results from Simulation 2, where there existed
 model misspecification (lacking one loading from Scale 1 to
-Math). Figure~\ref{fig:sim22res} to Figure~\ref{fig:sim26res} display
+Math). Figures~\ref{fig:sim22res} to~\ref{fig:sim26res} display
 results when the unmodeled loading, the loading $\lambda_{11}$, the
-covariance $\phi_{12}$, the error term $\psi_{11}$ and intercept $\mu_{11}$
+covariance $\phi_{12}$, the error term $\psi_{11}$, and the intercept $\mu_{11}$
 violate invariance, respectively.  Results are only shown for simulation
 conditions exhibiting power curves that increased from zero.  These
 results were generally the same as the Simulation 1 results.
