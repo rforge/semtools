@@ -133,10 +133,10 @@ In the following sections, we first briefly review the  theoretical framework of
 the proposed tests and provide a short tutorial illustrating the use of the
 tests in \proglang{R} \cite{R11}. Next, we study the tests' performance in simulations that mimic
 practical research scenarios.  Finally, we provide some further discussion on
-the tests' use in practice.  We acknowledge 
-problems associated with $p$-values (e.g., corrections for multiple
-tests, researcher degrees of freedom, interpretations, etc) but
-ignore them throughout the paper for expository purposes.
+the tests' use in practice.
+% We acknowledge problems associated with $p$-values (e.g., corrections for multiple
+% tests, researcher degrees of freedom, interpretations, etc) but
+% ignore them throughout the paper for expository purposes.
 
 
 \section{Background}
