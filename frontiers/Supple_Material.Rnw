@@ -1,0 +1,216 @@
+\documentclass[doc]{apa}
+\usepackage{graphicx,epsfig,amsmath,alltt,setspace,bm,float}
+\usepackage[english]{babel}
+\usepackage{tikz}
+
+\title{Score-based tests of measurement invariance: Use in practice}
+\twoauthors{Ting Wang and Edgar C.\ Merkle}{Achim Zeileis}
+\twoaffiliations{University of Missouri}{Universit\"{a}t Innsbruck}
+
+\acknowledgements{This work was supported by National Science
+  Foundation grant SES-1061334. 
+  Correspondence to Edgar Merkle. 
+  Email: merklee@missouri.edu.}
+  
+\shorttitle{Score-based tests in practice}
+\rightheader{Score-based tests in practice}
+
+\newcommand{\argmax}{\operatorname{argmax}\displaylimits}
+\let\proglang=\textsf
+\let\pkg=\emph
+\let\code=\texttt
+
+\spacing{1}
+
+\begin{document}
+
+\maketitle
+
+\include{Sweave}
+\setkeys{Gin}{width=\textwidth}
+<<preliminaries, echo=FALSE>>=
+## packages
+library("lavaan")
+library("strucchange") ## at least 1.5-0
+library("mvtnorm")
+library("lattice")
+
+## auxiliary code
+source("../www/sim-frontiers.R")
+source("../www/mz-frontiers.R")
+
+## some options
+options(prompt = "R> ", continue = "+  ", digits = 3,
+  useFancyQuotes = FALSE, show.signif.stars = FALSE)
+@
+
+<<sim2,echo=FALSE>>=
+## seed for replication
+RNGkind(kind = "default", normal.kind = "default")
+set.seed(1163)
+
+if(file.exists("sim2.rda")) {
+  load("sim2.rda")
+} else {
+  sim2 <- simulation(sim = "sim2", nobs = 480, 
+  parms = c("extra", "extra+loading", "extra+var", "extra+error", "extra+intercept"))
+
+  save(sim2, file="sim2.rda")
+}
+sim2$test <- factor(as.character(sim2$test),
+  levels = c("ordmax", "ordwmax", "catdiff"),
+  labels = c("maxLM_o", "WDM_o", "LM_uo"))
+  sim2$nlevels <- factor(sim2$nlevels)
+  levels(sim2$nlevels) <- paste("m=", levels(sim2$nlevels), sep="")
+  sim2$nobs <- factor(sim2$nobs)
+  levels(sim2$nobs) <- paste("n=", levels(sim2$nobs), sep="")
+  parlabs <- c(expression(lambda[11]), expression(phi[12]), 
+               expression(psi[11]), expression(mu[11]),
+	       expression(list(lambda[11], ldots, lambda[62])), 
+               expression(list(psi[11], ldots, psi[66])),
+               expression(list(mu[11], ldots, mu[66])))
+  levels(sim2$pars) <- c("Loading1", "Covariance", "Error1", "Intercept1", 
+                         "All Loadings", "All Errors", "All Intercepts") 
+
+@ 
+
+\section{Appendix}
+
+This Appendix contains additional results from Simulation 2, where there existed
+model misspecification (lacking one loading from Scale 1 to
+Math). Figures~\ref{fig:sim22res} to~\ref{fig:sim26res} display
+results when the unmodeled loading, the loading $\lambda_{11}$, the
+covariance $\phi_{12}$, the error term $\psi_{11}$, and the intercept $\mu_{11}$
+violate invariance, respectively.  Results are only shown for simulation
+conditions exhibiting power curves that increased from zero.  These
+results were generally the same as the Simulation 1 results.
+
+\begin{figure}[H]
+\caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
+violations of 0--4 standard errors (scaled by $\sqrt{n}$), Simulation 2. The
+parameter violating measurement invariance is the unmodeled
+loading. Panel labels denote the parameter(s) 
+being tested and the number of levels of the ordinal variable $m$.}
+\label{fig:sim22res}
+<<sim22res, fig=TRUE, height=7, width=9, echo=FALSE>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
+xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
+       subset = (parms == "extra" & 
+		 pars %in% c("All Loadings", "All Errors", "All Intercepts") & diff %% 0.5 == 0),
+       type = "b", xlab = "Violation Magnitude (Unmodeled Loading)", ylab = "Power", key = mykey, as.table = TRUE,
+       strip = function(..., which.given, factor.levels){
+	   if(which.given == 2){
+	       strip.default(which.given, factor.levels = parlabs[c(5, 6, 7)], ...)
+	   } else {
+	       strip.default(which.given, factor.levels = factor.levels, ...)
+	   }
+       })
+@
+
+\end{figure}
+
+\begin{figure}
+\caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
+violations of 0--4 standard errors (scaled by $\sqrt{n}$), Simulation 2. The
+parameter violating measurement invariance is $\lambda_{11}$.  Panel
+labels denote the parameter(s)  
+being tested and the number of levels of the ordinal variable $m$.}
+\label{fig:sim23res}
+<<sim23res, fig=TRUE, height=7, width=9, echo=FALSE>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
+xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
+       subset = (parms=="extra+loading" & 
+		 pars %in% c("Loading1", "All Loadings") & diff %% 0.5 == 0),
+       type = "b", xlab = expression(paste("Violation Magnitude (", lambda[11], ")")), ylab = "Power", key = mykey, as.table = TRUE,
+       strip = function(..., which.given, factor.levels){
+	   if(which.given == 2){
+	       strip.default(which.given, factor.levels = parlabs[c(1, 5)], ...)
+	   } else {
+	       strip.default(which.given, factor.levels = factor.levels, ...)
+	   }
+       })
+@
+
+\end{figure}
+
+\begin{figure}
+\caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
+violations of 0--4 standard errors (scaled by $\sqrt{n}$), Simulation 2. The
+parameter violating measurement invariance is $\phi_{12}$.  Panel
+labels denote the parameter  
+being tested and the number of levels of the ordinal variable $m$.}
+\label{fig:sim24res}
+<<sim24res, fig=TRUE, height=4.5, width=9, echo=FALSE>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
+xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
+       subset = (parms=="extra+var" & 
+		 pars %in% c("Covariance") & diff %% 0.5 == 0),
+       type = "b", xlab = expression(paste("Violation Magnitude (", phi[12], ")")),
+       ylab = "Power", key = mykey, as.table = TRUE,
+       strip = function(..., which.given, factor.levels){
+	   if(which.given == 2){
+	       strip.default(which.given, factor.levels = parlabs[c(2, 4:5)], ...)
+	   } else {
+	       strip.default(which.given, factor.levels = factor.levels, ...)
+	   }
+       })
+@
+
+\end{figure}
+
+\begin{figure}
+\caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
+violations of 0--4 standard errors (scaled by $\sqrt{n}$), Simulation 2. The
+parameter violating measurement invariance is $\psi_{11}$.  Panel
+labels denote the parameter(s)  
+being tested and the number of levels of the ordinal variable $m$.}
+\label{fig:sim25res}
+<<sim25res, fig=TRUE, height=7, width=9, echo=FALSE>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
+xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
+       subset = (parms == "extra+error" & 
+		 pars %in% c("Error1", "All Errors") & diff %% 0.5 == 0),
+       type = "b", xlab = expression(paste("Violation Magnitude (", psi[11], ")")),
+       ylab = "Power", key = mykey, as.table = TRUE,
+       strip = function(..., which.given, factor.levels){
+	   if(which.given == 2){
+	       strip.default(which.given, factor.levels = parlabs[c(3,6)], ...)
+	   } else {
+	       strip.default(which.given, factor.levels = factor.levels, ...)
+	   }
+       })
+@
+
+\end{figure}
+
+\begin{figure}
+\caption{Simulated power curves for $\max \mathit{LM}_o$, $\mathit{WDM}_o$, and $\mathit{LM}_{uo}$ across three levels of the ordinal variable $m$ and measurement invariance 
+violations of 0--4 standard errors (scaled by $\sqrt{n}$), Simulation 2. The
+parameter violating measurement invariance is $\mu_{11}$.  Panel
+labels denote the parameter(s)  
+being tested and the number of levels of the ordinal variable $m$.}
+\label{fig:sim26res}
+<<sim26res, fig=TRUE, height=7, width=9, echo=FALSE>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
+xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
+       subset = (parms == "extra+intercept" & 
+		 pars %in% c("Intercept1", "All Intercepts") & diff %% 0.5 == 0),
+       type = "b", xlab = expression(paste("Violation Magnitude (", mu[11], ")")),
+       ylab = "Power", key = mykey, as.table = TRUE,
+       strip = function(..., which.given, factor.levels){
+	   if(which.given == 2){
+	       strip.default(which.given, factor.levels = parlabs[c(4,7)], ...)
+	   } else {
+	       strip.default(which.given, factor.levels = factor.levels, ...)
+	   }
+       })
+@
+
+\end{figure}
+
+\end{document}
