@@ -335,6 +335,10 @@ were specifically interested in whether the scales were measurement invariant
 across age.  Because the sample size at each age was unbalanced, the authors 
 created age groups of approximately equal sample size.  In the examples below, 
 we test for measurement invariance across these age groups.
+For illustrative purposes, we conduct multiple tests and
+compare them to the traditional significance level of .05.  In
+practice, however, one should generally adjust the significance level
+for the number of tests carried out.
 
 We focus on measurement invariance of the factor loadings associated with 
 the GQ-6 scale, using a one-factor model.  This scale consists of five

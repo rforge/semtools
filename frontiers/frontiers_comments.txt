@@ -99,12 +99,6 @@ Response 2.6. Several important issues are raised in this comment and model sele
 
 As for the combination of multiple test statistics on the same data, one has to distinguish two situations: a combination of multiple test statistics within a single p-value (e.g., in a maximum test) and a combination of p-values from different tests. The former case (as shown in Figure 1, for example) is appropriately accounted for by employing the corresponding limiting distribution so that the conventional properties of p-values hold. In the latter case, however, it is clear that conduncting all of the tests proposed simultaneously (as done in the illustration) would require adjustment of the significance level employed. We do not apply any correction because we simply want to show the readers what the interpretation would be if each test were the only test for measurement invariance conducted.
 
-[[We agree that there are problems with p-values and have added a disclaimer near the beginning of the paper.
-
-The pictures/diagrams that we use are more amenable to Monte Carlo analyses than they may appear: given a model, we can assess the proportion of time the statistic achieves its maximum in the correct location, the variability in the maximum, and so on.  However, it is correct that the diagrams do not attempt to convey sampling variability in the maximum.
-
-Finally, we agree that it is problematic to test models and do inference on the same data (as Leeb and Poetscher discuss).  The measurement invariance issues studied here are primarily based on model testing, however: two models are tested against one another via, say, a LRT, and no inference is made about parameters within the models.  The diagrams (e.g., Figure 1) provide information about why one model was preferred over the other, but, as mentioned above, no explicit inference is made on the basis of this diagram.]]
-
 
 Comment 2.7. On the last lines on p. 13, just above the General Discussion, you point out that it is 'important to study to what extent the hypothesized model includes all parameters of importance, and that none of the tests inform about model misspecification'. The first statement imposes a rather daunting task, and will amplify the 'dangers' alluded to in 2.6. A pragmatic approach would be to use GLS as well: if the model is wrong, ML and GLS should not produce the same estimates, since they project the data along different angles on the model space. But at the end of the day the necessity to cross-validate on new data will still be paramount. 
 
