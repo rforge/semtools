@@ -336,7 +336,7 @@ across age.  Because the sample size at each age was unbalanced, the authors
 created age groups of approximately equal sample size.  In the examples below, 
 we test for measurement invariance across these age groups.
 For illustrative purposes, we conduct multiple tests and
-compare them to the traditional significance level of .05.  In
+compare them to the traditional significance level of 0.05.  In
 practice, however, one should generally adjust the significance level
 for the number of tests carried out.
 
