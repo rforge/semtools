@@ -24,7 +24,7 @@
 
 \begin{document}
 
-\maketitle
+%\maketitle
 
 \include{Sweave}
 \setkeys{Gin}{width=\textwidth}
@@ -74,9 +74,10 @@ sim2$test <- factor(as.character(sim2$test),
 
 @ 
 
-\section{Appendix}
+\section{Supplementary Material to Wang, Merkle, \& Zeileis}
 
-This Appendix contains additional results from Simulation 2, where there existed
+The Supplementary Material contains additional results from Simulation
+2, where there existed 
 model misspecification (lacking one loading from Scale 1 to
 Math). Figures~\ref{fig:sim22res} to~\ref{fig:sim26res} display
 results when the unmodeled loading, the loading $\lambda_{11}$, the

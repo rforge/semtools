@@ -20,40 +20,32 @@
 \twoaffiliations{University of Missouri}{Universit\"{a}t Innsbruck}
 
 \abstract{
-In this paper, we consider a family of  recently-proposed measurement invariance
+In this presentation, we study a family of  recently-proposed measurement invariance
 tests that are based on the {\em scores} of a fitted model.  This family can be used
 to test for measurement invariance w.r.t.\ a continuous auxiliary variable,
 without pre-specification of subgroups. Moreover, the family can be used when
 one wishes to test for  measurement invariance w.r.t.\ an ordinal auxiliary
 variable, yielding test statistics that are sensitive to violations that are
 monotonically related to the ordinal variable (and less sensitive to
-non-monotonic violations).  The paper is specifically aimed at potential users
-of the tests who may wish to know (i) how the tests can be employed for their
-data, and (ii) whether the tests can accurately identify specific models parameters that violate measurement invariance (possibly in the presence of model misspecification).  After providing an
-overview of the tests, we illustrate their general use via the \proglang{R} packages \pkg{lavaan}
-and \pkg{strucchange}.  We then describe two novel simulations that provide evidence
-of the tests' practical abilities.  As a whole, the paper provides researchers
-with the tools and knowledge needed to apply these tests to general measurement
-invariance scenarios.
+non-monotonic violations).  After providing an overview of the family
+of tests, we present new simulation-based results examining (i) the extent
+to which the tests can identify specific parameters violating
+measurement invariance, and (ii) the extent to which the tests are
+impacted by model misspecification.
+We also describe an R implementation that allows users to generally
+apply the tests to SEMs estimated under multivariate normality.
 }
 
-\acknowledgements{This work was supported by National Science
-  Foundation grant SES-1061334. 
-  Correspondence to Edgar Merkle. 
-  Email: merklee@missouri.edu.}
-\shorttitle{Score-based tests in practice}
-\rightheader{Score-based tests in practice}
+% \acknowledgements{This work was supported by National Science
+%   Foundation grant SES-1061334. 
+%   Correspondence to Edgar Merkle. 
+%   Email: merklee@missouri.edu.}
+% \shorttitle{Score-based tests in practice}
+% \rightheader{Score-based tests in practice}
 
-\newcommand{\argmax}{\operatorname{argmax}\displaylimits}
 \let\proglang=\textsf
 \let\pkg=\emph
 \let\code=\texttt
-
-%% for internal use
-\newcommand{\fixme}[1]{\emph{\marginpar{FIXME} (#1)}}
-\newcommand{\readme}[1]{\emph{\marginpar{Ed} (#1)}}
-\newcommand{\seeme}[1]{\emph{\marginpar{Ting} (#1)}}
-
 
 \spacing{1}
 
