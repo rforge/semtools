@@ -35,6 +35,18 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 
 <h2>semtools: Methods for Testing Measurement Invariance in Structural Equation Models</h2>
 
+<h3>Testing non-nested structural equation models</h3>
+
+<ul>
+  <li>Working paper</li>
+  <li>Replication materials:<ul>
+    <li><a href="vuong-lavaan.R">lavaan extensions</a> containing <tt>vuong()</tt> method for carrying out Vuong tests on two lavaan objects.</li>
+    <li><a href="sim-vuong.R">Simulation functions</a> for data generation, power evaluation, and power summaries.</li
+    <li><a href="burnout.rda">Burnout data</a> for application.</li>
+    <li><a href="replication-vuong.R">Replication script</a> containing code to run and summarize the application and simulations, using the above files.</li>
+  </ul></li>
+</ul>  
+
 <h3>Score-based tests of measurement invariance: Use in practice</h3>
 
 <ul>
