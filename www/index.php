@@ -38,7 +38,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <h3>Testing non-nested structural equation models</h3>
 
 <ul>
-  <li>Working paper</li>
+  <li><a href="http://arxiv.org/abs/1402.6720">Working paper</a></li>
   <li>Replication materials:<ul>
     <li><a href="vuong-lavaan.R">lavaan extensions</a> containing <tt>vuong()</tt> method for carrying out Vuong tests on two lavaan objects.</li>
     <li><a href="sim-vuong.R">Simulation functions</a> for data generation, power evaluation, and power summaries.</li>
