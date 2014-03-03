@@ -1,0 +1,70 @@
+\documentclass{beamer}
+\setbeamertemplate{caption}[numbered]
+\usepackage{beamerthemeSzeged,graphics,amsmath,bm,booktabs}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usefonttheme{serif}
+
+\title{Score-based tests of measurement invariance: Use in practice}
+\subtitle{2014 Annual Meeting of Psychometric Society}
+\author[shortname]{Ting Wang\inst{1} \and Edgar C. Merkle\inst{1} \and 
+  Achim Zeileis \inst{2}}
+\institute[shortinst]{\inst{1} University of Missouri \and 
+                      \inst{2} Universit\"{a}t Innsbruck}
+
+\renewcommand{\baselinestretch}{1.1}
+
+\begin{document}
+
+<<setup, include=FALSE>>=
+library("knitr")
+opts_chunk$set(size='footnotesize',tidy.opts=list(width.cutoff=50,
+               reindent.spaces=6))
+
+## Color unevaluted commands using Sexpr
+knit_hooks$set(inline = function(x) { 
+  if (is.numeric(x)) return(knitr:::format_sci(x, 'latex'))
+  highr:::hi_latex(x)
+}) 
+## packages
+library("lavaan")
+library("strucchange") ## at least 1.5-0
+library("mvtnorm")
+library("lattice")
+
+## auxiliary code
+source("../www/sim-frontiers.R")
+source("../www/mz-frontiers.R")
+
+## some options
+options(prompt = "R> ", continue = "+  ", digits = 3,
+  useFancyQuotes = FALSE, show.signif.stars = FALSE)
+@ 
+
+\frame{\titlepage}
+
+
+\begin{frame}
+\frametitle{Problem Scenario}
+
+\end{frame}
+%--------------------------------------------------------------------------
+
+\begin{frame}
+\frametitle{Overview} 
+% Table of contents slide, comment this block out to remove it
+\tableofcontents 
+% Throughout your presentation, if you choose to use \section{} and 
+%\subsection{} commands, these will automatically be printed on this slide 
+%as an overview of your presentation
+\end{frame}
+
+\section{Theoretical Background}
+\section{Simulation: Locating M.I. Violation Parameter Property}
+\subsection{Violation Parameter is IN the Model}
+\subsection{Violation Parameter is OUT the Model}
+\section{Conclusion from Simulation Studies}
+\section{Application}
+
+
+\end{document}

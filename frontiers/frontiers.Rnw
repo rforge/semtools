@@ -430,7 +430,7 @@ restr <- cfa("f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
 full <- cfa("f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
   data = yg, group = "agegroup", meanstructure = TRUE)
 @
-%
+
 Finally, we can get the results of a likelihood ratio test via the \code{anova()}
 function, which implies that the GQ-6 violates measurement invariance.
 <<LRT>>=
