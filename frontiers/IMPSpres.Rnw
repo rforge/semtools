@@ -1,15 +1,18 @@
 \documentclass{beamer}
 \setbeamertemplate{caption}[numbered]
 \usepackage{beamerthemeSzeged,graphics,amsmath,bm,booktabs}
+\usepackage{tikz}
 \usepackage[T1]{fontenc}
 \usepackage[english]{babel}
 \usefonttheme{serif}
+% Seems necessary for texlive 2012?
+\usetikzlibrary{arrows}
 
 \title{Score-based tests of measurement invariance: Use in practice}
 \subtitle{2014 Annual Meeting of Psychometric Society}
 \author[shortname]{Ting Wang\inst{1} \and Edgar C. Merkle\inst{1} \and 
   Achim Zeileis \inst{2}}
-\institute[shortinst]{\inst{1} University of Missouri \and 
+\institute[]{\inst{1} University of Missouri \and 
                       \inst{2} Universit\"{a}t Innsbruck}
 
 \renewcommand{\baselinestretch}{1.1}
@@ -18,7 +21,7 @@
 
 <<setup, include=FALSE>>=
 library("knitr")
-opts_chunk$set(size='footnotesize',tidy.opts=list(width.cutoff=50,
+opts_chunk$set(size='footnotesize',tidy.opts=list(width.cutoff=45,
                reindent.spaces=6))
 
 ## Color unevaluted commands using Sexpr
@@ -66,6 +69,34 @@ parlabs <- c(expression(lambda[11]), expression(phi[12]),
              expression(list(mu[11], ldots, mu[66])))
 levels(sim1$pars) <- c("Loading1", "Covariance", "Error1", "Intercept1", 
                        "All Loadings", "All Errors", "All Intercepts")  
+
+## seed for replication
+RNGkind(kind = "default", normal.kind = "default")
+set.seed(1163)
+
+if(file.exists("sim2.rda")) {
+  load("sim2.rda")
+} else {
+  sim2 <- simulation(sim = "sim2", nobs = 480, 
+  parms = c("extra", "extra+loading", "extra+var", "extra+error", 
+           "extra+intercept"))
+
+  save(sim2, file="sim2.rda")
+}
+sim2$test <- factor(as.character(sim2$test),
+  levels = c("ordmax", "ordwmax", "catdiff"),
+  labels = c("maxLM_o", "WDM_o", "LM_uo"))
+  sim2$nlevels <- factor(sim2$nlevels)
+  levels(sim2$nlevels) <- paste("m=", levels(sim2$nlevels), sep="")
+  sim2$nobs <- factor(sim2$nobs)
+  levels(sim2$nobs) <- paste("n=", levels(sim2$nobs), sep="")
+  parlabs <- c(expression(lambda[11]), expression(phi[12]), 
+               expression(psi[11]), expression(mu[11]),
+	       expression(list(lambda[11], ldots, lambda[62])), 
+               expression(list(psi[11], ldots, psi[66])),
+               expression(list(mu[11], ldots, mu[66])))
+  levels(sim2$pars) <- c("Loading1", "Covariance", "Error1", "Intercept1", 
+                         "All Loadings", "All Errors", "All Intercepts")
 @
 
 \frame{\titlepage}
@@ -85,29 +116,118 @@ levels(sim1$pars) <- c("Loading1", "Covariance", "Error1", "Intercept1",
 %\subsection{} commands, these will automatically be printed on this slide 
 %as an overview of your presentation
 \end{frame}
-
+%--------------------------------------------------------------------------
 \section{Theoretical Background}
-\section{Simulation: Locating M.I. Violation Parameter Property}
+\section{Simulation}
 \subsection{Violation Parameter is IN the Model}
+\begin{frame}
+ \begin{figure}
+    \caption{Model used for the simulation.}
+    \label{fig:pathinmodel}
+\resizebox{8.0cm}{!}{
+\begin{tikzpicture}
+[latent/.style={circle,draw=black!50,fill=white!20,thick,
+                inner sep=0pt, minimum width=20mm, minimum height=10mm},
+ manifest/.style={rectangle,draw=black!50,fill=white!20,thick,
+                inner sep=0pt,minimum width=20mm, minimum height=10mm},
+ error/.style={circle,draw=black!50,fill=white!20,thick,
+                inner sep=0pt, minimum width=10mm},
+ post/.style={->,shorten >=1pt,>=stealth',semithick},
+ postred/.style={->,shorten >=1pt,>=stealth',semithick,red},
+ postdashed/.style={->,shorten >=1pt,>=stealth',semithick,red,dashed},
+ sling/.style={<->,shorten >=1pt,>=stealth',shorten <=1pt,>=stealth',
+   auto,distance=20mm,semithick},
+ errorsling/.style={<->,shorten >=1pt,>=stealth',shorten <=1pt,>=stealth',
+   auto,distance=10mm,semithick}]
 
+
+
+%position objects.
+
+\node[latent] (VERBAL) at (0,4) {VERBAL};
+\node[latent] (MATH)   at (0,0) {MATH};
+
+\node[manifest] (SCALE1) at(5,6) {SCALE1};
+\node[manifest] (SCALE2) at (5,4.5) {SCALE2};
+\node[manifest] (SCALE3) at (5,3) {SCALE3};
+\node[manifest] (SCALE4) at(5,1) {SCALE4};
+\node[manifest] (SCALE5) at (5,-0.5) {SCALE5};
+\node[manifest] (SCALE6) at (5,-2) {SCALE6};
+
+\node[error] (E1) at (7,6) {E1};
+\node[error] (E2) at (7,4.5) {E2};
+\node[error] (E3) at (7,3) {E3};
+\node[error] (E4) at (7,1) {E4};
+\node[error] (E5) at (7,-0.5) {E5};
+\node[error] (E6) at (7,-2) {E6};
+
+%arrows, slings and texts
+\node[latent] (VERBAL) at (0,4) {VERBAL}
+   edge [postred] node[above=0.01cm,text width=2cm]
+   {\scriptsize{$\lambda_{11}=4.92$}} (SCALE1)
+   edge [post] node[above=0.001mm,text width=2cm]
+   {\scriptsize{$\lambda_{21}=2.96$}} (SCALE2)
+   edge [post] node[above=0.1cm,text width=2cm]
+   {\scriptsize{$\lambda_{31}=5.96$}} (SCALE3)
+   edge [sling,bend right=100] node[auto,swap]{1}(VERBAL.-180)
+   edge [sling,bend right=70] node[auto,swap]
+   {$\phi_{12}=-0.48$}(MATH)  ;
+
+\node[latent] (MATH) at (0,0) {MATH}
+   edge [post] node[above=0.01cm,text width=2cm]
+   {\scriptsize{$\lambda_{42}=3.24$}}(SCALE4)
+   edge [post] node[above=0.01cm,text width=2cm]
+   {\scriptsize{$\lambda_{52}=4.32$}}(SCALE5)
+   edge [post] node[above=0.25cm,text width=2cm]
+   {\scriptsize{$\lambda_{62}=7.21$}}(SCALE6)
+   edge [sling,bend right=100] node[auto,swap]{1}(MATH.270);
+
+\node[error] (E1) at (7,6) {E1}
+   edge [post] node[auto,swap]{\small{1}}(SCALE1)
+   edge [errorsling, bend right=100]node[right=0.1,text width=2cm]
+   {\scriptsize{$\psi_{11}=26.77$}} (E1.45);
+\node[error] (E2) at (7,4.5) {E2}
+   edge [post] node[auto,swap]{\small{1}} (SCALE2)
+   edge [errorsling, bend right=100] node[right=0.1,text width=2cm]
+   {\scriptsize{$\psi_{22}=13.01$}}(E2.45);
+\node[error] (E3) at (7,3) {E3}
+   edge [post] node[auto,swap]{\small{1}}(SCALE3)
+   edge [errorsling, bend right=100] node[right=0.1,text width=2cm]
+   {\scriptsize{$\psi_{33}=30.93$}}(E3.45);
+\node[error] (E4) at (7,1) {E4}
+   edge [post] node[auto,swap]{\small{1}}(SCALE4)
+   edge [errorsling, bend right=100] node[right=0.1,text width=2cm]
+   {\scriptsize{$\psi_{44}=3.17$}}(E4.45);
+\node[error] (E5) at (7,-0.5) {E5}
+   edge [post] node[auto,swap]{\small{1}}(SCALE5)
+   edge [errorsling, bend right=100] node[right=0.1,text width=2cm]
+   {\scriptsize{$\psi_{55}=8.82$}} (E5.45);
+\node[error] (E6) at (7,-2) {E6}
+   edge [post] node[auto,swap]{\small{1}}(SCALE6)
+   edge [errorsling, bend right=100] node[right=0.1,text width=2cm]
+   {\scriptsize{$\psi_{66}=22.5$}}(E6.45);
+\end{tikzpicture}}
+\end{figure}
+\end{frame}
 
 \begin{frame}
 \begin{figure}
-\tiny{\caption{M.I.violation parameter $\lambda_{11}$}}
+\tiny{\caption{M.I.violation parameter $\lambda_{11}$.  Testing
+    parameters are $\lambda_{11}$ and $\lambda_{11} \ldots \lambda_{62}$.}}
 \label{fig:sim11res}
-<<sim11res, fig=TRUE, height=5.5, width=9, echo=FALSE>>=
+<<sim11res, fig=TRUE, height=5, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim1$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
        subset = (parms == "loading" & 
-          pars %in% c("Loading1", "Error1", "All Loadings") & diff %% 0.5 == 0),
+          pars %in% c("Loading1", "All Loadings") & diff %% 0.5 == 0),
        type = "b", xlab = 
           expression(paste("Violation Magnitude (", lambda[11], ")")),
        ylab = "Power", key = mykey, as.table = TRUE,
        strip = function(..., which.given, factor.levels){
            if(which.given == 2){
              strip.default(which.given, factor.levels = 
-                           parlabs[c(1, 3, 5)], ...)
+                           parlabs[c(1, 5)], ...)
 	   } else {
 	       strip.default(which.given, factor.levels = factor.levels, ...)
 	   }
@@ -116,16 +236,207 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
 
 \end{figure}
 \end{frame}
+%--------------------------------------------------------------------------
+\begin{frame}
+\begin{figure}
+\tiny{\caption{M.I.violation parameter $\lambda_{11}$.  Testing
+    parmaeter is $\psi_{11} \ldots \psi_{66}, \sigma_{12}$ and
+    $\mu_{11} \ldots \mu_{66}$.}}
+\label{fig:sim12res}
+<<sim12res, fig=TRUE, height=5, width=9, echo=FALSE>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(sim1$test), points = TRUE, lines = TRUE)
+xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
+       subset = (parms == "loading" & 
+          pars %in% c("All Errors", "Covariance", "All Intercepts") 
+                 & diff %% 0.5 == 0),
+       type = "b", xlab = 
+          expression(paste("Violation Magnitude (", lambda[11], ")")),
+       ylab = "Power", ylim = c(0,1), key = mykey, as.table = TRUE,
+       strip = function(..., which.given, factor.levels){
+           if(which.given == 2){
+             strip.default(which.given, factor.levels = 
+                           parlabs[c(2, 6, 7)], ...)
+	   } else {
+	       strip.default(which.given, factor.levels = factor.levels, ...)
+	   }
+       })
+@
 
-
-
-
-
-
+\end{figure}
+\end{frame}
+%--------------------------------------------------------------------------
 
 \subsection{Violation Parameter is OUT the Model}
-\section{Conclusion from Simulation Studies}
+\begin{frame}
+\begin{figure}
+    \caption{Model used for the simulation.}
+    \label{fig:pathinmodel}
+\resizebox{8.0cm}{!}{
+\begin{tikzpicture}
+[latent/.style={circle,draw=black!50,fill=white!20,thick,
+                inner sep=0pt, minimum width=20mm, minimum height=10mm},
+ manifest/.style={rectangle,draw=black!50,fill=white!20,thick,
+                inner sep=0pt,minimum width=20mm, minimum height=10mm},
+ error/.style={circle,draw=black!50,fill=white!20,thick,
+                inner sep=0pt, minimum width=10mm},
+ post/.style={->,shorten >=1pt,>=stealth',semithick},
+ postred/.style={->,shorten >=1pt,>=stealth',semithick,red},
+ postdashed/.style={->,shorten >=1pt,>=stealth',semithick,red,dashed},
+ sling/.style={<->,shorten >=1pt,>=stealth',shorten <=1pt,>=stealth',
+   auto,distance=20mm,semithick},
+ errorsling/.style={<->,shorten >=1pt,>=stealth',shorten <=1pt,>=stealth',
+   auto,distance=10mm,semithick}]
+
+
+
+%position objects.
+
+\node[latent] (VERBAL) at (0,4) {VERBAL};
+\node[latent] (MATH)   at (0,0) {MATH};
+
+\node[manifest] (SCALE1) at(5,6) {SCALE1};
+\node[manifest] (SCALE2) at (5,4.5) {SCALE2};
+\node[manifest] (SCALE3) at (5,3) {SCALE3};
+\node[manifest] (SCALE4) at(5,1) {SCALE4};
+\node[manifest] (SCALE5) at (5,-0.5) {SCALE5};
+\node[manifest] (SCALE6) at (5,-2) {SCALE6};
+
+\node[error] (E1) at (7,6) {E1};
+\node[error] (E2) at (7,4.5) {E2};
+\node[error] (E3) at (7,3) {E3};
+\node[error] (E4) at (7,1) {E4};
+\node[error] (E5) at (7,-0.5) {E5};
+\node[error] (E6) at (7,-2) {E6};
+
+%arrows, slings and texts
+\node[latent] (VERBAL) at (0,4) {VERBAL}
+   edge [post] node[above=0.01cm,text width=2cm]
+   {\scriptsize{$\lambda_{11}=4.92$}} (SCALE1)
+   edge [post] node[above=0.001mm,text width=2cm]
+   {\scriptsize{$\lambda_{21}=2.96$}} (SCALE2)
+   edge [post] node[above=0.1cm,text width=2cm]
+   {\scriptsize{$\lambda_{31}=5.96$}} (SCALE3)
+   edge [sling,bend right=100] node[auto,swap]{1}(VERBAL.-180)
+   edge [sling,bend right=70] node[auto,swap]
+   {$\phi_{12}=-0.48$}(MATH)  ;
+
+\node[latent] (MATH) at (0,0) {MATH}
+   edge [post] node[above=0.01cm,text width=2cm]
+   {\scriptsize{$\lambda_{42}=3.24$}}(SCALE4)
+   edge [postdashed] node [below=0.7cm,text width=2cm, left=0.001cm]
+   {\scriptsize{unmodeled loading=$3$}}(SCALE1.210)
+   edge [post] node[above=0.01cm,text width=2cm]
+   {\scriptsize{$\lambda_{52}=4.32$}}(SCALE5)
+   edge [post] node[above=0.25cm,text width=2cm]
+   {\scriptsize{$\lambda_{62}=7.21$}}(SCALE6)
+   edge [sling,bend right=100] node[auto,swap]{1}(MATH.270);
+
+\node[error] (E1) at (7,6) {E1}
+   edge [post] node[auto,swap]{\small{1}}(SCALE1)
+   edge [errorsling, bend right=100]node[right=0.1,text width=2cm]
+   {\scriptsize{$\psi_{11}=26.77$}} (E1.45);
+\node[error] (E2) at (7,4.5) {E2}
+   edge [post] node[auto,swap]{\small{1}} (SCALE2)
+   edge [errorsling, bend right=100] node[right=0.1,text width=2cm]
+   {\scriptsize{$\psi_{22}=13.01$}}(E2.45);
+\node[error] (E3) at (7,3) {E3}
+   edge [post] node[auto,swap]{\small{1}}(SCALE3)
+   edge [errorsling, bend right=100] node[right=0.1,text width=2cm]
+   {\scriptsize{$\psi_{33}=30.93$}}(E3.45);
+\node[error] (E4) at (7,1) {E4}
+   edge [post] node[auto,swap]{\small{1}}(SCALE4)
+   edge [errorsling, bend right=100] node[right=0.1,text width=2cm]
+   {\scriptsize{$\psi_{44}=3.17$}}(E4.45);
+\node[error] (E5) at (7,-0.5) {E5}
+   edge [post] node[auto,swap]{\small{1}}(SCALE5)
+   edge [errorsling, bend right=100] node[right=0.1,text width=2cm]
+   {\scriptsize{$\psi_{55}=8.82$}} (E5.45);
+\node[error] (E6) at (7,-2) {E6}
+   edge [post] node[auto,swap]{\small{1}}(SCALE6)
+   edge [errorsling, bend right=100] node[right=0.1,text width=2cm]
+   {\scriptsize{$\psi_{66}=22.5$}}(E6.45);
+\end{tikzpicture}}
+\end{figure}
+\end{frame}
+%--------------------------------------------------------------------------
+\begin{frame}
+\begin{figure}
+\tiny{\caption{The parameter violating measurement invariance is the unmodeled
+loading. Testing parameters are $\lambda_{11}$ and $\psi_{11}$.}}
+\label{fig:sim21res}
+<<sim21res, fig=TRUE, height=5, width=9, echo=FALSE>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
+xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
+       subset = (parms == "extra" & 
+	 pars %in% c("Loading1", "Error1") 
+                 & diff %% 0.5 == 0),
+       type = "b", xlab = "Violation Magnitude (Unmodeled Loading)",
+       ylab = "Power", key = mykey, as.table = TRUE,
+       strip = function(..., which.given, factor.levels){
+	   if(which.given == 2){
+	 strip.default(which.given, factor.levels = parlabs[c(1, 3)], ...)
+	   } else {
+	       strip.default(which.given, factor.levels = factor.levels, ...)
+	   }
+       })
+@
+\end{figure}
+\end{frame}
+%--------------------------------------------------------------------------
+\begin{frame}
+\begin{figure}
+\tiny{\caption{The parameter violating measurement invariance is the unmodeled
+loading. Testing parameters are $\sigma_{12}$ and $\mu_{11}$.}}
+\label{fig:sim22res}
+<<sim22res, fig=TRUE, height=5, width=9, echo=FALSE>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
+xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
+       subset = (parms == "extra" & 
+	 pars %in% c("Covariance", "Intercept1") 
+                 & diff %% 0.5 == 0),
+       type = "b", xlab = "Violation Magnitude (Unmodeled Loading)",
+       ylab = "Power", ylim = c(0,1), key = mykey, as.table = TRUE,
+       strip = function(..., which.given, factor.levels){
+	   if(which.given == 2){
+	 strip.default(which.given, factor.levels = parlabs[c(2, 4)], ...)
+	   } else {
+	       strip.default(which.given, factor.levels = factor.levels, ...)
+	   }
+       })
+@
+\end{figure}
+\end{frame}
+
+
+\section{Conclusion}
 \section{Application}
+\begin{frame}[fragile]
+\frametitle{Input data and Fit model}
+\begin{enumerate}
+ \item Input data
+<<data,eval=FALSE>>=
+data("YouthGratitude", package = "psychotools")
+compcases <- apply(YouthGratitude[, 4:28], 1, function(x) all(x %in% 1:9))
+yg <- YouthGratitude[compcases, ]
+@ 
+\item Fit restricted model and full model
+<<modeest,eval=FALSE>>=
+restr <- cfa("f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
+  data = yg, group = "agegroup", meanstructure = TRUE,
+  group.equal = "loadings")
 
+full <- cfa("f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
+  data = yg, group = "agegroup", meanstructure = TRUE)
+@ 
+\end{enumerate}
+\end{frame}
 
+%--------------------------------------------------------------------------
+%TODO: reset counter for enumerate.
+\begin{frame}
+  \item fff
+\end{frame}
 \end{document}
