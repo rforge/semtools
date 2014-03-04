@@ -39,7 +39,34 @@ source("../www/mz-frontiers.R")
 ## some options
 options(prompt = "R> ", continue = "+  ", digits = 3,
   useFancyQuotes = FALSE, show.signif.stars = FALSE)
-@ 
+
+## seed for replication
+RNGkind(kind = "default", normal.kind = "default")
+set.seed(1163)
+
+if(file.exists("sim1.rda")) {
+  load("sim1.rda")
+} else {
+  sim1 <- simulation(sim = "sim1", nobs = 480, parms = c("loading", "error", 
+                                                   "var", "intercept"))
+  sim1$nlevels <- factor(sim1$nlevels)
+  levels(sim1$nlevels) <- paste("m=", levels(sim1$nlevels), sep="")
+ 
+  sim1$nobs <- factor(sim1$nobs)
+  levels(sim1$nobs) <- paste("n=", levels(sim1$nobs), sep="")
+  save(sim1, file="sim1.rda")
+}
+sim1$test <- factor(as.character(sim1$test), levels = c("ordmax","ordwmax",
+                                                 "catdiff"),
+                    labels = c("maxLM_o", "WDM_o", "LM_uo"))
+parlabs <- c(expression(lambda[11]), expression(phi[12]), 
+             expression(psi[11]), expression(mu[11]), expression
+             (list(lambda[11], ldots, lambda[62])), 
+             expression(list(psi[11], ldots, psi[66])), 
+             expression(list(mu[11], ldots, mu[66])))
+levels(sim1$pars) <- c("Loading1", "Covariance", "Error1", "Intercept1", 
+                       "All Loadings", "All Errors", "All Intercepts")  
+@
 
 \frame{\titlepage}
 
@@ -62,6 +89,40 @@ options(prompt = "R> ", continue = "+  ", digits = 3,
 \section{Theoretical Background}
 \section{Simulation: Locating M.I. Violation Parameter Property}
 \subsection{Violation Parameter is IN the Model}
+
+
+\begin{frame}
+\begin{figure}
+\tiny{\caption{M.I.violation parameter $\lambda_{11}$}}
+\label{fig:sim11res}
+<<sim11res, fig=TRUE, height=5.5, width=9, echo=FALSE>>=
+trellis.par.set(theme = canonical.theme(color = FALSE))
+mykey <- simpleKey(levels(sim1$test), points = TRUE, lines = TRUE)
+xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
+       subset = (parms == "loading" & 
+          pars %in% c("Loading1", "Error1", "All Loadings") & diff %% 0.5 == 0),
+       type = "b", xlab = 
+          expression(paste("Violation Magnitude (", lambda[11], ")")),
+       ylab = "Power", key = mykey, as.table = TRUE,
+       strip = function(..., which.given, factor.levels){
+           if(which.given == 2){
+             strip.default(which.given, factor.levels = 
+                           parlabs[c(1, 3, 5)], ...)
+	   } else {
+	       strip.default(which.given, factor.levels = factor.levels, ...)
+	   }
+       })
+@
+
+\end{figure}
+\end{frame}
+
+
+
+
+
+
+
 \subsection{Violation Parameter is OUT the Model}
 \section{Conclusion from Simulation Studies}
 \section{Application}
