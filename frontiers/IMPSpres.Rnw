@@ -4,6 +4,7 @@
 \usepackage{tikz}
 \usepackage[T1]{fontenc}
 \usepackage[english]{babel}
+\usepackage{enumitem}
 \usefonttheme{serif}
 % Seems necessary for texlive 2012?
 \usetikzlibrary{arrows}
@@ -16,6 +17,8 @@
                       \inst{2} Universit\"{a}t Innsbruck}
 
 \renewcommand{\baselinestretch}{1.1}
+\newcounter{tmpc}
+
 
 \begin{document}
 
@@ -97,6 +100,30 @@ sim2$test <- factor(as.character(sim2$test),
                expression(list(mu[11], ldots, mu[66])))
   levels(sim2$pars) <- c("Loading1", "Covariance", "Error1", "Intercept1", 
                          "All Loadings", "All Errors", "All Intercepts")
+
+data("YouthGratitude", package = "psychotools")
+compcases <- apply(YouthGratitude[, 4:28], 1, function(x) all(x %in% 1:9))
+yg <- YouthGratitude[compcases, ]
+
+restr <- cfa("f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
+  data = yg, group = "agegroup", meanstructure = TRUE,
+  group.equal = "loadings")
+
+set.seed(1090)
+wdmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
+  vcov = "info", functional = "WDMo")
+
+if(file.exists("maxLMo.rda")){
+  load("maxLMo.rda")
+} else {
+  RNGkind(kind = "default", normal.kind = "default")
+  set.seed(1090)
+  maxLMo <- ordL2BB(yg$agegroup, nproc = 4)
+  save(maxLMo, file = "maxLMo.rda")
+}
+maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
+  vcov = "info", functional = maxLMo)
+
 @
 
 \frame{\titlepage}
@@ -414,29 +441,70 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 \section{Conclusion}
 \section{Application}
 \begin{frame}[fragile]
-\frametitle{Input data and Fit model}
+\frametitle{Procedures of Application}
 \begin{enumerate}
  \item Input data
+\asuivre
+\end{enumerate}
 <<data,eval=FALSE>>=
 data("YouthGratitude", package = "psychotools")
 compcases <- apply(YouthGratitude[, 4:28], 1, function(x) all(x %in% 1:9))
 yg <- YouthGratitude[compcases, ]
 @ 
-\item Fit restricted model and full model
-<<modeest,eval=FALSE>>=
-restr <- cfa("f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
-  data = yg, group = "agegroup", meanstructure = TRUE,
-  group.equal = "loadings")
 
-full <- cfa("f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
-  data = yg, group = "agegroup", meanstructure = TRUE)
-@ 
-\end{enumerate}
+
 \end{frame}
 
 %--------------------------------------------------------------------------
-%TODO: reset counter for enumerate.
+\begin{frame}[fragile]
+\frametitle{Procedures of Application}
+\begin{enumerate}
+\item Fit your model
+\end{enumerate}
+ <<modeest,eval=FALSE>>=
+  restr <- cfa("f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
+  data = yg, group = "agegroup", meanstructure = TRUE,
+  group.equal = "loadings")
+@ 
+
+\end{frame}
+%--------------------------------------------------------------------------
+\begin{frame}[fragile]
+\frametitle{Procedures of Application}
+\begin{enumerate}[resume]
+  \item Test if M.I. is violated.
+\end{enumerate}
+<<sctest-ord2, eval=FALSE>>=
+wdmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
+  functional = "WDMo",  plot = TRUE, ylim = c(0, 3.2),
+  xlab = "Age group", ylab = "Weighted test statistics")
+maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
+  vcov = "info", functional = "maxLMo",  plot = TRUE, ylim = c(0, 14),
+  xlab = "Age group", ylab = "LM statistics",
+  main = expression(maxLM[o]), boundary = list(col = 1, lty = 2))
+@ 
+
+\end{frame}
+
 \begin{frame}
-  \item fff
+  \frametitle
+\begin{figure}
+\caption{Fluctuation processes for the $\mathit{WDM}_o$ statistic 
+  (left panel) and the $\max\mathit{LM}_o$ statistic (right panel).}
+\label{fig:ordres}
+<<sctest-ord-graphics, fig=TRUE, height=4.5, width=9, echo=FALSE, results=hide>>=
+
+par(mfrow = c(1, 2))
+set.seed(1090)
+sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
+  functional = "WDMo", plot = TRUE, ylim = c(0, 3.2),
+  xlab = "Age group", ylab = "Weighted test statistics",
+  main = expression(WDM[o]), boundary = list(col = 1, lty = 2))
+sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
+  functional = maxLMo, plot = TRUE, ylim = c(0, 14),
+  xlab = "Age group", ylab = "LM statistics",
+  main = expression(maxLM[o]), boundary = list(col = 1, lty = 2))
+@
+\end{figure}
 \end{frame}
 \end{document}
