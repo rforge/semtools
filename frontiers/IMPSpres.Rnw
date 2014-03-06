@@ -4,7 +4,6 @@
 \usepackage{tikz}
 \usepackage[T1]{fontenc}
 \usepackage[english]{babel}
-\usepackage{enumitem}
 \usefonttheme{serif}
 % Seems necessary for texlive 2012?
 \usetikzlibrary{arrows}
@@ -17,7 +16,9 @@
                       \inst{2} Universit\"{a}t Innsbruck}
 
 \renewcommand{\baselinestretch}{1.1}
-\newcounter{tmpc}
+\newcounter{sauvegardeenumi}
+\newcommand{\asuivre}{\setcounter{sauvegardeenumi}{\theenumi}}
+\newcommand{\suite}{\setcounter{enumi}{\thesauvegardeenumi}}
 
 
 \begin{document}
@@ -442,9 +443,8 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 \section{Application}
 \begin{frame}[fragile]
 \frametitle{Procedures of Application}
-\begin{enumerate}
+\begin{enumerate}[1.]
  \item Input data
-\asuivre
 \end{enumerate}
 <<data,eval=FALSE>>=
 data("YouthGratitude", package = "psychotools")
@@ -458,10 +458,12 @@ yg <- YouthGratitude[compcases, ]
 %--------------------------------------------------------------------------
 \begin{frame}[fragile]
 \frametitle{Procedures of Application}
-\begin{enumerate}
+\begin{enumerate}[2.]
+  \suite
 \item Fit your model
 \end{enumerate}
  <<modeest,eval=FALSE>>=
+ library(lavaan)
   restr <- cfa("f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
   data = yg, group = "agegroup", meanstructure = TRUE,
   group.equal = "loadings")
@@ -471,40 +473,31 @@ yg <- YouthGratitude[compcases, ]
 %--------------------------------------------------------------------------
 \begin{frame}[fragile]
 \frametitle{Procedures of Application}
-\begin{enumerate}[resume]
+\begin{enumerate}[3.]
+  \suite
   \item Test if M.I. is violated.
 \end{enumerate}
 <<sctest-ord2, eval=FALSE>>=
+ library(strucchange)
 wdmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
   functional = "WDMo",  plot = TRUE, ylim = c(0, 3.2),
   xlab = "Age group", ylab = "Weighted test statistics")
-maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
-  vcov = "info", functional = "maxLMo",  plot = TRUE, ylim = c(0, 14),
-  xlab = "Age group", ylab = "LM statistics",
-  main = expression(maxLM[o]), boundary = list(col = 1, lty = 2))
 @ 
-
 \end{frame}
+%--------------------------------------------------------------------------
 
 \begin{frame}
-  \frametitle
 \begin{figure}
-\caption{Fluctuation processes for the $\mathit{WDM}_o$ statistic 
-  (left panel) and the $\max\mathit{LM}_o$ statistic (right panel).}
+\tiny{\caption{Fluctuation processes for the $\mathit{WDM}_o$ statistic}}
 \label{fig:ordres}
-<<sctest-ord-graphics, fig=TRUE, height=4.5, width=9, echo=FALSE, results=hide>>=
-
-par(mfrow = c(1, 2))
-set.seed(1090)
+<<sctest-ord-graphics,fig=TRUE, height=3.3, width=5, echo=FALSE, results=hide>>=
 sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
   functional = "WDMo", plot = TRUE, ylim = c(0, 3.2),
   xlab = "Age group", ylab = "Weighted test statistics",
   main = expression(WDM[o]), boundary = list(col = 1, lty = 2))
-sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
-  functional = maxLMo, plot = TRUE, ylim = c(0, 14),
-  xlab = "Age group", ylab = "LM statistics",
-  main = expression(maxLM[o]), boundary = list(col = 1, lty = 2))
 @
 \end{figure}
 \end{frame}
+
+
 \end{document}
