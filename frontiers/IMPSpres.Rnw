@@ -132,10 +132,43 @@ maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
 
 \begin{frame}
 \frametitle{Problem Scenario}
+\begin{itemize}
+  \item
+ \emph{Data:} The data consist of responses to a gratitude scale from $n=1401$ youth 
+ aged 10--19 years, dividing into six age groups: 10-11, 12-13, 14,
+ 15, 16, 17-19. 
+  \item
+\emph{Question:} The researcher is interested in whether the scales 
+were measurement invariant across these age groups.  
+\end{itemize}
 
 \end{frame}
 %--------------------------------------------------------------------------
-
+\begin{frame}
+  \frametitle{Similar Problem Scenarios and Generalization}
+  \begin{itemize}
+    \item Whether model parameter holds for people with different
+      income level, grade level, motivation level, etc.  
+    \item In general, the problem is whether measurement invariance
+      hypothesis holds with an auxilliary ordinal variable. 
+    \end{itemize}
+\end{frame}
+%--------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Possible Solution}
+\begin{itemize}
+\item Likelihood Ratio Test(LRT) for full model and reduced model(s).
+  \begin{itemize}
+    \item Ignore the nature of ordinal variable, treat it as
+      categorical varaible. 
+    \item Sensitive to sample size. Rejecte the reduced model(s) too often.
+    \item Rather tedious and time consuming to fit and compare all possible
+      models. e.g, for testing one parameter, you need to fit $*2^{m-1}$ models,
+      $m$ is the level of ordinal variable.
+    \end{itemize}
+\item Score-based Tests w.r.t. ordinal variable. 
+\end{itemize}
+  \end{frame}
 \begin{frame}
 \frametitle{Overview} 
 % Table of contents slide, comment this block out to remove it
@@ -146,6 +179,80 @@ maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
 \end{frame}
 %--------------------------------------------------------------------------
 \section{Theoretical Background}
+\begin{frame}
+  \frametitle{Score for Each Observation}
+\begin{equation}
+\label{eq:score}
+s(\theta;x_{i}) = \left (
+  \frac{\partial \ell(\theta;x_{i})}{\partial \theta_{1}}, \dots,
+  \frac{\partial \ell(\theta;x_{i})}{\partial \theta_{k}} \right
+  )^\top,\ i=1,\ldots,n,
+\end{equation} 
+\scriptsize{where $\ell(\theta; x_i)$ is the likelihood associated with individual
+$i$ and $\theta$ is a $k$-dimensional parameter vector. The corresponding
+maximum likelihood estimate $\hat{\theta}$ solves the first order condition:
+$\sum_{i = 1}^n s(\hat \theta;x_{i}) = 0$.}  
+\end{frame}
+%--------------------------------------------------------------------------
+
+\begin{frame}
+  \frametitle{Decorrelate and Order Cumulative Score}
+To formalize these ideas, we define a suitably scaled cumulative sum of the 
+ordered scores.  This can be written as
+\begin{equation} 
+    \label{eq:cumscore}
+  {\bm B}(t; \hat {\bm \theta}) ~=~ \hat {\bm I}^{-1/2} n^{-1/2}
+    \sum_{i = 1}^{\lfloor n \cdot t \rfloor} {\bm s}(\hat {\bm \theta}; x_{(i)})
+  \qquad (0 \le t \le 1)
+\end{equation}
+\scriptsize{where $\hat{\bm I}$ is an estimate of the information matrix, $\lfloor
+nt \rfloor$ is the integer part of $nt$, and $x_{(i)}$ reflects the individual 
+with the $i$-thsmallest value of the auxiliary variable $V$.} 
+  \end{frame}
+%--------------------------------------------------------------------------
+\begin{frame}
+  \frametitle{}
+  \begin{itemize}
+   \item  Under the hypothesis of measurement invariance, a central limit theorem can be
+   used to show that the fluctuation of the above cumulative sum follows a
+   Brownian bridge.
+   \item This result allows us to calculate $p$-values and
+   critical values for test statistics under the hypothesis of
+   measurement invariance.
+  \end{itemize}
+ \end{frame}
+%--------------------------------------------------------------------------  
+ \begin{frame}
+   \frametitle{Statistics Based on Decorrelated and Ordered Socre}
+   Multiple test statistics are available, depending on how one
+summarizes the behavior of the cumulative sum of scores. Below shows
+ two statistics for ordinal auxiliary variable with $m$ levels,  
+
+\scriptsize{\begin{eqnarray}
+    \label{eq:wdm}
+      \mathit{WDM}_o & = & \max_{i \in \{i_1, \dots, i_{m-1} \}} ~
+      \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1/2}      
+                             \max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} |\\
+    \label{eq:maxlmo}
+      \max \mathit{LM}_o & = & \max_{i \in \{i_1, \dots, i_{m-1} \}} ~
+                             \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1}
+                             \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2
+\end{eqnarray}}
+where $i_{\ell}=\lfloor n \cdot t_{\ell} \rfloor$ $(\ell=1,\ldots,m-1)$.
+   \end{frame}
+%--------------------------------------------------------------------------  
+\begin{frame}
+  \frametitle{Visual Explanation of the Score-based Test for ordinal
+    auxillary varaible.}
+$$\bordermatrix{ \text{$B$}& \theta_{1} & \theta_{2} & \ldots &\theta_{k}\cr
+                x_{1}&  1.32  & -4.32 & \ldots & -2.34\cr
+                x_{1}&  3.37 & 8.32 & \ldots & \textcolor{red}{63.45}\cr
+                x_{..}& \vdots & \vdots & \vdots & \vdots\cr
+                x_{m}&  0 & 0 & \ldots & 0\cr
+                x_{m}& 0     &   0     & \ldots & 0}$$
+  
+  \end{frame}
+   
 \section{Simulation}
 \subsection{Violation Parameter is IN the Model}
 \begin{frame}
@@ -438,8 +545,21 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 \end{figure}
 \end{frame}
 
-
+%--------------------------------------------------------------------------
 \section{Conclusion}
+
+\begin{frame}
+  \frametitle{Conclusion based on Simulation Studies}
+ \begin{itemize}
+   \item
+      The ordinal test statistic proposed have relatively-high power for detecting measurement 
+      invariance violation parameter specifically that are monotonic with the auxiliary ordinal variable. 
+   \item This specificity feature is robust as long as the violation parameter is 
+     included in the testing model.
+   \item The use of these tests is convenient without changing the focal psychometric model.
+   \end{itemize}
+\end{frame}
+%--------------------------------------------------------------------------
 \section{Application}
 \begin{frame}[fragile]
 \frametitle{Procedures of Application}
@@ -460,7 +580,7 @@ yg <- YouthGratitude[compcases, ]
 \frametitle{Procedures of Application}
 \begin{enumerate}[2.]
   \suite
-\item Fit your model
+\item Fit your model:no need to comparing various models.
 \end{enumerate}
  <<modeest,eval=FALSE>>=
  library(lavaan)
