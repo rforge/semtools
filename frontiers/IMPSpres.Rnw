@@ -134,12 +134,14 @@ maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
 \frametitle{Problem Scenario}
 \begin{itemize}
   \item
- \emph{Data:} The data consist of responses to a gratitude scale from $n=1401$ youth 
+ \emph{Data:} \\
+ The data consist of responses to a gratitude scale from $n=1401$ youth 
  aged 10--19 years, dividing into six age groups: 10-11, 12-13, 14,
  15, 16, 17-19. 
   \item
-\emph{Question:} The researcher is interested in whether the scales 
-were measurement invariant across these age groups.  
+\emph{Question:} \\
+The researcher is interested in whether the scale
+is measurement invariant across these age groups.  
 \end{itemize}
 
 \end{frame}
@@ -147,10 +149,10 @@ were measurement invariant across these age groups.
 \begin{frame}
   \frametitle{Similar Problem Scenarios and Generalization}
   \begin{itemize}
-    \item Whether model parameter holds for people with different
+    \item Whether model parameter(s) hold(s) for people with different
       income level, grade level, motivation level, etc.  
-    \item In general, the problem is whether measurement invariance
-      hypothesis holds with an auxilliary ordinal variable. 
+    \item In general, the problem is whether measurement invariance(M.I.)
+      hypothesis holds with respect to an auxiliary ordinal variable. 
     \end{itemize}
 \end{frame}
 %--------------------------------------------------------------------------
@@ -163,8 +165,8 @@ were measurement invariant across these age groups.
       categorical varaible. 
     \item Sensitive to sample size. Rejecte the reduced model(s) too often.
     \item Rather tedious and time consuming to fit and compare all possible
-      models. e.g, for testing one parameter, you need to fit $*2^{m-1}$ models,
-      $m$ is the level of ordinal variable.
+      models. e.g, for testing one parameter, you need to fit $2^{m-1}$ 
+      models, $m$ is the level of ordinal variable.
     \end{itemize}
 \item Score-based Tests w.r.t. ordinal variable. 
 \end{itemize}
@@ -186,36 +188,46 @@ were measurement invariant across these age groups.
 s(\theta;x_{i}) = \left (
   \frac{\partial \ell(\theta;x_{i})}{\partial \theta_{1}}, \dots,
   \frac{\partial \ell(\theta;x_{i})}{\partial \theta_{k}} \right
-  )^\top,\ i=1,\ldots,n,
+  ),\ i=1,\ldots,n,
 \end{equation} 
-\scriptsize{where $\ell(\theta; x_i)$ is the likelihood associated with individual
+
+\vspace{0.3in}
+where $\ell(\theta; x_i)$ is the likelihood associated with individual
 $i$ and $\theta$ is a $k$-dimensional parameter vector. The corresponding
 maximum likelihood estimate $\hat{\theta}$ solves the first order condition:
-$\sum_{i = 1}^n s(\hat \theta;x_{i}) = 0$.}  
+$\sum_{i = 1}^n s(\hat \theta;x_{i}) = 0$. 
 \end{frame}
 %--------------------------------------------------------------------------
 
 \begin{frame}
-  \frametitle{Decorrelate and Order Cumulative Score}
-To formalize these ideas, we define a suitably scaled cumulative sum of the 
-ordered scores.  This can be written as
+  \frametitle{Cumulative Sum Score: Decorrelate and Order}
 \begin{equation} 
     \label{eq:cumscore}
   {\bm B}(t; \hat {\bm \theta}) ~=~ \hat {\bm I}^{-1/2} n^{-1/2}
     \sum_{i = 1}^{\lfloor n \cdot t \rfloor} {\bm s}(\hat {\bm \theta}; x_{(i)})
   \qquad (0 \le t \le 1)
 \end{equation}
-\scriptsize{where $\hat{\bm I}$ is an estimate of the information matrix, $\lfloor
-nt \rfloor$ is the integer part of $nt$, and $x_{(i)}$ reflects the individual 
-with the $i$-thsmallest value of the auxiliary variable $V$.} 
+
+\vspace{0.3in}
+where $\hat{\bm I}$ is an estimate of the information matrix, $\lfloor
+nt \rfloor$ is the integer part of $nt$, $t$ is the cumulative proportion 
+of $n$, and $x_{(i)}$ reflects the 
+individual with the $i$-th smallest value of the auxiliary variable $V$. 
   \end{frame}
 %--------------------------------------------------------------------------
 \begin{frame}
-  \frametitle{}
+  \frametitle{Convergence Distribution}
   \begin{itemize}
-   \item  Under the hypothesis of measurement invariance, a central limit theorem can be
-   used to show that the fluctuation of the above cumulative sum follows a
-   Brownian bridge.
+   \item  Under the hypothesis of measurement invariance, a central limit 
+     theorem can be
+   used to show that the fluctuation of the above cumulative sum score
+   matrix ${\bm B}(\cdot; \hat {\bm \theta})$ converge in distribution to a 
+   k-dimensional Brownian bridge ${\bm B}^{0}(\cdot)$.
+   \begin{equation}
+     \label{eq:converge}
+    {\bm B}(\cdot; \hat {\bm \theta}) ~\overset{d}
+        {\rightarrow}~ {\bm B}^{0}(\cdot),
+   \end{equation}
    \item This result allows us to calculate $p$-values and
    critical values for test statistics under the hypothesis of
    measurement invariance.
@@ -223,7 +235,7 @@ with the $i$-thsmallest value of the auxiliary variable $V$.}
  \end{frame}
 %--------------------------------------------------------------------------  
  \begin{frame}
-   \frametitle{Statistics Based on Decorrelated and Ordered Socre}
+   \frametitle{Statistics Based on Cumulative Sum Socre}
    Multiple test statistics are available, depending on how one
 summarizes the behavior of the cumulative sum of scores. Below shows
  two statistics for ordinal auxiliary variable with $m$ levels,  
@@ -235,26 +247,43 @@ summarizes the behavior of the cumulative sum of scores. Below shows
                              \max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} |\\
     \label{eq:maxlmo}
       \max \mathit{LM}_o & = & \max_{i \in \{i_1, \dots, i_{m-1} \}} ~
-                             \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1}
-                             \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2
+        \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1}
+          \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2
 \end{eqnarray}}
-where $i_{\ell}=\lfloor n \cdot t_{\ell} \rfloor$ $(\ell=1,\ldots,m-1)$.
+where $i_{\ell}=\lfloor n \cdot t_{\ell} \rfloor$,
+$(t_{ell}$ is the cumulative proportions associated with level $\ell$, 
+($\ell=1,\ldots,m-1)$.
    \end{frame}
-%--------------------------------------------------------------------------  
+%-------------------------------------------------------------------------- 
 \begin{frame}
-  \frametitle{Visual Explanation of the Score-based Test for ordinal
-    auxillary varaible.}
-$$\bordermatrix{ \text{$B$}& \theta_{1} & \theta_{2} & \ldots &\theta_{k}\cr
+\frametitle{What If the Auxiliary Variable is Indeed Categorical}
+\begin{equation}
+    \label{eq:lmuo}
+     \mathit{LM}_{uo} = \sum_{\ell = 1, \dots, m} \sum_{j = 1, \dots, k}
+    \left( {\bm B}(\hat {\bm \theta})_{i_\ell j} - {\bm B}
+      (\hat {\bm \theta})_{i_{\ell - 1}j} \right)^2,
+\end{equation}
+
+\vspace{0.3in}
+This statistic is asymptotically equivalent to the likelihood
+ratio test statistic but only requires estimation of only one model 
+(the reduced model).
+ \end{frame}
+%--------------------------------------------------------------------------
+\begin{frame}
+  \frametitle{Visual Explanation of the Score-based Test w.r.t. ordinal
+    auxiliary variable.}
+$$\bordermatrix{\text{}& \theta_{1} & \theta_{2} & \ldots &\theta_{k}\cr
                 x_{1}&  1.32  & -4.32 & \ldots & -2.34\cr
-                x_{1}&  3.37 & 8.32 & \ldots & \textcolor{red}{63.45}\cr
+                x_{2}&  3.37 & 8.32 & \ldots & \textcolor{red}{63.45}\cr
                 x_{..}& \vdots & \vdots & \vdots & \vdots\cr
-                x_{m}&  0 & 0 & \ldots & 0\cr
-                x_{m}& 0     &   0     & \ldots & 0}$$
+                x_{m-1}&  12.34 & 13.32 & \ldots & 6.89\cr
+                x_{m}& 0     &   0     & \ldots & 0} $$
   
   \end{frame}
    
 \section{Simulation}
-\subsection{Violation Parameter is IN the Model}
+\subsection{M.I. Violation Parameter is IN the Model}
 \begin{frame}
  \begin{figure}
     \caption{Model used for the simulation.}
@@ -344,7 +373,22 @@ $$\bordermatrix{ \text{$B$}& \theta_{1} & \theta_{2} & \ldots &\theta_{k}\cr
 \end{tikzpicture}}
 \end{figure}
 \end{frame}
-
+%--------------------------------------------------------------------------
+\begin{frame}
+  \frametitle{Simulation Setup}
+  Power and Type I error were examined across the following conditions.
+ \begin{itemize}
+   \item Three sample sizes ($n=120,\textcolor{red}{480},960$), 
+   \item Three numbers of categories ($m=4,8,12$), 
+   \item Violation magnitude: $d$ times the parameters' asymptotic 
+     standard errors (scaled by $\sqrt n$), with $d=0,0.25,0.5,...,4$ 
+   \item Violation Level: began at level $1+m/2$ of the auxiliary variable 
+         $V$
+ \end{itemize}
+   Statistics $\mathit{WDM}_o$, $\max \mathit{LM}_o$, $\mathit{LM}_{uo}$ were 
+   examined.
+\end{frame}
+%--------------------------------------------------------------------------
 \begin{frame}
 \begin{figure}
 \tiny{\caption{M.I.violation parameter $\lambda_{11}$.  Testing
@@ -375,7 +419,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
 \begin{frame}
 \begin{figure}
 \tiny{\caption{M.I.violation parameter $\lambda_{11}$.  Testing
-    parmaeter is $\psi_{11} \ldots \psi_{66}, \sigma_{12}$ and
+    parameters are $\psi_{11} \ldots \psi_{66}, \sigma_{12}$ and
     $\mu_{11} \ldots \mu_{66}$.}}
 \label{fig:sim12res}
 <<sim12res, fig=TRUE, height=5, width=9, echo=FALSE>>=
@@ -402,7 +446,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
 \end{frame}
 %--------------------------------------------------------------------------
 
-\subsection{Violation Parameter is OUT the Model}
+\subsection{M.I. Violation Parameter is OUT the Model}
 \begin{frame}
 \begin{figure}
     \caption{Model used for the simulation.}
@@ -529,7 +573,7 @@ loading. Testing parameters are $\sigma_{12}$ and $\mu_{11}$.}}
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
-       subset = (parms == "extra" & 
+       subset = (parms == "extra" &
 	 pars %in% c("Covariance", "Intercept1") 
                  & diff %% 0.5 == 0),
        type = "b", xlab = "Violation Magnitude (Unmodeled Loading)",
@@ -552,11 +596,14 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
   \frametitle{Conclusion based on Simulation Studies}
  \begin{itemize}
    \item
-      The ordinal test statistic proposed have relatively-high power for detecting measurement 
-      invariance violation parameter specifically that are monotonic with the auxiliary ordinal variable. 
-   \item This specificity feature is robust as long as the violation parameter is 
-     included in the testing model.
-   \item The use of these tests is convenient without changing the focal psychometric model.
+      The ordinal test statistic proposed have relatively-high power 
+      for detecting measurement 
+      invariance violation parameter specifically that are monotonic 
+      with the auxiliary ordinal variable. 
+   \item This specificity feature is robust as long as the violation 
+     parameter is included in the testing model.
+   \item The use of these tests is convenient without changing the 
+     focal psychometric model.
    \end{itemize}
 \end{frame}
 %--------------------------------------------------------------------------
