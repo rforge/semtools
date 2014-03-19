@@ -200,7 +200,7 @@ $\sum_{i = 1}^n s(\hat \theta;x_{i}) = 0$.
 %--------------------------------------------------------------------------
 
 \begin{frame}
-  \frametitle{Cumulative Sum Score: Decorrelate and Order}
+  \frametitle{Empirical Cumulative Sum Score: Decorrelate and Order}
 \begin{equation} 
     \label{eq:cumscore}
   {\bm B}(t; \hat {\bm \theta}) ~=~ \hat {\bm I}^{-1/2} n^{-1/2}
@@ -220,7 +220,8 @@ individual with the $i$-th smallest value of the auxiliary variable $V$.
   \begin{itemize}
    \item  Under the hypothesis of measurement invariance, a central limit 
      theorem can be
-   used to show that the fluctuation of the above cumulative sum score
+   used to show that the fluctuation of the above empirical cumulative sum 
+   score
    matrix ${\bm B}(\cdot; \hat {\bm \theta})$ converge in distribution to a 
    k-dimensional Brownian bridge ${\bm B}^{0}(\cdot)$.
    \begin{equation}
@@ -235,10 +236,10 @@ individual with the $i$-th smallest value of the auxiliary variable $V$.
  \end{frame}
 %--------------------------------------------------------------------------  
  \begin{frame}
-   \frametitle{Statistics Based on Cumulative Sum Socre}
+   \frametitle{Statistics Based on Empirical Cumulative Sum Socre}
    Multiple test statistics are available, depending on how one
-summarizes the behavior of the cumulative sum of scores. Below shows
- two statistics for ordinal auxiliary variable with $m$ levels,  
+summarizes the behavior of the empirical cumulative sum of scores. Below 
+shows two statistics for ordinal auxiliary variable with $m$ levels,  
 
 \scriptsize{\begin{eqnarray}
     \label{eq:wdm}
@@ -251,7 +252,7 @@ summarizes the behavior of the cumulative sum of scores. Below shows
           \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2
 \end{eqnarray}}
 where $i_{\ell}=\lfloor n \cdot t_{\ell} \rfloor$,
-$(t_{ell}$ is the cumulative proportions associated with level $\ell$, 
+$t_{\ell}$ is the cumulative proportions associated with level $\ell$, 
 ($\ell=1,\ldots,m-1)$.
    \end{frame}
 %-------------------------------------------------------------------------- 
