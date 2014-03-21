@@ -200,7 +200,8 @@ $\sum_{i = 1}^n s(\hat \theta;x_{i}) = 0$.
 %--------------------------------------------------------------------------
 
 \begin{frame}
-  \frametitle{Empirical Cumulative Sum Score: Decorrelate and Order}
+  \frametitle{Empirical Cumulative Sum Score: Decorrelate and
+    Systematic Order}
 \begin{equation} 
     \label{eq:cumscore}
   {\bm B}(t; \hat {\bm \theta}) ~=~ \hat {\bm I}^{-1/2} n^{-1/2}
