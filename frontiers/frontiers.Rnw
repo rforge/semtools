@@ -176,7 +176,10 @@ $\sum_{i = 1}^n s(\hat \theta;x_{i}) = 0$.
 
 To verbally describe Equation~\eqref{eq:score}, each
 individual has $k$ scores describing the extent to which the fitted
-model describes that particular individual.  We can roughly interpret
+model describes that particular individual.  
+These scores are similar to residuals \cite<and, in fact, the tests
+can be applied directly to residuals in other contexts; see>{zeihor07}:
+we can roughly interpret
 scores near zero as providing a ``good'' description of an individual,
 with scores far from zero providing a ``bad'' description of an
 individual.  This is only a rough interpretation as, even when measurement
@@ -338,7 +341,10 @@ we test for measurement invariance across these age groups.
 For illustrative purposes, we conduct multiple tests and
 compare them to the traditional significance level of 0.05.  In
 practice, however, one should generally adjust the significance level
-for the number of tests carried out.
+for the number of tests carried out.  Additionally, because
+measurement invariance researchers often have large sample sizes,
+cross-validation methods can be useful to help verify the test
+results.
 
 We focus on measurement invariance of the factor loadings associated with 
 the GQ-6 scale, using a one-factor model.  This scale consists of five
@@ -1182,10 +1188,11 @@ least squares \cite<e.g.,>{broarm95}.  Score calculation for these alternative
 discrepancy functions has not been implemented (to our knowledge), though the
 calculation could be implemented.  Test statistic calculation and
 inference would then proceed in exactly the same manner as the calculation and
-inference illustrated in this paper.
+inference illustrated in this paper.  Study of the proposed tests'
+application to larger SEMs is warranted.
 
 In addition to alternative fit functions, the tests can be extended to other
-models estimated via ML.  Of primary interest to the topic of measurement
+models estimated via ML.  Of primary relevance to the topic of measurement
 invariance, the tests can be extended to item response models to examine
 differential item functioning.  In particular, \citeA{strkop13} studied
 application of these tests to the Rasch model, using them as the basis of a
