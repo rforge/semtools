@@ -129,33 +129,163 @@ maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
 
 \frame{\titlepage}
 
-
 \begin{frame}
-\frametitle{Problem Scenario}
-\begin{itemize}
-  \item
- \emph{Data:} \\
- The data consist of responses to a gratitude scale from $n=1401$ youth 
- aged 10--19 years, dividing into six age groups: 10-11, 12-13, 14,
- 15, 16, 17-19. 
-  \item
-\emph{Question:} \\
-The researcher is interested in whether the scale
-is measurement invariant across these age groups.  
-\end{itemize}
-
+\frametitle{Outline} 
+% Table of contents slide, comment this block out to remove it
+\tableofcontents 
+% Throughout your presentation, if you choose to use \section{} and 
+%\subsection{} commands, these will automatically be printed on this slide 
+%as an overview of your presentation
 \end{frame}
 %--------------------------------------------------------------------------
 \begin{frame}
-  \frametitle{Similar Problem Scenarios and Generalization}
+\frametitle{Measurement Invariance}
   \begin{itemize}
-    \item Whether model parameter(s) hold(s) for people with different
-      income level, grade level, motivation level, etc.  
-    \item In general, the problem is whether measurement invariance(M.I.)
-      hypothesis holds with respect to an auxiliary ordinal variable. 
-    \end{itemize}
+    \item Measurement invariance: Sets of tests/items consistently
+      assigning scores across diverse groups of individuals.\\ \ \\
+    \item Notable examination of measurement invariance:
+      \begin{itemize}
+         \item SAT for different ethnic groups (Atkinson, 2001)
+         \item Gratitude for adolescents and adults (Froh JJ et al 2011)     
+      \end{itemize}
+  \end{itemize}
 \end{frame}
 %--------------------------------------------------------------------------
+\begin{frame}
+  \frametitle{Example: Grade 1, 2, 3 vs. Grade 4, 5, 6}
+ \begin{figure}
+    \label{fig:pathinmodeltheory}
+\resizebox{8.0cm}{!}{
+\begin{tikzpicture}
+[latent/.style={circle,draw=black!50,fill=white!20,thick,
+                inner sep=0pt, minimum width=20mm, minimum height=10mm},
+ manifest/.style={rectangle,draw=black!50,fill=white!20,thick,
+                inner sep=0pt,minimum width=20mm, minimum height=10mm},
+ error/.style={circle,draw=black!50,fill=white!20,thick,
+                inner sep=0pt, minimum width=10mm},
+ post/.style={->,shorten >=1pt,>=stealth',semithick},
+ postred/.style={->,shorten >=1pt,>=stealth',semithick,red},
+ postdashed/.style={->,shorten >=1pt,>=stealth',semithick,red,dashed},
+ sling/.style={<->,shorten >=1pt,>=stealth',shorten <=1pt,>=stealth',
+   auto,distance=20mm,semithick},
+ errorsling/.style={<->,shorten >=1pt,>=stealth',shorten <=1pt,>=stealth',
+   auto,distance=10mm,semithick}]
+
+
+
+%position objects.
+
+\node[latent] (VERBAL) at (0,4) {VERBAL};
+\node[latent] (MATH)   at (0,0) {MATH};
+
+\node[manifest] (SCALE1) at(5,6) {SCALE1};
+\node[manifest] (SCALE2) at (5,4.5) {SCALE2};
+\node[manifest] (SCALE3) at (5,3) {SCALE3};
+\node[manifest] (SCALE4) at(5,1) {SCALE4};
+\node[manifest] (SCALE5) at (5,-0.5) {SCALE5};
+\node[manifest] (SCALE6) at (5,-2) {SCALE6};
+
+\node[error] (E1) at (7,6) {E1};
+\node[error] (E2) at (7,4.5) {E2};
+\node[error] (E3) at (7,3) {E3};
+\node[error] (E4) at (7,1) {E4};
+\node[error] (E5) at (7,-0.5) {E5};
+\node[error] (E6) at (7,-2) {E6};
+
+%arrows, slings and texts
+\node[latent] (VERBAL) at (0,4) {VERBAL}
+   edge [postred] node[above=0.01cm,text width=4cm]
+   {\scriptsize{$\lambda_{11}=4.92/7.92$}} (SCALE1)
+   edge [post] node[above=0.001mm,text width=2cm]
+   {\scriptsize{$\lambda_{21}=2.96$}} (SCALE2)
+   edge [post] node[above=0.1cm,text width=2cm]
+   {\scriptsize{$\lambda_{31}=5.96$}} (SCALE3)
+   edge [sling,bend right=100] node[auto,swap]{1}(VERBAL.-180)
+   edge [sling,bend right=70] node[auto,swap]
+   {$\phi_{12}=-0.48$}(MATH)  ;
+
+\node[latent] (MATH) at (0,0) {MATH}
+   edge [post] node[above=0.01cm,text width=2cm]
+   {\scriptsize{$\lambda_{42}=3.24$}}(SCALE4)
+   edge [post] node[above=0.01cm,text width=2cm]
+   {\scriptsize{$\lambda_{52}=4.32$}}(SCALE5)
+   edge [post] node[above=0.25cm,text width=2cm]
+   {\scriptsize{$\lambda_{62}=7.21$}}(SCALE6)
+   edge [sling,bend right=100] node[auto,swap]{1}(MATH.270);
+
+\node[error] (E1) at (7,6) {E1}
+   edge [post] node[auto,swap]{\small{1}}(SCALE1)
+   edge [errorsling, bend right=100]node[right=0.1,text width=2cm]
+   {\scriptsize{$\psi_{11}=26.77$}} (E1.45);
+\node[error] (E2) at (7,4.5) {E2}
+   edge [post] node[auto,swap]{\small{1}} (SCALE2)
+   edge [errorsling, bend right=100] node[right=0.1,text width=2cm]
+   {\scriptsize{$\psi_{22}=13.01$}}(E2.45);
+\node[error] (E3) at (7,3) {E3}
+   edge [post] node[auto,swap]{\small{1}}(SCALE3)
+   edge [errorsling, bend right=100] node[right=0.1,text width=2cm]
+   {\scriptsize{$\psi_{33}=30.93$}}(E3.45);
+\node[error] (E4) at (7,1) {E4}
+   edge [post] node[auto,swap]{\small{1}}(SCALE4)
+   edge [errorsling, bend right=100] node[right=0.1,text width=2cm]
+   {\scriptsize{$\psi_{44}=3.17$}}(E4.45);
+\node[error] (E5) at (7,-0.5) {E5}
+   edge [post] node[auto,swap]{\small{1}}(SCALE5)
+   edge [errorsling, bend right=100] node[right=0.1,text width=2cm]
+   {\scriptsize{$\psi_{55}=8.82$}} (E5.45);
+\node[error] (E6) at (7,-2) {E6}
+   edge [post] node[auto,swap]{\small{1}}(SCALE6)
+   edge [errorsling, bend right=100] node[right=0.1,text width=2cm]
+   {\scriptsize{$\psi_{66}=22.5$}}(E6.45);
+\end{tikzpicture}}
+\end{figure}
+\end{frame}
+%--------------------------------------------------------------------------
+\begin{frame}
+  \frametitle{Hypotheses}
+ Hypothesis of  measurement invariance and alternative:
+      \begin{center}
+          $H_0: \bm{\theta}_i = \bm{\theta}_0$, \\
+          $H_1: \bm{\theta}_i = \bm{\theta}_{(v_{i})}$\\
+      \end{center}
+ 
+      $\bm{\theta}_i = (\lambda_{i, 11}, \dots, \psi_{i, 11}, 
+      \dots, \varphi_{i, 12})^\top$
+      is the full $k$-dimensional parameter vector for individual
+      $i$, $i=1,\ldots,n$. 
+      
+      \vspace{0.3in}
+      $V$ can be continuous, \textcolor{red}{ordinal} or 
+      categorical variable.
+
+\end{frame}
+%--------------------------------------------------------------------------
+%\begin{frame}
+%\frametitle{Problem Scenario}
+%\begin{itemize}
+%  \item
+% \emph{Data:} \\
+% The data consist of responses to a gratitude scale from $n=1401$ youth 
+% aged 10--19 years, dividing into six age groups: 10-11, 12-13, 14,
+% 15, 16, 17-19. 
+%  \item
+%\emph{Question:} \\
+%The researcher is interested in whether the scale
+%is measurement invariant across these age groups.  
+%\end{itemize}
+%
+%\end{frame}
+%%--------------------------------------------------------------------------
+%\begin{frame}
+%  \frametitle{Similar Problem Scenarios and Generalization}
+%  \begin{itemize}
+%    \item Whether model parameter(s) hold(s) for people with different
+%      income level, grade level, motivation level, etc.  
+%    \item In general, the problem is whether measurement invariance(M.I.)
+%      hypothesis holds with respect to an auxiliary ordinal variable. 
+%    \end{itemize}
+%\end{frame}
+%%--------------------------------------------------------------------------
 \begin{frame}
 \frametitle{Possible Solution}
 \begin{itemize}
@@ -170,38 +300,42 @@ is measurement invariant across these age groups.
     \end{itemize}
 \item Score-based Tests w.r.t. ordinal variable. 
 \end{itemize}
-  \end{frame}
-\begin{frame}
-\frametitle{Overview} 
-% Table of contents slide, comment this block out to remove it
-\tableofcontents 
-% Throughout your presentation, if you choose to use \section{} and 
-%\subsection{} commands, these will automatically be printed on this slide 
-%as an overview of your presentation
 \end{frame}
-%--------------------------------------------------------------------------
+
+
+%  --------------------------------------------------------------------------
 \section{Theoretical Background}
 \begin{frame}
-  \frametitle{Score for Each Observation}
-\begin{equation}
-\label{eq:score}
-s(\theta;x_{i}) = \left (
-  \frac{\partial \ell(\theta;x_{i})}{\partial \theta_{1}}, \dots,
-  \frac{\partial \ell(\theta;x_{i})}{\partial \theta_{k}} \right
-  ),\ i=1,\ldots,n,
-\end{equation} 
-
-\vspace{0.3in}
-where $\ell(\theta; x_i)$ is the likelihood associated with individual
-$i$ and $\theta$ is a $k$-dimensional parameter vector. The corresponding
-maximum likelihood estimate $\hat{\theta}$ solves the first order condition:
-$\sum_{i = 1}^n s(\hat \theta;x_{i}) = 0$. 
+  \frametitle{Score-based Tests}
+  \begin{itemize}
+    \item The score-based tests (Edgar Merkle and Achim Zeileis, 2013) 
+      rely on first derivatives of
+      the model's log-likelihood function.
+    \item We consider individual terms ({\em scores}) of the gradient.  
+      These scores tell us how well a particular parameter describes a 
+      particular individual.
+  % Equation of gradient vs scores for individuals
+  \end{itemize}
+\begin{eqnarray*}
+  \displaystyle\sum_{i=1}^{n} s(\hat{\bm{\theta}} ; \bm{x}_i) =
+  {\bm 0},\text{ where} \\
+ \\
+  s(\hat{{\bm \theta}}; \bm{x}_i) = \frac{\partial}{\partial \bm{\theta}} 
+  \log
+\text{L}({\bm{x}}_i, {\bm{\theta}}) \big |_{\bm{\theta} = \widehat{\bm{\theta}}}
+\end{eqnarray*}
 \end{frame}
 %--------------------------------------------------------------------------
 
 \begin{frame}
   \frametitle{Empirical Cumulative Sum Score: Decorrelate and
     Systematic Order}
+ We need a way to aggregate scores across people so that we
+      can draw some general conclusions.
+      \begin{itemize}
+        \item Decorrelate gradient correlations.
+        \item Order individuals by an auxiliary variable. 
+      \end{itemize}
 \begin{equation} 
     \label{eq:cumscore}
   {\bm B}(t; \hat {\bm \theta}) ~=~ \hat {\bm I}^{-1/2} n^{-1/2}
@@ -209,11 +343,10 @@ $\sum_{i = 1}^n s(\hat \theta;x_{i}) = 0$.
   \qquad (0 \le t \le 1)
 \end{equation}
 
-\vspace{0.3in}
+\vspace{0.2in}
 where $\hat{\bm I}$ is an estimate of the information matrix, $\lfloor
 nt \rfloor$ is the integer part of $nt$, $t$ is the cumulative proportion 
-of $n$, and $x_{(i)}$ reflects the 
-individual with the $i$-th smallest value of the auxiliary variable $V$. 
+of $n$, $t \in (1/n, n)$.
   \end{frame}
 %--------------------------------------------------------------------------
 \begin{frame}
@@ -239,38 +372,44 @@ individual with the $i$-th smallest value of the auxiliary variable $V$.
  \begin{frame}
    \frametitle{Statistics Based on Empirical Cumulative Sum Socre}
    Multiple test statistics are available, depending on how one
-summarizes the behavior of the empirical cumulative sum of scores. Below 
-shows two statistics for ordinal auxiliary variable with $m$ levels,  
+summarizes the behavior of the empirical cumulative sum of scores. 
+\begin{itemize}
+\item Statistics for ordianl variable: \\
+Weighted Double Maximum ordinal ($\mathit{WDM}_o$),\\
+maximum Lagrange multiplier ordinal ($\max \mathit{LM}_o$). \\
+\item Statistics for categorical variable:\\
+$\mathit{LM}_{uo}$ \\
+\end{itemize}
+\end{frame}
+%\scriptsize{\begin{eqnarray}
+%    \label{eq:wdm}
+%      \mathit{WDM}_o & = & \max_{i \in \{i_1, \dots, i_{m-1} \}} ~
+%      \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1/2}      
+%                             \max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} |\\
+%    \label{eq:maxlmo}
+%      \max \mathit{LM}_o & = & \max_{i \in \{i_1, \dots, i_{m-1} \}} ~
+%        \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1}
+%          \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2
+%\end{eqnarray}}
+%where $i_{\ell}=\lfloor n \cdot t_{\ell} \rfloor$,
+%$t_{\ell}$ is the cumulative proportions associated with level $\ell$, 
+%($\ell=1,\ldots,m-1)$.
 
-\scriptsize{\begin{eqnarray}
-    \label{eq:wdm}
-      \mathit{WDM}_o & = & \max_{i \in \{i_1, \dots, i_{m-1} \}} ~
-      \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1/2}      
-                             \max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} |\\
-    \label{eq:maxlmo}
-      \max \mathit{LM}_o & = & \max_{i \in \{i_1, \dots, i_{m-1} \}} ~
-        \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1}
-          \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2
-\end{eqnarray}}
-where $i_{\ell}=\lfloor n \cdot t_{\ell} \rfloor$,
-$t_{\ell}$ is the cumulative proportions associated with level $\ell$, 
-($\ell=1,\ldots,m-1)$.
-   \end{frame}
 %-------------------------------------------------------------------------- 
-\begin{frame}
-\frametitle{What If the Auxiliary Variable is Indeed Categorical}
-\begin{equation}
-    \label{eq:lmuo}
-     \mathit{LM}_{uo} = \sum_{\ell = 1, \dots, m} \sum_{j = 1, \dots, k}
-    \left( {\bm B}(\hat {\bm \theta})_{i_\ell j} - {\bm B}
-      (\hat {\bm \theta})_{i_{\ell - 1}j} \right)^2,
-\end{equation}
-
-\vspace{0.3in}
-This statistic is asymptotically equivalent to the likelihood
-ratio test statistic but only requires estimation of only one model 
-(the reduced model).
- \end{frame}
+%begin{frame}
+%frametitle{What If the Auxiliary Variable is Indeed Categorical}
+%begin{equation}
+%   \label{eq:lmuo}
+%    \mathit{LM}_{uo} = \sum_{\ell = 1, \dots, m} \sum_{j = 1, \dots, k}
+%   \left( {\bm B}(\hat {\bm \theta})_{i_\ell j} - {\bm B}
+%     (\hat {\bm \theta})_{i_{\ell - 1}j} \right)^2,
+%end{equation}
+%
+%vspace{0.3in}
+%his statistic is asymptotically equivalent to the likelihood
+%atio test statistic but only requires estimation of only one model 
+%the reduced model).
+%\end{frame}
 %--------------------------------------------------------------------------
 \begin{frame}
   \frametitle{Visual Explanation of the Score-based Test w.r.t. ordinal
@@ -283,9 +422,31 @@ $$\bordermatrix{\text{}& \theta_{1} & \theta_{2} & \ldots &\theta_{k}\cr
                 x_{m}& 0     &   0     & \ldots & 0} $$
   
   \end{frame}
-   
+%-------------------------------------------------------------------------   
 \section{Simulation}
-\subsection{M.I. Violation Parameter is IN the Model}
+\begin{frame}
+  \frametitle{Simulation}
+  What is the tests' power of locating the M.I.violation parameter? 
+  \begin{itemize}
+   \item The M.I. violation parameter is included in the model(IN). 
+   \item The M.I. violation parameter is \emph{not} in the model(OUT). 
+  \end{itemize}
+\end{frame}
+%--------------------------------------------------------------------------
+\begin{frame}
+  \frametitle{Simulation Setup}
+ \begin{itemize}
+   \item Three sample sizes ($n=120,\textcolor{red}{480},960$), 
+   \item Three numbers of categories ($m=4,8,12$), 
+   \item Violation magnitude: $d$ times the parameters' asymptotic 
+     standard errors (scaled by $\sqrt n$), with $d=0,0.25,0.5,...,4$ 
+   \item Violation Level: began at level $1+m/2$ of the auxiliary variable 
+         $V$
+ \end{itemize}
+   Statistics $\mathit{WDM}_o$, $\max \mathit{LM}_o$, $\mathit{LM}_{uo}$ were 
+   examined.
+\end{frame}
+%--------------------------------------------------------------------------
 \begin{frame}
  \begin{figure}
     \caption{Model used for the simulation.}
@@ -376,21 +537,7 @@ $$\bordermatrix{\text{}& \theta_{1} & \theta_{2} & \ldots &\theta_{k}\cr
 \end{figure}
 \end{frame}
 %--------------------------------------------------------------------------
-\begin{frame}
-  \frametitle{Simulation Setup}
-  Power and Type I error were examined across the following conditions.
- \begin{itemize}
-   \item Three sample sizes ($n=120,\textcolor{red}{480},960$), 
-   \item Three numbers of categories ($m=4,8,12$), 
-   \item Violation magnitude: $d$ times the parameters' asymptotic 
-     standard errors (scaled by $\sqrt n$), with $d=0,0.25,0.5,...,4$ 
-   \item Violation Level: began at level $1+m/2$ of the auxiliary variable 
-         $V$
- \end{itemize}
-   Statistics $\mathit{WDM}_o$, $\max \mathit{LM}_o$, $\mathit{LM}_{uo}$ were 
-   examined.
-\end{frame}
-%--------------------------------------------------------------------------
+
 \begin{frame}
 \begin{figure}
 \tiny{\caption{M.I.violation parameter $\lambda_{11}$.  Testing
@@ -448,7 +595,6 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
 \end{frame}
 %--------------------------------------------------------------------------
 
-\subsection{M.I. Violation Parameter is OUT the Model}
 \begin{frame}
 \begin{figure}
     \caption{Model used for the simulation.}
@@ -543,8 +689,8 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
 %--------------------------------------------------------------------------
 \begin{frame}
 \begin{figure}
-\tiny{\caption{The parameter violating measurement invariance is the unmodeled
-loading. Testing parameters are $\lambda_{11}$ and $\psi_{11}$.}}
+\tiny{\caption{The parameter violating measurement invariance is the 
+    unmodeled loading. Testing parameters are $\lambda_{11}$ and $\psi_{11}$.}}
 \label{fig:sim21res}
 <<sim21res, fig=TRUE, height=5, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
@@ -568,8 +714,9 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 %--------------------------------------------------------------------------
 \begin{frame}
 \begin{figure}
-\tiny{\caption{The parameter violating measurement invariance is the unmodeled
-loading. Testing parameters are $\sigma_{12}$ and $\mu_{11}$.}}
+\tiny{\caption{The parameter violating measurement invariance is 
+    the unmodeled loading. Testing parameters are $\sigma_{12}$ 
+    and $\mu_{11}$.}}
 \label{fig:sim22res}
 <<sim22res, fig=TRUE, height=5, width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
@@ -610,6 +757,15 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 \end{frame}
 %--------------------------------------------------------------------------
 \section{Application}
+\begin{frame}
+  \frametitle{Application: Software Preparation}
+The tests can be carried out in R. Specifically, 
+\begin{itemize}
+\item Model estimation can be carried out in \emph{lavaan} package. 
+\item The test statistic and plot is got from \emph{strucchange} package.
+\end{itemize}
+\end{frame}
+%--------------------------------------------------------------------------
 \begin{frame}[fragile]
 \frametitle{Procedures of Application}
 \begin{enumerate}[1.]
@@ -663,10 +819,16 @@ wdmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
 sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
   functional = "WDMo", plot = TRUE, ylim = c(0, 3.2),
   xlab = "Age group", ylab = "Weighted test statistics",
-  main = expression(WDM[o]), boundary = list(col = 1, lty = 2))
+  main = expression(WDM[o]), boundary = list(col = "red", lty = 1))
 @
 \end{figure}
 \end{frame}
-
-
+%--------------------------------------------------------------------------
+\begin{frame}
+ \begin{itemize}
+ \item Thanks! 
+ \item Questions?
+ \end{itemize}
+\end{frame}
+%--------------------------------------------------------------------------
 \end{document}
