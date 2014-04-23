@@ -78,13 +78,13 @@ options(prompt = "R> ", continue = "+  ", digits = 3,
   useFancyQuotes = FALSE, show.signif.stars = FALSE)
 @
 
-Many of the papers in this special issue focus on the topic of approximate
+Some of the papers in this special issue focus on the topic of approximate
 measurement invariance: we know that strict hypotheses of measurement invariance
 do not hold exactly across different groups, and this should be reflected in
 corresponding tests of measurement invariance.  Under a Bayesian
-approach, we may utilize the idea of approximate invariance
-\cite<e.g.,>{muthen13}, whereby across-group equality constraints on
-parameters are replaced with informative prior distributions.  In this paper, we
+approach, we may implement the idea of approximate invariance
+\cite<e.g.,>{muthen13} by replacing across-group equality constraints on
+parameters with informative prior distributions.  In this paper, we
 describe an alternative approach: the development of test statistics that 
 are especially sensitive to violations that are monotonic w.r.t. the
 variable of interest (and 
@@ -110,7 +110,9 @@ models \cite{bauhus09,moldol10,pur02} and factor mixture models
 \cite{dolmaa98,lubmut05}.  These methods require estimation of a model
 of greater complexity, while the tests described in this paper work solely
 on the output of a traditional factor model \cite<see>[for
-further comparison of these methods]{MerZei13}.
+further comparison of these methods]{MerZei13}.  These methods all
+assume that the estimated model is correctly specified, save
+possibly for differences in parameter values between individuals.
 
 The family of tests described here have recently been applied
 to the study of measurement invariance \cite{MerZei13,MerFanZei}, though their
@@ -121,7 +123,10 @@ scenarios likely to be encountered in practice.  While the previous
 papers have described and studied the tests under ideal conditions, we
 focus here on two topics of interest to the applied researcher:
 software considerations for carrying out the tests, and test
-performance under model misspecification.
+performance under model misspecification.  The latter issue is
+particularly important because, in practice, all models are
+misspecified.  Hence, practically-useful tests of measurement
+invariance should be robust to model misspecification.
 %In order to fix the psychometric scale, we need to specify the violating parameter.  
 %Moreover, in practice model misspecification is an inevitable issue to a certain extent 
 %and may interfere with parameter invariance specificity. A family of tests derived from 
@@ -129,6 +134,7 @@ performance under model misspecification.
 %by measurement invariance violation. However, these tests have only been used to a limited 
 %type of parameter violation. It is this paper's intent to provide a detailed examination 
 %of the tests' performance under practical research scenarios. 
+
 In the following sections, we first briefly review the  theoretical framework of
 the proposed tests and provide a short tutorial illustrating the use of the
 tests in \proglang{R} \cite{R11}. Next, we study the tests' performance in simulations that mimic
@@ -347,9 +353,12 @@ cross-validation methods can be useful to help verify the test
 results.
 
 We focus on measurement invariance of the factor loadings associated with 
-the GQ-6 scale, using a one-factor model.  This scale consists of five
-items scored from 1--9.  While the ``age group'' variable against 
-which we are testing measurement invariance is best considered ordinal, 
+one of the scales in the dataset, the GQ-6 scale \cite{mccemm02}.  This
+scale consists of five Likert scale items (there is a sixth item that
+is omitted from analyses, following Froh et al.) with seven points
+each.  We fit a one-factor model to these items, examining whether the
+factor model parameters are invariant with respect to age group.  
+While the age group variable is best considered ordinal, 
 for demonstration we consider its treatment as categorical, continuous, and ordinal.  
 Each of these treatments is described below in a separate section.
 
