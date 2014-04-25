@@ -1226,10 +1226,24 @@ for evaluating the parameter instability tests. \proglang{R}~and both
 packages are freely available under the General Public License~2 from the
 Comprehensive \proglang{R} Archive Network at \url{http://CRAN.R-project.org/}.
 \proglang{R}~code for replication of our results is
-available at \url{http://semtools.R-Forge.R-project.org/}.
+available at \url{http://semtools.R-Forge.R-project.org/} and also in
+an online supplement to this article.
 
 
 \bibliography{refs}
+
+\section{Appendix}
+
+The accompanying zip file contains R code for replication of all
+analyses and simulations from the article.
+
+\begin{itemize}
+  \item mz-frontiers.R: Model estimation functions for simulations.
+  \item sim-frontiers.R: Functions for data generation, power
+    evaluation, and power summaries.
+  \item replication-frontiers.R: Code for the tutorial and
+    simulations, utilizing the other two files.
+\end{itemize}
 
 %% \section{Appendix}
 
