@@ -450,7 +450,7 @@ $$\bordermatrix{\text{}& \theta_{1} & \theta_{2} & \ldots &\theta_{k}\cr
 \begin{frame}
  \begin{figure}
     \caption{Model used for the simulation.}
-    \label{fig:pathinmodel}
+    \label{fig:pathinmodel1}
 \resizebox{8.0cm}{!}{
 \begin{tikzpicture}
 [latent/.style={circle,draw=black!50,fill=white!20,thick,
@@ -598,7 +598,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
 \begin{frame}
 \begin{figure}
     \caption{Model used for the simulation.}
-    \label{fig:pathinmodel}
+    \label{fig:pathinmodel2}
 \resizebox{8.0cm}{!}{
 \begin{tikzpicture}
 [latent/.style={circle,draw=black!50,fill=white!20,thick,
@@ -787,7 +787,7 @@ yg <- YouthGratitude[compcases, ]
   \suite
 \item Fit your model:no need to comparing various models.
 \end{enumerate}
- <<modeest,eval=FALSE>>=
+<<modeest,eval=FALSE>>=
  library(lavaan)
   restr <- cfa("f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
   data = yg, group = "agegroup", meanstructure = TRUE,
