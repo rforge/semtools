@@ -543,7 +543,7 @@ $$\bordermatrix{\text{}& \theta_{1} & \theta_{2} & \ldots &\theta_{k}\cr
 \tiny{\caption{M.I.violation parameter $\lambda_{11}$.  Testing
     parameters are $\lambda_{11}$ and $\lambda_{11} \ldots \lambda_{62}$.}}
 \label{fig:sim11res}
-<<sim11res, fig=TRUE, height=5, width=9, echo=FALSE>>=
+<<sim11res, fig.height=5, fig.width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim1$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
@@ -571,7 +571,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
     parameters are $\psi_{11} \ldots \psi_{66}, \sigma_{12}$ and
     $\mu_{11} \ldots \mu_{66}$.}}
 \label{fig:sim12res}
-<<sim12res, fig=TRUE, height=5, width=9, echo=FALSE>>=
+<<sim12res, fig.height=5, fig.width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim1$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
@@ -692,7 +692,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim1,
 \tiny{\caption{The parameter violating measurement invariance is the 
     unmodeled loading. Testing parameters are $\lambda_{11}$ and $\psi_{11}$.}}
 \label{fig:sim21res}
-<<sim21res, fig=TRUE, height=5, width=9, echo=FALSE>>=
+<<sim21res, fig.height=5, fig.width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
@@ -718,7 +718,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
     the unmodeled loading. Testing parameters are $\sigma_{12}$ 
     and $\mu_{11}$.}}
 \label{fig:sim22res}
-<<sim22res, fig=TRUE, height=5, width=9, echo=FALSE>>=
+<<sim22res, fig.height=5, fig.width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
 mykey <- simpleKey(levels(sim2$test), points = TRUE, lines = TRUE)
 xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
@@ -815,7 +815,7 @@ wdmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
 \begin{figure}
 \tiny{\caption{Fluctuation processes for the $\mathit{WDM}_o$ statistic}}
 \label{fig:ordres}
-<<sctest-ord-graphics,fig=TRUE, height=3.3, width=5, echo=FALSE, results=hide>>=
+<<sctest-ord-graphics, fig.height=3.3, fig.width=5, echo=FALSE, results='hide'>>=
 sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
   functional = "WDMo", plot = TRUE, ylim = c(0, 3.2),
   xlab = "Age group", ylab = "Weighted test statistics",
