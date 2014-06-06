@@ -4,6 +4,8 @@
 \usepackage{tikz}
 \usepackage[T1]{fontenc}
 \usepackage[english]{babel}
+\setbeamercolor{block title}{use=structure,fg=black,bg=blue!10!white}
+\setbeamercolor{block body}{use=structure,fg=black,bg=blue!05!white}
 \usefonttheme{serif}
 % Seems necessary for texlive 2012?
 \usetikzlibrary{arrows}
@@ -129,14 +131,7 @@ maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
 
 \frame{\titlepage}
 
-\begin{frame}
-\frametitle{Outline} 
-% Table of contents slide, comment this block out to remove it
-\tableofcontents 
-% Throughout your presentation, if you choose to use \section{} and 
-%\subsection{} commands, these will automatically be printed on this slide 
-%as an overview of your presentation
-\end{frame}
+
 %--------------------------------------------------------------------------
 \begin{frame}
 \frametitle{Measurement Invariance}
@@ -145,8 +140,9 @@ maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
       assigning scores across diverse groups of individuals.\\ \ \\
     \item Notable examination of measurement invariance:
       \begin{itemize}
-         \item SAT for different ethnic groups (Atkinson, 2001)
-         \item Gratitude for adolescents and adults (Froh JJ et al 2011)     
+         \item SAT for different ethnic groups (Atkinson, 2001, CITE)
+         \item Intelligence tests for different cohorts
+           (Jelte M. Wicherts, Conor V.Dolan, David J. Hessen CITE)     
       \end{itemize}
   \end{itemize}
 \end{frame}
@@ -244,19 +240,40 @@ maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
 \begin{frame}
   \frametitle{Hypotheses}
  Hypothesis of  measurement invariance and alternative:
-      \begin{center}
-          $H_0: \bm{\theta}_i = \bm{\theta}_0$, \\
-          $H_1: \bm{\theta}_i = \bm{\theta}_{(v_{i})}$\\
-      \end{center}
- 
-      $\bm{\theta}_i = (\lambda_{i, 11}, \dots, \psi_{i, 11}, 
-      \dots, \varphi_{i, 12})^\top$
-      is the full $k$-dimensional parameter vector for individual
-      $i$, $i=1,\ldots,n$. 
-      
-      \vspace{0.3in}
-      $V$ can be continuous, \textcolor{red}{ordinal} or 
-      categorical variable.
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{2 Groups}
+        \begin{align}
+          &H_0: \underset{i\in\left\{1:n\right\}}{\bm{\theta}_i} = 
+          \bm{\theta}_0,\\
+          &H_1:
+           \begin{cases}
+               \underset{i \in \left\{v_{1}\right\}}{\bm{\theta}_i} = 
+               \bm{\theta}_{v_{1}} \\
+               \underset{i \in \left\{v_{2}\right\}}{\bm{\theta}_i} = 
+               \bm{\theta}_{v_{2}}, 
+           \end{cases}
+        \end{align}
+        \begin{center}
+         where $\left\{v_{1}\right\}+\left\{v_{2}\right\}=\left\{1:n\right\}$
+        \end{center}
+      \end{block}
+  \end{column}
+  \begin{column}{0.48\textwidth}
+    \begin{block}{G Groups}
+         \begin{align}
+          &H_0: \underset{i\in\left\{1:n\right\}}{\bm{\theta}_i} = 
+                \bm{\theta}_0,\\
+          &H_1: \underset{i \in \left\{v_{g}\right\}}{\bm{\theta}_i} = 
+                \bm{\theta}_{v_{g}}, 
+         \end{align}
+       \begin{center}
+        where $\sum_{g=1}^{G}\left\{v_{g}\right\}=\left\{1:n\right\}$
+       \end{center}   
+       $V_{g}$ can be categorical, \textit{ordinal} and continous.
+    \end{block}
+  \end{column}
+\end{columns}
 
 \end{frame}
 %--------------------------------------------------------------------------
@@ -290,25 +307,34 @@ maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
 \frametitle{Possible Solution}
 \begin{itemize}
 \item Likelihood Ratio Test(LRT) for full model and reduced model(s).
-  \begin{itemize}
-    \item Ignore the nature of ordinal variable, treat it as
-      categorical varaible. 
-    \item Sensitive to sample size. Rejecte the reduced model(s) too often.
-    \item Rather tedious and time consuming to fit and compare all possible
-      models. e.g, for testing one parameter, you need to fit $2^{m-1}$ 
-      models, $m$ is the level of ordinal variable.
-    \end{itemize}
-\item Score-based Tests w.r.t. ordinal variable. 
+%  \begin{itemize}
+%    \item Ignore the nature of ordinal variable, treat it as
+%      categorical varaible. 
+%    \item Sensitive to sample size. Rejecte the reduced model(s) too often.
+%    \item Rather tedious and time consuming to fit and compare all possible
+%      models. e.g, for testing one parameter, you need to fit $2^{m-1}$ 
+%      models, $m$ is the level of ordinal variable.
+%    \end{itemize}
+\item Wald Test
+\item Lagrange Multiplier Test(Score Test)
+\item \textbf{Score-based Tests(more general) w.r.t. ordinal variable}. 
 \end{itemize}
 \end{frame}
-
-
+%  --------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Outline} 
+% Table of contents slide, comment this block out to remove it
+\tableofcontents 
+% Throughout your presentation, if you choose to use \section{} and 
+%\subsection{} commands, these will automatically be printed on this slide 
+%as an overview of your presentation
+\end{frame}
 %  --------------------------------------------------------------------------
 \section{Theoretical Background}
 \begin{frame}
   \frametitle{Score-based Tests}
   \begin{itemize}
-    \item The score-based tests (Edgar Merkle and Achim Zeileis, 2013) 
+    \item The score-based tests (CITE Edgar Merkle and Achim Zeileis, 2013) 
       rely on first derivatives of
       the model's log-likelihood function.
     \item We consider individual terms ({\em scores}) of the gradient.  
