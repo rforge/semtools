@@ -14,11 +14,12 @@
 \title{Score-based tests of measurement invariance: Use in practice}
 \subtitle{2014 Annual Meeting of Psychometric Society}
 \author[shortname]{Ting Wang\inst{1} \and Edgar C. Merkle\inst{1} \and 
-  Achim Zeileis \inst{2}}
+  Achim Zeileis\inst{2}}
 \institute[]{\inst{1} University of Missouri \and 
                       \inst{2} Universit\"{a}t Innsbruck}
 
 \renewcommand{\baselinestretch}{1.1}
+\def\bibfont{\footnotesize}
 \newcounter{sauvegardeenumi}
 \newcommand{\asuivre}{\setcounter{sauvegardeenumi}{\theenumi}}
 \newcommand{\suite}{\setcounter{enumi}{\thesauvegardeenumi}}
@@ -254,9 +255,9 @@ maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
                \bm{\theta}_{v_{2}}, 
            \end{cases}
         \end{align}
-        \begin{center}
-         where $\left\{v_{1}\right\}+\left\{v_{2}\right\}=\left\{1:n\right\}$
-        \end{center}
+       % \begin{center}
+       %  where $\left\{v_{1}\right\}+\left\{v_{2}\right\}=\left\{1:n\right\}$
+       % \end{center}
       \end{block}
   \end{column}
   \begin{column}{0.48\textwidth}
@@ -267,9 +268,9 @@ maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
           &H_1: \underset{i \in \left\{v_{g}\right\}}{\bm{\theta}_i} = 
                 \bm{\theta}_{v_{g}}, 
          \end{align}
-       \begin{center}
-        where $\sum_{g=1}^{G}\left\{v_{g}\right\}=\left\{1:n\right\}$
-       \end{center}   
+      % \begin{center}
+      %  where $\sum_{g=1}^{G}\left\{v_{g}\right\}=\left\{1:n\right\}$
+      % \end{center}   
        $V_{g}$ can be categorical, \textit{ordinal} and continous.
     \end{block}
   \end{column}
@@ -306,7 +307,8 @@ maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
 \begin{frame}
 \frametitle{Possible Solution}
 \begin{itemize}
-\item Likelihood Ratio Test(LRT) for full model and reduced model(s).
+\item Likelihood Ratio Test (LRT) (Require estimates under null
+  hypothesis and alternative).
 %  \begin{itemize}
 %    \item Ignore the nature of ordinal variable, treat it as
 %      categorical varaible. 
@@ -315,9 +317,11 @@ maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
 %      models. e.g, for testing one parameter, you need to fit $2^{m-1}$ 
 %      models, $m$ is the level of ordinal variable.
 %    \end{itemize}
-\item Wald Test
-\item Lagrange Multiplier Test(Score Test)
-\item \textbf{Score-based Tests(more general) w.r.t. ordinal variable}. 
+\item Wald Test (Require estimates under alternative). 
+\item Lagrange Multiplier Test (Score Test) (Require estimates under
+  null hypotheis)
+\item \textbf{Score-based Tests (more general) w.r.t. categorical,
+    ordinal, continuous variable}. 
 \end{itemize}
 \end{frame}
 %  --------------------------------------------------------------------------
@@ -334,7 +338,7 @@ maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
 \begin{frame}
   \frametitle{Score-based Tests}
   \begin{itemize}
-    \item The score-based tests \cite{MerZei13}
+    \item The score-based tests \cite{MerZei13, MerFanZei}
       rely on first derivatives of
       the model's log-likelihood function.
     \item We consider individual terms ({\em scores}) of the gradient.  
@@ -359,7 +363,7 @@ maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
  We need a way to aggregate scores across people so that we
       can draw some general conclusions.
       \begin{itemize}
-        \item Decorrelate gradient correlations.
+        \item Decorrelate sores for each parameter.
         \item Order individuals by an auxiliary variable. 
       \end{itemize}
 \begin{equation} 
@@ -376,11 +380,10 @@ of $n$, $t \in (1/n, n)$.
   \end{frame}
 %--------------------------------------------------------------------------
 \begin{frame}
-  \frametitle{Visual Explanation of the Score-based Test w.r.t. ordinal
-    auxiliary variable.}
+  \frametitle{Visual Explanation of the Score-based Test}
   \begin{columns}
     \begin{column}{0.48\textwidth}
-      \begin{block}{Score}
+      \begin{block}{Empirical Score}
         \resizebox{5.0cm}{!}{
         $$\bordermatrix{\text{}& \theta_{1} & \theta_{2} & \ldots 
           &\textcolor{red}{\theta_{k}}\cr
@@ -388,12 +391,12 @@ of $n$, $t \in (1/n, n)$.
                 x_{2}&  3.37 & 8.32 & \ldots & 63.45\cr
                 x_{3}&  4.12 & 3.48 & \ldots & -3.11\cr
                 x_{..}& \vdots & \vdots & \vdots & \vdots\cr
-                x_{m-1}&  12.34 & 13.32 & \ldots & 6.89\cr
-                x_{m}& 0     &   0     & \ldots & 0} $$}
+                x_{n-1}&  12.34 & 13.32 & \ldots & 6.89\cr
+                x_{n}& 0     &   0     & \ldots & 0} $$}
         \end{block}
      \end{column}
      \begin{column}{0.48\textwidth}
-       \begin{block}{Cumulative score}
+       \begin{block}{Empirical Cumulative score}
          \resizebox{5.0cm}{!}{
       $$\bordermatrix{\text{}& \theta_{1} & \theta_{2} & \ldots
         &\textcolor{red}{\theta_{k}}\cr
@@ -401,8 +404,8 @@ of $n$, $t \in (1/n, n)$.
                 x_{2}&  4.69 & 4.00 & \ldots & 61.11\cr
                 x_{3}&  8.81 & 7.48 & \ldots & 58.00\cr
                 x_{..}& \vdots & \vdots & \vdots & \vdots\cr
-                x_{m-1}&  7.89 & 3.32 & \ldots & 4.91\cr
-                x_{m}& 0     &   0     & \ldots & 0} $$}
+                x_{n-1}&  7.89 & 3.32 & \ldots & 4.91\cr
+                x_{n}& 0     &   0     & \ldots & 0} $$}
         \end{block}
       \end{column}
    \end{columns}
@@ -416,7 +419,7 @@ of $n$, $t \in (1/n, n)$.
      theorem can be
    used to show that the fluctuation of the above empirical cumulative sum 
    score
-   matrix ${\bm B}(\cdot; \hat {\bm \theta})$ converge in distribution to a 
+   matrix ${\bm B}(\cdot; \hat {\bm \theta})$ converges in distribution to a 
    k-dimensional Brownian bridge ${\bm B}^{0}(\cdot)$.
    \begin{equation}
      \label{eq:converge}
@@ -431,14 +434,17 @@ of $n$, $t \in (1/n, n)$.
 %--------------------------------------------------------------------------  
  \begin{frame}
    \frametitle{Statistics Based on Empirical Cumulative Sum Socre}
-   Multiple test statistics are available, depending on how one
-summarizes the behavior of the empirical cumulative sum of scores. 
 \begin{itemize}
-\item Statistics for ordinal variable: \\
+  \item Statistics for auxiliary categorical variable:\\
+maximum Lagrange multiplier categorical ($\mathit{LM}_{uo}$), 
+asymptotic equvialent to LRT.\\
+\item Statistics for auxiliary ordinal variable: \\
 Weighted Double Maximum ordinal ($\mathit{WDM}_o$),\\
-maximum Lagrange multiplier ordinal ($\max \mathit{LM}_o$). \\
-\item Statistics for categorical variable:\\
-$\mathit{LM}_{uo}$ \\
+maximum Lagrange multiplier ordinal ($\max\mathit{LM}_o$). \\
+\item Statistics for auxiliary continuous variable:\\
+Double maximumum statistic ($\mathit{DM}$)\\
+Cram{\'e}r-von Mises type statistic ($\mathit{CvM}$)\\
+maximum Lagrange multiplier ($\max\mathit{LM}$)\\
 \end{itemize}
 \end{frame}
 
@@ -464,13 +470,15 @@ $\mathit{LM}_{uo}$ \\
 %-------------------------------------------------------------------------   
 \begin{frame}
   \frametitle{Simulation Motivation}
-  What is the tests' power under model misspecification? 
-  \begin{itemize}
-    \item The model missed out one parameter, which is \emph {not} the 
-      M.I. parameter.
-    \item The model missed out one parameter, which \emph{is} the M.I. 
-      parameter. 
-  \end{itemize}
+  \begin{block}{Simulation:}
+    What is the ordinal tests' power under model misspecification? 
+    \begin{itemize}
+      \item The estimated model excludes one parameter, which is \emph
+        {not} the problematic parameter.
+      \item The estimated model excludes one parameter, which \emph{is}
+        the problematic parameter. 
+    \end{itemize}
+  \end{block}
 \end{frame}
 %--------------------------------------------------------------------------
 \begin{frame}
@@ -480,13 +488,14 @@ $\mathit{LM}_{uo}$ \\
    \item Three numbers of categories ($m=4,8,12$), 
    \item Violation magnitude: $d$ times the parameters' asymptotic 
      standard errors (scaled by $\sqrt n$), with $d=0,0.25,0.5,...,4$ 
-   \item Violation Level: began at level $1+m/2$ of the auxiliary variable 
-         $V$
+   \item Ordinal Violation: began at level $1+m/2$ of the auxiliary 
+     variable $V$.
  \end{itemize}
    Statistics $\mathit{WDM}_o$, $\max \mathit{LM}_o$, $\mathit{LM}_{uo}$ were 
    examined.
 \end{frame}
 %--------------------------------------------------------------------------
+
 \begin{frame}
   \begin{figure}
     \caption{Missed out parameter is not the M.I. parameter}
@@ -610,7 +619,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 \begin{frame}
 \begin{figure}
 \tiny{\caption{M.I.violation parameter $\lambda_{11}$.  Testing
-    parameters are $\psi_{11} \ldots \psi_{66}, \sigma_{12}$ and
+    parameters are $\phi_{12}$, $\psi_{11} \ldots \psi_{66}$, and
     $\mu_{11} \ldots \mu_{66}$.}}
 \label{fig:sim22res}
 <<sim22res, fig.height=5, fig.width=9, echo=FALSE>>=
@@ -639,7 +648,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 
 \begin{frame}
 \begin{figure}
-    \caption{Missed out parameter is the M.I. parameter}
+    \caption{Excluded parameter is the problematic parameter}
     \label{fig:pathinmodel2}
 \resizebox{8.0cm}{!}{
 \begin{tikzpicture}
@@ -729,6 +738,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 \end{figure}
 \end{frame}
 %--------------------------------------------------------------------------
+
 \begin{frame}
 \begin{figure}
 \tiny{\caption{The parameter violating measurement invariance is the 
@@ -757,7 +767,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 \begin{frame}
 \begin{figure}
 \tiny{\caption{The parameter violating measurement invariance is 
-    the unmodeled loading. Testing parameters are $\sigma_{12}$ 
+    the unmodeled loading. Testing parameters are $\phi_{12}$ 
     and $\mu_{11}$.}}
 \label{fig:sim24res}
 <<sim24res, fig.height=5, fig.width=9, echo=FALSE>>=
@@ -786,7 +796,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
   \frametitle{Conclusion based on Simulation Studies}
  \begin{itemize}
    \item
-      The ordinal test statistic proposed have relatively-high power 
+      The ordinal test statistic proposed have better power 
       for detecting measurement 
       invariance violation parameter specifically that are monotonic 
       with the auxiliary ordinal variable. 
@@ -813,17 +823,11 @@ The tests can be carried out in R. Specifically,
  \item Input data
 \end{enumerate}
 \begin{itemize}
-  \item Gratitude scale (GQ-6, 5 items) completed by six age
+  \item Gratitude scale (GQ-6) completed by six age
     groups(10-11, 12-13, 14, 15, 16, 17-19) \cite{frofan11}
+  \item sample size is 1327.
+  \item LRT is always significant when sample size is large. 
 \end{itemize}
-<<data,eval=FALSE>>=
-data("YouthGratitude", package = "psychotools")
-compcases <- apply(YouthGratitude[, 4:28], 1, 
-                   function(x) all(x %in% 1:9))
-yg <- YouthGratitude[compcases, ]
-@ 
-
-
 \end{frame}
 
 %--------------------------------------------------------------------------
@@ -831,7 +835,7 @@ yg <- YouthGratitude[compcases, ]
 \frametitle{Procedures of Application}
 \begin{enumerate}[2.]
   \suite
-\item Fit your constrained model:no need to comparing various models.
+\item Fit your constrained model: no need to comparing various models.
 \end{enumerate}
 <<modeest,eval=FALSE>>=
  library(lavaan)
@@ -851,9 +855,7 @@ yg <- YouthGratitude[compcases, ]
 <<sctest-ord2, eval=TRUE>>=
  library(strucchange)
 wdmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4, 
-               vcov = "info", functional = "WDMo",  plot = FALSE, 
-               ylim = c(0, 3.2), xlab = "Age group", 
-               ylab = "Weighted test statistics")
+               vcov = "info", functional = "WDMo")
 wdmo
 @ 
 \end{frame}
@@ -865,9 +867,9 @@ wdmo
 \label{fig:ordres}
 <<sctest-ord-graphics, fig.height=3.3, fig.width=5, echo=FALSE, results='hide'>>=
 sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
-  functional = "WDMo", plot = TRUE, ylim = c(0, 3.2),
-  xlab = "Age group", ylab = "Weighted test statistics",
-  main = expression(WDM[o]), boundary = list(col = "red", lty = 1))
+  functional = "WDMo", plot = TRUE, 
+               ylim = c(0, 3.2), xlab = "Age group", 
+               ylab = "Weighted test statistics")
 @
 \end{figure}
 \end{frame}
@@ -879,9 +881,21 @@ sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
  \end{itemize}
 \end{frame}
 %--------------------------------------------------------------------------
-\begin{frame}[shrink=0.8]{References}
+\begin{frame}[shrink=0.3]{Reference}
 \bibliographystyle{apacite}
 \bibliography{refs}
+\end{frame}
+%--------------------------------------------------------------------------
+
+ 
+\begin{frame}
+\frametitle{Categorical statistics equation}
+\begin{equation}
+   \label{eq:lmuo}
+    \mathit{LM}_{uo} = \sum_{\ell = 1, \dots, m} \sum_{j = 1, \dots, k}
+   \left( {\bm B}(\hat {\bm \theta})_{i_\ell j} - {\bm B}
+     (\hat {\bm \theta})_{i_{\ell - 1}j} \right)^2,
+\end{equation}
 \end{frame}
 %--------------------------------------------------------------------------
 \begin{frame}
@@ -900,14 +914,18 @@ where $i_{\ell}=\lfloor n \cdot t_{\ell} \rfloor$,
 $t_{\ell}$ is the cumulative proportions associated with level $\ell$, 
 ($\ell=1,\ldots,m-1)$.
 \end{frame}
-%-------------------------------------------------------------------------- 
+%--------------------------------------------------------------------------
 \begin{frame}
-\frametitle{Categorical statistics equation}
-\begin{equation}
-   \label{eq:lmuo}
-    \mathit{LM}_{uo} = \sum_{\ell = 1, \dots, m} \sum_{j = 1, \dots, k}
-   \left( {\bm B}(\hat {\bm \theta})_{i_\ell j} - {\bm B}
-     (\hat {\bm \theta})_{i_{\ell - 1}j} \right)^2,
-\end{equation}
+  \frametitle{Continuous statistics equations}
+\begin{eqnarray}
+    \label{eq:dmax}
+    \mathit{DM} & = & \max_{i = 1,\dots, n} \max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} | \\
+        \label{eq:cvm}
+    \mathit{CvM}     & = & n^{-1} \sum_{i = 1,\dots, n} \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2, \\
+    \label{eq:maxlm}
+    \max \mathit{LM} & = & \max_{i = \underline{i}, \dots, \overline{\imath}} ~
+      \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1}
+      \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2.
+\end{eqnarray}
 \end{frame}
 \end{document}
