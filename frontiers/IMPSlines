@@ -1,0 +1,28 @@
+1. Good morning everyone. My name is Ting Wang. Today I'm going to talk about score-based tests' application in measurement invariance. 
+
+2. Measurement invariance is an important assumption to develop unbiased scales. It means items can assign consistent scores across diverse groups. For example, we want SAT score represents the same amount of ability for each ethnic group. We also want the intelligence test score indicates the same amount of intelligence for each cohorts. 
+
+3. If we translate these wishes in factor analysis framework, the question is wheather the loading for scale 1 for kids in lower grade is equvialent for kids in higher grade. If it is, we say the M.I. assumption holds, which means this null hypothesis holds(pass to slide 4). If not, we say the M.I. assumption is violated. which means kids in lower grade have one set of parameters, and kids in higher grade have another set of parameters. 
+
+4. This M.I. hypothesis can be extended to multiple groups g. The only changing place is the alternative hypothesis, which means each group has its own parameters. vg is the auxiliary variable, it can be categorical, like gender; or ordinal, like grade; or continuous, like age. 
+
+5. For this kind of hypothesis testing problem, researchers ususlly use LRT, wald test or Lagrange Multiplier test. Note LM test only requires estimates under null hypothesis. In this study we are going to focus on a more general LM test, which is called score-based tests.
+
+6. In this presentation, we are going to first introduce these tests' theoretical background. Then we will demonstrate these tests' performance under practical scenarios by using simulation studies. In the end, we will illustrate how to use these tests. 
+
+7. The score-based tests rely on the first derivatives of the model's log-likelihood function taken at the maximum estimation. Or equivalently, we can say the maximum estimation is got when the sum of scores is zero. These scores tell how well a particular parameter describles a particular individual. 
+
+8. After we get those scores for each indiviudal, we need a way to aggregate scores across people. Specifically, we need to order these scores according to an auxiliarly variable. We also need to decorrelate the potential correlations between scores for each parameter. This empirical cumulative sum score can do these two things. Where I hat which is the information matrix decorrelate the scores. 
+
+9. Those equations are very abstract and hard to interpret. So we will illustrate by this matrix demonstration. The left is the score matrix. Each row is every individual, each column represent each parameter. The right is the cumulative score, it just means we sum the score matrix rows. For example, the second row is the sum of these two rows, and third row is the sum of these three rows, so on and so forth. The last row is always zero, because that's how we get the maximum estimation.  After decorrelation, if we see there is a very big number, it is very likely that this parameter, theta k violates M.I. assumption. 
+
+10. So we need some critical value to summarize the behavior of the empirical sum scores. Luckily, under the hypothesis of measurement invariance, a central limit theorem can be used to show that the empirical sum of score converges to a k dimensional Brownian bridge. k is the length of parameter vector. Thus we can get p value and critical value under the hypothesis M.I. 
+
+11. Depending on what kind of auxiliary variable we use, multiple statistics were proposed. When it is categorical, we can use LM-uo, this statistic is asymptotic equvialent to LRT. If it is ordinal, we can use WDMo or maxLMo. We will demonstrate these statistics equation in the end. 
+
+12. In this particular study, we focus on the practical issues of using these tests. We know, in practice, model misspecification is inevitable and in most studies, the auxiliary variable are ordinal, like income level, grade level, age level. So we want to examine the ordinal tests' performance under model misspecification by using simulations.  Besides, we will illustrate how to use these tests in application work.  So these tests can be available to all researchers. 
+
+13. Particularly, the question for simulation is what is the ordinal tests' power under model misspecification.  It can be divided into two senarios, one is the estimated model missed out one parameter, but that parameter is not important, which means that parameter doesn't violate M.I. The second senario is worse. The estimated model missed out one parameter, and that parameter violates the M.I. assumption. 
+
+14. 
+
