@@ -24,5 +24,35 @@
 
 13. Particularly, the question for simulation is what is the ordinal tests' power under model misspecification.  It can be divided into two senarios, one is the estimated model missed out one parameter, but that parameter is not important, which means that parameter doesn't violate M.I. The second senario is worse. The estimated model missed out one parameter, and that parameter violates the M.I. assumption. 
 
-14. 
+14. The simulation's set up is like this. We explored three sample sizes. Because the pattern didn't change much for different sample sizes. Here we only show result for sample size 480. Then 3 numbers of levels were explored. Violation magnitude is d times parameters' asymptotic standard error. The larger the d is, the larger violation magnitude. The violation happens in the middle of the levels. These statistics were examined. 
+
+15. In simulation 1, we explored this loading is excluded, but the violation paramater lambda 11 is included in the model. 
+
+16. The result is like this. The y axis represents power, the x axis represents d. panel title represents the testing parameter and level. 
+The first row is when testing parameter is lambda 11. We can see with increasing d, the power increases. Also the ordinal statistics have higher power than this categorical statistic, which is asymptotic equivalent to LRT. When we test all loadings in the second row, the same pattern here. 
+
+17. And the other parameters like the correlations between factors, error variances and intercepts have power near 0. So we know the test can specifically detect the violation parameter lambda 11. 
+
+18. In simulation 2, when we exclude this loading associated with scale 1 and also this loading is the violation one. 
+
+19. The result is like this. The loading and error variances associated scale 1 demonstrated increasing power with increading violation magnitude. 
+
+20. The correlation between factors and intercept associated with scale 1 have power near 0. 
+
+21. The conlusion we can draw from simulation is that ordinal statistics have better power for detecting M.I. parameter specifically. And this feature is robust as long as the violation parameter is included in the model. Also the use of these tests are convenient because we don't need to compare full model and reduced model. I will show the procedure of how to implement in software. 
+
+22. Software preparation, basically we need R. Model estimation can be carried out in lavaan package. The test statistic and plot is got from strucchange package. 
+ 
+23. In this example, we use gratitude scale. It is completed by six age groups. sample size is over one thousand. LRT is always significant when sample size is large. 
+
+24. After we input data, we only need to fit the constrained model. 
+
+25. Then we use the sctest function to call these tests. In this example, the p value is larger than 0.05. If we use plot=TRUE here, 
+we can generate the plot. 
+
+26. The x-axis is the age group. The y-axis is the statistics for each group. If the statistic is larger than critical value--the red line, then we know M.I. assumption is violated. 
+
+27. That's all. Thanks. Do you have any questions?
+
+
 
