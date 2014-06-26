@@ -14,13 +14,13 @@
 
 8. After we get those scores for each indiviudal, we need a way to aggregate scores across people. Specifically, we need to order these scores according to an auxiliarly variable. We also need to decorrelate the potential correlations between scores for each parameter. This empirical cumulative sum score can do these two things. Where I hat which is the information matrix decorrelate the scores. 
 
-9. Those equations are very abstract and hard to interpret. So we will illustrate by this matrix demonstration. The left is the score matrix. Each row is every individual, each column represent each parameter. The right is the cumulative score, it just means we sum the score matrix rows. For example, the second row is the sum of these two rows, and third row is the sum of these three rows, so on and so forth. The last row is always zero, because that's how we get the maximum estimation.  After decorrelation, if we see there is a very big number, it is very likely that this parameter, theta k violates M.I. assumption. 
+9. Those equations are very abstract and hard to interpret. So we will illustrate by this matrix demonstration. The left is the score matrix. Each row represents every individual, each column represents each parameter. The right is the empirical cumulative score, it just means we sum the score matrix rows. For example, the second row is the sum of these two rows, and third row is the sum of these three rows, so on and so forth. The last row is always zero, because that's how we get the maximum estimation.  After decorrelation, if we see there is a very big number, it is very likely that this parameter, theta k violates M.I. assumption. 
 
-10. So we need some critical value to summarize the behavior of the empirical sum scores. Luckily, under the hypothesis of measurement invariance, a central limit theorem can be used to show that the empirical sum of score converges to a k dimensional Brownian bridge. k is the length of parameter vector. Thus we can get p value and critical value under the hypothesis M.I. 
+10. So we need some critical value to summarize the behavior of the empirical sum scores. Luckily, under the hypothesis of measurement invariance, a central limit theorem can be used to show that the empirical sum of scores converges to a k dimensional Brownian bridge. k is the length of parameter vector. Thus we can get p value and critical values. 
 
-11. Depending on what kind of auxiliary variable we use, multiple statistics were proposed. When it is categorical, we can use LM-uo, this statistic is asymptotic equvialent to LRT. If it is ordinal, we can use WDMo or maxLMo. We will demonstrate these statistics equation in the end. 
+11. Depending on what kind of auxiliary variable we use, multiple statistics were proposed. When it is categorical, we can use LM-uo, this statistic is asymptotic equvialent to LRT. If it is ordinal, we can use WDMo or maxLMo. We will demonstrate these statistics equations in the end. 
 
-12. In this particular study, we focus on the practical issues of using these tests. We know, in practice, model misspecification is inevitable and in most studies, the auxiliary variable are ordinal, like income level, grade level, age level. So we want to examine the ordinal tests' performance under model misspecification by using simulations.  Besides, we will illustrate how to use these tests in application work.  So these tests can be available to all researchers. 
+12. In this particular study, we focus on the practical issues of using these tests. We know, in practice, model misspecification is inevitable and in most studies, the auxiliary variable are ordinal, like income level, grade level. So we want to examine the ordinal tests' performance under model misspecification by using simulations.  Besides, we will illustrate how to use these tests in application work.  So these tests can be available to all researchers. 
 
 13. Particularly, the question for simulation is what is the ordinal tests' power under model misspecification.  It can be divided into two senarios, one is the estimated model missed out one parameter, but that parameter is not important, which means that parameter doesn't violate M.I. The second senario is worse. The estimated model missed out one parameter, and that parameter violates the M.I. assumption. 
 
@@ -29,7 +29,7 @@
 15. In simulation 1, we explored this loading is excluded, but the violation paramater lambda 11 is included in the model. 
 
 16. The result is like this. The y axis represents power, the x axis represents d. panel title represents the testing parameter and level. 
-The first row is when testing parameter is lambda 11. We can see with increasing d, the power increases. Also the ordinal statistics have higher power than this categorical statistic, which is asymptotic equivalent to LRT. When we test all loadings in the second row, the same pattern here. 
+The first row is when testing parameter is lambda 11. We can see with increasing d, the power increases regardless of levels. Also the ordinal statistics have higher power than this categorical statistic, which is asymptotic equivalent to LRT. When we test all loadings in the second row, the same pattern here. 
 
 17. And the other parameters like the correlations between factors, error variances and intercepts have power near 0. So we know the test can specifically detect the violation parameter lambda 11. 
 
@@ -39,9 +39,9 @@ The first row is when testing parameter is lambda 11. We can see with increasing
 
 20. The correlation between factors and intercept associated with scale 1 have power near 0. 
 
-21. The conlusion we can draw from simulation is that ordinal statistics have better power for detecting M.I. parameter specifically. And this feature is robust as long as the violation parameter is included in the model. Also the use of these tests are convenient because we don't need to compare full model and reduced model. I will show the procedure of how to implement in software. 
+21. The conlusion we can draw from simulation is that ordinal statistics have better power for detecting M.I. parameter specifically. And this feature is robust as long as the violation parameter is included in the model. Also the use of these tests are convenient because we don't need to compare full model and reduced model. I will show the procedure of how to implement these tests in software. 
 
-22. Software preparation, basically we need R. Model estimation can be carried out in lavaan package. The test statistic and plot is got from strucchange package. 
+22. First, software preparation. Basically we need R. Model estimation can be carried out in lavaan package. The test statistic and plot is got from strucchange package. 
  
 23. In this example, we use gratitude scale. It is completed by six age groups. sample size is over one thousand. LRT is always significant when sample size is large. 
 
@@ -52,7 +52,7 @@ we can generate the plot.
 
 26. The x-axis is the age group. The y-axis is the statistics for each group. If the statistic is larger than critical value--the red line, then we know M.I. assumption is violated. 
 
-27. That's all. Thanks. Do you have any questions?
+27. That's all. Thanks. Do you have any questions?(Show references and equations)
 
 
 

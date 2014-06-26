@@ -1,6 +1,7 @@
 \documentclass{beamer}
 \setbeamertemplate{caption}[numbered]
 \usepackage{beamerthemeSzeged,graphics,amsmath,bm,booktabs}
+\usepackage{appendixnumberbeamer}
 \usepackage[notocbib]{apacite}
 \usepackage{tikz}
 \usepackage[T1]{fontenc}
@@ -320,8 +321,8 @@ maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
 \item Wald Test (Require estimates under alternative). 
 \item Lagrange Multiplier Test (Score Test) (Require estimates under
   null hypotheis)
-\item \textbf{Score-based Tests (more general) w.r.t. categorical,
-    ordinal, continuous variable}. 
+\item \textbf{Score-based Tests (more general) w.r.t. auxiliary
+    variable (categorical, ordinal, continuous)}. 
 \end{itemize}
 \end{frame}
 %  --------------------------------------------------------------------------
@@ -346,25 +347,26 @@ maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
       particular individual.
   % Equation of gradient vs scores for individuals
   \end{itemize}
-\begin{eqnarray*}
-  \displaystyle\sum_{i=1}^{n} s(\hat{\bm{\theta}} ; \bm{x}_i) =
-  {\bm 0},\text{ where} \\
- \\
-  s(\hat{{\bm \theta}}; \bm{x}_i) = \frac{\partial}{\partial \bm{\theta}} 
+  
+  \begin{eqnarray}
+   s(\hat{{\bm \theta}}; \bm{x}_i) = \frac{\partial}{\partial \bm{\theta}} 
   \log
-\text{L}({\bm{x}}_i, {\bm{\theta}}) \big |_{\bm{\theta} = \widehat{\bm{\theta}}}
-\end{eqnarray*}
+\text{L}({\bm{x}}_i, {\bm{\theta}}) \big |_{\bm{\theta} = \widehat{\bm{\theta}}}\\
+  \displaystyle\sum_{i=1}^{n} s(\hat{\bm{\theta}} ; \bm{x}_i) =
+  {\bm 0} 
+  \end{eqnarray}
+
 \end{frame}
 %--------------------------------------------------------------------------
 
 \begin{frame}
-  \frametitle{Empirical Cumulative Sum Score: Decorrelate and
-    Systematic Order}
+  \frametitle{Empirical Cumulative Sum Score:  Systematic Order and 
+    Decorrelate}
  We need a way to aggregate scores across people so that we
       can draw some general conclusions.
       \begin{itemize}
-        \item Decorrelate sores for each parameter.
-        \item Order individuals by an auxiliary variable. 
+        \item Order individuals by an auxiliary variable.
+        \item Decorrelate sores for each parameter.    
       \end{itemize}
 \begin{equation} 
     \label{eq:cumscore}
@@ -383,7 +385,7 @@ of $n$, $t \in (1/n, n)$.
   \frametitle{Visual Explanation of the Score-based Test}
   \begin{columns}
     \begin{column}{0.48\textwidth}
-      \begin{block}{Empirical Score}
+      \begin{block}{Score}
         \resizebox{5.0cm}{!}{
         $$\bordermatrix{\text{}& \theta_{1} & \theta_{2} & \ldots 
           &\textcolor{red}{\theta_{k}}\cr
@@ -392,11 +394,11 @@ of $n$, $t \in (1/n, n)$.
                 x_{3}&  4.12 & 3.48 & \ldots & -3.11\cr
                 x_{..}& \vdots & \vdots & \vdots & \vdots\cr
                 x_{n-1}&  12.34 & 13.32 & \ldots & 6.89\cr
-                x_{n}& 0     &   0     & \ldots & 0} $$}
+                x_{n}& -5.78     &   3.50     & \ldots & 7.67} $$}
         \end{block}
      \end{column}
      \begin{column}{0.48\textwidth}
-       \begin{block}{Empirical Cumulative score}
+       \begin{block}{Empirical Cumulative Score}
          \resizebox{5.0cm}{!}{
       $$\bordermatrix{\text{}& \theta_{1} & \theta_{2} & \ldots
         &\textcolor{red}{\theta_{k}}\cr
@@ -485,7 +487,7 @@ maximum Lagrange multiplier ($\max\mathit{LM}$)\\
   \frametitle{Simulation Setup}
  \begin{itemize}
    \item Three sample sizes ($n=120,\textcolor{red}{480},960$), 
-   \item Three numbers of categories ($m=4,8,12$), 
+   \item Three numbers of ordinal levels ($m=4,8,12$), 
    \item Violation magnitude: $d$ times the parameters' asymptotic 
      standard errors (scaled by $\sqrt n$), with $d=0,0.25,0.5,...,4$ 
    \item Ordinal Violation: began at level $1+m/2$ of the auxiliary 
@@ -498,7 +500,7 @@ maximum Lagrange multiplier ($\max\mathit{LM}$)\\
 
 \begin{frame}
   \begin{figure}
-    \caption{Missed out parameter is not the M.I. parameter}
+    \caption{Excluded out parameter is not the problematic parameter}
     \label{fig:pathinmodel1}
 \resizebox{8.0cm}{!}{
 \begin{tikzpicture}
@@ -855,7 +857,8 @@ The tests can be carried out in R. Specifically,
 <<sctest-ord2, eval=TRUE>>=
  library(strucchange)
 wdmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4, 
-               vcov = "info", functional = "WDMo")
+               vcov = "info", functional = "WDMo", 
+               plot = FALSE)
 wdmo
 @ 
 \end{frame}
@@ -881,6 +884,7 @@ sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
  \end{itemize}
 \end{frame}
 %--------------------------------------------------------------------------
+\appendix
 \begin{frame}[shrink=0.3]{Reference}
 \bibliographystyle{apacite}
 \bibliography{refs}
@@ -889,7 +893,7 @@ sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
 
  
 \begin{frame}
-\frametitle{Categorical statistics equation}
+\frametitle{Categorical Statistics Equation}
 \begin{equation}
    \label{eq:lmuo}
     \mathit{LM}_{uo} = \sum_{\ell = 1, \dots, m} \sum_{j = 1, \dots, k}
@@ -899,7 +903,7 @@ sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
 \end{frame}
 %--------------------------------------------------------------------------
 \begin{frame}
-  \frametitle{Ordinal statistics equations}
+  \frametitle{Ordinal Statistics Equations}
 \scriptsize{\begin{eqnarray}
     \label{eq:wdm}
       \mathit{WDM}_o & = & \max_{i \in \{i_1, \dots, i_{m-1} \}} ~
@@ -916,7 +920,7 @@ $t_{\ell}$ is the cumulative proportions associated with level $\ell$,
 \end{frame}
 %--------------------------------------------------------------------------
 \begin{frame}
-  \frametitle{Continuous statistics equations}
+  \frametitle{Continuous Statistics Equations}
 \begin{eqnarray}
     \label{eq:dmax}
     \mathit{DM} & = & \max_{i = 1,\dots, n} \max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} | \\
