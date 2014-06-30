@@ -1,57 +1,64 @@
-1. Good morning everyone. My name is Ting Wang. Today I'm going to talk about score-based tests' application in measurement invariance. 
+1. Good morning everyone. My name is Ting Wang. Today I'm going to talk about a new family of measurement invariance tests that are related to traditional score tests.
 
-2. Measurement invariance is an important assumption to develop unbiased scales. It means items can assign consistent scores across diverse groups. For example, we want SAT score represents the same amount of ability for each ethnic group. We also want the intelligence test score indicates the same amount of intelligence for each cohorts. 
+2. To start, we all know that measurement invariance is important for the development and use of psychometric scales.  Measurement invariance implies that it makes sense to compare test scores across diverse groups. There are many real world situations where people worry that measurement invariance is violated.  For example, some universities have worried that the SAT is biased against minority groups.  Additionally, researchers have studied measurement invariance of intelligence tests over time. 
 
-3. If we translate these wishes in factor analysis framework, the question is wheather the loading for scale 1 for kids in lower grade is equvialent for kids in higher grade. If it is, we say the M.I. assumption holds, which means this null hypothesis holds(pass to slide 4). If not, we say the M.I. assumption is violated. which means kids in lower grade have one set of parameters, and kids in higher grade have another set of parameters. 
+3. Measurement invariance is often studied via factor analysis.  For example, here is a situation where we are studying six scales across two grade levels.  If measurement invariance is violated, then parameter values will differ across the grade levels (point to red line).  If measurement invariance holds, then all parameter values will be the same in the grade levels.
 
-4. This M.I. hypothesis can be extended to multiple groups g. The only changing place is the alternative hypothesis, which means each group has its own parameters. vg is the auxiliary variable, it can be categorical, like gender; or ordinal, like grade; or continuous, like age. 
+4. The null hypothesis associated with measurement invariance is shown on the left.  The hypothesis can be extended to multiple groups, as shown on the right.  The only change is in the alternative hypothesis, which now says that each group has its own parameters. v_g is the value of the auxiliary variable in group g; in the last example, the auxiliary variable was grade.  In different applications, V_g can be categorical, like gender; or ordinal, like grade; or continuous, like age. 
 
-5. For this kind of hypothesis testing problem, researchers ususlly use LRT, wald test or Lagrange Multiplier test. Note LM test only requires estimates under null hypothesis. In this study we are going to focus on a more general LM test, which is called score-based tests.
+5. For this kind of hypothesis testing problem, the auxiliary variable is usually treated as categorical.  This allows researchers to use the LRT, wald test or Lagrange Multiplier test. Note LM test only requires estimates under null hypothesis. In this study we are going to focus on a generalization of the LM test, which can be used for different types of auxiliary variables.
 
-6. In this presentation, we are going to first introduce these tests' theoretical background. Then we will demonstrate these tests' performance under practical scenarios by using simulation studies. In the end, we will illustrate how to use these tests. 
+6. In this presentation, we are going to first introduce these tests' theoretical background. Then we will demonstrate these tests' performance under practical scenarios via simulation. In the end, we will illustrate the tests' implementation in R. 
 
-7. The score-based tests rely on the first derivatives of the model's log-likelihood function taken at the maximum estimation. Or equivalently, we can say the maximum estimation is got when the sum of scores is zero. These scores tell how well a particular parameter describles a particular individual. 
+7. The score-based tests rely on the first derivatives of the model's log-likelihood function taken at the maximum likelihood estimates. Or equivalently, we can say the maximum estimation is obtained when the sum of scores is zero. These scores tell how well a particular parameter describes a particular individual. 
+TING: You need to define \hat{\theta}: maybe add another equation to show that \hat{\theta} is the ML estimate
 
+TING: I split up slide 8 into two slides, so the text below should be revised (and the rest of the slide numbers will be off by 1)
 8. After we get those scores for each indiviudal, we need a way to aggregate scores across people. Specifically, we need to order these scores according to an auxiliarly variable. We also need to decorrelate the potential correlations between scores for each parameter. This empirical cumulative sum score can do these two things. Where I hat which is the information matrix decorrelate the scores. 
 
-9. Those equations are very abstract and hard to interpret. So we will illustrate by this matrix demonstration. The left is the score matrix. Each row represents every individual, each column represents each parameter. The right is the empirical cumulative score, it just means we sum the score matrix rows. For example, the second row is the sum of these two rows, and third row is the sum of these three rows, so on and so forth. The last row is always zero, because that's how we get the maximum estimation.  After decorrelation, if we see there is a very big number, it is very likely that this parameter, theta k violates M.I. assumption. 
+9. Those equations are somewhat abstract, so we will illustrate by example. The left is the score matrix. Each row represents every individual, each column represents each parameter. The right is the empirical cumulative score, it just means we sum the score matrix rows. For example, the second row is the sum of these two rows, and third row is the sum of these three rows, so on and so forth. The last row is always zero, because that's how we get the maximum estimation.  After decorrelation, if we see there is a very big number, it is likely that this parameter, theta k violates M.I. assumption. 
 
 10. So we need some critical value to summarize the behavior of the empirical sum scores. Luckily, under the hypothesis of measurement invariance, a central limit theorem can be used to show that the empirical sum of scores converges to a k dimensional Brownian bridge. k is the length of parameter vector. Thus we can get p value and critical values. 
 
-11. Depending on what kind of auxiliary variable we use, multiple statistics were proposed. When it is categorical, we can use LM-uo, this statistic is asymptotic equvialent to LRT. If it is ordinal, we can use WDMo or maxLMo. We will demonstrate these statistics equations in the end. 
+11. Depending on the scale of V, multiple statistics were proposed. Here, we will focus on tests when V is ordinal. 
 
-12. In this particular study, we focus on the practical issues of using these tests. We know, in practice, model misspecification is inevitable and in most studies, the auxiliary variable are ordinal, like income level, grade level. So we want to examine the ordinal tests' performance under model misspecification by using simulations.  Besides, we will illustrate how to use these tests in application work.  So these tests can be available to all researchers. 
+12. In this particular study, we focus on the practical issues of using these tests. We know, in practice, model misspecification is inevitable and in most studies, the auxiliary variable are ordinal, like income level, grade level. So we want to examine the ordinal tests' performance under model misspecification via simulations.  We will also illustrate how to carry out the tests in R. 
 
-13. Particularly, the question for simulation is what is the ordinal tests' power under model misspecification.  It can be divided into two senarios, one is the estimated model missed out one parameter, but that parameter is not important, which means that parameter doesn't violate M.I. The second senario is worse. The estimated model missed out one parameter, and that parameter violates the M.I. assumption. 
+TING: I think you should always say "measurement invariance" instead of "M.I.".  This is because "M.I." also
+stands for "multiple imputation", and people might get confused.
+13. The question for simulation is what is the ordinal tests' power under model misspecification.  It can be divided into two scenarios, one is the estimated model excluded one parameter, but that parameter is not important because that parameter doesn't violate M.I. The second scenario is worse. The estimated model excludes one parameter, and that parameter violates the M.I. assumption. 
 
-14. The simulation's set up is like this. We explored three sample sizes. Because the pattern didn't change much for different sample sizes. Here we only show result for sample size 480. Then 3 numbers of levels were explored. Violation magnitude is d times parameters' asymptotic standard error. The larger the d is, the larger violation magnitude. The violation happens in the middle of the levels. These statistics were examined. 
+14. The simulation's design is like this. We explored three sample sizes. Because the pattern didn't change much for different sample sizes, we only show results for sample size 480. Then 3 numbers of levels were explored: V is ordinal and could have 4, 8, or 12 categories (levels).  We also manipulated the magnitude of the measurement invariance violation, with the violation always starting in the middle levels. Finally, we examined three test statistics. 
 
-15. In simulation 1, we explored this loading is excluded, but the violation paramater lambda 11 is included in the model. 
+TING: Instead of "violation parameter", you should say "violating parameter"
+15. In Simulation 1, the model was misspecified (point to dashed line), but the parameter violating measurement invariance was included in the model. 
 
-16. The result is like this. The y axis represents power, the x axis represents d. panel title represents the testing parameter and level. 
-The first row is when testing parameter is lambda 11. We can see with increasing d, the power increases regardless of levels. Also the ordinal statistics have higher power than this categorical statistic, which is asymptotic equivalent to LRT. When we test all loadings in the second row, the same pattern here. 
+16. Here are the results. The y axis represents power, the x axis represents the magnitude of the invariance violation.  The panel title represents the parameters that we test for measurement invariance, along with the number of levels of the ordinal variable. 
+In the first row, we are testing the parameter that violates invariance (lambda 11). We can see with increasing d, the power increases regardless of levels. Also the ordinal statistics have higher power than this categorical statistic, because they make use of the ordering of V. When we test all loadings in the second row, the same pattern here. 
 
-17. And the other parameters like the correlations between factors, error variances and intercepts have power near 0. So we know the test can specifically detect the violation parameter lambda 11. 
+17. When we test the other parameters (like the correlations between factors, error variances and intercepts), we have power near 0. So we know the test can specifically detect the violating parameter lambda 11. 
 
-18. In simulation 2, when we exclude this loading associated with scale 1 and also this loading is the violation one. 
+18. In simulation 2, we exclude the problematic loading (the dashed line) from the estimated model. 
 
-19. The result is like this. The loading and error variances associated scale 1 demonstrated increasing power with increading violation magnitude. 
+19. Results are shown here. Some modeled loadings and error variances appear to violate measurement invariance, even though they do not violate invariance.   
 
-20. The correlation between factors and intercept associated with scale 1 have power near 0. 
+20. The correlation between factors and the intercept associated with scale 1 have power near 0. 
 
-21. The conlusion we can draw from simulation is that ordinal statistics have better power for detecting M.I. parameter specifically. And this feature is robust as long as the violation parameter is included in the model. Also the use of these tests are convenient because we don't need to compare full model and reduced model. I will show the procedure of how to implement these tests in software. 
+21. From these simulations, we conclude that the ordinal statistics have better power for detecting measurement invariance violations, when the violation is related to the ordinal variable.  Additionally, if violations occur in an unmodeled parameter, all tests incorrectly attribute problems to the modeled parameters.  Also, these tests are convenient because we don't need to fit both a full model and a reduced model.  Next, I will demonstrate the tests' implementation in R. 
 
-22. First, software preparation. Basically we need R. Model estimation can be carried out in lavaan package. The test statistic and plot is got from strucchange package. 
+22. To carry out the tests, you only need to install two R packages: model estimation can be carried out in lavaan, and test statistics and graphs are obtained from strucchange. 
  
-23. In this example, we use gratitude scale. It is completed by six age groups. sample size is over one thousand. LRT is always significant when sample size is large. 
+23. In this example, we use scales that are intended to measure gratitude. It is completed by six age groups (of teenagers). Sample size is over one thousand. LRT is always significant when sample size is large. 
 
-24. After we input data, we only need to fit the constrained model. 
+24. After we input data, we only need to fit the reduced model. 
 
-25. Then we use the sctest function to call these tests. In this example, the p value is larger than 0.05. If we use plot=TRUE here, 
-we can generate the plot. 
+TING: Does the other test statistic have a p-value further from .05?  We don't need to have
+questions about what to do when p is close to .05.
+25. Then we use the sctest function to call these tests. In this example, the p value is larger than 0.05. If we use plot=TRUE here, we can generate a plot. 
 
-26. The x-axis is the age group. The y-axis is the statistics for each group. If the statistic is larger than critical value--the red line, then we know M.I. assumption is violated. 
+26. The plot contains information about how specific age groups differ from each other.  The x-axis is the age group, and the y-axis is the (partial) test statistic corresponding to each group. If the statistic is larger than critical value--the red line, then we have evidence of a measurement invariance violation. 
 
+TING: Add the frontiers reference to this slide (the one that says thanks, questions)
 27. That's all. Thanks. Do you have any questions?(Show references and equations)
 
 

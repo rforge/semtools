@@ -18,13 +18,15 @@
   Achim Zeileis\inst{2}}
 \institute[]{\inst{1} University of Missouri \and 
                       \inst{2} Universit\"{a}t Innsbruck}
-
+\date{Supported by NSF grant SES-1061334}
+                    
 \renewcommand{\baselinestretch}{1.1}
 \def\bibfont{\footnotesize}
 \newcounter{sauvegardeenumi}
 \newcommand{\asuivre}{\setcounter{sauvegardeenumi}{\theenumi}}
 \newcommand{\suite}{\setcounter{enumi}{\thesauvegardeenumi}}
 
+\renewcommand\bibliographytypesize{\tiny}
 
 \begin{document}
 
@@ -141,16 +143,16 @@ maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
   \begin{itemize}
     \item Measurement invariance: Sets of tests/items consistently
       assigning scores across diverse groups of individuals.\\ \ \\
-    \item Notable examination of measurement invariance:
+    \item Applications illustrating the importance of measurement invariance:
       \begin{itemize}
          \item SAT for different ethnic groups \cite{atk01}
-         \item Intelligence tests for different cohorts. \cite{wich04}
+         \item Intelligence tests' use over time. \cite{wich04}
       \end{itemize}
   \end{itemize}
 \end{frame}
 %--------------------------------------------------------------------------
 \begin{frame}
-  \frametitle{Example: Grade 1, 2, 3 vs. Grade 4, 5, 6}
+  \frametitle{Example: Grade 5 vs. Grade 6}
  \begin{figure}
     \label{fig:pathinmodeltheory}
 \resizebox{8.0cm}{!}{
@@ -308,8 +310,8 @@ maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
 \begin{frame}
 \frametitle{Possible Solution}
 \begin{itemize}
-\item Likelihood Ratio Test (LRT) (Require estimates under null
-  hypothesis and alternative).
+\item Likelihood Ratio Test (LRT): Require estimates under null
+  hypothesis and alternative.
 %  \begin{itemize}
 %    \item Ignore the nature of ordinal variable, treat it as
 %      categorical varaible. 
@@ -318,11 +320,11 @@ maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
 %      models. e.g, for testing one parameter, you need to fit $2^{m-1}$ 
 %      models, $m$ is the level of ordinal variable.
 %    \end{itemize}
-\item Wald Test (Require estimates under alternative). 
-\item Lagrange Multiplier Test (Score Test) (Require estimates under
-  null hypotheis)
-\item \textbf{Score-based Tests (more general) w.r.t. auxiliary
-    variable (categorical, ordinal, continuous)}. 
+\item Wald Test: Require estimates under alternative. 
+\item Lagrange Multiplier Test (Score Test): Require estimates under
+  null hypotheis.
+\item \textbf{Score Test generalizations w.r.t. general auxiliary
+    variable (categorical, ordinal, or continuous)}. 
 \end{itemize}
 \end{frame}
 %  --------------------------------------------------------------------------
@@ -358,15 +360,27 @@ maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
 
 \end{frame}
 %--------------------------------------------------------------------------
+\begin{frame}
+  \frametitle{Score Aggregation}
+  \begin{itemize}
+    \item Each individual has a score for each model parameter,
+      resulting in $nk$ total scores (where $k$ is the dimension of
+      $\bm{\theta}$).
+    \item To draw general conclusions about measurement invariance, we
+      need to aggregate across scores in specific manners.
+    \item When $V$ is ordinal or continuous, we can make use of the
+      ordering in $V$ to obtain novel test statistics.
+  \end{itemize}
+\end{frame}
+
+%--------------------------------------------------------------------------
 
 \begin{frame}
-  \frametitle{Empirical Cumulative Sum Score:  Systematic Order and 
-    Decorrelate}
- We need a way to aggregate scores across people so that we
-      can draw some general conclusions.
+  \frametitle{Cumulative Sum of Scores}
       \begin{itemize}
         \item Order individuals by an auxiliary variable.
-        \item Decorrelate sores for each parameter.    
+        \item Decorrelate scores, using an estimate of the information
+          matrix.    
       \end{itemize}
 \begin{equation} 
     \label{eq:cumscore}
@@ -415,7 +429,7 @@ of $n$, $t \in (1/n, n)$.
 %--------------------------------------------------------------------------
   
 \begin{frame}
-  \frametitle{Convergence Distribution}
+  \frametitle{Distributional Theory}
   \begin{itemize}
    \item  Under the hypothesis of measurement invariance, a central limit 
      theorem can be
@@ -435,16 +449,12 @@ of $n$, $t \in (1/n, n)$.
  \end{frame}
 %--------------------------------------------------------------------------  
  \begin{frame}
-   \frametitle{Statistics Based on Empirical Cumulative Sum Socre}
+   \frametitle{Test Statistics}
 \begin{itemize}
-  \item Statistics for auxiliary categorical variable:\\
-maximum Lagrange multiplier categorical ($\mathit{LM}_{uo}$), 
-asymptotic equvialent to LRT.\\
-\item Statistics for auxiliary ordinal variable: \\
-Weighted Double Maximum ordinal ($\mathit{WDM}_o$),\\
-maximum Lagrange multiplier ordinal ($\max\mathit{LM}_o$). \\
-\item Statistics for auxiliary continuous variable:\\
-Double maximumum statistic ($\mathit{DM}$)\\
+  \item Categorical $V$: Maximum Lagrange multiplier test (asymptotically equvialent to LRT).
+\item Ordinal $V$: Weighted double maximum test ($\mathit{WDM}_o$);\\
+Maximum Lagrange multiplier test ($\max\mathit{LM}_o$).
+\item Continuous $V$: Double maximumum test ($\mathit{DM}$)\\
 Cram{\'e}r-von Mises type statistic ($\mathit{CvM}$)\\
 maximum Lagrange multiplier ($\max\mathit{LM}$)\\
 \end{itemize}
@@ -461,10 +471,11 @@ maximum Lagrange multiplier ($\max\mathit{LM}$)\\
 \section{Simulation}
 \begin{frame}
   \frametitle{Study Motivation}
-  \begin{block}{Practice Consideration}
+  \begin{block}{Practical Considerations}
     \begin{itemize}
       \item Model misspecification is inevitable in practice.  
-      \item M.I. is often studied with respect to \textbf{ordinal} variable.
+      \item Measurement invariance is often studied with respect to an
+        \textbf{ordinal} variable.
       \item Availability/Convenience of software implementation.
     \end{itemize}
   \end{block}
@@ -473,7 +484,7 @@ maximum Lagrange multiplier ($\max\mathit{LM}$)\\
 \begin{frame}
   \frametitle{Simulation Motivation}
   \begin{block}{Simulation:}
-    What is the ordinal tests' power under model misspecification? 
+    What are the ordinal tests' power under model misspecification? 
     \begin{itemize}
       \item The estimated model excludes one parameter, which is \emph
         {not} the problematic parameter.
@@ -500,7 +511,7 @@ maximum Lagrange multiplier ($\max\mathit{LM}$)\\
 
 \begin{frame}
   \begin{figure}
-    \caption{Excluded out parameter is not the problematic parameter}
+    \caption{Excluded parameter does not violate invariance}
     \label{fig:pathinmodel1}
 \resizebox{8.0cm}{!}{
 \begin{tikzpicture}
@@ -593,8 +604,8 @@ maximum Lagrange multiplier ($\max\mathit{LM}$)\\
 
 \begin{frame}
 \begin{figure}
-\tiny{\caption{M.I.violation parameter $\lambda_{11}$.  Testing
-    parameters are $\lambda_{11}$ and $\lambda_{11} \ldots \lambda_{62}$.}}
+\tiny{\caption{$\lambda_{11}$ violates measurement invariance.  Tested
+    parameters are $\lambda_{11}$ and \{$\lambda_{11}, \ldots, \lambda_{62}$.\}}}
 \label{fig:sim21res}
 <<sim21res, fig.height=5, fig.width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
@@ -620,9 +631,9 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 %--------------------------------------------------------------------------
 \begin{frame}
 \begin{figure}
-\tiny{\caption{M.I.violation parameter $\lambda_{11}$.  Testing
-    parameters are $\phi_{12}$, $\psi_{11} \ldots \psi_{66}$, and
-    $\mu_{11} \ldots \mu_{66}$.}}
+\tiny{\caption{$\lambda_{11}$ violates measurement invariance.  Tested
+    parameters are $\phi_{12}$, \{$\psi_{11}, \ldots, \psi_{66}$\}, and
+    \{$\mu_{11}, \ldots, \mu_{66}$\}.}}
 \label{fig:sim22res}
 <<sim22res, fig.height=5, fig.width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
@@ -650,7 +661,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 
 \begin{frame}
 \begin{figure}
-    \caption{Excluded parameter is the problematic parameter}
+    \caption{Excluded parameter does violate invariance}
     \label{fig:pathinmodel2}
 \resizebox{8.0cm}{!}{
 \begin{tikzpicture}
@@ -744,7 +755,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 \begin{frame}
 \begin{figure}
 \tiny{\caption{The parameter violating measurement invariance is the 
-    unmodeled loading. Testing parameters are $\lambda_{11}$ and $\psi_{11}$.}}
+    unmodeled loading. Tested parameters are $\lambda_{11}$ and $\psi_{11}$.}}
 \label{fig:sim23res}
 <<sim23res, fig.height=5, fig.width=9, echo=FALSE>>=
 trellis.par.set(theme = canonical.theme(color = FALSE))
@@ -769,7 +780,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 \begin{frame}
 \begin{figure}
 \tiny{\caption{The parameter violating measurement invariance is 
-    the unmodeled loading. Testing parameters are $\phi_{12}$ 
+    the unmodeled loading. Tested parameters are $\phi_{12}$ 
     and $\mu_{11}$.}}
 \label{fig:sim24res}
 <<sim24res, fig.height=5, fig.width=9, echo=FALSE>>=
@@ -798,20 +809,20 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
   \frametitle{Conclusion based on Simulation Studies}
  \begin{itemize}
    \item
-      The ordinal test statistic proposed have better power 
+      The ordinal test statistics have better power 
       for detecting measurement 
-      invariance violation parameter specifically that are monotonic 
-      with the auxiliary ordinal variable. 
-   \item This feature is robust as long as the violation 
+      invariance violations that are monotonic 
+      with $V$.
+   \item This feature is robust as long as the violating 
       parameter is included in the testing model.
-   \item The use of these tests is convenient without changing the 
-      focal psychometric model.
+   \item The use of these tests is convenient, requiring estimation of
+     only a reduced model.
    \end{itemize}
 \end{frame}
 %--------------------------------------------------------------------------
 \section{Application}
 \begin{frame}
-  \frametitle{Application: Software Preparation}
+  \frametitle{Software Illustration}
 The tests can be carried out in R. Specifically, 
 \begin{itemize}
 \item Model estimation can be carried out in \emph{lavaan} package. 
@@ -827,7 +838,7 @@ The tests can be carried out in R. Specifically,
 \begin{itemize}
   \item Gratitude scale (GQ-6) completed by six age
     groups(10-11, 12-13, 14, 15, 16, 17-19) \cite{frofan11}
-  \item sample size is 1327.
+  \item $n=1327$.
   \item LRT is always significant when sample size is large. 
 \end{itemize}
 \end{frame}
@@ -852,7 +863,7 @@ The tests can be carried out in R. Specifically,
 \frametitle{Procedures of Application}
 \begin{enumerate}[3.]
   \suite
-  \item Test if M.I. is violated.
+  \item Test of measurement invariance
 \end{enumerate}
 <<sctest-ord2, eval=TRUE>>=
  library(strucchange)
@@ -885,7 +896,7 @@ sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
 \end{frame}
 %--------------------------------------------------------------------------
 \appendix
-\begin{frame}[shrink=0.3]{Reference}
+\begin{frame}{Reference}
 \bibliographystyle{apacite}
 \bibliography{refs}
 \end{frame}
