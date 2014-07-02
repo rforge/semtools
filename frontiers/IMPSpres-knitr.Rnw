@@ -27,6 +27,7 @@
 \newcommand{\suite}{\setcounter{enumi}{\thesauvegardeenumi}}
 
 \renewcommand\bibliographytypesize{\tiny}
+\DeclareMathOperator*{\argmax}{\arg\!\max}
 
 \begin{document}
 
@@ -351,12 +352,14 @@ maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
   \end{itemize}
   
   \begin{eqnarray}
+  \hat{\bm \theta}=\argmax_{\bm \theta} \ell(\bm \theta; x_{1}, \ldots, x_{n})\\
    s(\hat{{\bm \theta}}; \bm{x}_i) = \frac{\partial}{\partial \bm{\theta}} 
   \log
 \text{L}({\bm{x}}_i, {\bm{\theta}}) \big |_{\bm{\theta} = \widehat{\bm{\theta}}}\\
   \displaystyle\sum_{i=1}^{n} s(\hat{\bm{\theta}} ; \bm{x}_i) =
   {\bm 0} 
   \end{eqnarray}
+
 
 \end{frame}
 %--------------------------------------------------------------------------
@@ -865,25 +868,27 @@ The tests can be carried out in R. Specifically,
   \suite
   \item Test of measurement invariance
 \end{enumerate}
-<<sctest-ord2, eval=TRUE>>=
+<<sctest-ord2, eval=FALSE>>=
  library(strucchange)
-wdmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4, 
-               vcov = "info", functional = "WDMo", 
-               plot = FALSE)
-wdmo
+maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4, 
+               vcov = "info", functional = "maxLMo", 
+               plot = TRUE)
+@
+<<sctest-ord2res, eval=TRUE>>=
+maxlmo
 @ 
 \end{frame}
 %--------------------------------------------------------------------------
 
 \begin{frame}
 \begin{figure}
-\tiny{\caption{Fluctuation processes for the $\mathit{WDM}_o$ statistic}}
+\tiny{\caption{Fluctuation processes for the $\mathit{LM}_o$ statistic}}
 \label{fig:ordres}
 <<sctest-ord-graphics, fig.height=3.3, fig.width=5, echo=FALSE, results='hide'>>=
 sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
-  functional = "WDMo", plot = TRUE, 
-               ylim = c(0, 3.2), xlab = "Age group", 
-               ylab = "Weighted test statistics")
+  functional = maxLMo, plot = TRUE, 
+               ylim = c(0, 14), xlab = "Age group", 
+               ylab = "LM statistics")
 @
 \end{figure}
 \end{frame}
@@ -893,6 +898,10 @@ sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
  \item Thanks! 
  \item Questions?
  \end{itemize}
+\vspace{0.3in}
+ Wang, T., Merkle, E. C., Zeileis, A. (2014). Score-based tests of measurement 
+ invariance: Use in practice. \emph{Quantitative Psychology and Measurement},
+ 5, 438. 
 \end{frame}
 %--------------------------------------------------------------------------
 \appendix
