@@ -341,7 +341,7 @@ maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
 \section{Theoretical Background}
 \begin{frame}
   \frametitle{Score-based Tests}
-  \begin{itemize}
+ \begin{itemize}
     \item The score-based tests \cite{MerZei13, MerFanZei}
       rely on first derivatives of
       the model's log-likelihood function.
@@ -351,16 +351,16 @@ maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
   % Equation of gradient vs scores for individuals
   \end{itemize}
   
-  \begin{eqnarray}
-  \hat{\bm \theta}=\argmax_{\bm \theta} \ell(\bm \theta; x_{1}, \ldots, x_{n})\\
-   s(\hat{{\bm \theta}}; \bm{x}_i) = \frac{\partial}{\partial \bm{\theta}} 
+\scriptsize{   \begin{eqnarray}
+      s(\hat{{\bm \theta}}; \bm{x}_i) = \frac{\partial}{\partial \bm{\theta}} 
   \log
-\text{L}({\bm{x}}_i, {\bm{\theta}}) \big |_{\bm{\theta} = \widehat{\bm{\theta}}}\\
-  \displaystyle\sum_{i=1}^{n} s(\hat{\bm{\theta}} ; \bm{x}_i) =
-  {\bm 0} 
-  \end{eqnarray}
-
-
+\text{L}({\bm{x}}_i, {\bm{\theta}}) \big |_{\bm{\theta} =
+  \widehat{\bm{\theta}}}, \text{where}\\[1em]
+  \hat{\bm \theta}=\argmax_{\bm \theta} \ell(\bm \theta; x_{1}, \ldots, x_{n})\\
+   \displaystyle\sum_{i=1}^{n} s(\hat{\bm{\theta}} ; \bm{x}_i) =
+  {\bm 0}
+  \end{eqnarray}}
+  
 \end{frame}
 %--------------------------------------------------------------------------
 \begin{frame}
@@ -871,8 +871,8 @@ The tests can be carried out in R. Specifically,
 <<sctest-ord2, eval=FALSE>>=
  library(strucchange)
 maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4, 
-               vcov = "info", functional = "maxLMo", 
-               plot = TRUE)
+                 vcov = "info", functional = "maxLMo",
+                 plot = TRUE)
 @
 <<sctest-ord2res, eval=TRUE>>=
 maxlmo
