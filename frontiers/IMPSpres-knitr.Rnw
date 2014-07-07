@@ -154,23 +154,23 @@ maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
 %--------------------------------------------------------------------------
 \begin{frame}
   \frametitle{Example: Grade 5 vs. Grade 6}
- \begin{figure}
-    \label{fig:pathinmodeltheory}
-\resizebox{8.0cm}{!}{
-\begin{tikzpicture}
+    \begin{figure}
+      \label{fig:pathinmodeltheory}
+         \resizebox{8.0cm}{!}{
+           \begin{tikzpicture}
 [latent/.style={circle,draw=black!50,fill=white!20,thick,
-                inner sep=0pt, minimum width=20mm, minimum height=10mm},
- manifest/.style={rectangle,draw=black!50,fill=white!20,thick,
-                inner sep=0pt,minimum width=20mm, minimum height=10mm},
- error/.style={circle,draw=black!50,fill=white!20,thick,
-                inner sep=0pt, minimum width=10mm},
- post/.style={->,shorten >=1pt,>=stealth',semithick},
- postred/.style={->,shorten >=1pt,>=stealth',semithick,red},
- postdashed/.style={->,shorten >=1pt,>=stealth',semithick,red,dashed},
- sling/.style={<->,shorten >=1pt,>=stealth',shorten <=1pt,>=stealth',
-   auto,distance=20mm,semithick},
- errorsling/.style={<->,shorten >=1pt,>=stealth',shorten <=1pt,>=stealth',
-   auto,distance=10mm,semithick}]
+inner sep=0pt, minimum width=20mm, minimum height=10mm},
+manifest/.style={rectangle,draw=black!50,fill=white!20,thick,
+inner sep=0pt,minimum width=20mm, minimum height=10mm},
+error/.style={circle,draw=black!50,fill=white!20,thick,
+inner sep=0pt, minimum width=10mm},
+post/.style={->,shorten >=1pt,>=stealth',semithick},
+postred/.style={->,shorten >=1pt,>=stealth',semithick,red},
+postdashed/.style={->,shorten >=1pt,>=stealth',semithick,red,dashed},
+sling/.style={<->,shorten >=1pt,>=stealth',shorten <=1pt,>=stealth',
+auto,distance=20mm,semithick},
+errorsling/.style={<->,shorten >=1pt,>=stealth',shorten <=1pt,>=stealth',
+auto,distance=10mm,semithick}]
 
 
 
@@ -351,15 +351,19 @@ maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4,
   % Equation of gradient vs scores for individuals
   \end{itemize}
   
-\scriptsize{   \begin{eqnarray}
-      s(\hat{{\bm \theta}}; \bm{x}_i) = \frac{\partial}{\partial \bm{\theta}} 
-  \log
-\text{L}({\bm{x}}_i, {\bm{\theta}}) \big |_{\bm{\theta} =
-  \widehat{\bm{\theta}}}, \text{where}\\[1em]
-  \hat{\bm \theta}=\argmax_{\bm \theta} \ell(\bm \theta; x_{1}, \ldots, x_{n})\\
-   \displaystyle\sum_{i=1}^{n} s(\hat{\bm{\theta}} ; \bm{x}_i) =
-  {\bm 0}
-  \end{eqnarray}}
+\scriptsize{   
+  \begin{eqnarray}
+    \label{eq:scoreml}
+    s(\hat{{\bm \theta}}; \bm{x}_i) = \frac{\partial}{\partial \bm{\theta}} 
+    \log\text{L}({\bm{x}}_i, {\bm{\theta}}) \big |_{\bm{\theta} =
+    \widehat{\bm{\theta}}}, \text{where}\\[1em]
+    \label{eq:ml}
+    \hat{\bm \theta}=\argmax_{\bm \theta} \log\text{L}(\bm \theta; x_{1}, 
+    \ldots, x_{n})\\
+    \label{eq:scoresumml}
+   \displaystyle\sum_{i=1}^{n} s(\hat{\bm{\theta}} ; \bm{x}_i) = {\bm 0}
+  \end{eqnarray}
+}
   
 \end{frame}
 %--------------------------------------------------------------------------
@@ -900,8 +904,8 @@ sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
  \end{itemize}
 \vspace{0.3in}
  Wang, T., Merkle, E. C., Zeileis, A. (2014). Score-based tests of measurement 
- invariance: Use in practice. \emph{Quantitative Psychology and Measurement},
- 5, 438. 
+ invariance: Use in practice. \emph{Froniters in Psychology}, \emph{5}(438), 
+ 1-11. 
 \end{frame}
 %--------------------------------------------------------------------------
 \appendix
