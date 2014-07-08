@@ -2,6 +2,7 @@
 \setbeamertemplate{caption}[numbered]
 \usepackage{beamerthemeSzeged,graphics,amsmath,bm,booktabs}
 \usepackage{appendixnumberbeamer}
+\usepackage{blkarray}
 \usepackage[notocbib]{apacite}
 \usepackage{tikz}
 \usepackage[T1]{fontenc}
@@ -355,9 +356,12 @@ auto,distance=10mm,semithick}]
 \begin{frame}
   \frametitle{Score-based Tests}
  \begin{itemize}
-    \item The score-based tests \cite{MerZei13, MerFanZei}
-      rely on first derivatives of
-      the model's log-likelihood function.
+  %  \item The score-based tests \cite{MerZei13, MerFanZei}
+  %    rely on first derivatives of
+  %    the model's log-likelihood function.
+    \item Access deviations in the model score \cite{MerZei13,
+      MerFanZei}, i.e., the first derivatives of the model's log
+      likelihoood function.  
     \item We consider individual terms ({\em scores}) of the gradient.  
       These scores tell us how well a particular parameter describes a 
       particular individual.
@@ -422,36 +426,52 @@ of $n$, $t \in (1/n, n)$.
 \begin{frame}
   \frametitle{Visual Explanation of the Score-based Test}
   \begin{columns}
-    \begin{column}{0.48\textwidth}
+    \begin{column}{0.48\textwidth}     
       \begin{block}{Score}
-        \resizebox{5.0cm}{!}{
-        $$\bordermatrix{\text{}& \theta_{1} & \theta_{2} & \ldots 
-          &\textcolor{red}{\theta_{k}}\cr
-                x_{1}&  1.32  & -4.32 & \ldots & -2.34\cr
-                x_{2}&  3.37 & 8.32 & \ldots & 63.45\cr
-                x_{3}&  4.12 & 3.48 & \ldots & -3.11\cr
-                x_{..}& \vdots & \vdots & \vdots & \vdots\cr
-                x_{n-1}&  12.34 & 13.32 & \ldots & 6.89\cr
-                x_{n}& -5.78     &   3.50     & \ldots & 7.67} $$}
-        \end{block}
+        \resizebox{5.0cm}{!}{ 
+          $
+            \begin{blockarray}{cccccc}
+              \text{}& \theta_{1} & \theta_{2} & \ldots 
+                     &\textcolor{red}{\theta_{k}} & \text{age} \\
+               \begin{block}{l(cccc)c}
+                 x_{1} &  1.32  & -4.32 & \ldots & -2.34 & 10.5\\
+                 x_{2} &  3.37 & 8.32 & \ldots & 63.45 & 11.0\\ 
+                 x_{3} &  4.12 & 3.48 & \ldots & -3.11 & 11.3\\
+                 x_{..} & \vdots & \vdots & \vdots & \vdots & 17.1\\ 
+                 x_{n-1} &  12.34 & 13.32 & \ldots & 6.89 & 18.6\\
+                 x_{n} & -5.78 & 3.50 & \ldots & 7.67 & 18.9\\
+               \end{block}
+            \end{blockarray} 
+           $
+          }
+        \end{block}   
      \end{column}
+        
      \begin{column}{0.48\textwidth}
-       \begin{block}{Empirical Cumulative Score}
-         \resizebox{5.0cm}{!}{
-      $$\bordermatrix{\text{}& \theta_{1} & \theta_{2} & \ldots
-        &\textcolor{red}{\theta_{k}}\cr
-                x_{1}&  1.32  & -4.32 & \ldots & -2.34\cr
-                x_{2}&  4.69 & 4.00 & \ldots & 61.11\cr
-                x_{3}&  8.81 & 7.48 & \ldots & 58.00\cr
-                x_{..}& \vdots & \vdots & \vdots & \vdots\cr
-                x_{n-1}&  7.89 & 3.32 & \ldots & 4.91\cr
-                x_{n}& 0     &   0     & \ldots & 0} $$}
+          \begin{block}{Empirical Cumulative Score}
+          \resizebox{5.0cm}{!}{
+           $
+            \begin{blockarray}{cccccc}
+              \text{}& \theta_{1} & \theta_{2} & \ldots 
+                     &\textcolor{red}{\theta_{k}} & \text{age} \\
+               \begin{block}{l(cccc)c}
+                 x_{1} &  1.32  & -4.32 & \ldots & -2.34 & 10.5 \\
+                 x_{2} &  4.69 & 4.00 & \ldots & 61.11 & 11.0 \\
+                 x_{3} &  8.81 & 7.48 & \ldots & 58.00 & 11.3 \\
+                 x_{..} & \vdots & \vdots & \vdots & \vdots & 17.1 \\
+                 x_{n-1} &  7.89 & 3.32 & \ldots & 4.91 & 18.6 \\
+                 x_{n}& 0     &   0     & \ldots & 0 & 18.9 \\
+               \end{block}
+            \end{blockarray} 
+           $
+         }  
         \end{block}
       \end{column}
    \end{columns}
 \end{frame}
 
 % --------------------------------------------------------------------------
+
   
 \begin{frame}
   \frametitle{Distributional Theory}
@@ -881,7 +901,7 @@ The tests can be carried out in R. Specifically,
 \end{enumerate}
 \begin{itemize}
   \item Gratitude scale (GQ-6) completed by six age
-    groups(10-11, 12-13, 14, 15, 16, 17-19) \cite{frofan11}
+    groups (10--11, 12--13, 14, 15, 16, 17--19) \cite{frofan11}
   \item $n=1327$.
   \item LRT is always significant when sample size is large. 
 \end{itemize}
@@ -896,7 +916,7 @@ The tests can be carried out in R. Specifically,
 \item Fit the constrained model: no need to compare various models.
 \end{enumerate}
 <<modeest,eval=FALSE>>=
- library(lavaan)
+ library("lavaan")
   restr <- cfa("f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
                data = yg, group = "agegroup", 
                meanstructure = TRUE, group.equal = "loadings")
@@ -913,7 +933,7 @@ The tests can be carried out in R. Specifically,
   \item Test of measurement invariance
 \end{enumerate}
 <<sctest-ord2, eval=FALSE>>=
- library(strucchange)
+ library("strucchange")
 maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4, 
                  vcov = "info", functional = "maxLMo",
                  plot = TRUE)
@@ -927,13 +947,14 @@ maxlmo
 
 \begin{frame}
 \begin{figure}
-\tiny{\caption{Fluctuation processes for the $\mathit{LM}_o$ statistic}}
+\tiny{\caption{Fluctuation processes for $\max\mathit{LM}_o$ statistic}}
 \label{fig:ordres}
 <<sctest-ord-graphics, fig.height=3.3, fig.width=5, echo=FALSE, results='hide'>>=
+par(cex = 0.8)
 sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
-  functional = maxLMo, plot = TRUE, 
+  functional = maxLMo, plot = TRUE,  
                ylim = c(0, 14), xlab = "Age group", 
-               ylab = "LM statistics")
+               ylab = "LM statistics", main = expression(maxLM[o]))
 @
 \end{figure}
 \end{frame}
