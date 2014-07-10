@@ -426,12 +426,33 @@ of $n$, $t \in (1/n, n)$.
 \begin{frame}
   \frametitle{Visual Explanation of the Score-based Test}
   \begin{columns}
-    \begin{column}{0.48\textwidth}     
-      \begin{block}{Score}
-        \resizebox{5.0cm}{!}{ 
+    \begin{column}{0.33\textwidth}     
+      \begin{block}{Unordered Score}
+        \resizebox{3.3cm}{!}{ 
           $
-            \begin{blockarray}{cccccc}
-              \text{}& \theta_{1} & \theta_{2} & \ldots 
+            \begin{blockarray}{lccccc}
+              \text{obs} &\theta_{1} & \theta_{2} & \ldots 
+                     &\textcolor{red}{\theta_{k}} & \text{age} \\
+               \begin{block}{l(cccc)c}
+                 &4.12 & 3.48 & \ldots & -3.11 & 11.3\\
+                 &1.32  & -4.32 & \ldots & -2.34 & 10.5\\
+                 &3.37 & 8.32 & \ldots & 63.45 & 11.0\\ 
+                 &-5.78 & 3.50 & \ldots & 7.67 & 18.9\\
+                 &\vdots & \vdots & \vdots & \vdots & 17.1\\ 
+                 &12.34 & 13.32 & \ldots & 6.89 & 18.6\\              
+               \end{block}
+            \end{blockarray} 
+           $
+          }
+        \end{block}   
+     \end{column}
+    
+    \begin{column}{0.33\textwidth}     
+      \begin{block}{Ordered Score}
+        \resizebox{3.3cm}{!}{ 
+          $
+            \begin{blockarray}{lccccc}
+              \text{obs}& \theta_{1} & \theta_{2} & \ldots 
                      &\textcolor{red}{\theta_{k}} & \text{age} \\
                \begin{block}{l(cccc)c}
                  x_{1} &  1.32  & -4.32 & \ldots & -2.34 & 10.5\\
@@ -447,12 +468,12 @@ of $n$, $t \in (1/n, n)$.
         \end{block}   
      \end{column}
         
-     \begin{column}{0.48\textwidth}
-          \begin{block}{Empirical Cumulative Score}
-          \resizebox{5.0cm}{!}{
+     \begin{column}{0.33\textwidth}
+          \begin{block}{\scriptsize{Empirical Cumulative Score}}
+          \resizebox{3.3cm}{!}{
            $
-            \begin{blockarray}{cccccc}
-              \text{}& \theta_{1} & \theta_{2} & \ldots 
+            \begin{blockarray}{lccccc}
+              \text{obs}& \theta_{1} & \theta_{2} & \ldots 
                      &\textcolor{red}{\theta_{k}} & \text{age} \\
                \begin{block}{l(cccc)c}
                  x_{1} &  1.32  & -4.32 & \ldots & -2.34 & 10.5 \\
@@ -949,8 +970,7 @@ maxlmo
 \begin{figure}
 \tiny{\caption{Fluctuation processes for $\max\mathit{LM}_o$ statistic}}
 \label{fig:ordres}
-<<sctest-ord-graphics, fig.height=3.3, fig.width=5, echo=FALSE, results='hide'>>=
-par(cex = 0.8)
+<<sctest-ord-graphics,  out.width="250px", out.height ="180px", echo=FALSE, results='hide'>>=
 sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
   functional = maxLMo, plot = TRUE,  
                ylim = c(0, 14), xlab = "Age group", 
