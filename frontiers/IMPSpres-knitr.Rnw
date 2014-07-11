@@ -402,7 +402,7 @@ auto,distance=10mm,semithick}]
 %--------------------------------------------------------------------------
 
 \begin{frame}
-  \frametitle{Cumulative Sum of Scores}
+  \frametitle{Empirical Cumulative Score Process}
       \begin{itemize}
         \item Order individuals by an auxiliary variable.
         \item Decorrelate scores, using an estimate of the information
@@ -469,7 +469,7 @@ of $n$, $t \in (1/n, n)$.
      \end{column}
         
      \begin{column}{0.33\textwidth}
-          \begin{block}{\scriptsize{Empirical Cumulative Score}}
+          \begin{block}{Cumulative Score}
           \resizebox{3.3cm}{!}{
            $
             \begin{blockarray}{lccccc}
