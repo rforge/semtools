@@ -281,7 +281,7 @@ auto,distance=10mm,semithick}]
       % \begin{center}
       %  where $\sum_{g=1}^{G}\left\{v_{g}\right\}=\left\{1:n\right\}$
       % \end{center}   
-       $V_{g}$ can be categorical, \textit{ordinal} and continous.
+       $V_{g}$ can be categorical, \textit{ordinal}, or continuous.
     \end{block}
   \end{column}
 \end{columns}
@@ -407,7 +407,6 @@ auto,distance=10mm,semithick}]
         \item Order individuals by an auxiliary variable.
         \item Decorrelate scores, using an estimate of the information
           matrix.    
-      \end{itemize}
 \begin{equation} 
     \label{eq:cumscore}
   {\bm B}(t; \hat {\bm \theta}) ~=~ \hat {\bm I}^{-1/2} n^{-1/2}
@@ -419,6 +418,7 @@ auto,distance=10mm,semithick}]
 where $\hat{\bm I}$ is an estimate of the information matrix, $\lfloor
 nt \rfloor$ is the integer part of $nt$, $t$ is the cumulative proportion 
 of $n$, $t \in (1/n, n)$.
+  \end{itemize}
   \end{frame}
 
 % --------------------------------------------------------------------------
@@ -519,10 +519,11 @@ of $n$, $t \in (1/n, n)$.
 \begin{frame}
    \frametitle{Test Statistics}
 \begin{itemize}
+    \itemsep8pt
   \item Categorical $V$: Maximum Lagrange multiplier test (asymptotically equvialent to LRT).
 \item Ordinal $V$: Weighted double maximum test ($\mathit{WDM}_o$);\\
 Maximum Lagrange multiplier test ($\max\mathit{LM}_o$).
-\item Continuous $V$: Double maximumum test ($\mathit{DM}$)\\
+\item Continuous $V$: Double maximum test ($\mathit{DM}$)\\
 Cram{\'e}r-von Mises type statistic ($\mathit{CvM}$)\\
 maximum Lagrange multiplier ($\max\mathit{LM}$)\\
 \end{itemize}
@@ -545,7 +546,7 @@ maximum Lagrange multiplier ($\max\mathit{LM}$)\\
       \item Model misspecification is inevitable in practice.  
       \item Measurement invariance is often studied with respect to an
         \textbf{ordinal} variable.
-      \item Availability/Convenience of software implementation.
+      \item Availability/convenience of software implementation.
     \end{itemize}
   \end{block}
 \end{frame}
@@ -889,6 +890,7 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
 \begin{frame}
   \frametitle{Conclusion based on Simulation Studies}
  \begin{itemize}
+     \itemsep8pt
    \item
       The ordinal test statistics have better power 
       for detecting measurement 
@@ -908,8 +910,8 @@ xyplot(power ~ diff | nlevels + pars, group = ~ test, data = sim2,
   \frametitle{Software Illustration}
 The tests can be carried out in R. Specifically, 
 \begin{itemize}
-\item Model estimation can be carried out in \emph{lavaan} package. 
-\item The test statistic and plot is obtained from \emph{strucchange} package.
+\item Model estimation via package \emph{lavaan}. 
+\item The test statistic and plot via package \emph{strucchange}.
 \end{itemize}
 \end{frame}
 
@@ -954,7 +956,7 @@ The tests can be carried out in R. Specifically,
   \item Test of measurement invariance
 \end{enumerate}
 <<sctest-ord2, eval=FALSE>>=
- library("strucchange")
+library("strucchange")
 maxlmo <- sctest(restr, order.by = yg$agegroup, parm = 1:4, 
                  vcov = "info", functional = "maxLMo",
                  plot = TRUE)
@@ -970,7 +972,7 @@ maxlmo
 \begin{figure}
 \tiny{\caption{Fluctuation processes for $\max\mathit{LM}_o$ statistic}}
 \label{fig:ordres}
-<<sctest-ord-graphics,  out.width="250px", out.height ="180px", echo=FALSE, results='hide'>>=
+<<sctest-ord-graphics, out.width="2.5in", out.height ="2.5in", echo=FALSE, results='hide', fig.height=5, fig.width=5>>=
 sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
   functional = maxLMo, plot = TRUE,  
                ylim = c(0, 14), xlab = "Age group", 
@@ -984,7 +986,6 @@ sctest(restr, order.by = yg$agegroup, parm = 1:4, vcov = "info",
 \begin{frame}
  \begin{itemize}
  \item Thanks! 
- \item Questions?
  \end{itemize}
 \vspace{0.3in}
  Wang, T., Merkle, E. C., Zeileis, A. (2014). Score-based tests of measurement 
