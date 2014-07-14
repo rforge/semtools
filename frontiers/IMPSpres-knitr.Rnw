@@ -179,7 +179,7 @@ auto,distance=10mm,semithick}]
 
 
 %position objects.
-
+ 
 \node[latent] (VERBAL) at (0,4) {VERBAL};
 \node[latent] (MATH)   at (0,0) {MATH};
 
@@ -333,7 +333,7 @@ auto,distance=10mm,semithick}]
 %    \end{itemize}
 \item Wald Test: Require estimates under alternative. 
 \item Lagrange Multiplier Test (Score Test): Require estimates under
-  null hypotheis.
+  null hypothesis.
 \item \textbf{Score Test generalizations w.r.t. general auxiliary
     variable (categorical, ordinal, or continuous)}. 
 \end{itemize}
@@ -361,7 +361,7 @@ auto,distance=10mm,semithick}]
   %    the model's log-likelihood function.
     \item Access deviations in the model score \cite{MerZei13,
       MerFanZei}, i.e., the first derivatives of the model's log
-      likelihoood function.  
+      likelihood function.  
     \item We consider individual terms ({\em scores}) of the gradient.  
       These scores tell us how well a particular parameter describes a 
       particular individual.
@@ -423,23 +423,23 @@ of $n$, $t \in (1/n, n)$.
 
 % --------------------------------------------------------------------------
 
-\begin{frame}
+\begin{frame}[t]
   \frametitle{Visual Explanation of the Score-based Test}
   \begin{columns}
-    \begin{column}{0.33\textwidth}     
-      \begin{block}{Unordered Score}
-        \resizebox{3.3cm}{!}{ 
+    \begin{column}{0.45\textwidth}     
+      \begin{block}{\scriptsize{Unordered Score}}
+        \resizebox{4.0 cm}{!}{ 
           $
             \begin{blockarray}{lccccc}
               \text{obs} &\theta_{1} & \theta_{2} & \ldots 
-                     &\textcolor{red}{\theta_{k}} & \text{age} \\
+                     &\textcolor{red}{\theta_{k}} & V \\
                \begin{block}{l(cccc)c}
-                 &4.12 & 3.48 & \ldots & -3.11 & 11.3\\
-                 &1.32  & -4.32 & \ldots & -2.34 & 10.5\\
-                 &3.37 & 8.32 & \ldots & 63.45 & 11.0\\ 
-                 &-5.78 & 3.50 & \ldots & 7.67 & 18.9\\
-                 &\vdots & \vdots & \vdots & \vdots & 17.1\\ 
-                 &12.34 & 13.32 & \ldots & 6.89 & 18.6\\              
+                x_{1} &4.12 & 3.48 & \ldots & -3.11 & 11.3\\
+                x_{2}  &1.32  & -4.32 & \ldots & -2.34 & 10.5\\
+                x_{3} &3.37 & 8.32 & \ldots & 63.45 & 11.0\\ 
+                x_{..} &\vdots & \vdots & \vdots & \vdots & \vdots\\ 
+                x_{n-1} &-5.78 & 3.50 & \ldots & 7.67 & 18.9\\            
+                x_{n} &12.34 & 13.32 & \ldots & 6.89 & 18.6\\              
                \end{block}
             \end{blockarray} 
            $
@@ -447,48 +447,48 @@ of $n$, $t \in (1/n, n)$.
         \end{block}   
      \end{column}
     
-    \begin{column}{0.33\textwidth}     
-      \begin{block}{Ordered Score}
-        \resizebox{3.3cm}{!}{ 
+    \begin{column}{0.45\textwidth}     
+      \begin{block}{\scriptsize{Ordered Score}}
+        \resizebox{4.0 cm}{!}{ 
           $
             \begin{blockarray}{lccccc}
               \text{obs}& \theta_{1} & \theta_{2} & \ldots 
-                     &\textcolor{red}{\theta_{k}} & \text{age} \\
+                     &\textcolor{red}{\theta_{k}} & V \\
                \begin{block}{l(cccc)c}
-                 x_{1} &  1.32  & -4.32 & \ldots & -2.34 & 10.5\\
-                 x_{2} &  3.37 & 8.32 & \ldots & 63.45 & 11.0\\ 
-                 x_{3} &  4.12 & 3.48 & \ldots & -3.11 & 11.3\\
-                 x_{..} & \vdots & \vdots & \vdots & \vdots & 17.1\\ 
-                 x_{n-1} &  12.34 & 13.32 & \ldots & 6.89 & 18.6\\
-                 x_{n} & -5.78 & 3.50 & \ldots & 7.67 & 18.9\\
+                 x_{(1)} &  1.32  & -4.32 & \ldots & -2.34 & 10.5\\
+                 x_{(2)} &  3.37 & 8.32 & \ldots & 63.45 & 11.0\\ 
+                 x_{(3)} &  4.12 & 3.48 & \ldots & -3.11 & 11.3\\
+                 x_{(..)} & \vdots & \vdots & \vdots & \vdots & \vdots\\ 
+                 x_{(n-1)} &  12.34 & 13.32 & \ldots & 6.89 & 18.6\\
+                 x_{(n)} & -5.78 & 3.50 & \ldots & 7.67 & 18.9\\
                \end{block}
             \end{blockarray} 
            $
           }
         \end{block}   
      \end{column}
-        
-     \begin{column}{0.33\textwidth}
-          \begin{block}{Cumulative Score}
-          \resizebox{3.3cm}{!}{
+   \end{columns}
+   
+   \begin{block}{\scriptsize{Empirical Cumulative Score}}
+          $\bm B(\cdot;\hat{\bm \theta}) = \hat{\bm I}^{-1/2}n^{-1/2} \times$
+            \resizebox{4.2cm}{!}{
            $
             \begin{blockarray}{lccccc}
-              \text{obs}& \theta_{1} & \theta_{2} & \ldots 
-                     &\textcolor{red}{\theta_{k}} & \text{age} \\
+               \text{obs}& \theta_{1} & \theta_{2} & \ldots 
+                     &\textcolor{red}{\theta_{k}} & V \\
                \begin{block}{l(cccc)c}
-                 x_{1} &  1.32  & -4.32 & \ldots & -2.34 & 10.5 \\
-                 x_{2} &  4.69 & 4.00 & \ldots & 61.11 & 11.0 \\
-                 x_{3} &  8.81 & 7.48 & \ldots & 58.00 & 11.3 \\
-                 x_{..} & \vdots & \vdots & \vdots & \vdots & 17.1 \\
-                 x_{n-1} &  7.89 & 3.32 & \ldots & 4.91 & 18.6 \\
-                 x_{n}& 0     &   0     & \ldots & 0 & 18.9 \\
+                 x_{(1)} &  1.32  & -4.32 & \ldots & -2.34 & 10.5 \\
+                 x_{(2)} &  4.69 & 4.00 & \ldots & 61.11 & 11.0 \\
+                 x_{(3)} &  8.81 & 7.48 & \ldots & 58.00 & 11.3 \\
+                 x_{(..)} & \vdots & \vdots & \vdots & \vdots & \vdots\\
+                 x_{(n-1)} &  7.89 & 3.32 & \ldots & 4.91 & 18.6 \\
+                 x_{(n)}& 0     &   0     & \ldots & 0 & 18.9 \\
                \end{block}
             \end{blockarray} 
            $
-         }  
+         }
         \end{block}
-      \end{column}
-   \end{columns}
+ 
 \end{frame}
 
 % --------------------------------------------------------------------------
@@ -520,7 +520,7 @@ of $n$, $t \in (1/n, n)$.
    \frametitle{Test Statistics}
 \begin{itemize}
     \itemsep8pt
-  \item Categorical $V$: Maximum Lagrange multiplier test (asymptotically equvialent to LRT).
+  \item Categorical $V$: Maximum Lagrange multiplier test (asymptotically equivalent to LRT).
 \item Ordinal $V$: Weighted double maximum test ($\mathit{WDM}_o$);\\
 Maximum Lagrange multiplier test ($\max\mathit{LM}_o$).
 \item Continuous $V$: Double maximum test ($\mathit{DM}$)\\
