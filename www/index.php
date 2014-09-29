@@ -40,10 +40,10 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <ul>
   <li><a href="http://arxiv.org/abs/1402.6720">Working paper</a></li>
   <li>Replication materials:<ul>
-    <li><a href="vuong-lavaan.R">lavaan extensions</a> containing <tt>vuong()</tt> method for carrying out Vuong tests on two lavaan objects.</li>
     <li><a href="sim-vuong.R">Simulation functions</a> for data generation, power evaluation, and power summaries.</li>
     <li><a href="burnout.rda">Burnout data</a> for application.</li>
     <li><a href="replication-vuong.R">Replication script</a> containing code to run and summarize the application and simulations, using the above files.</li>
+    <li>Relies on R packages <em>nonnest2</em> to carry out the tests and <em>lavaan</em> for model estimation.
   </ul></li>
 </ul>  
 
