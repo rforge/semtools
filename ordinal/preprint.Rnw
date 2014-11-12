@@ -71,9 +71,9 @@
 \fancyfoot[LO,LE]{\small Copyright {\copyright} 2013 The Psychometric Society}
 \fancypagestyle{plain}{
 \fancyhf{}
-\fancyfoot[LO,LE]{\small This is a preprint of an article accepted for publication in \textit{Psychometrika}.\\ %%, \textbf{78}(1), 59--82.\\
-  Copyright~{\copyright} 2013 The Psychometric Society \url{http://www.psychometrika.org/}}
-  %% \doi{10.1007/S11336-012-9302-4}}
+\fancyfoot[LO,LE]{\small This is a preprint of an article published in \textit{Psychometrika}, \textbf{79}(4), 569--584.\\
+  Copyright~{\copyright} 2013 The Psychometric Society \url{http://www.psychometrika.org/}\\
+  \doi{10.1007/S11336-013-9376-7}}
 }
 
 \begin{document}
