@@ -47,6 +47,15 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
   </ul></li>
 </ul>  
 
+<h3>Bayesian factor models for the analysis of experimental data</h3>
+
+<ul>
+  <li>Working paper (coming soon)</li>
+  <li>Replication materials:
+    <li><a href="jagsmodels.R">JAGS models</a> used in the paper (this file writes JAGS model files when it is sourced in R).
+    <li><a href="peters08.rda">Peters & Levin (2008) data</a>, used in the application.
+    <li><a href="replication-bfa.R">Replication script</a> containing code to estimate and summarize the analyses, using the above files.</li>
+
 <h3>Score-based tests of measurement invariance: Use in practice</h3>
 
 <ul>
@@ -61,8 +70,8 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <h3>Testing for measurement invariance with respect to an ordinal variable</h3>
 
 <ul>
-  <li>Manuscript accepted for publication in Psychometrika.</li>
-  <li><a href="http://econpapers.repec.org/RePEc:inn:wpaper:2012-24">Working paper</a></li>
+  <li>Manuscript published in <a href="http://dx.doi.org/10.1007/S11336-013-9376-7">Psychometrika 79(4), 569-584</a>.</li>
+<!--  <li><a href="http://econpapers.repec.org/RePEc:inn:wpaper:2012-24">Working paper</a></li> -->
   <li>Replication materials:<ul>
     <li><a href="estfun-lavaan.R">lavaan extensions</a> containing <tt>estfun()</tt> method for lavaan objects (note: this code has been incorporated into lavaan and is no longer necessary).</li>
     <li><a href="efpFunctional-cat.R">strucchange extensions</a> containing <tt>efpFunctional</tt>s for ordinal measurement invariance tests.</li>
@@ -76,7 +85,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <h3>Tests of measurement invariance without subgroups: A generalization of classical methods</h3>
 
 <ul>
-  <li>Manuscript published in <a href="http://dx.doi.org/10.1007/S11336-012-9302-4">Psychometrika 78(1), 58-82</a>.</em></li>
+  <li>Manuscript published in <a href="http://dx.doi.org/10.1007/S11336-012-9302-4">Psychometrika 78(1), 58-82</a>.</li>
   <li><a href="http://www.psychoco.org/2012/slides/Merkle.pdf">Psychoco 2012 presentation</a></li>
   <li>Replication materials:<ul>
     <li><a href="estfun-lavaan.R">lavaan extensions</a> containing <tt>estfun()</tt> method for lavaan objects.</li>
