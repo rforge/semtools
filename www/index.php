@@ -51,10 +51,12 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 
 <ul>
   <li>Working paper (coming soon)</li>
-  <li>Replication materials:
-    <li><a href="jagsmodels.R">JAGS models</a> used in the paper (this file writes JAGS model files when it is sourced in R).
-    <li><a href="peters08.rda">Peters & Levin (2008) data</a>, used in the application.
+  <li>Replication materials:<ul>
+    <li><a href="jagsmodels.R">JAGS models</a> used in the paper (this file writes JAGS model files when it is sourced in R).</li>
+    <li><a href="peters08.rda">Peters & Levin (2008) data</a>, used in the application.</li>
     <li><a href="replication-bfa.R">Replication script</a> containing code to estimate and summarize the analyses, using the above files.</li>
+  </ul></li>
+</ul>
 
 <h3>Score-based tests of measurement invariance: Use in practice</h3>
 
