@@ -50,7 +50,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <h3>Bayesian factor models for the analysis of experimental data</h3>
 
 <ul>
-  <li>Working paper (coming soon)</li>
+  <li><a href="http://ssrn.com/abstract=2536989">Working paper</a></li>
   <li>Replication materials:<ul>
     <li><a href="jagsmodels.R">JAGS models</a> used in the paper (this file writes JAGS model files when it is sourced in R).</li>
     <li><a href="peters08.rda">Peters & Levin (2008) data</a>, used in the application.</li>
