@@ -1,0 +1,25 @@
+Title: Score-based tests of measurement invariance with respect to
+  continuous and ordinal variables
+Presenting author: Achin Zeileis, Universität Innsbruck, Austria
+Coauthors: Edgar C. Merkle, Ting Wang
+
+The issue of measurement invariance commonly arises in psychometric models and
+is typically assessed via likelihood ratio tests, Lagrange multiplier tests, and
+Wald tests, all of which require advance definition of the number of groups,
+group membership, and offending model parameters. We present a family of
+recently-proposed measurement invariance tests that are based on the scores of a
+fitted model (i.e., observation-wise derivatives of the log-likelihood with
+respect to the model parameters). This family can be used to test for
+measurement invariance w.r.t. a continuous auxiliary variable, without
+pre-specification of subgroups. Moreover, the family can be used when one wishes
+to test for  measurement invariance w.r.t. an ordinal auxiliary variable,
+yielding test statistics that are sensitive to violations that are monotonically
+related to the ordinal variable (and less sensitive to non-monotonic
+violations). The tests can be viewed as generalizations of the Lagrange
+multiplier (or score) test and they are especially useful for identifying
+subgroups of individuals that violate measurement invariance (without
+prespecified thresholds) and identifying specific parameters impacted by
+measurement invariance violations. We illustrate how the tests can be applied in
+practice in factor-analytic contexts using the R packages "lavaan" for model
+estimation and "strucchange" for carrying out the tests and visualization of the
+results.

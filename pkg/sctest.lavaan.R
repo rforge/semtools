@@ -1,4 +1,4 @@
-sctest.lavaan <- function(x, order.by, parm, stat, fnl = NULL, fplot = FALSE, ...){
+sctest_lavaan <- function(x, order.by, parm, stat, fnl = NULL, fplot = FALSE, ...){
   ## Carry out a score-based test of a fitted lavaan model x
 
   require("strucchange")
