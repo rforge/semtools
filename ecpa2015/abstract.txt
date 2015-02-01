@@ -1,6 +1,6 @@
 Title: Score-based tests of measurement invariance with respect to
   continuous and ordinal variables
-Presenting author: Achin Zeileis, Universität Innsbruck, Austria
+Presenting author: Achim Zeileis, Universität Innsbruck, Austria
 Coauthors: Edgar C. Merkle, Ting Wang
 
 The issue of measurement invariance commonly arises in psychometric models and
