@@ -46,7 +46,9 @@ simordl2bb <- function(freq, nproc, nrep, ...){
 }
 
 if(FALSE){
-  library(strucchange)
+  library("strucchange")
+  library("mvtnorm")
+  source("ordl2bb.R")
   ## Load critical values that were simulated from
   ## the psychometrika paper:
   load("~/Projects/semtools/ordinal/critvals.rda")
