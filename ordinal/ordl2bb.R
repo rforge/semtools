@@ -1,29 +1,17 @@
 simordl2bb <- function(freq, nproc, nrep, ...){
-  ## assumes freq includes the final cumulative
-  ## proportion of 1:
-  nbin <- length(freq)-1
-  bp <- cumsum(freq)[1:nbin]
-  res <- matrix(NA, nrep, nbin)
+  ## assumes freq includes the final cumulative proportion of 1
+  nbin <- length(freq) - 1L
+  bp <- cumsum(freq)[1L:nbin]
 
-  muvec <- rep(0, nbin)
   ## find multivariate normal covariance matrix between bins
   cmat <- matrix(NA, nbin, nbin)
-  for(i in 1:nbin){
-    for(j in i:nbin){
-      tmp <- sqrt(bp[i]*(1-bp[j]))/sqrt((1-bp[i])*bp[j])
-      cmat[j,i] <- tmp
-      cmat[i,j] <- tmp
-    }
-  }
+  for(i in 1L:nbin) cmat[i:nbin, i] <- cmat[i, i:nbin] <- sqrt(bp[i] * (1 - bp[i:nbin]))/sqrt((1 - bp[i]) * bp[i:nbin])
 
-  ## create block diagonal matrix so we can simulate all
-  ## parameters at once
-  fullcmat <- matrix(0, nbin*nproc, nbin*nproc)
-  for(j in 1:nproc){
-    fullcmat[(nbin*(j-1) + 1):(nbin*j),(nbin*(j-1) + 1):(nbin*j)] <- cmat
-  }
+  ## create block-diagonal matrix so we can simulate all parameters at once
+  fullcmat <- matrix(0, nbin * nproc, nbin * nproc)
+  for(j in 1L:nproc) fullcmat[(nbin * (j - 1L) + 1L):(nbin * j), (nbin * (j - 1L) + 1L):(nbin * j)] <- cmat
 
-  draws <- rmvnorm(nrep, rep(0,nbin*nproc), fullcmat)
+  draws <- rmvnorm(nrep, sigma = fullcmat)
 
   ## now get L2 norm sequentially for each bin:
   ## columns 1,(nbin+1),(2nbin+1),...
@@ -31,18 +19,12 @@ simordl2bb <- function(freq, nproc, nrep, ...){
   ## TODO if we also loops through values of colnums,
   ##      (first=1, then=2, ..., nproc)
   ##      we can simulate multiple values of nproc
-  colnums <- 1:nproc
+  colnums <- 1L:nproc
   ssbin <- matrix(NA, nrep, nbin)
-  for(j in 1:nbin){
-    ssbin[,j] <- apply(as.matrix(draws[,(colnums-1)*nbin + j]), 1,
-                       function(x) sum(x^2))
-  }
+  for(j in 1L:nbin) ssbin[, j] <- rowSums(as.matrix(draws[, (colnums - 1L) * nbin + j])^2)
 
   ## now get max across the above matrix
-  maxval <- apply(ssbin, 1, max)
-  
-  ## distribution of maximum values
-  maxval
+  apply(ssbin, 1L, max)
 }
 
 if(FALSE){
