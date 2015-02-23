@@ -18,7 +18,6 @@ simordl2bb <- function(freq, nproc, nrep, ...){
   ## columns 1,(nbin+1),(2nbin+1),...
   ## columns 2,(nbin+2),(2nbin+2),...
   colnums <- 1L:maxproc
-  ## One list entry per value of nproc
   ssbins <- matrix(NA, nrep, length(nproc))
   for(i in 1L:length(nproc)){
     tmpbin <- matrix(NA, nrep, nbin)
