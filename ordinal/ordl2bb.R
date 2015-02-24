@@ -25,7 +25,8 @@ simordl2bb <- function(freq, nproc, nrep, ...){
       cols <- ((colnums - 1L) * nbin + j)[1:nproc[i]]
       tmpbin[, j] <- rowSums(as.matrix(draws[, cols])^2)
     }
-    ssbins[,i] <- apply(tmpbin, 1L, max)
+    cmd <- paste("tmpbin[, ", 1:nbin, "]", sep="", collapse=",")
+    ssbins[,i] <- eval(parse(text=paste("pmax(",cmd,")")))
   }
 
   ssbins

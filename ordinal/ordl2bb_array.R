@@ -18,47 +18,46 @@ simordl2bb <- function(freq, nproc, nrep, ...){
   ## columns 1,(nbin+1),(2nbin+1),...
   ## columns 2,(nbin+2),(2nbin+2),...
   colnums <- 1L:maxproc
-  tmpbin <- array(NA, c(nrep, length(nproc), nbin))
+  rval <- array(NA, c(nrep, length(nproc), nbin))
   for(j in 1L:nbin){
     cols <- (colnums - 1L) * nbin + j
     res <- t(apply(as.matrix(draws[, cols])^2, 1, cumsum))
     if(maxproc==1) res <- matrix(res, nrep, 1)
-    tmpbin[, , j] <- res[, nproc]
+    rval[, , j] <- res[, nproc]
   }
-  apply(tmpbin, c(1,2), max)
+  cmd <- paste("rval[, , ", 1:nbin, "]", sep="", collapse=",")
+  rval <- eval(parse(text=paste("pmax(",cmd,")")))
+  rval
 }
 
 if(FALSE){
   library("strucchange")
   library("mvtnorm")
-  source("ordl2bb.R")
+  source("ordl2bb_array.R")
   ## Load critical values that were simulated from
   ## the psychometrika paper:
   load("~/Projects/semtools/ordinal/critvals.rda")
   
   ## Define quantiles, compare to new simulation
   qs <- c((1:19)/20, .975, .99)
-  tmp <- simordl2bb(rep((1/8),8), 3, 50000)
+  system.time(tmp <- simordl2bb(rep((1/8),8), 3, 50000))
+  ## Compare to looped code
+  source("ordl2bb.R")
+  system.time(tmp2 <- simordl2bb(rep((1/8),8), 3, 50000))
   oldsim <- cval[[2]]$computeCritval(1-qs,3)
   newsim <- quantile(tmp, qs)
-  plot(oldsim, newsim)
-  cbind(oldsim, newsim)
+  newsim2 <- quantile(tmp2, qs)
+  cbind(oldsim, newsim, newsim2)
 
   ## 20 parameters
-  tmp <- simordl2bb(rep((1/20),20), 3, 50000)
+  source("ordl2bb_array.R")
+  system.time(tmp <- simordl2bb(rep((1/20),20), 3, 50000))
+  source("ordl2bb.R")
+  system.time(tmp2 <- simordl2bb(rep((1/20),20), 3, 50000))
   oldsim <- cval[[4]]$computeCritval(1-qs,3)
   newsim <- quantile(tmp, qs)
-  plot(oldsim, newsim)
-  cbind(oldsim, newsim)
-
-  ## Try unequal bin sizes; do the old simulation
-  ## to compare (takes awhile)
-  tmp <- simordl2bb(c(.2,.5,.15,.15), 3, 50000)
-  tmp2 <- ordL2BB(c(.2,.5,.15,.15), nobs=5000, nproc=3, nrep=50000)
-  oldsim <- tmp2$computeCritval(1-qs,3)
-  newsim <- quantile(tmp, qs)
-  plot(oldsim, newsim)
-  cbind(oldsim, newsim)
+  newsim2 <- quantile(tmp2, qs)
+  cbind(oldsim, newsim, newsim2)
 
   ## should match ordwmax when nproc==1
   tmp <- simordl2bb(c(.2,.5,.15,.15), 1, 50000)
@@ -70,16 +69,22 @@ if(FALSE){
   ## multiple values of nproc: 50000 takes awhile
   ## for nproc=1:20, but could probably get away with a
   ## smaller value of nrep.
-  tmp <- simordl2bb(rep((1/20),20), 1:20, 50000)
+  source("ordl2bb_array.R")
+  system.time(tmp <- simordl2bb(rep((1/20),20), 1:20, 50000))
+  source("ordl2bb.R")
+  system.time(tmp2 <- simordl2bb(rep((1/20),20), 1:20, 50000))
   ## Comparison for each value of nproc
   for(i in 1:20){
-    print(rbind(quantile(tmp[,i], qs[15:19]), cval[[4]]$computeCritval(1-qs[15:19], i)))
+    print(rbind(quantile(tmp[,i], qs[15:19]), quantile(tmp2[,i], qs[15:19]), cval[[4]]$computeCritval(1-qs[15:19], i)))
   }
 
   ## Try irregular values of nproc
   npcs <- c(3,7,9)
-  tmp <- simordl2bb(rep((1/20),20), npcs, 50000)
+  source("ordl2bb_array.R")
+  system.time(tmp <- simordl2bb(rep((1/20),20), npcs, 100000))
+  source("ordl2bb.R")
+  system.time(tmp2 <- simordl2bb(rep((1/20),20), npcs, 100000))
   for(i in 1:length(npcs)){
-    print(rbind(quantile(tmp[,i], qs[15:19]), cval[[4]]$computeCritval(1-qs[15:19], npcs[i])))
+    print(rbind(quantile(tmp[,i], qs[15:19]), quantile(tmp2[,i], qs[15:19]), cval[[4]]$computeCritval(1-qs[15:19], npcs[i])))
   }
 }
