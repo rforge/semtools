@@ -18,15 +18,14 @@ simordl2bb <- function(freq, nproc, nrep, ...){
   ## columns 1,(nbin+1),(2nbin+1),...
   ## columns 2,(nbin+2),(2nbin+2),...
   colnums <- 1L:maxproc
-  rval <- array(NA, c(nrep, length(nproc), nbin))
+  rval <- vector(mode = "list", length = nbin)
   for(j in 1L:nbin){
     cols <- (colnums - 1L) * nbin + j
     res <- t(apply(as.matrix(draws[, cols])^2, 1, cumsum))
     if(maxproc==1) res <- matrix(res, nrep, 1)
-    rval[, , j] <- res[, nproc]
+    rval[[j]] <- res[, nproc]
   }
-  cmd <- paste("rval[, , ", 1:nbin, "]", sep="", collapse=",")
-  rval <- eval(parse(text=paste("pmax(",cmd,")")))
+  rval <- do.call("pmax", rval)
   rval
 }
 
