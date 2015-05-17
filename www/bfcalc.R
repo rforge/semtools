@@ -1,73 +1,47 @@
 ## Calculate logintlik via laplace method. Bayes factor is based on
 ## the difference between two logintlik.
 
-logintlik <- function(model = "linkinteraction.jag", 
-                      paraest = c("beta0", "lambda1", 
-                                  "lambda2", 
-                                  "beta1", "beta2", "beta3", 
-                                  "Inv_sig_e1", "phi"),
-                      data =  c(sureriskreg, list(t=1)),
-                      priorphi = "dunif"){
+logintlik <- function(model = "2fsemt.jag", 
+                      paraest = para[-which(para==rep("beta1[1]",p))],
+                      data = c(choicesurerisk, tlist(tbeta1_1=0),
+                               plist),
+                      priorphi = "dunif",
+                      n.iter = 5000){
+  ## require packages  
+  stopifnot(require("MCMCpack"))
+  stopifnot(require("Matrix"))
+  stopifnot(require("mvtnorm"))
+  
   m1 <- jags.model(model, data, n.chains=3)
-  update(m1, 1000)
-  m1res <- coda.samples(m1, paraest, n.iter=5000)
+  update(m1, n.iter)
+  m1res <- coda.samples(m1, paraest, n.iter = n.iter)
   ## posterior medians
   m1med <- summary(m1res)$quantiles[,3]
   ## posterior covariances
   m1cov <- cov(rbind(m1res[[1]], m1res[[2]], m1res[[3]]))
   ## all possible parameter names in bayeslv.Rnw. 
-  paranam = c("lambda1", "lambda2",
-              "int1","int2", "delta1", "delta2", "delta3",
-              "beta0", "beta1", "beta2", "beta3",
-              "b0", "b1", "b2", "b3",
-              "g1", "g2", "g3", "g4",
-              "Inv_cov1", "Inv_cov2", "phi", 
-              "Inv_sig_e1", "Inv_sig_e2", "Inv_sig_ee", "Inv_sig_f1")
+  paranam = c("lambda1", "lambda2", "lambda3","b0",
+              "int1", "beta0", "beta1[1]","beta1[2]",
+               "beta2[1]", "beta2[2]", "beta3[1]","beta3[2]",
+              "beta4","beta5","beta6", "nu1", "nu2",
+              "nu3","nu4", "Inv_cov1", "phi", 
+              "Inv_sig_e1", "Inv_sig_ee", "Inv_sig_f1")
   pname <- names(m1med)
-  rnums <- sapply(paranam, grep, pname)
+  rnums <- sapply(paranam, grep, pname, fixed=TRUE)
   
   ## remove equal parameter Inv_cov[1:2]=Inv_cov[2:1] and
   ## fixed parameters
   if (priorphi == "dwish") {
-    if (is.na(rnums$Inv_cov2[3])) {
       m1cov <- m1cov[-c(rnums$Inv_cov1[3], 
                      rnums$lambda1[which(m1med[rnums$lambda1]==0|
-                                   m1med[rnums$lambda1]==1)],
+                                         m1med[rnums$lambda1]==1)],
                      rnums$lambda2[which(m1med[rnums$lambda2]==0|
-                                         m1med[rnums$lambda2]==1)],
-                     rnums$delta1[which(m1med[rnums$delta1]==0|
-                                        m1med[rnums$delta1]==1)],
-                     rnums$delta2[which(m1med[rnums$delta2]==0|
-                                        m1med[rnums$delta2]==1)]),
+                                         m1med[rnums$lambda2]==1)]),
                     -c(rnums$Inv_cov1[3],
                      rnums$lambda1[which(m1med[rnums$lambda1]==0|
                                          m1med[rnums$lambda1]==1)],
                      rnums$lambda2[which(m1med[rnums$lambda2]==0|
-                                         m1med[rnums$lambda2]==1)],
-                     rnums$delta1[which(m1med[rnums$delta1]==0|
-                                        m1med[rnums$delta1]==1)],
-                     rnums$delta2[which(m1med[rnums$delta2]==0|
-                                        m1med[rnums$delta2]==1)])]
-    } else {
-     m1cov <- m1cov[-c(rnums$Inv_cov1[3], rnums$Inv_cov2[3],
-                    rnums$lambda1[which(m1med[rnums$lambda1]==0|
-                                        m1med[rnums$lambda1]==1)],
-                    rnums$lambda2[which(m1med[rnums$lambda2]==0|
-                                        m1med[rnums$lambda2]==1)],
-                    rnums$delta1[which(m1med[rnums$delta1]==0|
-                                       m1med[rnums$delta1]==1)],
-                    rnums$delta2[which(m1med[rnums$delta2]==0|
-                                       m1med[rnums$delta2]==1)]),
-                    -c(rnums$Inv_cov1[3], rnums$Inv_cov2[3],
-                    rnums$lambda1[which(m1med[rnums$lambda1]==0|
-                                        m1med[rnums$lambda1]==1)],
-                    rnums$lambda2[which(m1med[rnums$lambda2]==0|
-                                        m1med[rnums$lambda2]==1)],
-                    rnums$delta1[which(m1med[rnums$delta1]==0|
-                                       m1med[rnums$delta1]==1)],
-                    rnums$delta2[which(m1med[rnums$delta2]==0|
-                                       m1med[rnums$delta2]==1)])]
-    }
+                                        m1med[rnums$lambda2]==1)])]
   } 
   if (priorphi == "gamma") {
       m1cov <- m1cov
@@ -77,184 +51,155 @@ logintlik <- function(model = "linkinteraction.jag",
                      rnums$lambda1[which(m1med[rnums$lambda1]==0|
                                          m1med[rnums$lambda1]==1)],
                      rnums$lambda2[which(m1med[rnums$lambda2]==0|
-                                         m1med[rnums$lambda2]==1)],
-                     rnums$delta1[which(m1med[rnums$delta1]==0|
-                                        m1med[rnums$delta1]==1)],
-                     rnums$delta2[which(m1med[rnums$delta2]==0|
-                                        m1med[rnums$delta2]==1)]),
+                                         m1med[rnums$lambda2]==1)]),
                     -c(
                      rnums$lambda1[which(m1med[rnums$lambda1]==0|
                                          m1med[rnums$lambda1]==1)],
                      rnums$lambda2[which(m1med[rnums$lambda2]==0|
-                                         m1med[rnums$lambda2]==1)],
-                     rnums$delta1[which(m1med[rnums$delta1]==0|
-                                        m1med[rnums$delta1]==1)],
-                     rnums$delta2[which(m1med[rnums$delta2]==0|
-                                        m1med[rnums$delta2]==1)])]
+                                         m1med[rnums$lambda2]==1)])]
   }
 
   
   ## log(f(theta*))
-  logfthet <- sum(dnorm(m1med[c(
+  logfthet <- ifelse(model!="2fsemt", sum(dnorm(m1med[
               rnums$lambda1[which(m1med[rnums$lambda1]!=0 &
-                                  m1med[rnums$lambda1]!=1)],
+                                  m1med[rnums$lambda1]!=1)]], 0,
+              sqrt(1/0.001),log=TRUE)), sum(dnorm(m1med[
+              rnums$lambda1[which(m1med[rnums$lambda1]!=0 &
+                                  m1med[rnums$lambda1]!=1)]], 0,
+              sqrt(1/as.numeric(plist[1])),log=TRUE))/0.5) + 
+              ifelse(model!="2fsemt", sum(dnorm(m1med[
+              rnums$lambda1[which(m1med[rnums$lambda2]!=0 &
+                                  m1med[rnums$lambda2]!=1)]], 0,
+              sqrt(1/0.001),log=TRUE)), sum(dnorm(m1med[
               rnums$lambda2[which(m1med[rnums$lambda2]!=0 &
-                                  m1med[rnums$lambda2]!=1)],
-              rnums$delta1[which(m1med[rnums$delta1]!=0 &
-                                 m1med[rnums$delta1]!=1)],
-              rnums$delta2[which(m1med[rnums$delta2]!=0 &
-                                 m1med[rnums$delta2]!=1)],
-              rnums$int1, rnums$int2, rnums$delta3,        
-              rnums$beta0, rnums$beta1, rnums$beta2,
-              rnums$beta3, rnums$b0, rnums$b1, rnums$b2, rnums$b3,
-              rnums$g1, rnums$g2, rnums$g3, rnums$g4)],
-              0, sqrt(1/.001),
-              log=TRUE)) +
+                                  m1med[rnums$lambda2]!=1)]], 0,
+              sqrt(1/as.numeric(plist[2])),log=TRUE))/0.5) + 
+              sum(dnorm(m1med[rnums$lambda3], 0,
+                        sqrt(1/as.numeric(plist[3])), log=TRUE)/0.5) +
+              sum(dnorm(m1med[c(rnums$int1,      
+              rnums$beta0, rnums$b0)], 0, sqrt(1/0.001), log=TRUE)) +
+              sum(dnorm(m1med[c(rnums$'beta1[1]', rnums$'beta1[2]')], 0,
+                        sqrt(1/as.numeric(plist[4])), log=TRUE)) +
+              sum(dnorm(m1med[c(rnums$'beta2[1]', rnums$'beta2[2]')], 0,
+                        sqrt(1/as.numeric(plist[5])), log=TRUE)) +
+              sum(dnorm(m1med[c(rnums$'beta3[1]', rnums$'beta3[2]')], 0,
+                        sqrt(1/as.numeric(plist[6])), log=TRUE)) +
+              sum(dnorm(m1med[rnums$beta4], 0, sqrt(1/as.numeric(plist[7])), log=TRUE)) +
+              sum(dnorm(m1med[rnums$beta5], 0, sqrt(1/as.numeric(plist[8])), log=TRUE)) +
+              sum(dnorm(m1med[rnums$beta6], 0, sqrt(1/as.numeric(plist[9])), log=TRUE)) +
+              sum(dnorm(m1med[rnums$nu1], 0, sqrt(1/as.numeric(plist[10])), log=TRUE)) +
+              sum(dnorm(m1med[rnums$nu2], 0, sqrt(1/as.numeric(plist[11])), log=TRUE)) +
+              sum(dnorm(m1med[rnums$nu3], 0, sqrt(1/as.numeric(plist[12])), log=TRUE)) +
+              sum(dnorm(m1med[rnums$nu4], 0, sqrt(1/as.numeric(plist[13])), log=TRUE)) +
               ifelse(is.na(rnums$Inv_cov1[3]),
-             0, log(dwish(matrix(c(m1med[rnums$Inv_cov1]), 2, 2),2, 
+              0, log(dwish(matrix(c(m1med[rnums$Inv_cov1]), 2, 2),2, 
                   matrix(c(1,0,0,1),2,2)))) +
-              ifelse(is.na(rnums$Inv_cov2[3]),
-             0, log(dwish(matrix(c(m1med[rnums$Inv_cov2]), 2, 2),2, 
-                  matrix(c(1,0,0,1),2,2)))) +
-          sum(dunif(m1med[rnums$phi], -1, 1, log=TRUE)) +
-         sum(dgamma(m1med[rnums$Inv_sig_f1], .01, .01, log=TRUE)) + 
-          sum(dgamma(m1med[rnums$Inv_sig_e1], .01, .01,log=TRUE)) +
-          sum(dgamma(m1med[rnums$Inv_sig_e2], .01, .01,log=TRUE)) +
-          sum(dgamma(m1med[rnums$Inv_sig_ee], .01, .01,log=TRUE)) 
-  
- 
+              sum(dunif(m1med[rnums$phi], -1, 1, log=TRUE)) +
+              sum(dgamma(m1med[rnums$Inv_sig_f1], .1, .1, log=TRUE)) + 
+              sum(dgamma(m1med[rnums$Inv_sig_e1], .1, .1,log=TRUE)) +
+              sum(dgamma(m1med[rnums$Inv_sig_ee], .1, .1,log=TRUE)) 
 
   ## log-conditional likelihood, with thetas integrated out
-  if (is.na(rnums$Inv_cov2[3])) {
     lcl <- 0
     if (priorphi == "dwish"){
       lambda <- matrix(c(m1med[rnums$lambda1],
                           m1med[rnums$lambda2]), 10, 2)
       phi <- solve(matrix(c(m1med[rnums$Inv_cov1]), 2, 2))
+      psi <- diag(1/m1med[rnums$Inv_sig_e1])
+      covmat <- lambda %*% phi %*% t(lambda) + psi
     }
     if (priorphi == "gamma"){
       lambda <- matrix(c(m1med[rnums$lambda1]), 10, 1)
       phi <- 1/m1med[rnums$Inv_sig_f1]
-    }
-    if (priorphi == "dunif"){
-      lambda <- matrix(c(m1med[rnums$lambda1],
-                          m1med[rnums$lambda2]), 10, 2)
-      phi <- matrix(c(1, m1med[rnums$phi], m1med[rnums$phi], 1),
-                    2, 2)
-    }
-    if (is.na(rnums$Inv_sig_ee[1])){
       psi <- diag(1/m1med[rnums$Inv_sig_e1])
       covmat <- lambda %*% phi %*% t(lambda) + psi
-    } else {
-      psi <- diag(1/m1med[rnums$Inv_sig_ee])
-      covmat <- lambda %*% phi %*% t(lambda)
+    }
+    if (priorphi == "dunif"){
+      psix <- diag(1/m1med[rnums$Inv_sig_ee])
+      lambda <- matrix(c(m1med[rnums$lambda1],
+                         m1med[rnums$lambda2]), 10, 2)
+      psiy <- diag(1/m1med[rnums$Inv_sig_e1])
+      phi <- matrix(c(1, m1med[rnums$phi], m1med[rnums$phi], 1),
+                    2, 2)
+      Mu <- matrix(NA, data$N, 2)
+      numain <- c(ifelse(is.na(rnums$nu1[1]), 0,
+                      m1med[rnums$nu1]),
+                  ifelse(is.na(rnums$nu2[1]), 0,
+                      m1med[rnums$nu2]))
+      nuint <- matrix(c(ifelse(is.na(rnums$nu3[1]), 0,
+                      m1med[rnums$nu3])*(data$Num - data$Numc), 
+               ifelse(is.na(m1med[rnums$nu4[1]]), 0,
+                      m1med[rnums$nu4])*
+                  (data$Num - data$Numc)), nrow=data$N, ncol=2)
     }
   
     for(i in 1:data$N){
-      if (!is.na(rnums$int1[1])){
+      if (is.na(m1med[rnums$Inv_sig_ee][1])){
         mnvec <- m1med[rnums$int1]
         lcl <- lcl + dmvnorm(data$y[i,], mnvec, covmat, log=TRUE)
-      } 
-      if (model == "linkinteraction.jag"){
-        mnvec <- m1med[rnums$beta0] +
-                 c(rep(m1med[rnums$beta1[1]],5),
-                 rep(m1med[rnums$beta1[2]],5))*data$Frame[i] + 
-                 m1med[rnums$beta2]*data$Num[i]  + 
-                 if(is.na(m1med[rnums$beta3][1])){rep(0,10)}else{ 
-                 (rep(c(1,0), each=5)*
-                 m1med[rnums$beta3]*data$Frame[i]*data$Num[i])}
-        lcl <- lcl + dmvnorm(data$y[i,], mnvec, covmat, log=TRUE)
-      }
-      if (model == "linkFramesure1.jag"){
-        mnvec <- m1med[rnums$beta0] +
-                 if(is.na(m1med[rnums$beta1][1])){rep(0,10)}else{
-                 (c(rep(m1med[rnums$beta1[1]],
-                 5), rep(0, 5))* data$Frame[i])} +
-                 m1med[rnums$beta2]*data$Num[i]
-        lcl <- lcl + dmvnorm(data$y[i,], mnvec, covmat, log=TRUE)
-      }
-      if (model == "linkFramerisky1.jag"){
-        mnvec <- m1med[rnums$beta0] +
-                 if(is.na(m1med[rnums$beta1][1])){rep(0,10)}else{
-                 (c(rep(0, 5), rep(m1med[rnums$beta1[1]],
-                 5))* data$Frame[i])} +
-                 m1med[rnums$beta2]*data$Num[i]
-        lcl <- lcl + dmvnorm(data$y[i,], mnvec, covmat, log=TRUE)
-      }
-      if (!is.na(m1med[rnums$Inv_sig_ee][1])){
-        xcovmat <- m1med[rnums$g1]^2*covmat[6:10,6:10] + 
-                   m1med[rnums$g2]^2*covmat[1:5,1:5] - 
-                   m1med[rnums$g1]*m1med[rnums$g2]*
-                   covmat[1:5,6:10] %*% 
-                   covmat[6:10,1:5] +
-                   (sum(m1med[rnums$g3])*(data$Num[i]-data$Numc))^2*
-                   covmat[6:10,6:10] +
-                   (sum(m1med[rnums$g4])*(data$Num[i]-data$Numc))^2*
-                   covmat[1:5,1:5] - 
-                   sum(m1med[rnums$g3])*(data$Num[i]-data$Numc)*
-                   sum(m1med[rnums$g4])*
-                   (data$Num[i]-data$Numc)*covmat[6:10,1:5] %*% 
-                   covmat[1:5,6:10] + psi
-  
-        mnvec <-  m1med[rnums$b0] + rep(sum(m1med[rnums$b1]),5)*
-                  data$Frame[i] + m1med[rnums$b2]*
-                  (data$Num[i]-data$Numc) +
-                  sum(m1med[rnums$b3])*data$Frame[i]*
-                  (data$Num[i]-data$Numc) +
-                  m1med[rnums$g1]*
-                  m1med[rnums$beta0[6:10]] + m1med[rnums$g2]*
-                  m1med[rnums$beta0[1:5]] + 
-                  sum(m1med[rnums$g3])*m1med[rnums$beta0[6:10]]*
-                  (data$Num[i]-data$Numc) + 
-                  sum(m1med[rnums$g4])*m1med[rnums$beta0[1:5]]* 
-                  (data$Num[i]-data$Numc)
-        lcl <- lcl + dmvnorm(data$X[i,], mnvec, xcovmat, log=TRUE)
+      } else{
+           Mu[i,1] <- (ifelse(is.na(m1med[rnums$'beta1[1]'[1]]), 0,
+                       m1med[rnums$'beta1[1]'])*data$Frame[i]) + 
+                (ifelse(is.na(m1med[rnums$'beta2[1]'[1]]), 0,
+                       m1med[rnums$'beta2[1]'])*
+                           (data$Num[i] - data$Numc)) + 
+                      (ifelse(is.na(m1med[rnums$'beta3[1]'[1]]), 0,
+                         m1med[rnums$'beta3[1]'])*data$Frame[i]*
+                                 (data$Num[i] - data$Numc))
+           Mu[i,2] <- (ifelse(is.na(m1med[rnums$'beta1[2]'[1]]), 0,
+                       m1med[rnums$'beta1[2]'])*data$Frame[i]) + 
+                (ifelse(is.na(m1med[rnums$'beta2[2]'[1]]), 0,
+                       m1med[rnums$'beta2[2]'])*
+                           (data$Num[i] - data$Numc)) + 
+                      (ifelse(is.na(m1med[rnums$'beta3[2]'[1]]), 0,
+                         m1med[rnums$'beta3[2]'])*data$Frame[i]*
+                                 (data$Num[i] - data$Numc))
+           
+    cons <-  (ifelse(is.na(m1med[rnums$beta4[1]]), 0,
+                             m1med[rnums$beta4])*data$Frame[i]) + 
+                (ifelse(is.na(m1med[rnums$beta5[1]]), 0,
+                     m1med[rnums$beta5])*(data$Num[i]-data$Numc)) + 
+             (ifelse(is.na(m1med[rnums$beta6[1]]), 0,
+          m1med[rnums$beta6])*data$Frame[i]*(data$Num[i]-data$Numc))
+    xcovmat <- (m1med[rnums$lambda3] * (1 + numain%*%phi%*%numain +
+                nuint[i,]%*%phi%*%nuint[i,])) %*%
+               t(m1med[rnums$lambda3]) + psix
+    xmnvec <- m1med[rnums$b0]+ m1med[rnums$lambda3] * 
+             (numain%*%Mu[i,] + 
+              nuint[i,]%*%Mu[i,] + cons)
+    ycovmat <- lambda %*% phi %*% t(lambda) + psiy
+    ymnvec <- m1med[rnums$beta0] + lambda%*%Mu[i,]
+    mnvec <- c(xmnvec, ymnvec)
+    covmat <- bdiag(xcovmat,ycovmat)
+    covmat[(nrow(xcovmat)+1):(nrow(xcovmat)+nrow(ycovmat)), 
+           1:nrow(xcovmat)] = 
+               (lambda %*% c(numain%*%phi+nuint[i,]%*%phi)) %*% 
+               t(m1med[rnums$lambda3])
+    covmat[1:nrow(xcovmat), (nrow(xcovmat)+1):(nrow(xcovmat)+
+    nrow(ycovmat))] = t(covmat[(nrow(xcovmat)+1):(nrow(xcovmat)+
+                        nrow(ycovmat)),1:nrow(xcovmat)])
+    
+    lcl <- lcl + dmvnorm(cbind(data$X[i,],data$y[i,]), mnvec, 
+                         as.matrix(covmat), log=TRUE)
      }
-   }
- } else {
-  lcl1 <- 0
-  lcl2 <- 0
-  lambda1 <- matrix(c(m1med[rnums$lambda1],
-                          m1med[rnums$lambda2]), 10, 2)
-  lambda2 <- matrix(c(m1med[rnums$lambda1] +
-             if(is.na(rnums$delta1[1])){rep(0,10)}else{
-                 m1med[rnums$delta1]},
-             m1med[rnums$lambda2] +
-             if(is.na(rnums$delta2[1])){rep(0,10)}else{
-                m1med[rnums$delta2]}),
-             10, 2)
-  phi1 <- solve(matrix(c(m1med[rnums$Inv_cov1]), 2, 2))
-  phi2 <- solve(matrix(c(m1med[rnums$Inv_cov2]), 2, 2))
-  psi1 <- diag(1/m1med[rnums$Inv_sig_e1])
-  psi2 <- diag(1/m1med[rnums$Inv_sig_e2])
-  covmat1 <- lambda1 %*% phi1 %*% t(lambda1) + psi1
-  covmat2 <- lambda2 %*% phi2 %*% t(lambda2) + psi2
-  
-  for(i in 1:(data$N/2-1)){
-    mnvec <-  m1med[rnums$int1]
-    lcl1 <- lcl1 + dmvnorm(data$y[i,], mnvec, covmat1, log=TRUE)
   }
-  for(i in (data$N/2):(data$N)){
-    if(is.na(rnums$delta3[1]) & !is.na(rnums$int2[1])){
-        mnvec <- m1med[rnums$int2]}
-    if(!is.na(rnums$delta3[1]) & is.na(rnums$int2[1])){
-         mnvec <- m1med[rnums$int1] + m1med[rnums$delta3]}
-    if(is.na(rnums$delta3[1]) & is.na(rnums$int2[1])){
-         mnvec <- m1med[rnums$int1]}
-    lcl2 <- lcl2 + dmvnorm(data$y[i,], mnvec, covmat2, log=TRUE)
-  }
-  lcl <- lcl1 + lcl2
-}
+
   ## Eq (7) of lewis + raftery
   logintlik <- (nrow(m1cov)/2)*log(2*pi) + 
                 .5*log(det(m1cov)) + logfthet + lcl
   logintlik
 }
 
+if(FALSE){
+  source("bfcalc.R")
+  source("jagsmodels.R")
+
+}
 
 #############################################################
 ### Calculate Bayes factor via path sampling
-#bfcalc <- function(model, data, S=10, fname)
+# bfcalc <- function(model, data, S=10, fname)
 #  {
 #   if(file.exists(fname)){
 #     load(fname)
@@ -303,5 +248,5 @@ logintlik <- function(model = "linkinteraction.jag",
 #    }
 #    logBF
 #}
-#
+
  

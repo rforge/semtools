@@ -47,7 +47,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
   </ul></li>
 </ul>  
 
-<h3>Bayesian factor models for the analysis of experimental data</h3>
+<h3>Bayesian latent variable models for the analysis of experimental psychology data</h3>
 
 <ul>
   <li><a href="http://ssrn.com/abstract=2536989">Working paper</a></li>
@@ -55,7 +55,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
     <li><a href="jagsmodels.R">JAGS models</a> used in the paper (this file writes JAGS model files when it is sourced in R).</li>
     <li><a href="peters08.rda">Peters & Levin (2008) data</a>, used in the application.</li>
     <li><a href="bfcalc.R">Helper code</a> for computing Bayes factors via the Laplace approximation.</li>
-    <li><a href="replication-bfa.R">Replication script</a> containing code to estimate and summarize the analyses, using the above files.</li>
+    <li><a href="replication-blv.R">Replication script</a> containing code to estimate and summarize the analyses, using the above files.</li>
   </ul></li>
 </ul>
 
