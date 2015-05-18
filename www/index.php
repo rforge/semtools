@@ -33,7 +33,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <!-- get project title  -->
 <!-- own website starts here, the following may be changed as you like -->
 
-<h2>semtools: Methods for Testing Measurement Invariance in Structural Equation Models</h2>
+<h2>semtools: Methods for Structural Equation Models</h2>
 
 <h3>Testing non-nested structural equation models</h3>
 
