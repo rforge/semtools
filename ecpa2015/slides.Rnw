@@ -1,0 +1,492 @@
+\documentclass[11pt,compress,t]{beamer}
+\usetheme{Z}
+\usepackage{amsfonts,amstext,amsmath,bm}
+\newcommand{\argmax}{\operatorname{argmax}\displaylimits}
+
+%% need no \usepackage{Sweave}
+\definecolor{InputColor}{rgb}{0,0,0.3}
+\definecolor{OutputColor}{rgb}{0.2,0.2,0.2}
+
+\SweaveOpts{engine=R, eps=FALSE, keep.source=TRUE}
+<<preliminaries, echo=FALSE, results=hide>>=
+options(prompt = "R> ", continue = "+  ", useFancyQuotes = FALSE, width = 70)
+set.seed(1090)
+@
+
+\begin{document}
+
+\title{{\fontsize{14.7}{16}\selectfont Score-Based Tests of Measurement Invariance with Respect to Continuous and Ordinal Variables}}
+\author{Achim Zeileis, Edgar C. Merkle, Ting Wang}
+\URL{http://eeecon.uibk.ac.at/~zeileis/}
+\lecture{Score-Based Tests of Measurement Invariance with Respect to Continuous and Ordinal Variables}
+
+\subsection{Overview}
+
+\begin{frame}
+\frametitle{Overview}
+
+\begin{itemize}
+  \item Motivation
+  \item Framework
+  \item Score-based tests
+  \begin{itemize}
+    \item Continuous variables
+    \item Ordinal variables
+    \item Categorial variables
+  \end{itemize}
+  \item Illustration
+\end{itemize}
+
+\end{frame}
+
+\subsection{Motivation}
+
+\begin{frame}
+\frametitle{Motivation}
+
+\textbf{Psychometric models:} Typically measure latent scales based on certain
+manifest variables, e.g., item response theory (IRT) models or confirmatory
+factor analysis (CFA, today's focus).
+
+\medskip
+
+\textbf{Crucial assumption:} Measurement invariance (MI). Otherwise observed differences in
+scores cannot be reliably attributed to the latent variable that the model
+purports to measure.
+
+\medskip
+
+\textbf{Parameter stability:} In parametric models, the MI assumption
+corresponds to stability of parameters across all possible subgroups.
+
+\medskip
+
+\textbf{Inference:} The typical approach for assessing MI is
+\begin{itemize}
+  \item to split the data into reference and focal groups,
+  \item assess the stability of selected parameters (all or only a subset) across these groups
+  \item by means of standard tests: likelihood ratio (LR), Wald, or Lagrange multiplier
+    (LM or score) tests.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Motivation}
+
+\textbf{Problems:}
+\begin{itemize}
+  \item Subgroups have to be formed in advance.
+  \item Numerical variables are often categorized into groups in an ad hoc way
+    (e.g., splitting at the median).
+  \item In ordinal variables the ordering of the categories is often not exploited
+    (assessing only if at least one group differs from the others).
+  \item When likelihood ratio or Wald tests are employed, the model has to be
+    fitted to each subgroup which can become numerically challenging and computationally
+    intensive.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Motivation}
+
+\textbf{Idea:}
+\begin{itemize}
+  \item Generalize the LM test (or score test).
+  \item Thus, the model only has to be fitted once under the MI assumption to the full data set.
+  \item Catpure model deviations along a variable that is suspected to cause MI violations.
+  \item Exploit ordering to assess if there is (at least) one split so that the
+    model parameters before and after the split differ.
+  \item The split does \emph{not} have to be known or guessed in advance.
+\end{itemize}  
+
+\medskip
+
+\textbf{Illustration:} CFA for artificial data.
+\begin{itemize}
+  \item Model with two latent scales: Verbal and math score.
+  \item Three manifest variables for each scale.
+  \item Violation of MI for the math loadings along the age of the subjects.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Motivation: CFA for age $\le 16$}
+
+\vspace*{-0.6cm}
+
+\includegraphics[width=0.95\textwidth]{../psychoco2012/model_under16.pdf}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Motivation: CFA for age $> 16$}
+
+\vspace*{-0.6cm}
+
+\includegraphics[width=0.95\textwidth]{../psychoco2012/model_over16.pdf}
+
+\end{frame}
+
+
+\subsection{Framework}
+
+\begin{frame}
+\frametitle{Framework}
+
+\textbf{Model:} Based on log-likelihood $\ell(\cdot)$ for
+$p$-dimensional observations $\bm{x}_i$ ($i = 1, \dots, n$)
+based on $k$-dimensional parameter ${\bm \theta}$.
+
+\medskip
+
+\textbf{Estimation:} Maximum likelihood.
+\[
+  \hat{\bm{\theta}} ~=~ \argmax_{\bm{\theta}} \sum_{i = 1}^n \ell(\bm{\theta}; \bm{x}_i).
+\]
+
+\medskip
+
+\textbf{Equivalently:} Solve first order conditions
+\[
+  \sum_{i=1}^{n} {\bm s}(\hat{\bm{\theta}}; \bm{x}_i) ~=~ 0,    
+\]
+where the score function is the partial derivative of the casewise
+likelihood contributions w.r.t.\ the parameters $\bm{\theta}$.
+\[
+  {\bm s}({\bm \theta}; \bm{x}_i) ~=~ \left(
+    \frac{\partial \ell({\bm \theta}; \bm{x}_i)}{\partial \theta_1},
+    \dots,
+    \frac{\partial \ell({\bm \theta}; \bm{x}_i)}{\partial \theta_k}
+  \right)^\top.
+\]
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Framework}
+
+\textbf{Assumption:} Distribution/likelihood of $\bm{x}_i$ depends
+only on the latent scales (through the parameters $\bm{\theta}$) --
+but not on any other variable $v_i$.
+
+\medskip
+
+\textbf{Alternative view:} Parameters $\bm{\theta}$ do not depend
+any such variable $v_i$. Hence assess for $i = 1, \ldots, n$
+\begin{eqnarray*}
+    H_0: {\bm \theta}_i & = & {\bm \theta}_0, \\
+    H_1: {\bm \theta}_i & = & {\bm \theta}(v_i).
+\end{eqnarray*}
+
+\medskip
+
+\textbf{Special case:} Two subgroups resulting from one split point $\nu$.
+\begin{eqnarray*}
+  H_1^*: {\bm \theta}_i & = & \left\{ \begin{array}{ll}
+    {\bm \theta}^{(A)} & \mbox{if } v_i \le \nu \\
+    {\bm \theta}^{(B)} & \mbox{if } v_i >   \nu
+  \end{array} \right.
+\end{eqnarray*}
+
+\medskip
+
+\textbf{Tests:} LR/Wald/LM tests can be easily employed if pattern $\bm{\theta}(v_i)$
+is known, specifically for $H_1^*$ with fixed split point $\nu$.
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Framework}
+
+\textbf{For unknown split points:} Compute LR/Wald/LM tests for each possible
+split point $v_1 \le v_2 \le \dots \le v_n$ and reject if the maximum statistic is large.
+
+\medskip
+
+\textbf{Caution:} By maximally selecting the test statistic different critical
+values are required (not from a $\chi^2$ distribution)!
+
+\medskip
+
+\textbf{Illustration:} Assess all $k^* = 19$ model parameters from the artificial
+CFA example along the continuous variable age ($v_i$).
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Framework}
+
+\vspace*{-1.2cm}
+
+\includegraphics[width=\textwidth]{../psychoco2012/paper-lm-lr-19.pdf}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Framework}
+
+\textbf{Note:} For the maxLM test the parameters $\hat{\bm \theta}$ only have
+to be estimated once. Only the model scores ${\bm s}(\hat{\bm \theta}; \bm{x}_i)$
+have to be aggregated differently for each split point.
+
+\medskip
+
+\textbf{More generally:} Consider a class of tests that
+assesses whether the model ``deviations'' ${\bm s}(\hat{\bm \theta}; \bm{x}_i)$
+depend on $v_i$. This can consider only a subset $k*$ of all $k$
+parameters/scores or try to capture other patterns than $H_1^*$.
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Score-based tests}
+
+\textbf{Fluctuation process:} Capture fluctuations in the cumulative
+sum of the scores ordered by the variable $v$.
+\[
+  {\bm B}(t; \hat {\bm \theta}) ~=~ \hat {\bm I}^{-1/2} n^{-1/2}
+    \sum_{i = 1}^{\lfloor n \cdot t \rfloor} {\bm s}(\hat {\bm \theta}; \bm{x}_{(i)})
+  \qquad (0 \le t \le 1).
+\]
+\begin{itemize}
+  \item $\hat{\bm I}$ -- estimate of the information matrix.
+  \item $t$ -- proportion of data ordered by $v$.
+  \item $\lfloor n \cdot t \rfloor$ -- integer part of $n \cdot t$.
+  \item $x_{(i)}$ -- observation with the $i$-th smallest value of the
+    variable $v$.
+\end{itemize}
+
+\medskip
+
+\textbf{Functional central limit theorem:} Under $H_0$ convergence to a (continuous) Brownian bridge process
+${\bm B}(\cdot; \hat {\bm \theta}) ~\overset{d}{\rightarrow}~ {\bm B}^{0}(\cdot)$,
+from which critical values can be obtained -- either analytically or by simulation.
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Score-based tests: Continuous variables}
+
+\textbf{Test statistics:} The empirical process can be viewed as a matrix
+${\bm B}(\hat {\bm \theta})_{ij}$ with rows $i = 1, \dots, n$ (observations)
+and columns $j = 1, \dots, k$ (parameters). This can be aggregated to scalar
+test statistics along continuous the variable $v$.
+\begin{eqnarray*}
+    \mathit{DM}      & = & \max_{i = 1,\dots, n} \max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} | \\
+    \mathit{CvM}     & = & n^{-1} \sum_{i = 1,\dots, n} \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2, \\
+    \max \mathit{LM} & = & \max_{i = \underline{i}, \dots, \overline{\imath}} ~
+      \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1}
+      \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2.
+\end{eqnarray*}
+
+\medskip
+
+\textbf{Critical values:} Analytically for $\mathit{DM}$. Otherwise by
+direct simulation or further refined simulation techniques.
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Score-based tests: Ordinal variables}
+
+\textbf{Test statistics:} Aggregation along ordinal variables $v$ with $m$ levels.
+\begin{eqnarray*}
+      \mathit{WDM}_o     & = & \max_{i \in \{i_1, \dots, i_{m-1} \}} ~ \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1/2}      
+                             \max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} |,\\
+      \max \mathit{LM}_o & = & \max_{i \in \{i_1, \dots, i_{m-1} \}} ~
+                             \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1}
+                             \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2,
+\end{eqnarray*}
+where $i_1, \dots, i_{m-1}$ are the numbers of observations in each category.
+
+\medskip
+
+\textbf{Critical values:} For $\mathit{WDM}_o$ directly from a multivariate normal distribution.
+For $\max \mathit{LM}_o$ via simulation.
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Score-based tests: Categorical variables}
+
+\textbf{Test statistic:} Aggregation within the $m$ (unordered) categories of $v$.
+\[
+  \mathit{LM}_{uo} = \sum_{\ell = 1, \dots, m} \sum_{j = 1, \dots, k}
+    \left( {\bm B}(\hat {\bm \theta})_{i_\ell j} - {\bm B}(\hat {\bm \theta})_{i_{\ell - 1}j} \right)^2,
+\]
+
+\medskip
+
+\textbf{Critical values:} From a $\chi^2$ distribution (as usual).
+
+\medskip
+
+\textbf{Asymptotically equivalent:} LR test.
+
+
+\end{frame}
+
+\subsection{Illustration}
+
+\begin{frame}
+\frametitle{Illustration}
+
+\textbf{Software:} In R system for statistical computing.
+\begin{itemize}
+  \item \emph{strucchange} implements this general framwork for
+    parameter instability tests.
+  \item Object-oriented implementation that can be applied to many
+    model classes, including \emph{lavaan} objects for CFA models.
+\end{itemize}
+
+\medskip
+
+\textbf{Data:}
+\begin{itemize}
+  \item Application of adult gratitude scale to $n=1401$ youth aged 10--19 years.
+  \item GQ-6 scale has five Likert scale items with seven points each.
+  \item Assess the factor loadings of a one-factor model.
+  \item Question: Measurement invariance across six age groups?
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Illustration}
+
+\textbf{Packages:}
+
+<<packages, results=hide>>=
+library("lavaan")
+library("strucchange")
+@
+
+\medskip
+
+\textbf{Data:} Omitting incomplete cases.
+
+<<data>>=
+data("YouthGratitude", package = "psychotools")
+compcases <- apply(YouthGratitude[, 4:28], 1,
+  function(x) all(x %in% 1:9))
+yg <- YouthGratitude[compcases, ]
+@
+
+\medskip
+
+\textbf{Estimation:} One-factor CFA with loadings restricted to be equal
+across age groups.
+
+<<models>>=
+gq6cfa <- cfa("f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
+  data = yg, group = "agegroup", meanstructure = TRUE,
+  group.equal = "loadings")
+@
+
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Illustration}
+
+\textbf{Measurement invariance tests:}
+
+<<wdmo, strip.white=all, fig=TRUE, height=4.5, width=5, include=FALSE>>=
+sctest(gq6cfa, order.by = yg$agegroup, parm = 1:4,
+  vcov = "info", functional = "WDMo", plot = TRUE)
+@
+
+<<maxlmo, strip.white=all, fig=TRUE, height=4.5, width=5, include=FALSE>>=
+sctest(gq6cfa, order.by = yg$agegroup, parm = 1:4,
+  vcov = "info", functional = "maxLMo", plot = TRUE)
+@ 
+
+Both tests reflect only moderate parameter instability across age groups
+and do not show significant violations of measurement invariance at 5\% level.
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Illustration}
+
+\vspace*{-0.6cm}
+
+\centering
+\includegraphics[width=0.8\textwidth]{slides-wdmo}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Illustration}
+
+\vspace*{-0.6cm}
+
+\centering
+\includegraphics[width=0.8\textwidth]{slides-maxlmo}
+
+\end{frame}
+
+\subsection{Summary}
+
+\begin{frame}
+\frametitle{Summary}
+
+\begin{itemize}
+  \item General score-based test framework for assessing measurement
+    invariance in parametric psychometric models.
+  \item Assessment is along some variable $v$ which can be continuous,
+    ordinal, or categorical.
+  \item Tests can be seen as generalizations of the Lagrange multiplier
+    (or score) test.
+  \item Computation of critical values might require simulation from
+    certain stochastic processes (Brownian bridges).
+  \item Easy-to-use implementation available in R package \emph{strucchange}.
+  \item Can be re-used in model-based recursive partitioning.
+\end{itemize}
+
+\end{frame}
+
+\subsection{References}
+
+\begin{frame}
+\frametitle{References}
+
+\small
+
+Merkle EC, Zeileis A (2013).
+  \dquote{Tests of Measurement Invariance without Subgroups: A Generalization of Classical Methods.}
+  \emph{Psychometrika}, \textbf{78}(1), 59--82.
+  \doi{10.1007/s11336-012-9302-4}
+
+\medskip
+
+Merkle EC, Fan J, Zeileis A (2014).
+  \dquote{Testing for Measurement Invariance with Respect to an Ordinal Variable.}
+  \emph{Psychometrika}, \textbf{79}(4), 569--584.
+  \doi{10.1007/s11336-013-9376-7}
+
+\medskip
+
+Wang T, Merkle EC, Zeileis A (2014).
+  \dquote{Score-Based Tests of Measurement Invariance: Use in Practice.}
+  \emph{Frontiers in Psychology}, \textbf{5}(438).
+  \doi{10.3389/fpsyg.2014.00438}
+
+%% \medskip
+%% 
+%% Strobl C, Julia Kopf, Zeileis A (2015).
+%%   \dquote{Rasch Trees: A New Method for Detecting Differential Item Functioning in the Rasch Model.}
+%%   \textit{Psychometrika}. \textbf{80}(2), 289--316.
+%%   \doi{10.1007/s11336-013-9388-3}
+
+\end{frame}
+
+
+\end{document}
