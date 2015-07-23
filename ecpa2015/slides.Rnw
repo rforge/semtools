@@ -451,6 +451,10 @@ and do not show significant violations of measurement invariance at 5\% level.
   \item Can be re-used in model-based recursive partitioning.
 \end{itemize}
 
+\bigskip
+
+\textbf{Acknowledgments:} This work was supported by National Science Foundation grant SES-1061334.
+
 \end{frame}
 
 \subsection{References}
