@@ -51,7 +51,7 @@ factor analysis (CFA, today's focus).
 \medskip
 
 \textbf{Crucial assumption:} Measurement invariance (MI). Otherwise observed differences in
-scores cannot be reliably attributed to the latent variable that the model
+scales cannot be reliably attributed to the latent variable that the model
 purports to measure.
 
 \medskip
@@ -77,7 +77,7 @@ corresponds to stability of parameters across all possible subgroups.
 \textbf{Problems:}
 \begin{itemize}
   \item Subgroups have to be formed in advance.
-  \item Numerical variables are often categorized into groups in an ad hoc way
+  \item Continuous variables are often categorized into groups in an ad hoc way
     (e.g., splitting at the median).
   \item In ordinal variables the ordering of the categories is often not exploited
     (assessing only if at least one group differs from the others).
@@ -93,7 +93,7 @@ corresponds to stability of parameters across all possible subgroups.
 
 \textbf{Idea:}
 \begin{itemize}
-  \item Generalize the LM test (or score test).
+  \item Generalize the LM test.
   \item Thus, the model only has to be fitted once under the MI assumption to the full data set.
   \item Catpure model deviations along a variable that is suspected to cause MI violations.
   \item Exploit ordering to assess if there is (at least) one split so that the
@@ -105,7 +105,7 @@ corresponds to stability of parameters across all possible subgroups.
 
 \textbf{Illustration:} CFA for artificial data.
 \begin{itemize}
-  \item Model with two latent scales: Verbal and math score.
+  \item Model with two latent scales (verbal and math).
   \item Three manifest variables for each scale.
   \item Violation of MI for the math loadings along the age of the subjects.
 \end{itemize}
@@ -444,7 +444,7 @@ and do not show significant violations of measurement invariance at 5\% level.
   \item Assessment is along some variable $v$ which can be continuous,
     ordinal, or categorical.
   \item Tests can be seen as generalizations of the Lagrange multiplier
-    (or score) test.
+    test.
   \item Computation of critical values might require simulation from
     certain stochastic processes (Brownian bridges).
   \item Easy-to-use implementation available in R package \emph{strucchange}.
