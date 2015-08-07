@@ -40,7 +40,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <ul>
   <li>The current version of lavaan on CRAN (0.5-18) handles parameter constraints differently from all previous versions.</li>
   <li>The changes break our code for score-based tests in strucchange and for non-nested SEM comparisons.</li>
-  <li>We are currently working on solutions.  For now, we recommend using lavaan 0.5-17.</li>
+  <li>We are currently working on solutions.  For now, we recommend using <a href="https://cran.r-project.org/src/contrib/Archive/lavaan/lavaan_0.5-17.tar.gz">lavaan 0.5-17</a>.</li>
   <li>Further detail on the changes to lavaan is available <a href="http://lavaan.ugent.be/notes/lavaan_eq_constraints.pdf">here</a>.</li>
 </ul>
 
