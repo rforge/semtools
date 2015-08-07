@@ -35,6 +35,15 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 
 <h2>semtools: Methods for Structural Equation Models</h2>
 
+<h3>Important note on lavaan 0.5-18</h3>
+
+<ul>
+  <li>The current version of lavaan on CRAN (0.5-18) handles parameter constraints differently from all previous versions.</li>
+  <li>The changes break our code for score-based tests in strucchange and for non-nested SEM comparisons.</li>
+  <li>We are currently working on solutions.  For now, we recommend using lavaan 0.5-17.</li>
+  <li>Further detail on the changes to lavaan is available <a href="http://lavaan.ugent.be/notes/lavaan_eq_constraints.pdf">here</a>.</li>
+</ul>
+
 <h3>Testing non-nested structural equation models</h3>
 
 <ul>
@@ -43,7 +52,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
     <li><a href="sim-vuong.R">Simulation functions</a> for data generation, power evaluation, and power summaries.</li>
     <li><a href="burnout.rda">Burnout data</a> for application.</li>
     <li><a href="replication-vuong.R">Replication script</a> containing code to run and summarize the application and simulations, using the above files.</li>
-    <li>Relies on R packages <em>nonnest2</em> to carry out the tests and <em>lavaan</em> for model estimation.
+    <li>Relies on R packages <em>nonnest2</em> to carry out the tests and <em>lavaan 0.5-17</em> for model estimation.
   </ul></li>
 </ul>  
 
@@ -91,7 +100,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
   <li>Manuscript published in <a href="http://dx.doi.org/10.1007/S11336-012-9302-4">Psychometrika 78(1), 58-82</a>.</li>
   <li><a href="http://www.psychoco.org/2012/slides/Merkle.pdf">Psychoco 2012 presentation</a></li>
   <li>Replication materials:<ul>
-    <li><a href="estfun-lavaan.R">lavaan extensions</a> containing <tt>estfun()</tt> method for lavaan objects.</li>
+    <li><a href="estfun-lavaan.R">lavaan extensions</a> containing <tt>estfun()</tt> method for lavaan objects (note: this code has been incorporated into lavaan and is no longer necessary).</li>
     <li><a href="mz.R">Artificial example functions</a> for lavaan or OpenMx model estimation, along with score extraction.</li>
     <li><a href="sim.R">Simulation functions</a> for data generation, power evaluation, and power summaries.</li>
     <li><a href="replication.R">Replication script</a> containing code to run and summarize the examples and simulations, using the above files.</li>
