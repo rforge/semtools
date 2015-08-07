@@ -119,6 +119,7 @@ This matches closely with the result from Wang et al. (2014).  The result may di
 ## Potential full solution
 If we wish to apply the tests to models with more general constraints, Yves suggests that *lavaan* can give us Lagrange multiplier values associated with each constraint.  These could be used to augment the score matrix so that, if we then wish to test some equality-constrained parameters, we would presumably use the columns of the score matrix that correspond to the Lagrange multiplier values.  An augmented information matrix can already be obtained for these purposes via
 ```{r}
-auginfo <- lavInspect(restr, "augmented.information")
+auginfo <- lavInspect(restr, "augmented.information", add.labels=FALSE)
 ```
+where the `add.labels` argument works around a bug that Yves has already fixed.
 Yves suggests looking at the `lavTestScore()` function for hints on augmenting the scores.  This option has not yet been explored.
