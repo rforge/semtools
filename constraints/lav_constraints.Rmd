@@ -123,3 +123,31 @@ auginfo <- lavInspect(restr, "augmented.information", add.labels=FALSE)
 ```
 where the `add.labels` argument works around a bug that Yves has already fixed.
 Yves suggests looking at the `lavTestScore()` function for hints on augmenting the scores.  This option has not yet been explored.
+
+```{r}
+## comparison, solution?
+## gradient of likelihood, which is (- LM term)
+lavInspect(restr, "gradient")
+## matches scores
+lsc <- lavScores(restr)
+colSums(lsc)/nobs(restr)
+
+lsc2 <- t(lavInspect(restr,"gradient") + t(lsc))
+
+lavsc2 <- function(fit, ...){
+  t(lavInspect(fit,"gradient") + t(lavScores(fit)))
+}
+
+lavinfo <- function(fit, ...) lavInspect(fit, "information")
+
+sctest(restr, order.by=yg$agegroup, parm=c(1,16,46,61,76), scores=lavsc2, vcov=lavinfo, 
+       sandwich=FALSE, functional="LMuo")
+
+## find parameters affected by equality constraints
+apply(restr@Model@ceq.JAC==0,2,all)
+## find redundant parameters (only one non-zero entry, but
+## not for a+b+c == 3)
+apply(restr@Model@ceq.JAC!=0,2,sum)
+
+## use qr() to find non-redundant parameters?
+```
