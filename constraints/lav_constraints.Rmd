@@ -167,6 +167,6 @@ head(colSums(ls))
 ```
 
 ## Etc
-Beyond this, Yves suggested that *lavaan* can give us Lagrange multiplier values associated with each constraint.  These could possibly be used to augment the score matrix so that, if we then wish to test some equality-constrained parameters, we would presumably use the columns of the score matrix that correspond to the Lagrange multiplier values.  I am not optimistic that this approach will work because the other packages implicitly assume that the model is in reduced form (vs full form with constraints) for counting parameters, degrees of freedom, etc.  But I may not understand the suggestion.
+Beyond this, Yves suggested that *lavaan* can give us Lagrange multiplier values associated with each constraint.  These could possibly be used to augment the score matrix so that there is presumably one column associated with each constraint (?).  Perhaps this could work, but we would need a separate value for each observation in the sample (vs a single value across all observations).  I'm not sure how this could be obtained, after looking at the new `lavTestScore()`.
 
 I also notice in the "equality constraints" document that `lav_partable_df()` does not yet deal with equality constraints.  I think that the solution to this issue might be relevant to the "reduced model" issues here.
