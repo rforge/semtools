@@ -1,13 +1,13 @@
 ---
-title: "Score-based tests in lavaan 0.5-18"
+title: "Score-based tests in new lavaan versions"
 author: "Ed Merkle"
 date: "08/03/2015"
 output: pdf_document
 ---
 
-Consider the following example from Wang, Merkle, & Zeileis (2014):
+Consider the following example from Wang, Merkle, & Zeileis (2014) (note this is a custom lavaan version, as I removed the `eq.constraints.K` stuff from `lavScores()`):
 ```{r}
-library("lavaan")
+library("lavaan", lib.loc="~/dev_package_versions")
 data("YouthGratitude", package = "psychotools")
 compcases <- apply(YouthGratitude[, 4:28], 1, function(x) all(x %in% 1:9))
 yg <- YouthGratitude[compcases, ]
@@ -28,7 +28,7 @@ colSums(scores)[1:5]
 In previous versions of *lavaan*, these sums were always 0 (reflecting the gradient evaluated at the ML estimates).  Now, some columns do not sum to zero because the scores associated with a single parameter are contained in multiple columns of `scores`.
 
 ## Possible solutions
-Two possible solutions (that do not work) involve (i) obtaining the information matrix directly from *lavaan*, and (ii) using the *lavaan* 
+Two possible solutions (that do not work) involve (i) obtaining the information matrix directly from *lavaan* and maintaining the "full" model, and (ii) using the *lavaan* 
  projection matrix `eq.constraints.K`, which projects a vector from the full parameter space to the reduced parameter space.
  
  
@@ -36,16 +36,22 @@ Pursuing the first solution, we can at least avoid the error from `sctest()` by 
 ```{r}
 lavinfo <- function(fit, ...) lavInspect(fit, "information")
 ```
-which obtains the information matrix directly from `lavaan` instead of relying on `strucchange` to do it.  We now modify our call to `sctest`:
+which obtains the information matrix directly from `lavaan` instead of relying on `strucchange` to do it.  Second, we transform the score matrix so that each column again sums to zero.  This involves obtaining the gradient of the likelihood at the ML estimates; note that the optimization function now contains a second term that involves Lagrange multipliers, so this gradient will not equal zero at the ML estimates.  We apply this gradient to the scores, which accounts for the second term in the optimization function:
 ```{r}
-sctest(restr, order.by=yg$agegroup, parm=1:4, vcov=lavinfo, sandwich=FALSE, functional="LMuo")
+lavsc <- function(fit, ...) t(t(lavScores(fit)) + lavInspect(fit,"gradient"))
+```
+
+We now modify our call to `sctest`:
+```{r}
+sctest(restr, order.by=yg$agegroup, parm=1:4, scores=lavsc, 
+       vcov=lavinfo, sandwich=FALSE, functional="LMuo")
 ```
 which returns a plausible result, but the result still differs from previous versions (see Wang et al, 2014, p. 4, top first column).  This is because the argument `parm=1:4` gives us only the first group's loading parameters, and we already saw above that the scores in these columns do not sum to zero.  To fix this, we could find all the columns that correspond to these four loadings; these column names happen to be the only ones that have the string ".p" in them:
 ```{r}
-sctest(restr, order.by=yg$agegroup, parm=grep(".p", names(coef(restr))), vcov=lavinfo, 
-       sandwich=FALSE, functional="LMuo")
+sctest(restr, order.by=yg$agegroup, parm=grep(".p", names(coef(restr))), 
+       scores=lavsc, vcov=lavinfo, sandwich=FALSE, functional="LMuo")
 ```
-We now obtain a test statistic that is an order of magnitude too high; this is related to the fact that we chose 24 parameters of the original matrix (6 groups $\times$ 4 equality-constrained parameters).  In computing the test statistic, `sctest()` thinks we are testing 24 unique parameters instead of only 4, and the scores do not sum to zero in any of these columns.
+We now obtain a test statistic that is an order of magnitude too high; this seems related to the fact that we chose 24 parameters of the original matrix (6 groups $\times$ 4 equality-constrained parameters), with each score column summing to zero.  In computing the test statistic, `sctest()` thinks we are testing 24 unique parameters instead of only 4, and the scores should not sum to zero in columns that reflect the same parameter.  These results seem to imply that *strucchange* relies on the reduced model in order to produce the desired results.  Related to this point, I can use the above approach with *nonnest2* and obtain the "correct" test statistics.  I cannot obtain the correct $p$-values for statistics that have weighted sum of $\chi^2$ limiting distributions, because the algorithms implicitly use the number of model parameters to count degrees of freedom.
 
 Pursuing the second solution, we can define custom functions to project the original score vector and information matrix into the "reduced" dimension.  We can then use these in our call to `sctest()`:
 ```{r}
@@ -57,7 +63,7 @@ lavinfo <- function(fit, ...) t(fit@Model@eq.constraints.K) %*%
 sctest(restr, order.by=yg$agegroup, parm=1:4, scores=lavsc, vcov=lavinfo, 
        sandwich=FALSE, functional="LMuo")
 ```
-This result is again implausible.  It is because, after we project the original score matrix into a lower dimension, each column of the matrix no longer corresponds to a single parameter.  Hence, the argument `parm=1:4` tests some function of the scores that no longer corresponds to the four loadings of interest.
+This result is again implausible.  It is because, after we project the original score matrix into a lower dimension, each column of the matrix no longer corresponds to a single parameter.  Hence, the argument `parm=1:4` tests some function of the scores that no longer corresponds to the four loadings of interest.  It is unclear how we could test specific parameters using this projection.
 
 ## Preliminary solution
 There exists a simple solution for models with simple equality constraints (i.e., multiple freely-estimated parameters constrained to be equal to one another), which should include all the models from Merkle & Zeileis, 2013, Merkle, Fan, & Zeileis, 2014, and Wang, Merkle, & Zeileis, 2014. These are (presumably) models that satisfy the following conditions
@@ -71,9 +77,9 @@ if(restr@Model@eq.constraints){
                  length(restr@Model@ceq.nonlinear.idx) == 0
 }
 ```
-These conditions say that the constraints all involve a simple difference between two parameters that must equal 0.
+These conditions say that the constraints all involve a simple difference between two parameters that must equal 0.  In retrospect, I don't think the *strucchange* tests ever worked for models with more general equality constraints (I never considered them until now).
 
-In these cases, the reduced score vector can be obtained by finding columns of the full score vector that contain equality-constrained parameters, then summing across these columns.  The reduced `vcov()` can be obtained by taking only one row/column that corresponds to an equality-constrained parameter, as opposed to taking all of them.  The equality-constrained parameters are not entirely straightforward to find because there currently do not appear to be any indicators in *lavaan*.  We find them via this code:<!-- Further, depending on how the equality constraints are set, equality-constrained parameters may or may not have the same labels.  We must search for duplicated parameter labels and search for equality constraints in the parameter table. -->
+In the simple cases outlined above, the reduced score vector can be obtained by finding columns of the full score vector that contain equality-constrained parameters, then summing across these columns.  The reduced `vcov()` can be obtained by taking only one row/column that corresponds to an equality-constrained parameter, as opposed to taking all of them.  The equality-constrained parameters are not entirely straightforward to find because there currently do not appear to be any indicators in *lavaan*.  We find them via this code:<!-- Further, depending on how the equality constraints are set, equality-constrained parameters may or may not have the same labels.  We must search for duplicated parameter labels and search for equality constraints in the parameter table. -->
 ```{r}
 ## parameters with equality constraints:
 lpt <- parTable(restr)
@@ -117,37 +123,64 @@ sctest(restr, order.by=yg$agegroup, parm=1:4, scores=lavsc, vcov=lavinfo,
 This matches closely with the result from Wang et al. (2014).  The result may differ slightly because *lavaan* is optimizing the model in a new way, so that the 0.5-18 ML estimates may slightly differ from the 0.5-17 ML estimates.
 
 ## Potential full solution
-If we wish to apply the tests to models with more general constraints, Yves suggests that *lavaan* can give us Lagrange multiplier values associated with each constraint.  These could be used to augment the score matrix so that, if we then wish to test some equality-constrained parameters, we would presumably use the columns of the score matrix that correspond to the Lagrange multiplier values.  An augmented information matrix can already be obtained for these purposes via
+If we wish to apply the tests to models with general equality constraints within a single group, it seems like we can use the first attempted solution described previously.  This involves defining custom score and information matrix functions as we did at the start of the document:
 ```{r}
-auginfo <- lavInspect(restr, "augmented.information", add.labels=FALSE)
-```
-where the `add.labels` argument works around a bug that Yves has already fixed.
-Yves suggests looking at the `lavTestScore()` function for hints on augmenting the scores.  This option has not yet been explored.
-
-```{r}
-## comparison, solution?
-## gradient of likelihood, which is (- LM term)
-lavInspect(restr, "gradient")
-## matches scores
-lsc <- lavScores(restr)
-colSums(lsc)/nobs(restr)
-
-lsc2 <- t(lavInspect(restr,"gradient") + t(lsc))
-
-lavsc2 <- function(fit, ...){
-  t(lavInspect(fit,"gradient") + t(lavScores(fit)))
-}
-
 lavinfo <- function(fit, ...) lavInspect(fit, "information")
+lavsc <- function(fit, ...) t(t(lavScores(fit)) + lavInspect(fit,"gradient"))
+```
 
-sctest(restr, order.by=yg$agegroup, parm=c(1,16,46,61,76), scores=lavsc2, vcov=lavinfo, 
-       sandwich=FALSE, functional="LMuo")
+Then we may use these functions to test parameters involved in equality constraints, so long as we are careful not to test redundant parameters.  For example, if we use this model:
+```{r}
+hsm <- ' visual  =~ x1 + a*x2 + b*x3
+         textual =~ x4 + c*x5 + x6
+         speed   =~ x7 + x8 + x9
+         a+b+c == 3 '
+     
+fit <- cfa(hsm, data=HolzingerSwineford1939)
+```
+then we would presumably only want to test two of the parameters {a,b,c}, possibly also  distributing the third parameter's scores to the other two parameters' scores.
+The results would change depending on which of the two parameters one chose, but this is a property of the tests; it is the same as getting different results when one constrains different parameters to one in a factor analysis.
 
-## find parameters affected by equality constraints
-apply(restr@Model@ceq.JAC==0,2,all)
-## find redundant parameters (only one non-zero entry, but
-## not for a+b+c == 3)
-apply(restr@Model@ceq.JAC!=0,2,sum)
+Beyond this, Yves suggested that *lavaan* can give us Lagrange multiplier values associated with each constraint.  These could possibly be used to augment the score matrix so that, if we then wish to test some equality-constrained parameters, we would presumably use the columns of the score matrix that correspond to the Lagrange multiplier values.  I am not optimistic that this approach will work because the other packages implicitly assume that the model is in reduced form (vs full form with constraints).
 
-## use qr() to find non-redundant parameters?
+Finally, I notice in the "equality constraints" document that `lav_partable_df()` does not yet deal with equality constraints.  I think that the solution to this issue will be very relevant to the *strucchange* issues.
+
+## General solution
+Say that we have the parameter constraint $\theta_1 + \theta_2 + \theta_3 = 3$.  Using the full version of the model, we can get the gradient (and scores) associated with all three parameters:
+$$
+\begin{align}
+g(\theta_1) &= \frac{\partial L(\theta_1, \theta_2, \theta_3, \ldots | \bm{X})}{\partial \theta_1} \\
+g(\theta_2) &= \frac{\partial L(\theta_1, \theta_2, \theta_3, \ldots | \bm{X})}{\partial \theta_2} \\
+g(\theta_3) &= \frac{\partial L(\theta_1, \theta_2, \theta_3, \ldots | \bm{X})}{\partial \theta_3}.
+\end{align}
+$$
+
+Now, let's take $\theta_3 = (3 - \theta_1 - \theta_2)$, so that $\theta_3$ disappears from the model, allowing us to focus on a reduced model.  Let the gradient of the reduced model be denoted $g^*()$ with reduced model parameters also having asterisks.  We can (possibly) express the conditional log-likelihood of $\theta^*_1$ as a full model product, which splits the $\theta_1$ piece from the $\theta_3$ piece:
+$$
+L(\theta^*_1 | \theta_2, \theta_3, \theta_4, \ldots, \bm{X}) = f_1(\theta_1 | \theta_2, \ldots, \bm{X}) f_2(\theta_3 | \theta_2, \theta_4, \ldots, \bm{X}).
+$$
+To get the gradient associated with $\theta^*_1$, we can now use a product rule combined with a chain rule (since $\theta_3$ is a function of $\theta_1$):
+$$
+g^*(\theta^*_1 | \theta_2, \theta_3, \theta_4, \ldots, \bm{X}) = g(\theta_1 | \theta_2, \theta_3, \ldots, \bm{X}) + \left ( g(\theta_3 | \theta_1, \theta_2, \ldots, \theta_4, \bm{X}) \times \frac{\partial{(3 - \theta^*_1 - \theta^*_2)}{\partial \theta^*_1} \right ).
+$$
+So this would be $g(\theta_1 | \cdot) - g(\theta_3 | \cdot)$, both of which we can obtain from the full model `estfun()`.  In general, we need to have the derivative of the constraint wrt to each parameter involved.  I believe this can be obtained from `ceq.JAC` (for those in `ceq.linear.idx`) and `con.jac` (for those in `ceq.nonlinear.idx`)?
+
+Note this strategy covers the "simple equality constraint" solution that was previously discussed.
+
+
+```{r}
+hsm2 <- ' visual  =~ x1 + a*x2 + b*x3
+         textual =~ x4 + c*x5 + x6
+         speed   =~ x7 + x8 + x9
+         a*b == 1 '
+     
+fit <- cfa(hsm2, data=HolzingerSwineford1939)
+
+ls <- lavScores(fit)
+## assuming b = 1/a, convert to reduced model a parameter:
+sum(ls[,1] - ls[,2]/(coef(fit)[1]^2))
+
+## how to get derivative generally? see where ceq.function
+## is written, mimic to get something similar that will
+## give numerical derivs?
 ```
