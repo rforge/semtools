@@ -1,0 +1,865 @@
+\documentclass[11pt,compress,t]{beamer}
+\usetheme{Z}
+\usepackage{amsfonts,amstext,amsmath,bm}
+\newcommand{\argmax}{\operatorname{argmax}\displaylimits}
+
+%% need no \usepackage{Sweave}
+\definecolor{InputColor}{rgb}{0,0,0.3}
+\definecolor{OutputColor}{rgb}{0.2,0.2,0.2}
+
+\SweaveOpts{engine=R, eps=FALSE, keep.source=TRUE}
+<<preliminaries, echo=FALSE, results=hide>>=
+options(prompt = "R> ", continue = "+  ", useFancyQuotes = FALSE, width = 70)
+library("lavaan")
+library("strucchange")
+library("psychotree")
+library("psychotools")
+set.seed(1090)
+@
+
+\begin{document}
+
+\title{{\fontsize{14.7}{16}\selectfont Score-Based Tests of Measurement Invariance with Respect to Continuous and Ordinal Variables}}
+\author{Achim Zeileis, Edgar C. Merkle, Ting Wang}
+\URL{http://eeecon.uibk.ac.at/~zeileis/}
+\lecture{Score-Based Tests of Measurement Invariance with Respect to Continuous and Ordinal Variables}
+
+\subsection{Overview}
+
+\begin{frame}
+\frametitle{Overview}
+
+\begin{itemize}
+  \item Motivation
+  \item Framework
+  \item Score-based tests
+  \begin{itemize}
+    \item Continuous variables
+    \item Ordinal variables
+    \item Categorial variables
+  \end{itemize}
+  \item Software
+  \item Illustrations
+\end{itemize}
+
+\end{frame}
+
+\subsection{Motivation}
+
+\begin{frame}
+\frametitle{Motivation}
+
+\textbf{Psychometric models:} Typically measure latent scales based on certain
+manifest variables, e.g., item response theory (IRT) models or confirmatory
+factor analysis (CFA).
+
+\medskip
+
+\textbf{Crucial assumption:} Measurement invariance (MI). Otherwise observed differences in
+scales cannot be reliably attributed to the latent variable that the model
+purports to measure.
+
+\medskip
+
+\textbf{Parameter stability:} In parametric models, the MI assumption
+corresponds to stability of parameters across all possible subgroups.
+
+\medskip
+
+\textbf{Inference:} The typical approach for assessing MI is
+\begin{itemize}
+  \item to split the data into reference and focal groups,
+  \item assess the stability of selected parameters (all or only a subset) across these groups
+  \item by means of standard tests: likelihood ratio (LR), Wald, or Lagrange multiplier
+    (LM or score) tests.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Motivation}
+
+\textbf{Problems:}
+\begin{itemize}
+  \item Subgroups have to be formed in advance.
+  \item Continuous variables are often categorized into groups in an ad hoc way
+    (e.g., splitting at the median).
+  \item In ordinal variables the ordering of the categories is often not exploited
+    -- assessing only if at least one group differs from the others.
+  \item When likelihood ratio or Wald tests are employed, the model has to be
+    fitted to each subgroup which can become numerically challenging and computationally
+    intensive.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Motivation}
+
+\textbf{Idea:}
+\begin{itemize}
+  \item Generalize the LM test.
+  \item Thus, the model only has to be fitted once under the MI assumption to the full data set.
+  \item Catpure model deviations along a variable that is suspected to cause MI violations.
+  \item Exploit ordering to assess if there is (at least) one split so that the
+    model parameters before and after the split differ.
+  \item The split does \emph{not} have to be known or guessed in advance.
+\end{itemize}  
+
+\medskip
+
+\textbf{Illustration:} CFA for artificial data.
+\begin{itemize}
+  \item Model with two latent scales (verbal and math).
+  \item Three manifest variables for each scale.
+  \item Violation of MI for the math loadings along the age of the subjects.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Motivation: CFA for age $\le 16$}
+
+\vspace*{-0.6cm}
+
+\includegraphics[width=0.95\textwidth]{../psychoco2012/model_under16.pdf}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Motivation: CFA for age $> 16$}
+
+\vspace*{-0.6cm}
+
+\includegraphics[width=0.95\textwidth]{../psychoco2012/model_over16.pdf}
+
+\end{frame}
+
+
+\subsection{Framework}
+
+\begin{frame}
+\frametitle{Framework}
+
+\textbf{Model:} Based on log-likelihood $\ell(\cdot)$ for
+$p$-dimensional observations $\bm{x}_i$ ($i = 1, \dots, n$)
+and $k$-dimensional parameter ${\bm \theta}$.
+
+\medskip
+
+\textbf{Estimation:} Maximum likelihood.
+\[
+  \hat{\bm{\theta}} ~=~ \argmax_{\bm{\theta}} \sum_{i = 1}^n \ell(\bm{\theta}; \bm{x}_i).
+\]
+
+\medskip
+
+\textbf{Equivalently:} Solve first order conditions
+\[
+  \sum_{i=1}^{n} {\bm s}(\hat{\bm{\theta}}; \bm{x}_i) ~=~ 0,    
+\]
+where the score function is the partial derivative of the casewise
+likelihood contributions w.r.t.\ the parameters $\bm{\theta}$.
+\[
+  {\bm s}({\bm \theta}; \bm{x}_i) ~=~ \left(
+    \frac{\partial \ell({\bm \theta}; \bm{x}_i)}{\partial \theta_1},
+    \dots,
+    \frac{\partial \ell({\bm \theta}; \bm{x}_i)}{\partial \theta_k}
+  \right)^\top.
+\]
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Framework}
+
+\textbf{Assumption:} Distribution/likelihood of $\bm{x}_i$ depends
+only on the latent scales (through the parameters $\bm{\theta}$) --
+but not on any other variable $v_i$.
+
+\medskip
+
+\textbf{Alternative view:} Parameters $\bm{\theta}$ do not depend
+any such variable $v_i$. Hence assess for $i = 1, \ldots, n$
+\begin{eqnarray*}
+    H_0: {\bm \theta}_i & = & {\bm \theta}_0, \\
+    H_1: {\bm \theta}_i & = & {\bm \theta}(v_i).
+\end{eqnarray*}
+
+\medskip
+
+\textbf{Special case:} Two subgroups resulting from one split point $\nu$.
+\begin{eqnarray*}
+  H_1^*: {\bm \theta}_i & = & \left\{ \begin{array}{ll}
+    {\bm \theta}^{(A)} & \mbox{if } v_i \le \nu \\
+    {\bm \theta}^{(B)} & \mbox{if } v_i >   \nu
+  \end{array} \right.
+\end{eqnarray*}
+
+\medskip
+
+\textbf{Tests:} LR/Wald/LM tests can be easily employed if pattern $\bm{\theta}(v_i)$
+is known, specifically for $H_1^*$ with fixed split point $\nu$.
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Framework}
+
+\textbf{For unknown split points:} Compute LR/Wald/LM tests for each possible
+split point $v_1 \le v_2 \le \dots \le v_n$ and reject if the maximum statistic is large.
+
+\medskip
+
+\textbf{Caution:} By maximally selecting the test statistic different critical
+values are required (not from a $\chi^2$ distribution)!
+
+\medskip
+
+\textbf{Illustration:} Assess all $k^* = 19$ model parameters from the artificial
+CFA example along the continuous variable age ($v_i$).
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Framework}
+
+\vspace*{-1.2cm}
+
+\includegraphics[width=\textwidth]{../psychoco2012/paper-lm-lr-19.pdf}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Framework}
+
+\textbf{Note:} For the maxLM test the parameters $\hat{\bm \theta}$ only have
+to be estimated once. Only the model scores ${\bm s}(\hat{\bm \theta}; \bm{x}_i)$
+have to be aggregated differently for each split point.
+
+\medskip
+
+\textbf{More generally:} Consider a class of tests that
+assesses whether the model ``deviations'' ${\bm s}(\hat{\bm \theta}; \bm{x}_i)$
+depend on $v_i$. This can consider only a subset $k^*$ of all $k$
+parameters/scores or try to capture other patterns than $H_1^*$.
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Score-based tests}
+
+\textbf{Fluctuation process:} Capture fluctuations in the cumulative
+sum of the scores ordered by the variable $v$.
+\[
+  {\bm B}(t; \hat {\bm \theta}) ~=~ \hat {\bm I}^{-1/2} n^{-1/2}
+    \sum_{i = 1}^{\lfloor n \cdot t \rfloor} {\bm s}(\hat {\bm \theta}; \bm{x}_{(i)})
+  \qquad (0 \le t \le 1).
+\]
+\begin{itemize}
+  \item $\hat{\bm I}$ -- estimate of the information matrix.
+  \item $t$ -- proportion of data ordered by $v$.
+  \item $\lfloor n \cdot t \rfloor$ -- integer part of $n \cdot t$.
+  \item $x_{(i)}$ -- observation with the $i$-th smallest value of the
+    variable $v$.
+\end{itemize}
+
+\medskip
+
+\textbf{Functional central limit theorem:} Under $H_0$ convergence to a (continuous) Brownian bridge process
+${\bm B}(\cdot; \hat {\bm \theta}) ~\overset{d}{\rightarrow}~ {\bm B}^{0}(\cdot)$,
+from which critical values can be obtained -- either analytically or by simulation.
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Score-based tests: Continuous variables}
+
+\textbf{Test statistics:} The empirical process can be viewed as a matrix
+${\bm B}(\hat {\bm \theta})_{ij}$ with rows $i = 1, \dots, n$ (observations)
+and columns $j = 1, \dots, k$ (parameters). This can be aggregated to scalar
+test statistics along continuous the variable $v$.
+\begin{eqnarray*}
+    \mathit{DM}      & = & \max_{i = 1,\dots, n} \max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} | \\
+    \mathit{CvM}     & = & n^{-1} \sum_{i = 1,\dots, n} \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2, \\
+    \max \mathit{LM} & = & \max_{i = \underline{i}, \dots, \overline{\imath}} ~
+      \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1}
+      \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2.
+\end{eqnarray*}
+
+\medskip
+
+\textbf{Critical values:} Analytically for $\mathit{DM}$. Otherwise by
+direct simulation or further refined simulation techniques.
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Score-based tests: Continuous variables}
+
+<<gefp, echo=FALSE, results=hide>>=
+load("mz.rda")
+source("../www/mz.R")
+gefp_3_info <- gefp(mz_fit, fit = NULL, order.by = mz_data$age, parm = 1:3,
+  vcov = info.mzfit, sandwich = FALSE)
+gefp_19_info <- gefp(mz_fit, fit = NULL, order.by = mz_data$age,
+  vcov = info.mzfit, sandwich = FALSE)
+@
+
+\setkeys{Gin}{width=1.05\textwidth}
+\hspace*{-0.4cm}%
+<<gefp-dmax, echo=FALSE, results=hide, fig=TRUE, height=4.5, width=9>>=
+par(mfcol = c(1, 2))
+plot(gefp_3_info,  functional = maxBB, main = "DM, k* = 3", xlab = "Age")
+plot(gefp_19_info, functional = maxBB, main = "DM, k* = 19", xlab = "Age")
+@
+
+%plot(gefp_3_info,  functional = meanL2BB, main = "CvM, k* = 3", xlab = "Age")
+%plot(gefp_3_info,  functional = supLM(0.1), main = "max LM, k* = 3", xlab = "Age")
+%plot(gefp_19_info, functional = meanL2BB, main = "CvM, k* = 19", xlab = "Age")
+%plot(gefp_19_info, functional = supLM(0.1), main = "max LM, k* = 19", xlab = "Age")
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Score-based tests: Continuous variables}
+
+\setkeys{Gin}{width=1.05\textwidth}
+\hspace*{-0.4cm}%
+<<gefp-cvm, echo=FALSE, results=hide, fig=TRUE, height=4.5, width=9>>=
+par(mfcol = c(1, 2))
+plot(gefp_3_info,  functional = meanL2BB, main = "CvM, k* = 3", xlab = "Age")
+plot(gefp_19_info, functional = meanL2BB, main = "CvM, k* = 19", xlab = "Age")
+@
+
+%plot(gefp_3_info,  functional = supLM(0.1), main = "max LM, k* = 3", xlab = "Age")
+%plot(gefp_19_info, functional = supLM(0.1), main = "max LM, k* = 19", xlab = "Age")
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Score-based tests: Continuous variables}
+
+\setkeys{Gin}{width=1.05\textwidth}
+\hspace*{-0.4cm}%
+<<gefp-maxlm, echo=FALSE, results=hide, fig=TRUE, height=4.5, width=9>>=
+par(mfcol = c(1, 2))
+plot(gefp_3_info,  functional = supLM(0.1), main = "max LM, k* = 3", xlab = "Age")
+plot(gefp_19_info, functional = supLM(0.1), main = "max LM, k* = 19", xlab = "Age")
+@
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Score-based tests: Ordinal variables}
+
+\textbf{Test statistics:} Aggregation along ordinal variables $v$ with $m$ levels.
+\begin{eqnarray*}
+      \mathit{WDM}_o     & = & \max_{i \in \{i_1, \dots, i_{m-1} \}} ~ \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1/2}      
+                             \max_{j = 1, \dots, k} | {\bm B}(\hat {\bm \theta})_{ij} |,\\
+      \max \mathit{LM}_o & = & \max_{i \in \{i_1, \dots, i_{m-1} \}} ~
+                             \left\{ \frac{i}{n} \left( 1 - \frac{i}{n} \right) \right\}^{-1}
+                             \sum_{j = 1, \dots, k} {\bm B}(\hat {\bm \theta})_{ij}^2,
+\end{eqnarray*}
+where $i_1, \dots, i_{m-1}$ are the numbers of observations in each category.
+
+\medskip
+
+\textbf{Critical values:} For $\mathit{WDM}_o$ directly from a multivariate normal distribution.
+For $\max \mathit{LM}_o$ via simulation.
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Score-based tests: Categorical variables}
+
+\textbf{Test statistic:} Aggregation within the $m$ (unordered) categories of $v$.
+\[
+  \mathit{LM}_{uo} = \sum_{\ell = 1, \dots, m} \sum_{j = 1, \dots, k}
+    \left( {\bm B}(\hat {\bm \theta})_{i_\ell j} - {\bm B}(\hat {\bm \theta})_{i_{\ell - 1}j} \right)^2,
+\]
+
+\medskip
+
+\textbf{Critical values:} From a $\chi^2$ distribution (as usual).
+
+\medskip
+
+\textbf{Asymptotically equivalent:} LR test.
+
+
+\end{frame}
+
+\subsection{Software}
+
+\begin{frame}
+\frametitle{Software}
+
+\textbf{R packages:}
+\begin{itemize}
+  \item \emph{strucchange} implements this general framwork for
+    parameter instability tests.
+  \item Object-oriented implementation that can be applied to many
+    model classes, including \emph{lavaan} objects for CFA models.
+  \item Other psychometric models that cooperate with \emph{strucchange}
+    are provided in \emph{psychotools}, e.g., IRT models (Rasch, partial
+    credit, rating scale), Bradley-Terry models for paired comparisons,
+    and multinomial processing tree models.
+  \item Model-based recursive partitioning based on the general
+    parameter instability tests are provided in \emph{partykit}.
+  \item Adaptation to psychometric models in \emph{psychotree}.
+\end{itemize}
+
+\end{frame}
+
+\subsection{CFA: Youth gratitude}
+
+\begin{frame}
+\frametitle{CFA: Youth gratitude}
+
+\textbf{Question:} Does measurement invariance hold across age groups
+when an adult gratitude scale is applied to youth subjects?
+
+\medskip
+
+\textbf{Source:} Froh \emph{et al.} (2011, \emph{Psychological Assessment}).
+  ``Measuring Gratitude in Youth: Assessing the Psychometric Properties of
+  Adult Gratitude Scales in Children and Adolescents.''
+
+\medskip
+
+\textbf{Data:}
+\begin{itemize}
+  \item GQ-6 gratitude scale with five Likert scale items of seven points each.
+  \item Application to $n=1401$ youth aged 10--19 years (six age groups).
+  \item Assess the factor loadings of a one-factor model.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{CFA: Youth gratitude}
+
+\textbf{Packages:}
+
+<<packages, results=hide>>=
+library("lavaan")
+library("strucchange")
+@
+
+\medskip
+
+\textbf{Data:} Omitting incomplete cases.
+
+<<data>>=
+data("YouthGratitude", package = "psychotools")
+compcases <- apply(YouthGratitude[, 4:28], 1,
+  function(x) all(x %in% 1:9))
+yg <- YouthGratitude[compcases, ]
+@
+
+\medskip
+
+\textbf{Estimation:} One-factor CFA with loadings restricted to be equal
+across age groups.
+
+<<models>>=
+gq6_cfa <- cfa("f1 =~ gq6_1 + gq6_2 + gq6_3 + gq6_4 + gq6_5",
+  data = yg, group = "agegroup", meanstructure = TRUE,
+  group.equal = "loadings")
+@
+
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{CFA: Youth gratitude}
+
+\textbf{Measurement invariance tests:}
+
+<<wdmo, strip.white=all, fig=TRUE, height=4.5, width=5, include=FALSE>>=
+sctest(gq6_cfa, order.by = yg$agegroup, parm = 1:4,
+  vcov = "info", functional = "WDMo", plot = TRUE)
+@
+
+<<maxlmo, strip.white=all, fig=TRUE, height=4.5, width=5, include=FALSE>>=
+sctest(gq6_cfa, order.by = yg$agegroup, parm = 1:4,
+  vcov = "info", functional = "maxLMo", plot = TRUE)
+@ 
+
+Both tests reflect only moderate parameter instability across age groups
+and do not show significant violations of measurement invariance at 5\% level.
+
+\end{frame}
+
+\begin{frame}
+\frametitle{CFA: Youth gratitude}
+
+\vspace*{-0.6cm}
+
+\centering
+\includegraphics[width=0.8\textwidth]{slides-wdmo}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{CFA: Youth gratitude}
+
+\vspace*{-0.6cm}
+
+\centering
+\includegraphics[width=0.8\textwidth]{slides-maxlmo}
+
+\end{frame}
+
+
+\subsection{IRT: Examining exams}
+
+\begin{frame}
+\frametitle{IRT: Examining exams}
+
+\textbf{Question:} Does measurement invariance hold in a Rasch model for single-choice exam results?
+
+\medskip
+
+\textbf{Source:} Mathematics for first-year business and economics students at Universit\"at Innsbruck.
+Online tests (conducted in OpenOLAT) and written exams for 500--1,000 students per semester.
+
+\medskip
+
+\textbf{Data:} Individual results from an end-term exam.
+\begin{itemize}
+  \item 729 students (out of 941 registered).
+  \item 13~single-choice items with five answer alternatives,
+    covering the basics of analysis, linear algebra, financial mathematics.
+  \item Two groups with partially different item pools (on the same topics). Individual versions of
+    items generated via \emph{exams}.
+  \item Correctly solved items yield 100\% of associated points. Items without correct solution can
+    either be unanswered (0\%) or with an incorrect answer ($-25\%$). Only considered as binary here.
+\end{itemize}
+
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{IRT: Examining exams}
+
+\textbf{Packages:}
+
+<<packages, results=hide>>=
+library("psychotools")
+library("psychotree")
+@
+
+\medskip
+
+\textbf{Data:} Load, select first group, and exclude extreme scorers.
+
+<<data>>=
+load("MathExam.rda")
+mex <- subset(MathExam, group == 1 & nsolved > 0 & nsolved < 13)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{IRT: Examining exams}
+
+<<solved-plot, eval=FALSE>>=
+plot(mex$solved)
+@
+
+\vspace*{-0.6cm}
+
+\setkeys{Gin}{width=1.05\textwidth}
+\hspace*{-0.4cm}%
+<<solved-plot-fig, echo=FALSE, results=hide, fig=TRUE, height=6.2, width=10>>=
+<<solved-plot>>
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{IRT: Examining exams}
+
+<<credits-plot, eval=FALSE>>=
+plot(mex$credits)
+@
+
+\vspace*{-0.6cm}
+
+\setkeys{Gin}{width=1.05\textwidth}
+\hspace*{-0.4cm}%
+<<credits-plot-fig, echo=FALSE, results=hide, fig=TRUE, height=6.2, width=10>>=
+<<credits-plot>>
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{IRT: Examining exams}
+
+<<raschmodel-plot, eval=FALSE>>=
+mex_rasch <- raschmodel(mex$solved)
+plot(mex_rasch, type = "profile")
+@
+
+\vspace*{-0.6cm}
+
+\setkeys{Gin}{width=1.05\textwidth}
+\hspace*{-0.4cm}%
+<<raschmodel-plot-fig, echo=FALSE, results=hide, fig=TRUE, height=6.2, width=10>>=
+<<raschmodel-plot>>
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{IRT: Examining exams}
+
+<<raschmodel-piplot, eval=FALSE>>=
+plot(mex_rasch, type = "piplot")
+@
+
+\vspace*{-0.4cm}
+
+\setkeys{Gin}{width=1.05\textwidth}
+\hspace*{-0.4cm}%
+<<raschmodel-piplot-fig, echo=FALSE, results=hide, fig=TRUE, height=6.2, width=10>>=
+<<raschmodel-piplot>>
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{IRT: Examining exams}
+
+\textbf{Measurement invariance tests:}
+
+<<raschmodel-maxlm, strip.white=all, fig=TRUE, height=6.5, width=7.5, include=FALSE>>=
+sctest(mex_rasch, order.by = jitter(mex$tests),
+  vcov = "info", functional = "maxLM", plot = TRUE)
+@
+
+<<raschmodel-maxlmo, strip.white=all, fig=TRUE, height=6.5, width=7.5, include=FALSE>>=
+mex$otests <- cut(mex$tests, breaks = c(0, 14:24, 26),
+  ordered = TRUE, labels = c("<= 14", 15:24, ">= 25"))
+sctest(mex_rasch, order.by = mex$otests,
+  vcov = "info", functional = "maxLMo", plot = TRUE)
+@ 
+
+Clear violation of measurement invariance: Students that performed poorly in the
+previous online tests have a different item profile.
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{IRT: Examining exams}
+
+\vspace*{-0.6cm}
+
+\centering
+\includegraphics[width=0.8\textwidth]{slides-raschmodel-maxlm}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{IRT: Examining exams}
+
+\vspace*{-0.6cm}
+
+\centering
+\includegraphics[width=0.8\textwidth]{slides-raschmodel-maxlmo}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{IRT: Examining exams}
+
+<<raschtree>>=
+mex_tree <- raschtree(solved ~ otests + attempt + semester + study,
+  data = mex, vcov = "info", ordinal = "L2")
+@
+
+\vspace*{-0.3cm}
+
+\setkeys{Gin}{width=1.05\textwidth}
+\hspace*{-0.4cm}%
+<<raschtree-fig, echo=FALSE, results=hide, fig=TRUE, height=6.2, width=10>>=
+plot(mex_tree)
+@
+
+\end{frame}
+
+
+\subsection{Paired comparisons: Modeling topmodels}
+
+\begin{frame}[fragile]
+\frametitle{Paired comparisons: Modeling topmodels}
+
+\textbf{Question:} Does measurement invariance hold for a Bradley-Terry
+preference scaling of attractiveness?
+
+\bigskip
+
+\textbf{Source:} Strobl, Wickelmaier, Zeileis
+(2010, \textit{Journal of Educational and Behavioral Statistics}).
+``Accounting for Individual Differences in Bradley-Terry Models by Means of Recursive Partitioning.''
+
+\bigskip
+
+\textbf{Data:}
+\begin{itemize}
+  \item Paired comparisons of attractiveness for
+        \emph{Germany's Next Topmodel~2007} finalists:
+	Barbara, Anni, Hana, Fiona, Mandy, Anja.
+  \item Survey with 192~respondents at Universit{\"a}t T{\"u}bingen.
+  \item Available covariates: Gender, age, familiarty with the TV~show.
+  \item Familiarity assessed by yes/no questions:
+        (1)~Do you recognize the women?/Do you know the show?
+	(2)~Did you watch it regularly?
+	(3)~Did you watch the final show?/Do you know who won?
+\end{itemize}
+        
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Paired comparisons: Modeling topmodels}
+
+\vspace*{-0.7cm}
+\begin{center}
+\includegraphics[width=0.25\textwidth]{Barbara.jpg} \hspace*{0.1cm}
+\includegraphics[width=0.25\textwidth]{Anni.jpg} \hspace*{0.1cm}
+\includegraphics[width=0.25\textwidth]{Hana.jpg}
+
+\vspace*{0.1cm}
+
+\includegraphics[width=0.25\textwidth]{Fiona.jpg} \hspace*{0.1cm}
+\includegraphics[width=0.25\textwidth]{Mandy.jpg} \hspace*{0.1cm}
+\includegraphics[width=0.25\textwidth]{Anja.jpg}
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Paired comparisons: Modeling topmodels}
+
+<<Topmodel-MOB>>=
+data("Topmodel2007", package = "psychotree")
+tm_mob <- bttree(preference ~ ., data = Topmodel2007,
+  minsplit = 5, ref = "Barbara")
+@
+
+\vspace*{-0.3cm}
+
+\setkeys{Gin}{width=1.05\textwidth}
+\hspace*{-0.4cm}%
+<<Topmodel-plot, echo=FALSE, fig=TRUE, height=6.2, width=10>>=
+plot(tm_mob, abbreviate = 1, yscale = c(0, 0.5))
+@
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Paired comparisons: Modeling topmodels}
+
+\textbf{Recursively partitioned preferences:} Standardized ranking from Bradley-Terry model.
+
+\bigskip
+
+\begin{tabular}{|r|rrrrrr|} \hline
+ & Barbara & Anni & Hana & Fiona & Mandy & Anja \\ \hline
+<<Topmodel-table, echo=FALSE, results=tex>>=
+tm_tab <- round(worth(tm_mob), digits = 2)
+tm_tab <- cbind(rownames(tm_tab), format(tm_tab, nsmall = 2))
+cat(paste(apply(tm_tab, 1, paste, collapse = " & "), collapse = "\\\\\n"))
+@
+\\ \hline
+\end{tabular}
+
+\end{frame}
+
+
+\subsection{Summary}
+
+\begin{frame}
+\frametitle{Summary}
+
+\begin{itemize}
+  \item General score-based test framework for assessing measurement
+    invariance in parametric psychometric models.
+  \item Assessment is along some variable $v$ which can be continuous,
+    ordinal, or categorical.
+  \item Tests can be seen as generalizations of the Lagrange multiplier
+    test.
+  \item Computation of critical values might require simulation from
+    certain stochastic processes (Brownian bridges).
+  \item Easy-to-use implementation available in R package \emph{strucchange}.
+  \item Can be re-used in model-based recursive partitioning in R packages
+    \emph{partykit} and \emph{psychotree}.
+\end{itemize}
+
+\bigskip
+
+\textbf{Acknowledgments:} This work was supported by National Science Foundation grant SES-1061334.
+
+\end{frame}
+
+\subsection{References}
+
+\begin{frame}
+\frametitle{References}
+
+\footnotesize
+
+Merkle EC, Zeileis A (2013).
+  \dquote{Tests of Measurement Invariance without Subgroups: A Generalization of Classical Methods.}
+  \emph{Psychometrika}, \textbf{78}(1), 59--82.
+  \doi{10.1007/s11336-012-9302-4}
+
+\medskip
+
+Merkle EC, Fan J, Zeileis A (2014).
+  \dquote{Testing for Measurement Invariance with Respect to an Ordinal Variable.}
+  \emph{Psychometrika}, \textbf{79}(4), 569--584.
+  \doi{10.1007/s11336-013-9376-7}
+
+\medskip
+
+Wang T, Merkle EC, Zeileis A (2014).
+  \dquote{Score-Based Tests of Measurement Invariance: Use in Practice.}
+  \emph{Frontiers in Psychology}, \textbf{5}(438).
+  \doi{10.3389/fpsyg.2014.00438}
+
+\bigskip
+
+Strobl C, Julia Kopf, Zeileis A (2015).
+  \dquote{Rasch Trees: A New Method for Detecting Differential Item Functioning in the Rasch Model.}
+  \textit{Psychometrika}. \textbf{80}(2), 289--316.
+  \doi{10.1007/s11336-013-9388-3}
+
+\medskip
+
+Strobl C, Wickelmaier F, Zeileis A (2011).
+  \dquote{Accounting for Individual Differences in Bradley-Terry Models by Means of Recursive Partitioning.}
+  \textit{Journal of Educational and Behavioral Statistics}, \textbf{36}(2), 135--153.
+  \doi{10.3102/1076998609359791}
+
+\medskip
+
+Zeileis A, Hothorn T, Hornik K (2008).
+ \dquote{Model-Based Recursive Partitioning.}
+  \textit{Journal of Computational and Graphical Statistics},
+  \textbf{17}(2), 492--514.
+  \doi{10.1198/106186008X319331}
+
+\end{frame}
+
+
+\end{document}
+
