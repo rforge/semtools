@@ -43,6 +43,19 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
   <li>Further detail on the changes to lavaan is available <a href="http://lavaan.ugent.be/notes/lavaan_eq_constraints.pdf">here</a>.</li>
 </ul>
 
+<h3>Score-based tests of differential item functioning in the two-parameter model</h3>
+
+<ul>
+  <!-- <li><a href="">Working paper</a></li> -->
+  <li>Replication materials:<ul>
+    <li><a href="sim-irt.R">Simulation functions</a> for data generation, power evaluation, and power summaries.</li>
+    <li><a href="lavaan-irt.R">lavaan extensions</a> containing <tt>estfun()</tt> method for lavaan objects estimated via PML and code to simplify model estimation (note: this code relies on lavaan 0.5-17).</li>
+    <li><a href="mirt-irt.R">Code to obtain scores</a> from specific ltm objects and mirt objects.</li>
+    <li><a href="irtdata.rda">Data</a> from application section</li>
+    <li><a href="replication-irt.R">Replication script</a> containing code to run and summarize the application and simulations, using the above files.</li>
+  </ul></li>
+</ul>
+
 <h3>Testing non-nested structural equation models</h3>
 
 <ul>
