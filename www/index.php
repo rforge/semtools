@@ -35,6 +35,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 
 <h2>semtools: Methods for Structural Equation Models</h2>
 
+<!--
 <h3>Important note on lavaan 0.5-18</h3>
 
 <ul>
@@ -42,6 +43,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
   <li>The changes break some code for score-based tests in strucchange, and we are currently working on solutions.  For now, we recommend using <a href="https://cran.r-project.org/src/contrib/Archive/lavaan/lavaan_0.5-17.tar.gz">lavaan 0.5-17</a> for score-based tests.</li>
   <li>Further detail on the changes to lavaan is available <a href="http://lavaan.ugent.be/notes/lavaan_eq_constraints.pdf">here</a>.</li>
 </ul>
+-->
 
 <h3>Score-based tests of differential item functioning in the two-parameter model</h3>
 
