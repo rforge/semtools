@@ -61,7 +61,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <h3>Testing non-nested structural equation models</h3>
 
 <ul>
-  <li><a href="http://arxiv.org/abs/1402.6720">Working paper</a></li>
+  <li>Manuscript published in <a href="http://dx.doi.org/10.1037/met0000038">Psychological Methods 21(2), 151-163</a>.</li>
   <li>Replication materials:<ul>
     <li><a href="sim-vuong.R">Simulation functions</a> for data generation, power evaluation, and power summaries.</li>
     <li><a href="burnout.rda">Burnout data</a> for application.</li>
