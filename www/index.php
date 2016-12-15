@@ -45,6 +45,18 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 </ul>
 -->
 
+<h3>Derivative computations and robust standard errors for linear mixed effects models in lme4</h3>
+
+<ul>
+  <li>Working paper</li>
+  <li>Replication materials:<ul>
+    <li><a href="estfun.lmerMod.R">estfun method</a> for obtaining scores from models of class lmerMod.</li>
+    <li><a href="vcov.full.lmerMod.R">vcov method</a> for obtaining covariance matrix of all parameters (including random effect parameters) from models of class lmerMod.</li>
+    <li><a href="bread.lmerMod.R">bread function</a> for using the above code in tandem with package sandwich.</li>
+    <li><a href="replication-lmer.R">Replication script</a> containing code to run and summarize results from the paper, using the above files.</li>
+  </ul></li>
+</ul>
+
 <h3>Score-based tests of differential item functioning in the two-parameter model</h3>
 
 <ul>
