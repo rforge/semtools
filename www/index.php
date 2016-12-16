@@ -48,7 +48,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <h3>Derivative computations and robust standard errors for linear mixed effects models in lme4</h3>
 
 <ul>
-  <li>Working paper</li>
+  <li><a href="https://arxiv.org/abs/1612.04911">Working paper</a></li>
   <li>Replication materials:<ul>
     <li><a href="estfun.lmerMod.R">estfun method</a> for obtaining scores from models of class lmerMod.</li>
     <li><a href="vcov.full.lmerMod.R">vcov method</a> for obtaining covariance matrix of all parameters (including random effect parameters) from models of class lmerMod.</li>
@@ -85,7 +85,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <h3>Bayesian latent variable models for the analysis of experimental psychology data</h3>
 
 <ul>
-  <li><a href="http://ssrn.com/abstract=2536989">Working paper</a></li>
+  <li>Manuscript published in <a href="http://dx.doi.org/10.3758/s13423-016-1016-7">Psychonomic Bulletin & Review</a>.</li>
   <li>Replication materials:<ul>
     <li><a href="jagsmodels.R">JAGS models</a> used in the paper (this file writes JAGS model files when it is sourced in R).</li>
     <li><a href="peters08.rda">Peters & Levin (2008) data</a>, used in the application.</li>
