@@ -78,14 +78,16 @@ ggplot(meltpfcor, aes(x=Var2, y=Var1, fill=value)) +
 ## J: 2*the number of scenarios(5)
 ## get all data set used later. 
 set.seed(1090)
-surerisk <- list(y = peters08[,8:17], N = 108, J = 10)
+surerisk <- list(y = peters08[,8:17], N = 108, J = 10, halfJ = 10/2)
 sureriskreg <- list(y = peters08[,8:17], Frame = peters08$posframe,
-                           Num = peters08$Lipkus, N = 108, J = 10)
+                           Num = peters08$Lipkus, N = 108, J = 10,
+                    halfJ = 10/2)
 choicesurerisk <- list(y = peters08[,8:17], N = 108, J = 10, K = 5,
                        X = peters08[,3:7],
                        Frame = peters08$posframe, 
                        Num = peters08$Lipkus,
-                       Numc= mean(peters08$Lipkus))
+                       Numc= mean(peters08$Lipkus),
+                       halfJ = 10/2)
 
 
 ###############################################

@@ -20,11 +20,11 @@ model{
 ## prior distribution, can be changed to use informative prior
 ## prior for lambda1star. one of lambda1star has to be fixed to 0, 
 ## because factors are allowed to be correlated.
-  for (j in 1:J/2){
+  for (j in 1:halfJ){
     lambda1star[j]~dnorm(0,1)
   }
-  lambda1star[J/2+1]<-0
-   for (j in (J/2+2):J){
+  lambda1star[halfJ+1]<-0
+   for (j in (halfJ+2):J){
     lambda1star[j]~dnorm(0,1)
   }
 
@@ -117,17 +117,17 @@ model{
     }
   }
   #Prior distribution, can be changed to use informative prior
-  for (j in 1:J/2){
+  for (j in 1:halfJ){
     lambda1star[j]~dnorm(0,1)
   }
-  for (j in (J/2+1):J){
+  for (j in (halfJ+1):J){
     lambda1star[j]<-0
   }
  
-  for (j in 1:J/2){
+  for (j in 1:halfJ){
     lambda2star[j]<-0
   }
-  for (j in (J/2+1):J){
+  for (j in (halfJ+1):J){
     lambda2star[j]~dnorm(0,1)
   }
  
@@ -216,11 +216,11 @@ model{
   }
 
   ## prior for lambda1
-  for (j in 1:J/2){
+  for (j in 1:halfJ){
     lambda1[j] ~ dnorm(0,plambda1)T(0,)
     lambda2[j] <- 0
   }
-  for (j in (J/2+1):J){
+  for (j in (halfJ+1):J){
     lambda1[j] <- 0
     lambda2[j] ~ dnorm(0,plambda2)T(0,)
   }
