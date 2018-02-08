@@ -48,7 +48,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <h3>Derivative computations and robust standard errors for linear mixed effects models in lme4</h3>
 
 <ul>
-  <li><a href="https://arxiv.org/abs/1612.04911">Working paper</a></li>
+  <li><a href="https://arxiv.org/abs/1612.04911">Working paper</a> (manuscript accepted at Journal of Statistical Software)</li>
   <li>Replication materials:<ul>
     <li><a href="estfun.lmerMod.R">estfun method</a> for obtaining scores from models of class lmerMod.</li>
     <li><a href="vcov.full.lmerMod.R">vcov method</a> for obtaining covariance matrix of all parameters (including random effect parameters) from models of class lmerMod.</li>
@@ -60,7 +60,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <h3>Score-based tests of differential item functioning in the two-parameter model</h3>
 
 <ul>
-  <li><a href="http://econpapers.repec.org/paper/innwpaper/2016-05.htm">Working paper</a></li>
+  <li><a href="http://econpapers.repec.org/paper/innwpaper/2016-05.htm">Working paper</a> (manuscript accepted at Psychometrika)</li>
   <li>Replication materials:<ul>
     <li><a href="sim-irt.R">Simulation functions</a> for data generation, power evaluation, and power summaries.</li>
     <li><a href="lavaan-irt.R">lavaan extensions</a> containing <tt>estfun()</tt> method for lavaan objects estimated via PML and code to simplify model estimation (note: this code relies on lavaan 0.5-17).</li>
@@ -137,7 +137,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 
 <h3>Acknowledgments</h3>
 
-<p> This material is based upon work supported by the U.S. National Science Foundation under Grant No. SES-1061334.  Any opinions, findings and conclusions or recommendations expressed in this material are those of the authors and do not necessarily reflect the views of the National Science Foundation (NSF). </p>
+<p> This material is based upon work supported by the U.S. National Science Foundation under Grants SES-1061334 and 1460719.  Any opinions, findings and conclusions or recommendations expressed in this material are those of the authors and do not necessarily reflect the views of the National Science Foundation (NSF). </p>
 
 <p> The <strong>project summary page</strong> resides <a href="http://<?php echo $domain; ?>/projects/<?php echo $group_name; ?>/"><strong>here</strong></a>. </p>
 
