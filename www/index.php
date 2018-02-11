@@ -45,6 +45,16 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 </ul>
 -->
 
+<h3>Bayesian model assessment: Use of conditional vs marginal likelihoods</h3>
+<ul>
+  <li>Working paper</li>
+  <li>Replication materials:<ul>
+    <li><a href="mfrh_functions.R">Helper functions</a> for obtaining conditional and marginal information criteria from CFA and IRT models.</li>
+    <li><a href="rasch_edstan_modified.stan">Stan code</a> for model estimation in the IRT example.</li>
+    <li><a href="replication-mfrh.R">Replication script</a> containing code to estimate models and obtain results from the paper, using the above files.</li>
+  </ul></li>
+</ul>
+
 <h3>Derivative computations and robust standard errors for linear mixed effects models in lme4</h3>
 
 <ul>
