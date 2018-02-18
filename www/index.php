@@ -47,7 +47,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 
 <h3>Bayesian model assessment: Use of conditional vs marginal likelihoods</h3>
 <ul>
-  <li>Working paper</li>
+  <li><a href="http://arxiv.org/abs/1802.04452">Working paper</a></li>
   <li>Replication materials:<ul>
     <li><a href="mfrh_functions.R">Helper functions</a> for obtaining conditional and marginal information criteria from CFA and IRT models.</li>
     <li><a href="rasch_edstan_modified.stan">Stan code</a> for model estimation in the IRT example.</li>
