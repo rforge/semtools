@@ -105,6 +105,50 @@ if(file.exists("mod2res.rda")){
 
 
 ###############################################
+## Functions for specifying prior precisions
+para <- c("beta0", "lambda1","lambda2", "lambda3", 
+          "b0", "beta1[1]","beta1[2]", "beta2[1]","beta2[2]", 
+          "beta3[1]", "beta3[2]","beta4","beta5",
+          "beta6", "nu1", "nu2","nu3", "nu4",
+          "Inv_sig_ee", "Inv_sig_e1", "phi")
+p <- length(para)
+tlist <- function(tbeta1_1=1, tbeta1_2=1, tbeta2_1=1, tbeta2_2=1,  
+                  tbeta3_1=1, tbeta3_2=1, tbeta4=1, tbeta5=1, 
+                  tbeta6=1, tnu1=1, tnu2=1, tnu3=1, tnu4=1){
+           list(tbeta1_1 = tbeta1_1, 
+                tbeta1_2 = tbeta1_2,
+                tbeta2_1 = tbeta2_1,
+                tbeta2_2 = tbeta2_2,
+                tbeta3_1 = tbeta3_1,
+                tbeta3_2 = tbeta3_2,
+                tbeta4 = tbeta4, 
+                tbeta5 = tbeta5, 
+                tbeta6 = tbeta6, 
+                tnu1 = tnu1, tnu2 = tnu2,
+                tnu3 = tnu3, tnu4 = tnu4)
+         }
+prlist <- function(plambda1=.1, plambda2=.1, plambda3=.1, 
+                  pbeta1=.1, pbeta2=.1, pbeta3=.1,  
+                  pbeta4=.1, pbeta5=.1, 
+                  pbeta6=.1, pnu1=.1, pnu2=.1, pnu3=.1, 
+                  pnu4=.1){
+           list(plambda1 = plambda1, 
+                plambda2 = plambda2,
+                plambda3 = plambda3,
+                pbeta1 = pbeta1, 
+                pbeta2 = pbeta2,
+                pbeta3 = pbeta3,
+                pbeta4 = pbeta4, 
+                pbeta5 = pbeta5, 
+                pbeta6 = pbeta6, 
+                pnu1 = pnu1, pnu2 = pnu2,
+                pnu3 = pnu3, pnu4 = pnu4)
+       }
+plist <- prlist()
+
+
+
+###############################################
 ## Bayes factor for one- versus two-factor model
 if(file.exists("logBF2f1f.rda")){
   load("logBF2f1f.rda")
@@ -160,47 +204,6 @@ loadtab <- paste(c("Riskless & ", "Risky & "),
 writeLines(loadtab)
 
 
-###############################################
-## Functions for specifying prior precisions
-para <- c("beta0", "lambda1","lambda2", "lambda3", 
-          "b0", "beta1[1]","beta1[2]", "beta2[1]","beta2[2]", 
-          "beta3[1]", "beta3[2]","beta4","beta5",
-          "beta6", "nu1", "nu2","nu3", "nu4",
-          "Inv_sig_ee", "Inv_sig_e1", "phi")
-p <- length(para)
-tlist <- function(tbeta1_1=1, tbeta1_2=1, tbeta2_1=1, tbeta2_2=1,  
-                  tbeta3_1=1, tbeta3_2=1, tbeta4=1, tbeta5=1, 
-                  tbeta6=1, tnu1=1, tnu2=1, tnu3=1, tnu4=1){
-           list(tbeta1_1 = tbeta1_1, 
-                tbeta1_2 = tbeta1_2,
-                tbeta2_1 = tbeta2_1,
-                tbeta2_2 = tbeta2_2,
-                tbeta3_1 = tbeta3_1,
-                tbeta3_2 = tbeta3_2,
-                tbeta4 = tbeta4, 
-                tbeta5 = tbeta5, 
-                tbeta6 = tbeta6, 
-                tnu1 = tnu1, tnu2 = tnu2,
-                tnu3 = tnu3, tnu4 = tnu4)
-         }
-prlist <- function(plambda1=.1, plambda2=.1, plambda3=.1, 
-                  pbeta1=.1, pbeta2=.1, pbeta3=.1,  
-                  pbeta4=.1, pbeta5=.1, 
-                  pbeta6=.1, pnu1=.1, pnu2=.1, pnu3=.1, 
-                  pnu4=.1){
-           list(plambda1 = plambda1, 
-                plambda2 = plambda2,
-                plambda3 = plambda3,
-                pbeta1 = pbeta1, 
-                pbeta2 = pbeta2,
-                pbeta3 = pbeta3,
-                pbeta4 = pbeta4, 
-                pbeta5 = pbeta5, 
-                pbeta6 = pbeta6, 
-                pnu1 = pnu1, pnu2 = pnu2,
-                pnu3 = pnu3, pnu4 = pnu4)
-       }
-
 
 ###############################################
 ## Fitting the SEM from Figure 1
@@ -208,7 +211,6 @@ if(file.exists("semresp.rda")){
   load("semresp.rda")
 } else {
   if(!file.exists("semresp.rda")){
-    plist <- prlist()
     sem <- jags.model("2fsemt.jag", c(choicesurerisk, tlist(), 
                                       plist), n.chains = 3)
     update(sem, 5000)
