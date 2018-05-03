@@ -141,6 +141,12 @@ ggplot(subset(plotdic, type=="Spiegelhalter")) +
 #############
 ## Figure 2
 #############
+## by hand, count the number of free factor mean/variance
+## parameters per model
+nmns <- c(0, 0, 0, 0, 0, 3, 3, 3, 1)
+nvars <- c(4, 4, 4, 4, 2, 2, 2, 2, 2)
+nlvpar <- nmns + nvars
+
 justpd <- lapply(res, function(x) x$pdres)
 allpd <- do.call("rbind", justpd)
 allpd <- cbind.data.frame(allpd, model=rep(1:9, 10))
