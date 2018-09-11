@@ -26,6 +26,9 @@ get_boundary <- function(obj, fun, trim = 0) {
 ## convenience function for computing information matrix
 info_full <- function(x, ...) solve(vcov(x) * nobs(x))
 
+## for lavaan version 0.5-18 or later
+info_full <- function(x, ...) solve(vcov(x, remove.duplicated = TRUE) * nobs(x))
+
 
 ##################
 ## Simulation 1 ##
