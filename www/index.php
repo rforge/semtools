@@ -45,6 +45,13 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 </ul>
 -->
 
+<h3>Model selection of nested and non-nested item response models using Vuong tests</h3>
+<ul>
+  <li><a href="https://arxiv.org/abs/1810.04734">Working paper</a></li>
+  <li>Replication materials <a href="https://github.com/sumny/vuong_mirt_code">available on github</li>
+</ul>
+
+
 <h3>Bayesian model assessment: Use of conditional vs marginal likelihoods</h3>
 <ul>
   <li><a href="http://arxiv.org/abs/1802.04452">Working paper</a></li>
@@ -70,7 +77,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <h3>Score-based tests of differential item functioning in the two-parameter model</h3>
 
 <ul>
-  <li><a href="http://econpapers.repec.org/paper/innwpaper/2016-05.htm">Working paper</a> (manuscript accepted at Psychometrika)</li>
+  <li>Manuscript published in <a href="http://dx.doi.org/10.1007/s11336-017-9591-8">Psychometrika 83(1), 132-155</a>.</li>
   <li>Replication materials:<ul>
     <li><a href="sim-irt.R">Simulation functions</a> for data generation, power evaluation, and power summaries.</li>
     <li><a href="lavaan-irt.R">lavaan extensions</a> containing <tt>estfun()</tt> method for lavaan objects estimated via PML and code to simplify model estimation (note: this code relies on lavaan 0.5-17).</li>
@@ -95,7 +102,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <h3>Bayesian latent variable models for the analysis of experimental psychology data</h3>
 
 <ul>
-  <li>Manuscript published in <a href="http://dx.doi.org/10.3758/s13423-016-1016-7">Psychonomic Bulletin & Review</a>.</li>
+  <li>Manuscript published in <a href="http://dx.doi.org/10.3758/s13423-016-1016-7">Psychonomic Bulletin & Review 25(1), 256-270</a>.</li>
   <li>Replication materials:<ul>
     <li><a href="jagsmodels.R">JAGS models</a> used in the paper (this file writes JAGS model files when it is sourced in R).</li>
     <li><a href="peters08.rda">Peters & Levin (2008) data</a>, used in the application.</li>
