@@ -34,6 +34,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <!-- own website starts here, the following may be changed as you like -->
 
 <h2>semtools: Methods for Structural Equation Models</h2>
+<br />
 
 <!--
 <h3>Important note on lavaan 0.5-18</h3>
@@ -48,7 +49,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <h3>Model selection of nested and non-nested item response models using Vuong tests</h3>
 <ul>
   <li><a href="https://arxiv.org/abs/1810.04734">Working paper</a></li>
-  <li>Replication materials <a href="https://github.com/sumny/vuong_mirt_code">available on github</li>
+  <li>Replication materials <a href="https://github.com/sumny/vuong_mirt_code">available on github</a></li>
 </ul>
 
 
