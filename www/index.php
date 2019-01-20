@@ -66,8 +66,9 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <h3>Derivative computations and robust standard errors for linear mixed effects models in lme4</h3>
 
 <ul>
-  <li><a href="https://arxiv.org/abs/1612.04911">Working paper</a> (manuscript accepted at Journal of Statistical Software)</li>
+  <li>Manuscript published in <a href="http://dx.doi.org/10.18637/jss.v087.c01">Journal of Statistical Software 87(c01), 1-16</a>.</li>
   <li>Replication materials:<ul>
+    <li><a href="https://cran.r-project.org/package=merDeriv">merDeriv package</a> for installation from CRAN.</li>
     <li><a href="estfun.lmerMod.R">estfun method</a> for obtaining scores from models of class lmerMod.</li>
     <li><a href="vcov.full.lmerMod.R">vcov method</a> for obtaining covariance matrix of all parameters (including random effect parameters) from models of class lmerMod.</li>
     <li><a href="bread.lmerMod.R">bread function</a> for using the above code in tandem with package sandwich.</li>
