@@ -46,6 +46,12 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 </ul>
 -->
 
+<h3>Score-based tests for explaining upper-level heterogeneity in linear mixed models</h3>
+<ul>
+  <li><a href="http://arxiv.org/abs/1901.05796">Working paper</a></li>
+  <li>Replication materials <a href="http://wang-ting.com/working-paper/">available here</a></li>
+</ul>
+
 <h3>Model selection of nested and non-nested item response models using Vuong tests</h3>
 <ul>
   <li><a href="https://arxiv.org/abs/1810.04734">Working paper</a></li>
