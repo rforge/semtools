@@ -5,8 +5,7 @@ source("mfrh_functions.R")
 
 ######################
 ## CFA Example
-## requires blavaan 0.3-2 or higher; download at
-## install.packages("blavaan", repos="http://faculty.missouri.edu/~merklee", type="source")
+## requires blavaan 0.3-2 or higher
 library("blavaan")
 library("coda")
 ## data
@@ -29,10 +28,11 @@ for(i in 1:niter){
 ## MGCFA
 ## convenience function for multi-group CFA on this data
 mgcfa <- function(model, ...) bcfa(model, data = StereotypeThreat,
-                                   group = "group", burnin=4000,
-                                   sample=1e4, save.lvs=TRUE, jags.ic=TRUE,
+                                   group = "group", save.lvs=TRUE,
+                                   jags.ic=TRUE,
                                    dp = dpriors(ipsi="dgamma(1,1)"),
-                                   inits = "simple", ...)
+                                   inits = "simple",
+                                   convergence = "auto", ...)
 
 for(i in 1:niter){
   ## Step 2: Fix loadings across groups
@@ -204,7 +204,9 @@ library(doParallel)
 options(mc.cores = 5)
 options(loo.cores = 5)
 
-# Assemble example dataset
+# Assemble example dataset; the considered model formulas are
+#   ~ 1; ~ 1 + anger; ~ 1 + male; ~ 1 + anger + male;
+#   ~ 1 + anger + male + I(anger*male)
 dl <- irt_data(y = aggression$dich, jj = aggression$person,
                ii = aggression$item, covariates = aggression,
                formula = ~ 1 + male + anger)
@@ -222,3 +224,206 @@ stopCluster(cl)
 dic(ll_marg)
 waic(ll_marg$ll)
 loo(ll_marg$ll)
+
+
+
+
+## Manipulating priors in Example 1
+data("StereotypeThreat", package="psychotools")
+StereotypeThreat <- transform(StereotypeThreat, group = interaction(ethnicity, condition))
+StereotypeThreat <- StereotypeThreat[order(StereotypeThreat$group),]
+
+## hold results
+niter <- 10
+## weak and strong prior results
+resstrong <- vector("list", niter)
+resweak <- vector("list", niter)
+
+for(i in 1:niter){
+  resstrong[[i]] <- list(dicres = matrix(NA, 9, 8),
+                         llres = matrix(NA, 9, 4),
+                         pdres = matrix(NA, 9, 8))
+
+  resweak[[i]] <- list(dicres = matrix(NA, 9, 8),
+                       llres = matrix(NA, 9, 4),
+                       pdres = matrix(NA, 9, 8))
+}
+
+## convenience function for models with different priors
+mgstr <- function(model, ...) bcfa(model, data = StereotypeThreat,
+                                   group = "group", save.lvs=TRUE,
+                                   jags.ic=TRUE,
+                                   dp = dpriors(nu="dnorm(7,.1)", alpha="dnorm(0,1)",
+                                                lambda="dnorm(0,1)", beta="dnorm(0,1)",
+                                                itheta="dgamma(2.5,5)", ipsi="dgamma(2.5,5)"),
+                                   inits = "simple",
+                                   convergence = "auto",
+                                   bcontrol = list(max.time = "20m"), ...)
+
+mgwk <- function(model, ...) bcfa(model, data = StereotypeThreat,
+                                  group = "group", save.lvs=TRUE,
+                                  jags.ic=TRUE,
+                                  dp = dpriors(nu="dnorm(0,1e-4)", alpha="dnorm(0,1e-3)",
+                                               lambda="dnorm(0,1e-3)", beta="dnorm(0,1e-3)",
+                                               itheta="dgamma(.01,.01)", ipsi="dgamma(.1,.1)"),
+                                  inits = "simple",
+                                  convergence = "auto",
+                                  bcontrol = list(max.time = "20m"), ...)
+
+for(i in 1:niter){
+  ## Step 2: Fix loadings across groups
+  f <- 'ability =~ abstract + verbal + numerical'
+  m2 <- mgstr(f, group.equal = "loadings")
+    
+  resstrong <- fillres(m2, resstrong, 1, i)
+
+  m2 <- mgwk(f, group.equal = "loadings")
+    
+  resweak <- fillres(m2, resweak, 1, i)
+  
+  ## Step 2a: Free numerical loading in group 4 (minority.threat)
+  f <- 'ability =~ abstract + verbal + c(l1, l1, l1, l4) * numerical'
+  m2a <- mgstr(f, group.equal = "loadings")
+  
+  resstrong <- fillres(m2a, resstrong, 2, i)
+
+  m2a <- mgwk(f, group.equal = "loadings")
+  
+  resweak <- fillres(m2a, resweak, 2, i)
+  
+  ## Step 3: Fix variances across groups
+  m3 <- mgstr(f, group.equal = c("loadings", "residuals"))
+  
+  resstrong <- fillres(m3, resstrong, 3, i)
+
+  m3 <- mgwk(f, group.equal = c("loadings", "residuals"))
+  
+  resweak <- fillres(m3, resweak, 3, i)
+  
+  ## Step 3a: Free numerical variance in group 4
+  f <- c(f, 'numerical ~~ c(e1, e1, e1, e4) * numerical')
+  m3a <- mgstr(f, group.equal = c("loadings", "residuals"))
+
+  resstrong <- fillres(m3a, resstrong, 4, i)
+
+  m3a <- mgwk(f, group.equal = c("loadings", "residuals"))
+
+  resweak <- fillres(m3a, resweak, 4, i)
+  
+  ## Step 4: Fix latent variances within conditions
+  f <- c(f, 'ability ~~ c(vmaj, vmin, vmaj, vmin) * ability')
+  m4 <- mgstr(f, group.equal = c("loadings", "residuals"))
+
+  resstrong <- fillres(m4, resstrong, 5, i)
+
+  m4 <- mgwk(f, group.equal = c("loadings", "residuals"))
+
+  resweak <- fillres(m4, resweak, 5, i)
+  
+  ## Step 5: Fix certain means, free others
+  f <- c(f, 'numerical ~ c(na1, na1, na1, na4) * 1')
+  m5 <- mgstr(f, group.equal = c("loadings", "residuals", "intercepts"))
+
+  resstrong <- fillres(m5, resstrong, 6, i)
+
+  m5 <- mgwk(f, group.equal = c("loadings", "residuals", "intercepts"))
+
+  resweak <- fillres(m5, resweak, 6, i)
+  
+  ## Step 5a: Free ability mean in group majority.control
+  f <- c(f, 'abstract ~ c(ar1, ar2, ar2, ar2) * 1')
+  m5a <- mgstr(f, group.equal = c("loadings", "residuals", "intercepts"))
+
+  resstrong <- fillres(m5a, resstrong, 7, i)
+
+  m5a <- mgwk(f, group.equal = c("loadings", "residuals", "intercepts"))
+
+  resweak <- fillres(m5a, resweak, 7, i)
+  
+  ## Step 5b: Free also ability mean in group minority.control
+  f <- c(f[1:4], 'abstract ~ c(ar1, ar2, ar3, ar3) * 1')
+  m5b <- mgstr(f, group.equal = c("loadings", "residuals", "intercepts"))
+  
+  resstrong <- fillres(m5b, resstrong, 8, i)
+
+  m5b <- mgwk(f, group.equal = c("loadings", "residuals", "intercepts"))
+  
+  resweak <- fillres(m5b, resweak, 8, i)
+  
+  ## Step 6: Different latent mean structure
+  f <- c(f, 'ability ~  c(maj, min1, maj, min2) * 1 + c(0, NA, 0, NA) * 1')
+  m6 <- mgstr(f, group.equal = c("loadings", "residuals", "intercepts"))
+
+  resstrong <- fillres(m6, resstrong, 9, i)
+
+  m6 <- mgwk(f, group.equal = c("loadings", "residuals", "intercepts"))
+
+  resweak <- fillres(m6, resweak, 9, i)
+}
+
+save(resstrong, file="resstrong.rda")
+save(resweak, file="resweak.rda")
+
+
+
+## Model with ten "good" indicators; did not make it into the paper.
+set.seed(311)
+niter <- 10
+dgp <- ' f =~ 1*y1 + 1*y2 + 1*y3 + 1*y4 + 1*y5 + 1*y6 + 1*y7 + 1*y8 + 1*y9 + 1*y10
+         y1 ~~ .3*y1
+         y2 ~~ .3*y2
+         y3 ~~ .3*y3
+         y4 ~~ .3*y4
+         y5 ~~ .3*y5
+         y6 ~~ .3*y6
+         y7 ~~ .3*y7
+         y8 ~~ .3*y8
+         y9 ~~ .3*y9
+         y10 ~~ .3*y10 '
+
+Data <- simulateData(dgp, model.type='cfa', sample.nobs=500)
+
+## nested list so we can re-use the fillres() convenience function
+tenres <- list(list(dicres = matrix(NA, niter, 8),
+                    llres = matrix(NA, niter, 4),
+                    pdres = matrix(NA, niter, 8)))
+
+modsyn <- ' f =~ y1 + y2 + y3 + y4 + y5 + y6 + y7 + y8 + y9 + y10 '
+
+for(i in 1:niter){
+  mten <- bcfa(modsyn, data = Data, save.lvs = TRUE, jags.ic = TRUE,
+               inits = "simple", convergence = "auto",
+               bcontrol = list(max.time = "20m"))
+  
+  tenres <- fillres(mten, tenres, i, 1)
+}
+
+save(tenres, file="tenres.rda")
+
+## figure for appendix:
+justdics <- lapply(tenres, function(x) x$dicres)
+alldics <- do.call("rbind", justdics)
+names(alldics)[1:8] <- c("dic", "dicse", "jdic", "jdicse",
+                         "conddic", "conddicse", "condjdic",
+                         "condjdicse")
+dic <- as.numeric(as.matrix(alldics[,c(1,3,5,7)]))
+dicse <- as.numeric(as.matrix(alldics[,c(2,4,6,8)]))
+type <- rep(rep(c("Spiegelhalter","Plummer"), each=nrow(alldics)), 2)
+marg <- rep(c("Marginal","Conditional"), each=2*nrow(alldics))
+plotdic <- cbind.data.frame(dic, dicse, type, marg)
+
+## overall summary
+apply(alldics[,c(1,3,5,7)], 2, summary)
+
+my_theme <- theme_bw() +
+  theme(text = element_text(family = "serif", size = 14),
+        axis.text.x = element_text(size = 11),
+        strip.background = element_rect(fill = NA, color = NA, size = .5),
+        legend.key = element_rect(fill = NA, color = NA))
+
+ggplot(plotdic, aes(y = dic, x = type)) + 
+  geom_jitter(height = 0, width = .1, alpha = .25) +
+  facet_wrap(~ marg, scale = "free_y") +
+  labs(y = "DIC value", x = "Type") +
+  my_theme + theme(panel.grid.minor.x = element_blank())
+

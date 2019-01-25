@@ -7,6 +7,9 @@
 ################
 
 ## extracting dic & friends from models
+## note fillres() and dic_wrapper() can be extended to
+## also obtain waic or looic metrics; these metrics
+## are also returned by fitMeasures().
 fillres <- function(blavmod, res, i, iter){
   dics <- dic_wrapper(blavmod)
 
