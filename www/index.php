@@ -59,7 +59,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 </ul>
 
 
-<h3>Bayesian model assessment: Use of conditional vs marginal likelihoods</h3>
+<h3>Bayesian comparison of latent variable models: Conditional vs marginal likelihoods</h3>
 <ul>
   <li><a href="http://arxiv.org/abs/1802.04452">Working paper</a></li>
   <li>Replication materials:<ul>
