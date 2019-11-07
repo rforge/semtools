@@ -46,7 +46,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 </ul>
 -->
 
-<h3>Score-based tests for explaining upper-level heterogeneity in linear mixed models</h3>
+<h3>Score-based tests for explaining heterogeneity in linear mixed models</h3>
 <ul>
   <li><a href="http://arxiv.org/abs/1901.05796">Working paper</a></li>
   <li>Replication materials <a href="http://wang-ting.com/working-paper/">available here</a></li>
@@ -54,14 +54,14 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 
 <h3>Model selection of nested and non-nested item response models using Vuong tests</h3>
 <ul>
-  <li><a href="https://arxiv.org/abs/1810.04734">Working paper</a></li>
+  <li>Manuscript forthcoming in <a href="https://doi.org/10.1080/00273171.2019.1664280">Multivariate Behavioral Research</a>.</li>
   <li>Replication materials <a href="https://github.com/sumny/vuong_mirt_code">available on github</a></li>
 </ul>
 
 
 <h3>Bayesian comparison of latent variable models: Conditional vs marginal likelihoods</h3>
 <ul>
-  <li><a href="http://arxiv.org/abs/1802.04452">Working paper</a></li>
+  <li>Manuscript published in <a href="http://dx.doi.org/10.1007/s11336-019-09679-0">Psychometrika 84(3), 802-829</a>.</li>
   <li>Replication materials:<ul>
     <li><a href="mfrh_functions.R">Helper functions</a> for obtaining conditional and marginal information criteria from CFA and IRT models.</li>
     <li><a href="rasch_edstan_modified.stan">Stan code</a> for model estimation in the IRT example.</li>
