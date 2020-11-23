@@ -46,15 +46,20 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 </ul>
 -->
 
+<h3>Computation and application of generalized linear mixed model derivatives using lme4</h3>
+<ul>
+  <li><a href="https://arxiv.org/abs/2011.10414">Working paper</a>.</li>
+</ul>  
+
 <h3>Score-based tests for explaining heterogeneity in linear mixed models</h3>
 <ul>
-  <li><a href="http://arxiv.org/abs/1901.05796">Working paper</a></li>
+  <li>Manuscript forthcoming in <a href="https://doi.org/10.3758/s13428-020-01375-7">Behavior Research Methods</a>.</li>
   <li>Replication materials <a href="http://wang-ting.com/working-paper/">available here</a></li>
 </ul>
 
 <h3>Model selection of nested and non-nested item response models using Vuong tests</h3>
 <ul>
-  <li>Manuscript forthcoming in <a href="https://doi.org/10.1080/00273171.2019.1664280">Multivariate Behavioral Research</a>.</li>
+  <li>Manuscript published in <a href="https://doi.org/10.1080/00273171.2019.1664280">Multivariate Behavioral Research 55(5), 664-684</a>.</li>
   <li>Replication materials <a href="https://github.com/sumny/vuong_mirt_code">available on github</a></li>
 </ul>
 
