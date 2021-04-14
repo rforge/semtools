@@ -36,6 +36,9 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <h2>semtools: Methods for Structural Equation Models</h2>
 <br />
 
+Unless otherwise noted, all code on this page is released under the GPL-3 license.<br />
+
+
 <!--
 <h3>Important note on lavaan 0.5-18</h3>
 
